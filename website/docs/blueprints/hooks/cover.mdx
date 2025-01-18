@@ -43,7 +43,7 @@ This integration provides the entity which represents a cover in Home Assistant.
 />
 <Input
   name='Controller Entity'
-  description='The action sensor of the controller to use for the automation. Choose a value only if the remote is integrated with Zigbee2MQTT and Legacy Action Sensors are enabled. This input is deprecated in favor of the Controller Device input, and will be removed in* a future release.'
+  description='The action sensor of the controller to use for the automation. Choose a value only if the remote is integrated with Zigbee2MQTT and Legacy Action Sensors are enabled. This input is deprecated in favor of the Controller Device input, and will be removed in a future release.'
   selector='entity'
   deprecated
 />
@@ -66,6 +66,7 @@ This integration provides the entity which represents a cover in Home Assistant.
 - [IKEA E1743 TRÅDFRI On/Off Switch & Dimmer](/docs/blueprints/controllers/ikea_e1743)
 - [IKEA E1766 TRÅDFRI Open/Close Remote](/docs/blueprints/controllers/ikea_e1766)
 - [IKEA E1812 TRÅDFRI Shortcut button](/docs/blueprints/controllers/ikea_e1812)
+- [IKEA E2201 RODRET Dimmer](/docs/blueprints/controllers/ikea_e2201)
 - [SONOFF SNZB-01 Wireless Switch](/docs/blueprints/controllers/sonoff_snzb01)
 - [Xiaomi WXCJKG11LM Aqara Opple 2 button remote](/docs/blueprints/controllers/xiaomi_wxcjkg11lm)
 - [Xiaomi WXCJKG12LM Aqara Opple 4 button remote](/docs/blueprints/controllers/xiaomi_wxcjkg12lm)
@@ -98,3 +99,4 @@ If you want to link multiple covers to the same controller you can either use [C
   The `controller_entity` input has been deprecated, and `controller_device` is now mandatory.
   If you are a Zigbee2MQTT user and plan to update this blueprint, please make sure to remove the `controller_entity` input from your automation config and add the device ID of your controller to the `controller_device` input.
   To obtain the device ID from your controller, configure the automation from the UI and use the device selector dropdown on the `controller_device` input to select your controller.
+- **2025-01-20**: Add support for IKEA E2201 RODRET Dimmer. ([@yarafie](https://github.com/yarafie))
