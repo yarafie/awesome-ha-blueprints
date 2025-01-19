@@ -10,7 +10,7 @@ name: PR Commenter
 jobs:
   pr-commenter-ci-success:
     name: Report CI Success
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     if: ${{ github.actor != 'dependabot[bot]' && github.event.workflow_run.conclusion == 'success' }}
     steps:
       - name: Download changes analysis
@@ -58,7 +58,7 @@ jobs:
 
   pr-commenter-ci-failure:
     name: Report CI Failure
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     if: ${{ github.actor != 'dependabot[bot]' && github.event.workflow_run.conclusion == 'failure' }}
     steps:
       - name: Download failure reports

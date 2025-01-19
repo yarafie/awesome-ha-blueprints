@@ -7,7 +7,7 @@ name: CI - PR
 jobs:
   lint:
     name: Run Linters
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
       - name: Check out Git repository
@@ -67,7 +67,7 @@ jobs:
 
   format-lint:
     name: Run formatters to check code formatting
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
       - name: Check out Git repository
@@ -111,7 +111,7 @@ jobs:
 
   build:
     name: Check website build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
       - name: Check out Git repository
@@ -141,7 +141,7 @@ jobs:
 
   changes:
     name: Analyze changes
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
       - name: Check out Git repository

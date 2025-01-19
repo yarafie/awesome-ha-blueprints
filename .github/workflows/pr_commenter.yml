@@ -8,7 +8,7 @@ name: PR Commenter
 jobs:
   thank-you-message:
     name: Thank you message
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     if: ${{ github.actor != 'dependabot[bot]' }}
 
     steps:
