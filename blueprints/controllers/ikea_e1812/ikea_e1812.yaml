@@ -54,7 +54,7 @@ blueprint:
               model: TRADFRI SHORTCUT Button
             - integration: deconz
               manufacturer: IKEA of Sweden
-             model: TRADFRI SHORTCUT Button
+              model: TRADFRI SHORTCUT Button
            multiple: false
     helper_last_controller_event:
       name: (Required) Helper - Last Controller Event
