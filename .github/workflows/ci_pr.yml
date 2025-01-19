@@ -7,7 +7,7 @@ name: CI - PR
 jobs:
   lint:
     name: Run Linters
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
       - name: Check out Git repository
