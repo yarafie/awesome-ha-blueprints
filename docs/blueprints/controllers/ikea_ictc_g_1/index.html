@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="generator" content="Docusaurus v3.7.0">
 <title data-rh="true">Controller - IKEA ICTC-G-1 TRÅDFRI wireless dimmer | Awesome HA Blueprints</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:url" content="https://epmatt.github.io/awesome-ha-blueprints/docs/blueprints/controllers/ikea_ictc_g_1"><meta data-rh="true" property="og:locale" content="en"><meta data-rh="true" name="docusaurus_locale" content="en"><meta data-rh="true" name="docsearch:language" content="en"><meta data-rh="true" name="docusaurus_version" content="current"><meta data-rh="true" name="docusaurus_tag" content="docs-default-current"><meta data-rh="true" name="docsearch:version" content="current"><meta data-rh="true" name="docsearch:docusaurus_tag" content="docs-default-current"><meta data-rh="true" property="og:title" content="Controller - IKEA ICTC-G-1 TRÅDFRI wireless dimmer | Awesome HA Blueprints"><meta data-rh="true" name="description" content="Controller automation for executing any kind of action triggered by the provided IKEA ICTC-G-1 TRÅDFRI wireless dimmer. Supports deCONZ, ZHA, Zigbee2MQTT."><meta data-rh="true" property="og:description" content="Controller automation for executing any kind of action triggered by the provided IKEA ICTC-G-1 TRÅDFRI wireless dimmer. Supports deCONZ, ZHA, Zigbee2MQTT."><link data-rh="true" rel="icon" href="/awesome-ha-blueprints/img/favicon.ico"><link data-rh="true" rel="canonical" href="https://epmatt.github.io/awesome-ha-blueprints/docs/blueprints/controllers/ikea_ictc_g_1"><link data-rh="true" rel="alternate" href="https://epmatt.github.io/awesome-ha-blueprints/docs/blueprints/controllers/ikea_ictc_g_1" hreflang="en"><link data-rh="true" rel="alternate" href="https://epmatt.github.io/awesome-ha-blueprints/docs/blueprints/controllers/ikea_ictc_g_1" hreflang="x-default"><link rel="stylesheet" href="/awesome-ha-blueprints/assets/css/styles.6a0cf824.css">
-<script src="/awesome-ha-blueprints/assets/js/runtime~main.6722a086.js" defer="defer"></script>
+<script src="/awesome-ha-blueprints/assets/js/runtime~main.ca02370f.js" defer="defer"></script>
 <script src="/awesome-ha-blueprints/assets/js/main.e8d0d8f7.js" defer="defer"></script>
 </head>
 <body class="navigation-with-keyboard">
@@ -97,8 +97,8 @@ Hooks allow to easily create controller-based automations for interacting with m
 <li>
 <p><strong>2025-01-15</strong>:</p>
 <p>⚠️<!-- --> <strong>Breaking Change</strong>:</p>
-<p>Migrate to Zigbee2MQTT MQTT Device Triggers. (<a href="https://github.com/yarafie" target="_blank" rel="noopener noreferrer">@yarafie</a>)
-The <code>controller_entity</code> input has been deprecated, and <code>controller_device</code> is now mandatory.
+<p>Migrate to Zigbee2MQTT MQTT Device Triggers. (<a href="https://github.com/yarafie" target="_blank" rel="noopener noreferrer">@yarafie</a>)</p>
+<p>The <code>controller_entity</code> input has been deprecated, and <code>controller_device</code> is now mandatory.
 If you are a Zigbee2MQTT user and plan to update this blueprint, please make sure to remove the <code>controller_entity</code> input from your automation config and add the device ID of your controller to the <code>controller_device</code> input.
 To obtain the device ID from your controller, configure the automation from the UI and use the device selector dropdown on the <code>controller_device</code> input to select your controller.</p>
 </li>
