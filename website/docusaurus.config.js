@@ -2,12 +2,12 @@
 module.exports = {
   title: 'Awesome HA Blueprints',
   tagline: 'A curated list of automation blueprints for Home Assistant.',
-  url: 'https://epmatt.github.io',
+  url: 'https://yarafie.github.io',
   baseUrl: '/awesome-ha-blueprints/',
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
   favicon: 'img/favicon.ico',
-  organizationName: 'EPMatt',
+  organizationName: 'yarafie',
   projectName: 'awesome-ha-blueprints',
   themeConfig: {
     announcementBar: {
@@ -48,7 +48,7 @@ module.exports = {
           position: 'right',
         },
         {
-          href: 'https://github.com/EPMatt/awesome-ha-blueprints',
+          href: 'https://github.com/yarafie/awesome-ha-blueprints',
           label: 'GitHub',
           position: 'right',
         },
@@ -65,7 +65,7 @@ module.exports = {
       {
         docs: {
           sidebarPath: require.resolve('./sidebars.js'),
-          editUrl: 'https://github.com/EPMatt/awesome-ha-blueprints/edit/main/',
+          editUrl: 'https://github.com/yarafie/awesome-ha-blueprints/edit/main/',
         },
         theme: {
           customCss: require.resolve('./src/css/custom.css'),
