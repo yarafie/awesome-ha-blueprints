@@ -14,7 +14,7 @@ permissions:
 
 jobs:
   stale:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     steps:
       - name: 90 days stale policy for issues & PRs
         uses: actions/stale@v9

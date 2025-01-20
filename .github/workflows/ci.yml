@@ -8,7 +8,7 @@ name: CI - Push
 jobs:
   lint:
     name: Run Linters
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
 
     steps:
       - name: Check out Git repository
@@ -54,7 +54,7 @@ jobs:
 
   prettier:
     name: Prettier - Enforce code style
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
 
     steps:
       - name: Check out Git repository
@@ -91,7 +91,7 @@ jobs:
     needs:
       - lint
       - prettier
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
 
     steps:
       - name: Check out Git repository
