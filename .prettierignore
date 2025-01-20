@@ -21,3 +21,5 @@ yarn-error.log*
 # Local scripts
 to-yarafie.sh
 to-EPMatt.sh
+
+/website/docusaurus.config.js
