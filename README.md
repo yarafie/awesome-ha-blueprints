@@ -1,17 +1,18 @@
-<div align="center">
-
 # Disclaimer
 
 **====================================================**
+
 **This is a fork of the awesome-ha-blueprints project.**
+
 **====================================================**
 
 **All credit goes to the original Creator of the project EPMatt.**
 
-Links here and anywhere in this repository may point to [yarafie/awesome-ha-blueprints] (https://github.com/EPMatt/awesome-ha-blueprints/) fork but **Main Project** can be found at the below link.
+Links here and anywhere in this repository may point to [yarafie/awesome-ha-blueprints](https://github.com/yarafie/awesome-ha-blueprints/) fork but **Main Project** can be found at the below link.
 
-[EPMatt/awesome-ha-blueprints] (https://github.com/EPMatt/awesome-ha-blueprints/) 
+[EPMatt/awesome-ha-blueprints](https://github.com/EPMatt/awesome-ha-blueprints/) 
 
+<div align="center">
 # Awesome HA Blueprints
 
 <a href="https://yarafie.github.io/awesome-ha-blueprints/">
