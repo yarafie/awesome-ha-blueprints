@@ -10,7 +10,7 @@
 
 **All credit goes to the original Creator of the project EPMatt**.
 
-Links here and anywhere in this repository may point to this **fork** but **Main Project** can be found at the main repository.
+Links here and anywhere in this repository may point to [yarafie](https://github.com/yarafie/awesome-ha-blueprints/) fork but **Main Project** can be found at the following link [EPMatt](https://github.com/EPMatt/awesome-ha-blueprints/). 
 
 **====================================================**
 
