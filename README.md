@@ -17,6 +17,7 @@ Links here and anywhere in this repository may point to [yarafie/awesome-ha-blue
 </div>
 
 <div align="center">
+
 # Awesome HA Blueprints
 
 <a href="https://yarafie.github.io/awesome-ha-blueprints/">
