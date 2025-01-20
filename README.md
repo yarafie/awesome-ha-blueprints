@@ -14,6 +14,8 @@ Links here and anywhere in this repository may point to [yarafie/awesome-ha-blue
 
 [EPMatt/awesome-ha-blueprints](https://github.com/EPMatt/awesome-ha-blueprints/) 
 
+**====================================================**
+
 </div>
 
 <div align="center">
