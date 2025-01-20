@@ -16,7 +16,7 @@ function ControllerRequirement({ required, children }) {
       </p>
       <p>{children}</p>
       <a href='#supported-controllers'>List of Supported Controllers</a> -{' '}
-      <a href='https://epmatt.github.io/awesome-ha-blueprints/blueprints/controllers'>
+      <a href='https://yarafie.github.io/awesome-ha-blueprints/blueprints/controllers'>
         Controllers Docs
       </a>
     </CustomRequirement>

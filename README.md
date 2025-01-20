@@ -1,12 +1,25 @@
 <div align="center">
 
+# Disclaimer
+
+**====================================================**
+**This is a fork of the awesome-ha-blueprints project.**
+**====================================================**
+
+**All credit goes to the original Creator of the project EPMatt.**
+
+Links here and anywhere in this repository may point to [yarafie/awesome-ha-blueprints] (https://github.com/EPMatt/awesome-ha-blueprints/) fork but **Main Project** can be found at the below link.
+
+[EPMatt/awesome-ha-blueprints] (https://github.com/EPMatt/awesome-ha-blueprints/) 
+
 # Awesome HA Blueprints
 
-<a href="https://epmatt.github.io/awesome-ha-blueprints/">
+<a href="https://yarafie.github.io/awesome-ha-blueprints/">
 <img width=200 src="./awesome-ha-blueprints-logo.png"/>
 </a>
 <br/>
 <br/>
+
 A curated collection of blueprints for Home Assistant.
 
 Reliable, customizable, fully tested by the community.
@@ -28,21 +41,21 @@ Blueprints included in the collection are:
 - **Reliable** on most situations and corner cases;
 - **Fully maintained**, collaboratively **developed** and **tested by the community**.
 
-You can read the full introduction to the project [here](https://epmatt.github.io/awesome-ha-blueprints/docs/introduction).
+You can read the full introduction to the project [here](https://yarafie.github.io/awesome-ha-blueprints/docs/introduction).
 
 ## Documentation
 
-Every blueprint included in the collection is highly documented. You can read full documentation regarding this project in the [Official documentation website](https://epmatt.github.io/awesome-ha-blueprints/).
+Every blueprint included in the collection is highly documented. You can read full documentation regarding this project in the [Official documentation website](https://yarafie.github.io/awesome-ha-blueprints/).
 
 ## Available blueprints
 
-Browse the full list of available blueprints [here](https://epmatt.github.io/awesome-ha-blueprints/docs/blueprints/).
+Browse the full list of available blueprints [here](https://yarafie.github.io/awesome-ha-blueprints/docs/blueprints/).
 
-Blueprints are divided in categories. If you're interested in creating **controller-based automations**, check out the [Controllers-Hooks blueprint ecosystem](https://epmatt.github.io/awesome-ha-blueprints/docs/controllers-hooks-ecosystem). You'll be able to set up your switches, dimmers and remotes to control your lights, media players and more in just a few clicks.
+Blueprints are divided in categories. If you're interested in creating **controller-based automations**, check out the [Controllers-Hooks blueprint ecosystem](https://yarafie.github.io/awesome-ha-blueprints/docs/controllers-hooks-ecosystem). You'll be able to set up your switches, dimmers and remotes to control your lights, media players and more in just a few clicks.
 
 ## Contributing
 
-Please check our [Contribution Guidelines](https://github.com/EPMatt/awesome-ha-blueprints/blob/main/CONTRIBUTING.md) for additional information on how to contribute. From issues to new blueprints submissions, everything is described in detail to make sure the community can benefit the most from your contribution.
+Please check our [Contribution Guidelines](https://github.com/yarafie/awesome-ha-blueprints/blob/main/CONTRIBUTING.md) for additional information on how to contribute. From issues to new blueprints submissions, everything is described in detail to make sure the community can benefit the most from your contribution.
 
 ## Supporting the project
 
