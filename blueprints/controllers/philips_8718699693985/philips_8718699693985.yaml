@@ -51,10 +51,10 @@ blueprint:
             # source: https://github.com/dresden-elektronik/deconz-rest-plugin/wiki/Supported-Devices
             - integration: zha
               manufacturer: Philips
-            # **TBConfirmed** model:
+              # **TBConfirmed** model:
             - integration: deconz
               manufacturer: Philips
-            # **TBConfirmed** model:
+              # **TBConfirmed** model:
           multiple: false
     helper_last_controller_event:
       name: (Required) Helper - Last Controller Event
