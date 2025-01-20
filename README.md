@@ -1,3 +1,5 @@
+<div align="left">
+
 # Disclaimer
 
 **====================================================**
@@ -11,6 +13,8 @@
 Links here and anywhere in this repository may point to [yarafie/awesome-ha-blueprints](https://github.com/yarafie/awesome-ha-blueprints/) fork but **Main Project** can be found at the below link.
 
 [EPMatt/awesome-ha-blueprints](https://github.com/EPMatt/awesome-ha-blueprints/) 
+
+</div>
 
 <div align="center">
 # Awesome HA Blueprints
