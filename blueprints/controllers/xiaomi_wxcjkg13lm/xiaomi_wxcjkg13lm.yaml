@@ -519,7 +519,7 @@ mode: restart
 max_exceeded: silent
 trigger:
   # triggers for zigbee2mqtt mqtt device action
-  #button_1
+  # button_1
   - platform: device
     domain: mqtt
     device_id: !input controller_device
@@ -545,7 +545,7 @@ trigger:
     device_id: !input controller_device
     type: action
     subtype: button_1_triple
-  #button_2
+  # button_2
   - platform: device
     domain: mqtt
     device_id: !input controller_device
@@ -571,7 +571,7 @@ trigger:
     device_id: !input controller_device
     type: action
     subtype: button_2_triple
-  #button_3
+  # button_3
   - platform: device
     domain: mqtt
     device_id: !input controller_device
@@ -597,7 +597,7 @@ trigger:
     device_id: !input controller_device
     type: action
     subtype: button_3_triple
-  #button_4
+  # button_4
   - platform: device
     domain: mqtt
     device_id: !input controller_device
@@ -623,7 +623,7 @@ trigger:
     device_id: !input controller_device
     type: action
     subtype: button_4_triple
-  #button_5
+  # button_5
   - platform: device
     domain: mqtt
     device_id: !input controller_device
@@ -649,7 +649,7 @@ trigger:
     device_id: !input controller_device
     type: action
     subtype: button_5_triple
-  #button_6
+  # button_6
   - platform: device
     domain: mqtt
     device_id: !input controller_device
