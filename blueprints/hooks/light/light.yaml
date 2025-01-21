@@ -359,13 +359,13 @@ variables:
   step_long: '{{ (max_brightness-min_brightness)/brightness_steps_long }}'
 mode: restart
 max_exceeded: silent
-trigger:
-  - platform: event
+triggers:
+  - trigger: event
     event_type: ahb_controller_event
     event_data:
       controller: !input controller_device
 condition: []
-action:
+actions:
   - variables:
       action: '{{ trigger.event.data.action }}'
   - choose:
@@ -374,13 +374,13 @@ action:
           - choose:
               - conditions: '{{ force_brightness }}'
                 sequence:
-                  - service: light.toggle
+                  - action: light.toggle
                     entity_id: !input light
                     data:
                       brightness: !input on_brightness
                       transition: '{{ light_transition / 1000 }}'
             default:
-              - service: light.toggle
+              - action: light.toggle
                 entity_id: !input light
                 data:
                   transition: '{{ light_transition / 1000 }}'
@@ -389,19 +389,19 @@ action:
           - choose:
               - conditions: '{{ force_brightness }}'
                 sequence:
-                  - service: light.turn_on
+                  - action: light.turn_on
                     entity_id: !input light
                     data:
                       brightness: !input on_brightness
                       transition: '{{ light_transition / 1000 }}'
             default:
-              - service: light.turn_on
+              - action: light.turn_on
                 entity_id: !input light
                 data:
                   transition: '{{ light_transition / 1000 }}'
       - conditions: '{{ action == turn_off }}'
         sequence:
-          - service: light.turn_off
+          - action: light.turn_off
             entity_id: !input light
             data:
               transition: '{{ light_transition / 1000 }}'
@@ -411,21 +411,21 @@ action:
               # if light is off and smooth power on is disabled, turn it on at the previously saved brightness
               - conditions: '{{ states(light) == "off" and not smooth_power_on}}'
                 sequence:
-                  - service: light.turn_on
+                  - action: light.turn_on
                     data:
                       transition: '{{ light_transition / 1000 }}'
                       entity_id: !input light
               # if light is off and smooth power on is enabled, turn it on at minimum brightness
               - conditions: '{{ states(light) == "off" and smooth_power_on}}'
                 sequence:
-                  - service: light.turn_on
+                  - action: light.turn_on
                     data:
                       brightness: '{{ min_brightness }}'
                       transition: '{{ light_transition / 1000 }}'
                       entity_id: !input light
             # else the light is on, hence increase its brightness
             default:
-              - service: light.turn_on
+              - action: light.turn_on
                 data:
                   brightness: '{{ [ [state_attr(light,"brightness")+step_short, min_brightness] | max, max_brightness] | min }}'
                   transition: 0.25
@@ -435,12 +435,12 @@ action:
           - choose:
               - conditions: '{{ smooth_power_off and state_attr(light,"brightness") == min_brightness }}'
                 sequence:
-                  - service: light.turn_off
+                  - action: light.turn_off
                     data:
                       transition: '{{ light_transition / 1000 }}'
                       entity_id: !input light
             default:
-              - service: light.turn_on
+              - action: light.turn_on
                 data:
                   brightness: '{{ [ [state_attr(light,"brightness")-step_short, min_brightness] | max, max_brightness] | min }}'
                   transition: 0.25
@@ -452,7 +452,7 @@ action:
               # if light is off and smooth power on is disabled, turn it on at the previously saved brightness
               - conditions: '{{ states(light) == "off" and not smooth_power_on}}'
                 sequence:
-                  - service: light.turn_on
+                  - action: light.turn_on
                     data:
                       transition: '{{ light_transition / 1000 }}'
                       entity_id: !input light
@@ -461,7 +461,7 @@ action:
               # if light is off and smooth power on is enabled, turn it on at minimum brightness
               - conditions: '{{ states(light) == "off" and smooth_power_on}}'
                 sequence:
-                  - service: light.turn_on
+                  - action: light.turn_on
                     data:
                       brightness: '{{ min_brightness }}'
                       transition: '{{ light_transition / 1000 }}'
@@ -472,7 +472,7 @@ action:
           - repeat:
               while: '{{ true }}'
               sequence:
-                - service: light.turn_on
+                - action: light.turn_on
                   data:
                     brightness: '{{ [ [state_attr(light,"brightness")+step_long, min_brightness] | max, max_brightness] | min }}'
                     transition: 0.25
@@ -493,7 +493,7 @@ action:
                             # if the light is at minimum brightness, turn it off
                             - conditions: '{{ state_attr(light,"brightness") == min_brightness }}'
                               sequence:
-                                - service: light.turn_off
+                                - action: light.turn_off
                                   data:
                                     transition: '{{ light_transition / 1000 }}'
                                     entity_id: !input light
@@ -501,7 +501,7 @@ action:
                                     milliseconds: !input light_transition
                           # else lower the light's brightness
                           default:
-                            - service: light.turn_on
+                            - action: light.turn_on
                               data:
                                 brightness: '{{ [ [state_attr(light,"brightness")-step_long, min_brightness] | max, max_brightness] | min }}'
                                 transition: 0.25
@@ -514,7 +514,7 @@ action:
                   while: '{{ states(light) != "off" }}'
                   sequence:
                     # lower the light's brightness. since smooth power off is disabled, never let the brightness move below the user-provided minimum
-                    - service: light.turn_on
+                    - action: light.turn_on
                       data:
                         brightness: '{{ [ [state_attr(light,"brightness")-step_long, min_brightness] | max, max_brightness] | min }}'
                         transition: 0.25
@@ -526,14 +526,14 @@ action:
           choose:
             - conditions: '{{ light_color_mode_id == "color_temp" }}'
               sequence:
-                - service: light.turn_on
+                - action: light.turn_on
                   data:
                     color_temp: '{{ state_attr(light,"color_temp")|int + 50 }}'
                     transition: 0.25
                   entity_id: !input light
             - conditions: '{{ light_color_mode_id == "hs_color" }}'
               sequence:
-                - service: light.turn_on
+                - action: light.turn_on
                   data:
                     hs_color: '{{ [((state_attr(light,"hs_color")[0] or 0) + 15) % 360, 100] }}'
                     transition: 0.25
@@ -543,14 +543,14 @@ action:
           choose:
             - conditions: '{{ light_color_mode_id == "color_temp" }}'
               sequence:
-                - service: light.turn_on
+                - action: light.turn_on
                   data:
                     color_temp: '{{ [state_attr(light,"color_temp")|int - 50, 1]|max }}'
                     transition: 0.25
                   entity_id: !input light
             - conditions: '{{ light_color_mode_id == "hs_color" }}'
               sequence:
-                - service: light.turn_on
+                - action: light.turn_on
                   data:
                     hs_color: '{{ [((state_attr(light,"hs_color")[0] or 0) - 15) % 360, 100] }}'
                     transition: 0.25
@@ -563,7 +563,7 @@ action:
                 - repeat:
                     while: '{{ true }}'
                     sequence:
-                      - service: light.turn_on
+                      - action: light.turn_on
                         data:
                           color_temp: '{{ state_attr(light,"color_temp")|int + 50 }}'
                           transition: 0.25
@@ -575,7 +575,7 @@ action:
                 - repeat:
                     while: '{{ true }}'
                     sequence:
-                      - service: light.turn_on
+                      - action: light.turn_on
                         data:
                           hs_color: '{{ [((state_attr(light,"hs_color")[0] or 0) + 15) % 360, 100] }}'
                           transition: 0.25
@@ -590,7 +590,7 @@ action:
                 - repeat:
                     while: '{{ true }}'
                     sequence:
-                      - service: light.turn_on
+                      - action: light.turn_on
                         data:
                           color_temp: '{{ [state_attr(light,"color_temp")|int - 50, 1]|max }}'
                           transition: 0.25
@@ -602,7 +602,7 @@ action:
                 - repeat:
                     while: '{{ true }}'
                     sequence:
-                      - service: light.turn_on
+                      - action: light.turn_on
                         data:
                           hs_color: '{{ [((state_attr(light,"hs_color")[0] or 0) - 15) % 360, 100] }}'
                           transition: 0.25

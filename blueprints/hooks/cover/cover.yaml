@@ -139,43 +139,43 @@ variables:
   stop_cover_all: '{{ controller_mapping[controller_model]["stop_cover_all"] | default(None) }}'
 mode: restart
 max_exceeded: silent
-trigger:
-  - platform: event
+triggers:
+  - trigger: event
     event_type: ahb_controller_event
     event_data:
       controller: !input controller_device
-condition: []
-action:
+conditions: []
+actions:
   - variables:
       action: '{{ trigger.event.data.action }}'
   - choose:
       - conditions: '{{ action == open_cover }}'
         sequence:
-          - service: cover.open_cover
+          - action: cover.open_cover
             entity_id: !input cover
       - conditions: '{{ action == close_cover }}'
         sequence:
-          - service: cover.close_cover
+          - action: cover.close_cover
             entity_id: !input cover
       - conditions: '{{ action == stop_cover }}'
         sequence:
-          - service: cover.stop_cover
+          - action: cover.stop_cover
             entity_id: !input cover
       - conditions: '{{ action == open_cover_tilt }}'
         sequence:
-          - service: cover.open_cover_tilt
+          - action: cover.open_cover_tilt
             entity_id: !input cover
       - conditions: '{{ action == close_cover_tilt }}'
         sequence:
-          - service: cover.close_cover_tilt
+          - action: cover.close_cover_tilt
             entity_id: !input cover
       - conditions: '{{ action == stop_cover_tilt }}'
         sequence:
-          - service: cover.stop_cover_tilt
+          - action: cover.stop_cover_tilt
             entity_id: !input cover
       - conditions: '{{ action == stop_cover_all }}'
         sequence:
-          - service: cover.stop_cover
+          - action: cover.stop_cover
             entity_id: !input cover
-          - service: cover.stop_cover_tilt
+          - action: cover.stop_cover_tilt
             entity_id: !input cover
