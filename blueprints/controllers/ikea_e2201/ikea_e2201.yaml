@@ -250,13 +250,13 @@ triggers:
     domain: mqtt
     device_id: !input controller_device
     type: action
-    subtype: "on"
+    subtype: 'on'
     id: press-on-z2m-e2201
   - trigger: device
     domain: mqtt
     device_id: !input controller_device
     type: action
-    subtype: "off"
+    subtype: 'off'
     id: press-off-z2m-e2201
   - trigger: device
     domain: mqtt
@@ -281,7 +281,7 @@ triggers:
     event_type: zha_event
     event_data:
       device_id: !input controller_device
-      command: "on"
+      command: 'on'
       cluster_id: 6
       endpoint_id: 1
     id: press-on-zha-e2201
@@ -289,7 +289,7 @@ triggers:
     event_type: zha_event
     event_data:
       device_id: !input controller_device
-      command: "off"
+      command: 'off'
       cluster_id: 6
       endpoint_id: 1
     id: press-off-zha-e2201
@@ -297,7 +297,7 @@ triggers:
     event_type: zha_event
     event_data:
       device_id: !input controller_device
-      command: "move_with_on_off"
+      command: 'move_with_on_off'
       cluster_id: 8
       endpoint_id: 1
       args: [0, 83]
@@ -306,7 +306,7 @@ triggers:
     event_type: zha_event
     event_data:
       device_id: !input controller_device
-      command: "move"
+      command: 'move'
       cluster_id: 8
       endpoint_id: 1
       args: [1, 83, 0, 0]
