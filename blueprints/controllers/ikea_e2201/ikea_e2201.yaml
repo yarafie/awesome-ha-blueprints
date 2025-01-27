@@ -280,7 +280,7 @@ triggers:
   - trigger: event
     event_type: zha_event
     event_data:
-      device_id: !input remote_device
+      device_id: !input controller_device
       command: "on"
       cluster_id: 6
       endpoint_id: 1
@@ -288,7 +288,7 @@ triggers:
   - trigger: event
     event_type: zha_event
     event_data:
-      device_id: !input remote_device
+      device_id: !input controller_device
       command: "off"
       cluster_id: 6
       endpoint_id: 1
@@ -296,7 +296,7 @@ triggers:
   - trigger: event
     event_type: zha_event
     event_data:
-      device_id: !input remote_device
+      device_id: !input controller_device
       command: "move_with_on_off"
       cluster_id: 8
       endpoint_id: 1
@@ -305,7 +305,7 @@ triggers:
   - trigger: event
     event_type: zha_event
     event_data:
-      device_id: !input remote_device
+      device_id: !input controller_device
       command: "move"
       cluster_id: 8
       endpoint_id: 1
@@ -314,7 +314,7 @@ triggers:
   - trigger: event
     event_type: zha_event
     event_data:
-      device_id: !input remote_device
+      device_id: !input controller_device
       cluster_id: 8
       endpoint_id: 1
       command: stop_with_on_off
