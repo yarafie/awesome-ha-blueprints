@@ -250,13 +250,13 @@ triggers:
     domain: mqtt
     device_id: !input controller_device
     type: action
-    subtype: 'on'
+    subtype: "on"
     id: press-on-z2m-e2201
   - trigger: device
     domain: mqtt
     device_id: !input controller_device
     type: action
-    subtype: 'off'
+    subtype: "off"
     id: press-off-z2m-e2201
   - trigger: device
     domain: mqtt
