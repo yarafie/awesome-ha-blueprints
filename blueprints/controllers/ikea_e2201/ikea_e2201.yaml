@@ -423,9 +423,9 @@ actions:
       - conditions:
         - condition: trigger
           id:
-          - z2m-e2201-press-on
-          - zha-e2201-press-on
-          - dcz-e2201-press-on
+            - z2m-e2201-press-on
+            - zha-e2201-press-on
+            - dcz-e2201-press-on
         sequence:
           - choose:
               # if double press event is enabled
@@ -482,9 +482,9 @@ actions:
       - conditions:
         - condition: trigger
           id:
-          - z2m-e2201-hold-on
-          - zha-e2201-hold-on
-          - dcz-e2201-hold-on
+            - z2m-e2201-hold-on
+            - zha-e2201-hold-on
+            - dcz-e2201-hold-on
         sequence:
           # fire the event only once before looping the action
           - event: ahb_controller_event
@@ -504,9 +504,9 @@ actions:
       - conditions:
         - condition: trigger
           id:
-          - z2m-e2201-release
-          - zha-e2201-release
-          - dcz-e2201-release
+            - z2m-e2201-release
+            - zha-e2201-release
+            - dcz-e2201-release
         # for integrations which need to store the last controller event, need to check the previous button event, stored in the provided input_text
         - '{{ not integration_id in integrations_with_prev_event_storage or last_controller_event | string in button_up_long }}'
         sequence:
@@ -523,9 +523,9 @@ actions:
       - conditions:
         - condition: trigger
           id:
-          - z2m-e2201-hold-off
-          - zha-e2201-hold-off
-          - dcz-e2201-hold-off
+            - z2m-e2201-hold-off
+            - zha-e2201-hold-off
+            - dcz-e2201-hold-off
         sequence:
           - choose:
               # if double press event is enabled
@@ -582,9 +582,9 @@ actions:
       - conditions:
         - condition: trigger
           id:
-          - z2m-e2201-hold-off
-          - zha-e2201-hold-off
-          - dcz-e2201-hold-off
+            - z2m-e2201-hold-off
+            - zha-e2201-hold-off
+            - dcz-e2201-hold-off
         sequence:
           # fire the event only once before looping the action
           - event: ahb_controller_event
@@ -604,9 +604,9 @@ actions:
       - conditions:
         - condition: trigger
           id:
-          - z2m-e2201-release
-          - zha-e2201-release
-          - dcz-e2201-release
+            - z2m-e2201-release
+            - zha-e2201-release
+            - dcz-e2201-release
         # for integrations which need to store the last controller event, need to check the previous button event, stored in the provided input_text
         - '{{ not integration_id in integrations_with_prev_event_storage or last_controller_event | string in button_down_long }}'
         sequence:
