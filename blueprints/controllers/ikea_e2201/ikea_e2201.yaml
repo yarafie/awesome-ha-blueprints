@@ -607,8 +607,8 @@ actions:
               - z2m-e2201-release
               - zha-e2201-release
               - dcz-e2201-release
-        # for integrations which need to store the last controller event, need to check the previous button event, stored in the provided input_text
-        - '{{ not integration_id in integrations_with_prev_event_storage or last_controller_event | string in button_down_long }}'
+          # for integrations which need to store the last controller event, need to check the previous button event, stored in the provided input_text
+          - '{{ not integration_id in integrations_with_prev_event_storage or last_controller_event | string in button_down_long }}'
         sequence:
           # fire the event
           - event: ahb_controller_event
