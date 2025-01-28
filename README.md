@@ -15,7 +15,7 @@ Links here and anywhere in this repository may point to this fork but main proje
 - **Fork**: [yarafie](https://github.com/yarafie/awesome-ha-blueprints/).
 - **Main**: [EPMatt](https://github.com/EPMatt/awesome-ha-blueprints/).
 
-- Special mention goes to: 
+  Special mention goes to: 
   [@lsismerio](https://github.com/lsismeiro)
   [@LewisSpring](https://github.com/LewisSpring)
 
