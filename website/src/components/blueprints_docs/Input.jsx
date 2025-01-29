@@ -55,7 +55,7 @@ const styles = {
   },
 }
 
-function Input({ selector, required, name, description, deprecated }) {
+function Input({ selector, required, name, description, deprecated, virtual }) {
   const selectorVal = selector ? selectors[selector] : selectors.none
   return (
     <div>
@@ -66,6 +66,7 @@ function Input({ selector, required, name, description, deprecated }) {
         ) : (
           <Badge variant='info'>Optional</Badge>
         )}{' '}
+        {virtual && <Badge variant='info'>Virtual</Badge>}
         {deprecated && <Badge variant='danger'>Deprecated</Badge>}
       </span>
       <br />
