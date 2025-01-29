@@ -20,6 +20,9 @@ const selectors = {
   entity: {
     type: 'Entity',
   },
+  virtual: {
+    type: 'Virtual',
+  },
   number: {
     type: 'Number',
   },
