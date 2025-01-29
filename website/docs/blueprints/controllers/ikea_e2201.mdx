@@ -28,9 +28,9 @@ Hooks allow to easily create controller-based automations for interacting with m
 
 ## Requirements
 
-<Requirement id='deconz'/>
-<Requirement id='zha'/>
 <Requirement id='zigbee2mqtt'/>
+<Requirement id='zha'/>
+<Requirement id='deconz'/>
 <Requirement name='Input Text Integration' required>
 
 This integration provides the entity which must be provided to the blueprint in the **Helper - Last Controller Event** input. Learn more about this helper by reading the dedicated section in the [Additional Notes](#helper---last-controller-event).
@@ -52,12 +52,6 @@ This integration provides the entity which must be provided to the blueprint in 
   description='The controller device to use for the automation. Choose a value only if the remote is integrated with deCONZ, ZHA, Zigbee2MQTT.'
   selector='device'
   required='deCONZ, ZHA, Zigbee2MQTT'
-/>
-<Input
-  name='Controller Entity'
-  description='The action sensor of the controller to use for the automation. Choose a value only if the remote is integrated with Zigbee2MQTT and Legacy Action Sensors are enabled. This input is deprecated in favor of the Controller Device input, and will be removed in a future release.'
-  selector='entity'
-  deprecated
 />
 <Input
   name='Helper - Last Controller Event'
