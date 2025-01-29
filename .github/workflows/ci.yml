@@ -38,7 +38,7 @@ jobs:
           github_token: ${{ secrets.github_token }}
           reporter: github-check
           yamllint_flags: '.'
-          fail-level: error
+          fail_level: error
           filter_mode: nofilter
       - if: always()
         id: eslint
@@ -48,7 +48,7 @@ jobs:
           github_token: ${{ secrets.github_token }}
           reporter: github-check
           eslint_flags: --ext js,jsx .
-          fail-level: error
+          fail_level: error
           filter_mode: nofilter
           workdir: website
 
