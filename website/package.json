@@ -20,7 +20,7 @@
     "clsx": "^1.2.1",
     "react": "^16.8.4",
     "react-bootstrap-icons": "^1.10.2",
-    "react-dom": "^16.8.4"
+    "react-dom": "^19.0.0"
   },
   "browserslist": {
     "production": [
