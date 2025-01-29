@@ -14,7 +14,3 @@ yarn-error.log*
 
 # Temporary files
 /temp
-
-# Local scripts
-to-yarafie.sh
-to-EPMatt.sh

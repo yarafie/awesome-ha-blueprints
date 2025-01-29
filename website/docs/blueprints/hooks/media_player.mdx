@@ -42,12 +42,6 @@ This integration provides the entity which represents a media player in Home Ass
   required
 />
 <Input
-  name='Controller Entity'
-  description='The action sensor of the controller to use for the automation. Choose a value only if the remote is integrated with Zigbee2MQTT and Legacy Action Sensors are enabled. This input is deprecated in favor of the Controller Device input, and will be removed in a future release.'
-  selector='entity'
-  deprecated
-/>
-<Input
   name='Controller model'
   description='The model for the controller used in this automation. Choose a value from the list of supported controllers.'
   selector='select'
@@ -128,4 +122,4 @@ Not all media players support the customization of the number of steps for volum
   If you are a Zigbee2MQTT user and plan to update this blueprint, please make sure to remove the `controller_entity` input from your automation config and add the device ID of your controller to the `controller_device` input.
   To obtain the device ID from your controller, configure the automation from the UI and use the device selector dropdown on the `controller_device` input to select your controller.
 
-- **2025-01-19**: Add support for IKEA E2201 RODRET Dimmer. ([@yarafie](https://github.com/yarafie))
+- **2025-01-30**: Add support for IKEA E2201 RODRET Dimmer. ([@yarafie](https://github.com/yarafie))

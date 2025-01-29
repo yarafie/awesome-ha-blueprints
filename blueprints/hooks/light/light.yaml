@@ -14,7 +14,7 @@ blueprint:
 
     ## More Info
 
-    ℹ️ Version 2025.01.19
+    ℹ️ Version 2025.01.30
     📝 [Changelog](https://yarafie.github.io/awesome-ha-blueprints/docs/blueprints/hooks/light/#changelog)
     📕 Full documentation regarding this blueprint is available [here](https://yarafie.github.io/awesome-ha-blueprints/docs/blueprints/hooks/light).
 
@@ -528,7 +528,7 @@ actions:
               sequence:
                 - action: light.turn_on
                   data:
-                    color_temp: '{{ state_attr(light,"color_temp")|int + 50 }}'
+                    color_temp: '{{ state_attr(light,"color_temp")|int(0) + 50 }}'
                     transition: 0.25
                   entity_id: !input light
             - conditions: '{{ light_color_mode_id == "hs_color" }}'
@@ -545,7 +545,7 @@ actions:
               sequence:
                 - action: light.turn_on
                   data:
-                    color_temp: '{{ [state_attr(light,"color_temp")|int - 50, 1]|max }}'
+                    color_temp: '{{ [state_attr(light,"color_temp")|int(0) - 50, 1]|max }}'
                     transition: 0.25
                   entity_id: !input light
             - conditions: '{{ light_color_mode_id == "hs_color" }}'
@@ -565,7 +565,7 @@ actions:
                     sequence:
                       - action: light.turn_on
                         data:
-                          color_temp: '{{ state_attr(light,"color_temp")|int + 50 }}'
+                          color_temp: '{{ state_attr(light,"color_temp")|int(0) + 50 }}'
                           transition: 0.25
                         entity_id: !input light
                       - delay:
@@ -592,7 +592,7 @@ actions:
                     sequence:
                       - action: light.turn_on
                         data:
-                          color_temp: '{{ [state_attr(light,"color_temp")|int - 50, 1]|max }}'
+                          color_temp: '{{ [state_attr(light,"color_temp")|int(0) - 50, 1]|max }}'
                           transition: 0.25
                         entity_id: !input light
                       - delay:
