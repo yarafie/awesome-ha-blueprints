@@ -66,7 +66,7 @@ function Input({ selector, required, name, description, deprecated, virtual }) {
         ) : (
           <Badge variant='info'>Optional</Badge>
         )}{' '}
-        {virtual && <Badge variant='info'>Virtual</Badge>}
+        {virtual && <Badge variant='secondary'>Virtual</Badge>}
         {deprecated && <Badge variant='danger'>Deprecated</Badge>}
       </span>
       <br />
