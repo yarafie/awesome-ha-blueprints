@@ -48,7 +48,7 @@ module.exports = {
           position: 'right',
         },
         {
-          href: 'https://github.com/yarafie/awesome-ha-blueprints',
+          href: 'https://github.com/yarafie/awesome-ha-blueprints/',
           label: 'GitHub',
           position: 'right',
         },
