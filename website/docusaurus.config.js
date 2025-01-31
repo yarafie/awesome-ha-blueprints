@@ -56,7 +56,7 @@ module.exports = {
     },
     footer: {
       links: [],
-      copyright: `Awesome HA Blueprints is maintained by <a href='https://github.com/EPMatt'>Matteo Agnoletto</a>.<br/>Licensed under the <a href='https://github.com/EPMatt/awesome-ha-blueprints/blob/main/LICENSE'>GPL-3.0 License</a>`,
+      copyright: `Awesome HA Blueprints is maintained by <a href='https://github.com/EPMatt'>Matteo Agnoletto</a>.<br/>Licensed under the <a href='https://github.com/yarafie/awesome-ha-blueprints/blob/main/LICENSE'>GPL-3.0 License</a>`,
     },
   },
   presets: [
