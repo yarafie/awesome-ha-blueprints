@@ -307,18 +307,18 @@ triggers:
     event_type: zha_event
     event_data:
       device_id: !input controller_device
+      command: 'stop_with_on_off'
       cluster_id: 8
       endpoint_id: 1
-      command: stop_with_on_off
     id: zha-e2201-release
   - trigger: event
     event_type: zha_event
     event_data:
       device_id: !input controller_device
+      command: 'stop'
       cluster_id: 8
       endpoint_id: 1
-      command: stop
-     id: zha-e2201-release
+    id: zha-e2201-release
   # triggers for deCONZ
   - trigger: event
     event_type:
