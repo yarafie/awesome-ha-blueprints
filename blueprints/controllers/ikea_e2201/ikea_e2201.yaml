@@ -318,7 +318,7 @@ triggers:
       cluster_id: 8
       endpoint_id: 1
       command: stop
-    id: zha-e2201-release
+     id: zha-e2201-release
   # triggers for deCONZ
   - trigger: event
     event_type:
@@ -616,7 +616,7 @@ actions:
               action: button_down_long
           - choose:
               - conditions: []
-                sequence: action_button_down_long
+                sequence: !input action_button_down_long
           - choose:
               # if looping is enabled, loop the action for a finite number of iterations
               - conditions: '{{ button_down_long_loop }}'
