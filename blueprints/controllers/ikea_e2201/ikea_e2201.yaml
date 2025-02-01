@@ -417,8 +417,10 @@ actions:
     data:
       entity_id: !input helper_last_controller_event
       value: '{{ {"a":trigger_action,"t":as_timestamp(now())} | to_json }}'
+
   # choose the sequence to run based on the received button event
   - choose:
+
       # Actions for up button single or double press
       - conditions:
           - condition: trigger
@@ -447,9 +449,10 @@ actions:
                               controller: '{{ controller_id }}'
                               action: button_up_double
                           # run the custom action
-                          - choose:
-                              - conditions: []
-                                sequence: !input action_button_up_double
+#                          - choose:
+#                              - conditions: []
+#                                sequence: !input action_button_up_double
+                          - sequence: !input action_button_up_double
                     # previous event was not a short press
                     default:
                       # wait for the double press event to occur, within the provided delay
@@ -464,9 +467,10 @@ actions:
                           controller: '{{ controller_id }}'
                           action: button_up_short
                       # run the custom action
-                      - choose:
-                          - conditions: []
-                            sequence: !input action_button_up_short
+#                      - choose:
+#                          - conditions: []
+#                            sequence: !input action_button_up_short
+                      - sequence: !input action_button_up_short
             # if double press event is disabled run the action for the single short press
             default:
               # fire the event
@@ -475,9 +479,11 @@ actions:
                   controller: '{{ controller_id }}'
                   action: button_up_short
               # run the custom action
-              - choose:
-                  - conditions: []
-                    sequence: !input action_button_up_short
+#              - choose:
+#                  - conditions: []
+#                    sequence: !input action_button_up_short
+              - sequence: !input action_button_up_short
+
       # Actions for up button long press
       - conditions:
           - condition: trigger
@@ -491,15 +497,27 @@ actions:
             event_data:
               controller: '{{ controller_id }}'
               action: button_up_long
+          - sequence: !input action_button_up_long
           - choose:
               # if looping is enabled, loop the action for a finite number of iterations
               - conditions: '{{ button_up_long_loop }}'
                 sequence:
                   - repeat:
                       while: '{{ repeat.index < button_up_long_max_loop_repeats | int }}'
-                      sequence: !input action_button_up_long
+                      sequence:
+                        - event: ahb_controller_event
+                          event_data:
+                            controller: '{{ controller_id }}'
+                            action: button_up_long
+                        - sequence: !input action_button_up_long
             # if looping is not enabled run the custom action only once
-            default: !input action_button_up_long
+            default:
+              - event: ahb_controller_event
+                event_data:
+                  controller: '{{ controller_id }}'
+                  action: button_up_long
+              - sequence: !input action_button_up_long
+
       # Actions for up button long press released
       - conditions:
           - condition: trigger
@@ -516,9 +534,11 @@ actions:
               controller: '{{ controller_id }}'
               action: button_up_release
           # run the custom action
-          - choose:
-              - conditions: []
-                sequence: !input action_button_up_release
+#          - choose:
+#              - conditions: []
+#                sequence: !input action_button_up_release
+          - sequence: !input action_button_up_release
+
       # Actions for down button single or double press
       - conditions:
           - condition: trigger
@@ -547,9 +567,10 @@ actions:
                               controller: '{{ controller_id }}'
                               action: button_down_double
                           # run the custom action
-                          - choose:
-                              - conditions: []
-                                sequence: !input action_button_down_double
+#                          - choose:
+#                              - conditions: []
+#                                sequence: !input action_button_down_double
+                          - sequence: !input action_button_down_double
                     # previous event was not a short press
                     default:
                       # wait for the double press event to occur, within the provided delay
@@ -564,9 +585,10 @@ actions:
                           controller: '{{ controller_id }}'
                           action: button_down_short
                       # run the custom action
-                      - choose:
-                          - conditions: []
-                            sequence: !input action_button_down_short
+#                      - choose:
+#                          - conditions: []
+#                            sequence: !input action_button_down_short
+                      - sequence: !input action_button_down_short
             # if double press event is disabled run the action for the single short press
             default:
               # fire the event
@@ -575,9 +597,11 @@ actions:
                   controller: '{{ controller_id }}'
                   action: button_down_short
               # run the custom action
-              - choose:
-                  - conditions: []
-                    sequence: !input action_button_down_short
+#              - choose:
+#                  - conditions: []
+#                    sequence: !input action_button_down_short
+              - sequence: !input action_button_down_short
+
       # Actions for down button long press
       - conditions:
           - condition: trigger
@@ -591,15 +615,27 @@ actions:
             event_data:
               controller: '{{ controller_id }}'
               action: button_down_long
+          - sequence: action_button_down_long
           - choose:
               # if looping is enabled, loop the action for a finite number of iterations
               - conditions: '{{ button_down_long_loop }}'
                 sequence:
                   - repeat:
                       while: '{{ repeat.index < button_down_long_max_loop_repeats | int }}'
-                      sequence: !input action_button_down_long
+                      sequence:
+                        - event: ahb_controller_event
+                          event_data:
+                            controller: '{{ controller_id }}'
+                            action: button_down_long
+                        - sequence: !input action_button_down_long
             # if looping is not enabled run the custom action only once
-            default: !input action_button_down_long
+            default:
+              - event: ahb_controller_event
+                event_data:
+                  controller: '{{ controller_id }}'
+                  action: button_down_long
+              - sequence: !input action_button_down_long
+
       # Actions for down button long release
       - conditions:
           - condition: trigger
@@ -616,6 +652,7 @@ actions:
               controller: '{{ controller_id }}'
               action: button_down_release
           # run the custom action
-          - choose:
-              - conditions: []
-                sequence: !input action_button_down_release
+#          - choose:
+#              - conditions: []
+#                sequence: !input action_button_down_release
+          - sequence: !input action_button_down_release
