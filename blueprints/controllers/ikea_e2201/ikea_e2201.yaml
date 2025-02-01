@@ -417,10 +417,10 @@ actions:
     data:
       entity_id: !input helper_last_controller_event
       value: '{{ {"a":trigger_action,"t":as_timestamp(now())} | to_json }}'
-
+  #
   # choose the sequence to run based on the received button event
   - choose:
-
+      #
       # Actions for up button single or double press
       - conditions:
           - condition: trigger
@@ -483,7 +483,7 @@ actions:
               #    - conditions: []
               #      sequence: !input action_button_up_short
               - sequence: !input action_button_up_short
-
+      #
       # Actions for up button long press
       - conditions:
           - condition: trigger
@@ -517,7 +517,7 @@ actions:
                   controller: '{{ controller_id }}'
                   action: button_up_long
               - sequence: !input action_button_up_long
-
+      #
       # Actions for up button long press released
       - conditions:
           - condition: trigger
@@ -538,7 +538,7 @@ actions:
           #    - conditions: []
           #      sequence: !input action_button_up_release
           - sequence: !input action_button_up_release
-
+      #
       # Actions for down button single or double press
       - conditions:
           - condition: trigger
@@ -601,7 +601,7 @@ actions:
               #    - conditions: []
               #      sequence: !input action_button_down_short
               - sequence: !input action_button_down_short
-
+      #
       # Actions for down button long press
       - conditions:
           - condition: trigger
@@ -635,7 +635,7 @@ actions:
                   controller: '{{ controller_id }}'
                   action: button_down_long
               - sequence: !input action_button_down_long
-
+      #
       # Actions for down button long release
       - conditions:
           - condition: trigger
