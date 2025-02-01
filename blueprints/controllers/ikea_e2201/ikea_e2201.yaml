@@ -495,8 +495,8 @@ actions:
               controller: '{{ controller_id }}'
               action: button_up_long
           - choose:
-               - conditions: []
-                 sequence: !input action_button_up_long
+              - conditions: []
+                sequence: !input action_button_up_long
           - choose:
               # if looping is enabled, loop the action for a finite number of iterations
               - conditions: '{{ button_up_long_loop }}'
