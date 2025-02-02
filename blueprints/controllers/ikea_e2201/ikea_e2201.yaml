@@ -125,8 +125,8 @@ blueprint:
           mode: slider
           step: 1.0
     helper_long_press_delay:
-      name: (Optional) Helper - Double Press delay
-      description: Max delay between the first and the second button press for the double press event. Provide a value only if you are using a double press action. Increase this value if you notice that the double press action is not triggered properly.
+      name: (Optional) Helper - Long Press delay
+      description: Max delay between the pushing and releasing of a button long press event. Increase this value if you notice that the long press action is not triggered properly.
       default: 250
       selector:
         number:
