@@ -177,8 +177,7 @@ blueprint:
 # Automation schema
 variables:
   # convert input tags to variables, to be used in templates
-  button_up_long_loop: !input button_up_long_loop
-  button_down_long_loop: !input button_down_long_loop
+  helper_long_press_delay: !input helper_long_press_delay
   button_up_long_max_loop_repeats: !input button_up_long_max_loop_repeats
   button_down_long_max_loop_repeats: !input button_down_long_max_loop_repeats
   button_up_double_press: !input button_up_double_press
