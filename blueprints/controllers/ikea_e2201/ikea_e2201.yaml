@@ -429,7 +429,7 @@ actions:
                             type: action
                             subtype: 'on'
                         timeout:
-                          milliseconds: adjusted_double_press_delay
+                          milliseconds: '{{ adjusted_double_press_delay }}'
                         continue_on_timeout: true
                       - if:
                           - condition: template
@@ -464,7 +464,7 @@ actions:
                               cluster_id: 6
                               endpoint_id: 1
                         timeout:
-                          milliseconds: adjusted_double_press_delay
+                          milliseconds: '{{ adjusted_double_press_delay }}'
                         continue_on_timeout: true
                       - if:
                           - condition: template
@@ -497,7 +497,7 @@ actions:
                               device_id: !input controller_device
                               event: '1002'
                         timeout:
-                          milliseconds: adjusted_double_press_delay
+                          milliseconds: '{{ adjusted_double_press_delay }}'
                         continue_on_timeout: true
                       - if:
                           - condition: template
@@ -560,7 +560,7 @@ actions:
                             type: action
                             subtype: 'off'
                         timeout:
-                          milliseconds: adjusted_double_press_delay
+                          milliseconds: '{{ adjusted_double_press_delay }}'
                         continue_on_timeout: true
                       - if:
                           - condition: template
@@ -595,7 +595,7 @@ actions:
                               cluster_id: 6
                               endpoint_id: 1
                         timeout:
-                          milliseconds: adjusted_double_press_delay
+                          milliseconds: '{{ adjusted_double_press_delay }}'
                         continue_on_timeout: true
                       - if:
                           - condition: template
@@ -628,7 +628,7 @@ actions:
                               device_id: !input controller_device
                               event: '2002'
                         timeout:
-                          milliseconds: adjusted_double_press_delay
+                          milliseconds: '{{ adjusted_double_press_delay }}'
                         continue_on_timeout: true
                       - if:
                           - condition: template
