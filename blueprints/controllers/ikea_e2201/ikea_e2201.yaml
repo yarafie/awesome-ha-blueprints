@@ -535,6 +535,7 @@ actions:
               - choose:
                   - conditions: []
                     sequence: !input action_button_up_short
+      #
       # Handle Button Down Single Press / Double Press
       - conditions:
           - condition: trigger
