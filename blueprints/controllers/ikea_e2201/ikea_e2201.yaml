@@ -415,7 +415,7 @@ actions:
         sequence:
           - if:
               - condition: template
-                value_template: "{{ button_up_double_press }}"
+                value_template: '{{ button_up_double_press }}'
             then:
               - choose:
                   - conditions:
@@ -428,13 +428,13 @@ actions:
                             domain: mqtt
                             device_id: !input controller_device
                             type: action
-                            subtype: "on"
+                            subtype: 'on'
                         timeout:
                           milliseconds: !input adjusted_double_press_delay
                         continue_on_timeout: true
                       - if:
                           - condition: template
-                            value_template: "{{ wait.trigger.idx is defined }}"
+                            value_template: '{{ wait.trigger.idx is defined }}'
                         then:
                           - event: ahb_controller_event
                             event_data:
@@ -461,7 +461,7 @@ actions:
                             event_type: zha_event
                             event_data:
                               device_id: !input controller_device
-                              command: "on"
+                              command: 'on'
                               cluster_id: 6
                               endpoint_id: 1
                         timeout:
@@ -469,7 +469,7 @@ actions:
                         continue_on_timeout: true
                       - if:
                           - condition: template
-                            value_template: "{{ wait.trigger.idx is defined }}"
+                            value_template: '{{ wait.trigger.idx is defined }}'
                         then:
                           - event: ahb_controller_event
                             event_data:
@@ -502,7 +502,7 @@ actions:
                         continue_on_timeout: true
                       - if:
                           - condition: template
-                            value_template: "{{ wait.trigger.idx is defined }}"
+                            value_template: '{{ wait.trigger.idx is defined }}'
                         then:
                           - event: ahb_controller_event
                             event_data:
@@ -545,7 +545,7 @@ actions:
         sequence:
           - if:
               - condition: template
-                value_template: "{{ button_down_double_press }}"
+                value_template: '{{ button_down_double_press }}'
             then:
               - choose:
                   - conditions:
@@ -558,13 +558,13 @@ actions:
                             domain: mqtt
                             device_id: !input controller_device
                             type: action
-                            subtype: "off"
+                            subtype: 'off'
                         timeout:
                           milliseconds: !input adjusted_double_press_delay
                         continue_on_timeout: true
                       - if:
                           - condition: template
-                            value_template: "{{ wait.trigger.idx is defined }}"
+                            value_template: '{{ wait.trigger.idx is defined }}'
                         then:
                           - event: ahb_controller_event
                             event_data:
@@ -591,7 +591,7 @@ actions:
                             event_type: zha_event
                             event_data:
                               device_id: !input controller_device
-                              command: "off"
+                              command: 'off'
                               cluster_id: 6
                               endpoint_id: 1
                         timeout:
@@ -599,7 +599,7 @@ actions:
                         continue_on_timeout: true
                       - if:
                           - condition: template
-                            value_template: "{{ wait.trigger.idx is defined }}"
+                            value_template: '{{ wait.trigger.idx is defined }}'
                         then:
                           - event: ahb_controller_event
                             event_data:
@@ -632,7 +632,7 @@ actions:
                         continue_on_timeout: true
                       - if:
                           - condition: template
-                            value_template: "{{ wait.trigger.idx is defined }}"
+                            value_template: '{{ wait.trigger.idx is defined }}'
                         then:
                           - event: ahb_controller_event
                             event_data:
@@ -663,8 +663,8 @@ actions:
                   controller: '{{ controller_id }}'
                   action: button_down_short
               - choose:
-                 - conditions: []
-                   sequence: !input action_button_down_short
+                  - conditions: []
+                    sequence: !input action_button_down_short
       #
       # Handle Button Up Long Press
       - conditions:
@@ -698,13 +698,13 @@ actions:
                                       domain: mqtt
                                       device_id: !input controller_device
                                       type: action
-                                      subtype: "brightness_stop"
+                                      subtype: 'brightness_stop'
                                   timeout:
                                     milliseconds: !input helper_long_press_delay
                                   continue_on_timeout: true
                                 - if:
                                     - condition: template
-                                      value_template: "{{ wait.trigger.idx is defined }}"
+                                      value_template: '{{ wait.trigger.idx is defined }}'
                                   then:
                                     - event: ahb_controller_event
                                       event_data:
@@ -721,7 +721,7 @@ actions:
                                       event_type: zha_event
                                       event_data:
                                         device_id: !input controller_device
-                                        command: "stop_with_on_off"
+                                        command: 'stop_with_on_off'
                                         cluster_id: 8
                                         endpoint_id: 1
                                   timeout:
@@ -729,7 +729,7 @@ actions:
                                   continue_on_timeout: true
                                 - if:
                                     - condition: template
-                                      value_template: "{{ wait.trigger.idx is defined }}"
+                                      value_template: '{{ wait.trigger.idx is defined }}'
                                   then:
                                     - event: ahb_controller_event
                                       event_data:
@@ -752,7 +752,7 @@ actions:
                                   continue_on_timeout: true
                                 - if:
                                     - condition: template
-                                      value_template: "{{ wait.trigger.idx is defined }}"
+                                      value_template: '{{ wait.trigger.idx is defined }}'
                                   then:
                                     - event: ahb_controller_event
                                       event_data:
@@ -792,13 +792,13 @@ actions:
                                       domain: mqtt
                                       device_id: !input controller_device
                                       type: action
-                                      subtype: "brightness_stop"
+                                      subtype: 'brightness_stop'
                                   timeout:
                                     milliseconds: !input helper_long_press_delay
                                   continue_on_timeout: true
                                 - if:
                                     - condition: template
-                                      value_template: "{{ wait.trigger.idx is defined }}"
+                                      value_template: '{{ wait.trigger.idx is defined }}'
                                   then:
                                     - event: ahb_controller_event
                                       event_data:
@@ -815,7 +815,7 @@ actions:
                                       event_type: zha_event
                                       event_data:
                                         device_id: !input controller_device
-                                        command: "stop"
+                                        command: 'stop'
                                         cluster_id: 8
                                         endpoint_id: 1
                                   timeout:
@@ -823,7 +823,7 @@ actions:
                                   continue_on_timeout: true
                                 - if:
                                     - condition: template
-                                      value_template: "{{ wait.trigger.idx is defined }}"
+                                      value_template: '{{ wait.trigger.idx is defined }}'
                                   then:
                                     - event: ahb_controller_event
                                       event_data:
@@ -846,7 +846,7 @@ actions:
                                   continue_on_timeout: true
                                 - if:
                                     - condition: template
-                                      value_template: "{{ wait.trigger.idx is defined }}"
+                                      value_template: '{{ wait.trigger.idx is defined }}'
                                   then:
                                     - event: ahb_controller_event
                                       event_data:
