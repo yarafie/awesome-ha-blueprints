@@ -30,7 +30,7 @@ Links here and anywhere in this repository may point to this fork but main proje
 # Awesome HA Blueprints
 
 <a href="https://yarafie.github.io/awesome-ha-blueprints/">
-<img width=200 src="./awesome-ha-blueprints-logo.png"/>
+<img width=200 src="../awesome-ha-blueprints-logo.png"/>
 </a>
 <br/>
 <br/>
