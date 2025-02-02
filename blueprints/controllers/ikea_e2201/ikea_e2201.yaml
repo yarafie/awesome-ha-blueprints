@@ -178,10 +178,10 @@ blueprint:
 variables:
   # convert input tags to variables, to be used in templates
   button_up_long_loop: !input button_up_long_loop
-  button_up_long_max_loop_repeats: !input button_up_long_max_loop_repeats
-  button_up_double_press: !input button_up_double_press
   button_down_long_loop: !input button_down_long_loop
+  button_up_long_max_loop_repeats: !input button_up_long_max_loop_repeats
   button_down_long_max_loop_repeats: !input button_down_long_max_loop_repeats
+  button_up_double_press: !input button_up_double_press
   button_down_double_press: !input button_down_double_press
   helper_double_press_delay: !input helper_double_press_delay
   helper_debounce_delay: !input helper_debounce_delay
