@@ -361,27 +361,6 @@ conditions:
 #
 # Actions Block
 actions:
-  - variables:
-      # integration id used to select items in the action mapping
-      # set the integration type from trigger.id
-      integration_id: '{{ trigger.id.split("-")[0] }}'
-      # set the trigger_action based on trigger.id
-      trigger_action: >-
-        {%- if integration_id == "z2m" -%}
-        {{ trigger.payload }}
-        {%- elif integration_id == "zha" -%}
-        {{ trigger.event.data.command }}{{"_" if trigger.event.data.args|length > 0}}{{ trigger.event.data.args|join("_") }}
-        {%- elif integration_id == "dcz" -%}
-        {{ trigger.event.data.event }}
-        {%- endif -%}
-      # pre-choose actions for buttons based on configured integration
-      # mainly used to pass to hooks through ahb_controller_event
-      button_up_short: '{{ actions_mapping[integration_id]["button_up_short"] }}'
-      button_up_long: '{{ actions_mapping[integration_id]["button_up_long"] }}'
-      button_up_release: '{{ actions_mapping[integration_id]["button_up_release"] }}'
-      button_down_short: '{{ actions_mapping[integration_id]["button_down_short"] }}'
-      button_down_long: '{{ actions_mapping[integration_id]["button_down_long"] }}'
-      button_down_release: '{{ actions_mapping[integration_id]["button_down_release"] }}'
   #
   # choose the sequence to run based on the received button event
   - choose:
