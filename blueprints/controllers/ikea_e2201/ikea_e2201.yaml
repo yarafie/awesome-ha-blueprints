@@ -1,6 +1,6 @@
 # Blueprint metadata
 blueprint:
-  name: Controller (Testing v5) - IKEA E2201 RODRET Dimmer
+  name: Controller (Testing v6) - IKEA E2201 RODRET Dimmer
   description: |
     # Controller - IKEA E2201 RODRET Dimmer
 
@@ -100,67 +100,77 @@ blueprint:
       selector:
         action:
     # inputs for looping custom actions on long button press events until the corresponding release event is received
-    button_up_long_max_loop_repeats:
-      name: (Optional) Up button long press - Maximum loop repeats
-      description: >-
-        Maximum number of repeats for the custom action, when looping is enabled.
-        Use it as a safety limit to prevent an endless loop in case the corresponding stop event is not received.
-      default: 20
-      selector:
-        number:
-          min: 1.0
-          max: 1000.0
-          mode: slider
-          step: 1.0
-    button_down_long_max_loop_repeats:
-      name: (Optional) Down button long press - Maximum loop repeats
-      description: >-
-        Maximum number of repeats for the custom action, when looping is enabled.
-        Use it as a safety limit to prevent an endless loop in case the corresponding stop event is not received.
-      default: 20
-      selector:
-        number:
-          min: 1.0
-          max: 1000.0
-          mode: slider
-          step: 1.0
-    helper_long_press_delay:
-      name: (Optional) Helper - Long Press delay
-      description: Max delay between the pushing and releasing of a button long press event. Increase this value if you notice that the long press action is not triggered properly.
-      default: 250
-      selector:
-        number:
-          min: 100.0
-          max: 5000.0
-          unit_of_measurement: milliseconds
-          mode: box
-          step: 10.0
+    long_press_options_section:
+      name: Long Press options
+      icon: mdi:remote
+      collapsed: true
+      input:
+        button_up_long_max_loop_repeats:
+          name: (Optional) Up button long press - Maximum loop repeats
+          description: >-
+            Maximum number of repeats for the custom action, when looping is enabled.
+            Use it as a safety limit to prevent an endless loop in case the corresponding stop event is not received.
+          default: 20
+          selector:
+            number:
+              min: 1.0
+              max: 1000.0
+              mode: slider
+              step: 1.0
+        button_down_long_max_loop_repeats:
+          name: (Optional) Down button long press - Maximum loop repeats
+          description: >-
+            Maximum number of repeats for the custom action, when looping is enabled.
+            Use it as a safety limit to prevent an endless loop in case the corresponding stop event is not received.
+          default: 20
+          selector:
+            number:
+              min: 1.0
+              max: 1000.0
+              mode: slider
+              step: 1.0
+        helper_long_press_delay:
+          name: (Optional) Helper - Long Press delay
+          description: Max delay between the pushing and releasing of a button long press event. Increase this value if you notice that the long press action is not triggered properly.
+          default: 250
+          selector:
+            number:
+              min: 100.0
+              max: 5000.0
+              unit_of_measurement: milliseconds
+              mode: box
+              step: 10.0
     # inputs for enabling double press events
-    button_up_double_press_exposed:
-      name: (Optional) Expose up button double press event
-      description: Choose whether or not to expose the virtual double press event for the up button. Turn this on if you are providing an action for the up button double press event.
-      default: false
-      selector:
-        boolean:
-    button_down_double_press_exposed:
-      name: (Optional) Expose down button double press event
-      description: Choose whether or not to expose the virtual double press event for the down button. Turn this on if you are providing an action for the down button double press event.
-      default: false
-      selector:
-        boolean:
-    # helpers used to properly recognize the remote button events
-    helper_double_press_delay:
-      name: (Optional) Helper - Double Press delay
-      description: Max delay between the first and the second button press for the double press event. Provide a value only if you are using a double press action. Increase this value if you notice that the double press action is not triggered properly.
-      default: 250
-      selector:
-        number:
-          min: 100.0
-          max: 5000.0
-          unit_of_measurement: milliseconds
-          mode: box
-          step: 10.0
-#
+    double_press_options_section:
+      name: Double Press options
+      icon: mdi:remote
+      collapsed: true
+      input:
+        button_up_double_press_exposed:
+          name: (Optional) Expose up button double press event
+          description: Choose whether or not to expose the virtual double press event for the up button. Turn this on if you are providing an action for the up button double press event.
+          default: false
+          selector:
+            boolean:
+        button_down_double_press_exposed:
+          name: (Optional) Expose down button double press event
+          description: Choose whether or not to expose the virtual double press event for the down button. Turn this on if you are providing an action for the down button double press event.
+          default: false
+          selector:
+            boolean:
+        # helpers used to properly recognize the remote button events
+        helper_double_press_delay:
+          name: (Optional) Helper - Double Press delay
+          description: Max delay between the first and the second button press for the double press event. Provide a value only if you are using a double press action. Increase this value if you notice that the double press action is not triggered properly.
+          default: 250
+          selector:
+            number:
+              min: 100.0
+              max: 5000.0
+              unit_of_measurement: milliseconds
+              mode: box
+              step: 10.0
+#  
 # Automation schema
 variables:
   # convert input tags to variables, to be used in templates
