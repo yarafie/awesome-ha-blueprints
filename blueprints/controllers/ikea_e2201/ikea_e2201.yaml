@@ -170,7 +170,7 @@ blueprint:
               unit_of_measurement: milliseconds
               mode: box
               step: 10.0
-# 
+#
 # Automation schema
 variables:
   # convert input tags to variables, to be used in templates
