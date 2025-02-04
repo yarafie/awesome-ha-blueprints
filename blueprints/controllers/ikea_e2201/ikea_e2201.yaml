@@ -232,7 +232,7 @@ triggers:
     domain: mqtt
     device_id: !input controller_device
     type: action
-    subtype: {{ button_up_short }}
+    subtype: '{{ button_up_short }}'
   - trigger: device
     id: z2m-button-down-short
     domain: mqtt
