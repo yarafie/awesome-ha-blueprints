@@ -1,6 +1,6 @@
 # Blueprint metadata
 blueprint:
-  name: Controller (Testing v6) - IKEA E2201 RODRET Dimmer
+  name: Controller (Testing v7) - IKEA E2201 RODRET Dimmer
   description: |
     # Controller - IKEA E2201 RODRET Dimmer
 
@@ -232,7 +232,7 @@ triggers:
     domain: mqtt
     device_id: !input controller_device
     type: action
-    subtype: 'on'
+    subtype: button_up_short
   - trigger: device
     id: z2m-button-down-short
     domain: mqtt
