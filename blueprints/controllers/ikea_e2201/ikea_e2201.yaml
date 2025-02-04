@@ -1,6 +1,6 @@
 # Blueprint metadata
 blueprint:
-  name: Controller (Testing v7) - IKEA E2201 RODRET Dimmer
+  name: Controller (Testing v8) - IKEA E2201 RODRET Dimmer
   description: |
     # Controller - IKEA E2201 RODRET Dimmer
 
@@ -181,7 +181,7 @@ variables:
   button_down_double_press_exposed: !input button_down_double_press_exposed
   helper_double_press_delay: !input helper_double_press_delay
   # integration id used to select items in the action mapping
-  # set the integration type from trigger.id
+  # integration type is set from trigger.id
   integration_id: '{{ trigger.id.split("-")[0] }}'
   # mapping between actions and integrations
   actions_mapping:
