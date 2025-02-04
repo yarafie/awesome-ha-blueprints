@@ -1,6 +1,6 @@
 # Blueprint metadata
 blueprint:
-  name: Controller (Testing v8a) - IKEA E2201 RODRET Dimmer
+  name: Controller (Testing v8b) - IKEA E2201 RODRET Dimmer
   description: |
     # Controller - IKEA E2201 RODRET Dimmer
 
@@ -225,8 +225,6 @@ mode: single
 max_exceeded: silent
 #
 # Triggers Block
-trigger_variables:
-  button_up_short: '{{ actions_mapping[integration_id]["button_up_short"] }}'
 triggers:
   # triggers for zigbee2mqtt
   - trigger: device
@@ -234,7 +232,7 @@ triggers:
     domain: mqtt
     device_id: !input controller_device
     type: action
-    subtype: "{{ button_up_short }}"
+    subtype: 'on'
   - trigger: device
     id: z2m-button-down-short
     domain: mqtt
