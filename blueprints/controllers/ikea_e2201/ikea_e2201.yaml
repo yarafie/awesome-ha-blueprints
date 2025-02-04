@@ -136,13 +136,13 @@ blueprint:
           mode: box
           step: 10.0
     # inputs for enabling double press events
-    button_up_double_press:
+    button_up_double_press_exposed:
       name: (Optional) Expose up button double press event
       description: Choose whether or not to expose the virtual double press event for the up button. Turn this on if you are providing an action for the up button double press event.
       default: false
       selector:
         boolean:
-    button_down_double_press:
+    button_down_double_press_exposed:
       name: (Optional) Expose down button double press event
       description: Choose whether or not to expose the virtual double press event for the down button. Turn this on if you are providing an action for the down button double press event.
       default: false
@@ -160,19 +160,6 @@ blueprint:
           unit_of_measurement: milliseconds
           mode: box
           step: 10.0
-    helper_debounce_delay:
-      name: (Optional) Helper - Debounce delay
-      description:
-        Delay used for debouncing RAW controller events, by default set to 0. A value of 0 disables the debouncing feature. Increase this value if you notice custom actions or linked Hooks running multiple times when interacting with the device. When the controller needs to be debounced,
-        usually a value of 100 is enough to remove all duplicate events.
-      default: 0
-      selector:
-        number:
-          min: 0.0
-          max: 1000.0
-          unit_of_measurement: milliseconds
-          mode: box
-          step: 10.0
 #
 # Automation schema
 variables:
@@ -180,16 +167,12 @@ variables:
   helper_long_press_delay: !input helper_long_press_delay
   button_up_long_max_loop_repeats: !input button_up_long_max_loop_repeats
   button_down_long_max_loop_repeats: !input button_down_long_max_loop_repeats
-  button_up_double_press: !input button_up_double_press
-  button_down_double_press: !input button_down_double_press
+  button_up_double_press_exposed: !input button_up_double_press_exposed
+  button_down_double_press_exposed: !input button_down_double_press_exposed
   helper_double_press_delay: !input helper_double_press_delay
-  helper_debounce_delay: !input helper_debounce_delay
   # integration id used to select items in the action mapping
   # set the integration type from trigger.id
   integration_id: '{{ trigger.id.split("-")[0] }}'
-  # adjusted debounce delay so that the resulting double press delay is exactly as specified by the user when running the action, taking also account of debouncing
-  # make sure it never goes below the minimum double press delay
-  adjusted_double_press_delay: '{{ [helper_double_press_delay - helper_debounce_delay, 100] | max }}'
   # mapping between actions and integrations
   actions_mapping:
     z2m:
@@ -216,8 +199,6 @@ variables:
       button_up_release: ['1003']
       button_down_long: ['2001']
       button_down_release: ['2003']
-  # integrations which need to store the previous press event to determine which button was released
-  integrations_with_prev_event_storage: [z2m, zha]
   # build data to send within a controller event
   controller_id: !input controller_device
 #
@@ -372,11 +353,6 @@ conditions:
 #
 # Actions Block
 actions:
-  # debouncing - when automation is triggered multiple times, the last automation run is the one which completes execution, due to mode restart
-  # therefore previous runs must wait for the debounce delay before executing any other action
-  # if the delay expires and the automation is still running it means it's the last run and execution can continue
-  - delay:
-      milliseconds: !input helper_debounce_delay
   # extract button event from the trigger
   # provide a single string value to check against
   - variables:
@@ -414,7 +390,7 @@ actions:
         sequence:
           - if:
               - condition: template
-                value_template: '{{ button_up_double_press }}'
+                value_template: '{{ button_up_double_press_exposed }}'
             then:
               - choose:
                   - conditions:
@@ -429,7 +405,7 @@ actions:
                             type: action
                             subtype: 'on'
                         timeout:
-                          milliseconds: '{{ adjusted_double_press_delay }}'
+                          milliseconds: '{{ helper_double_press_delay }}'
                         continue_on_timeout: true
                       - if:
                           - condition: template
@@ -464,7 +440,7 @@ actions:
                               cluster_id: 6
                               endpoint_id: 1
                         timeout:
-                          milliseconds: '{{ adjusted_double_press_delay }}'
+                          milliseconds: '{{ helper_double_press_delay }}'
                         continue_on_timeout: true
                       - if:
                           - condition: template
@@ -497,7 +473,7 @@ actions:
                               device_id: !input controller_device
                               event: '1002'
                         timeout:
-                          milliseconds: '{{ adjusted_double_press_delay }}'
+                          milliseconds: '{{ helper_double_press_delay }}'
                         continue_on_timeout: true
                       - if:
                           - condition: template
@@ -545,7 +521,7 @@ actions:
         sequence:
           - if:
               - condition: template
-                value_template: '{{ button_down_double_press }}'
+                value_template: '{{ button_down_double_press_exposed }}'
             then:
               - choose:
                   - conditions:
@@ -560,7 +536,7 @@ actions:
                             type: action
                             subtype: 'off'
                         timeout:
-                          milliseconds: '{{ adjusted_double_press_delay }}'
+                          milliseconds: '{{ helper_double_press_delay }}'
                         continue_on_timeout: true
                       - if:
                           - condition: template
@@ -595,7 +571,7 @@ actions:
                               cluster_id: 6
                               endpoint_id: 1
                         timeout:
-                          milliseconds: '{{ adjusted_double_press_delay }}'
+                          milliseconds: '{{ helper_double_press_delay }}'
                         continue_on_timeout: true
                       - if:
                           - condition: template
@@ -628,7 +604,7 @@ actions:
                               device_id: !input controller_device
                               event: '2002'
                         timeout:
-                          milliseconds: '{{ adjusted_double_press_delay }}'
+                          milliseconds: '{{ helper_double_press_delay }}'
                         continue_on_timeout: true
                       - if:
                           - condition: template
