@@ -66,7 +66,7 @@ module.exports = {
       {
         docs: {
           sidebarPath: require.resolve('./sidebars.js'),
-          editUrl: 
+          editUrl:
             'https://github.com/yarafie/awesome-ha-blueprints/edit/main/',
         },
         theme: {
