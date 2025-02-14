@@ -10,6 +10,7 @@ jobs:
     name: Run Linters
     runs-on: ubuntu-latest
 
+    # Run the Steps
     steps:
       - name: Check out Git repository
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
