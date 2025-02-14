@@ -23,9 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ github.event_name == 'issue_comment' && github.actor != 'github-actions[bot]' }}
     steps:
-      # - uses: actions/checkout@v4
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
-      # - uses: actions-ecosystem/action-remove-labels@v1
       - uses: actions-ecosystem/action-remove-labels@556e306654eb4c343ecaff657772edaa3f1add86
         if: ${{ contains(github.event.issue.labels.*.name, 'status - waiting for feedback') }}
         with:
@@ -36,9 +34,7 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ github.event_name == 'issues' || github.event_name == 'pull_request' }}
     steps:
-      # - uses: actions/checkout@v4
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
-      # - uses: actions-ecosystem/action-remove-labels@v1
       - uses: actions-ecosystem/action-remove-labels@556e306654eb4c343ecaff657772edaa3f1add86
         if: ${{ github.event_name == 'issues' && contains(github.event.issue.labels.*.name, 'status - waiting for feedback') || github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'status - waiting for feedback') }}
         with:
