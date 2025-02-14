@@ -20,6 +20,9 @@ jobs:
   # or PR currently marked as waiting for feedback
   # Do not take into account comments posted by the github-actions bot
   remove_feedback_label_commented:
+    permissions:
+      contents: read
+      pull-requests: write
     runs-on: ubuntu-latest
     if: ${{ github.event_name == 'issue_comment' && github.actor != 'github-actions[bot]' }}
     steps:

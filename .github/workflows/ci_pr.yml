@@ -6,6 +6,9 @@ name: CI - PR
       - main
 jobs:
   lint:
+    permissions:
+      contents: read
+      pull-requests: write
     name: Run Linters
     runs-on: ubuntu-latest
 
