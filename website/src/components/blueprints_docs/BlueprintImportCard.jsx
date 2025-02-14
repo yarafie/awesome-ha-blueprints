@@ -10,7 +10,7 @@ const styles = {
 
 function BlueprintImportCard({ category, id }) {
   const [copy, setCopy] = useState(false)
-  const url = `https://github.com/EPMatt/awesome-ha-blueprints/blob/main/blueprints/${category}/${id}/${id}.yaml`
+  const url = `https://github.com/yarafie/awesome-ha-blueprints/blob/main/blueprints/${category}/${id}/${id}.yaml`
   const copyToClipboard = async () => {
     await navigator.clipboard.writeText(url)
     setCopy(true)

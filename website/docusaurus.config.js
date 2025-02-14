@@ -2,12 +2,12 @@
 module.exports = {
   title: 'Awesome HA Blueprints',
   tagline: 'A curated list of automation blueprints for Home Assistant.',
-  url: 'https://epmatt.github.io',
+  url: 'https://yarafie.github.io',
   baseUrl: '/awesome-ha-blueprints/',
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
   favicon: 'img/favicon.ico',
-  organizationName: 'EPMatt',
+  organizationName: 'yarafie',
   projectName: 'awesome-ha-blueprints',
   scripts: ['/awesome-ha-blueprints/js/google-tag-manager.js'],
   themeConfig: {
@@ -49,7 +49,7 @@ module.exports = {
           position: 'right',
         },
         {
-          href: 'https://github.com/EPMatt/awesome-ha-blueprints/',
+          href: 'https://github.com/yarafie/awesome-ha-blueprints/',
           label: 'GitHub',
           position: 'right',
         },
@@ -57,7 +57,7 @@ module.exports = {
     },
     footer: {
       links: [],
-      copyright: `Awesome HA Blueprints is maintained by <a href='https://github.com/EPMatt'>Matteo Agnoletto</a>.<br/>Licensed under the <a href='https://github.com/EPMatt/awesome-ha-blueprints/blob/main/LICENSE'>GPL-3.0 License</a>`,
+      copyright: `Awesome HA Blueprints is maintained by <a href='https://github.com/EPMatt'>Matteo Agnoletto</a>.<br/>Licensed under the <a href='https://github.com/yarafie/awesome-ha-blueprints/blob/main/LICENSE'>GPL-3.0 License</a>`,
     },
   },
   presets: [
@@ -66,7 +66,7 @@ module.exports = {
       {
         docs: {
           sidebarPath: require.resolve('./sidebars.js'),
-          editUrl: 'https://github.com/EPMatt/awesome-ha-blueprints/edit/main/',
+          editUrl: 'https://github.com/yarafie/awesome-ha-blueprints/edit/main/',
         },
         theme: {
           customCss: require.resolve('./src/css/custom.css'),

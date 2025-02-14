@@ -39,11 +39,11 @@ function Help() {
               <h3>Have an issue or want to contribute?</h3>
               <p>
                 Open an{' '}
-                <a href='https://github.com/EPMatt/awesome-ha-blueprints/issues'>
+                <a href='https://github.com/yarafie/awesome-ha-blueprints/issues'>
                   Issue
                 </a>{' '}
                 or submit a{' '}
-                <a href='https://github.com/EPMatt/awesome-ha-blueprints/pulls'>
+                <a href='https://github.com/yarafie/awesome-ha-blueprints/pulls'>
                   Pull Request
                 </a>
                 .{' '}
