@@ -14,7 +14,8 @@ jobs:
     if: ${{ github.actor != 'dependabot[bot]' && github.event.workflow_run.conclusion == 'success' }}
     steps:
       - name: Download changes analysis
-        uses: dawidd6/action-download-artifact@v8
+        # uses: dawidd6/action-download-artifact@v8
+        uses: dawidd6/action-download-artifact@20319c5641d495c8a52e688b7dc5fada6c3a9fbc
         with:
           commit: ${{ github.event.workflow_run.head_sha }}
           workflow: ci_pr.yml
@@ -22,7 +23,8 @@ jobs:
           path: changes
       - id: pr_info
         run: echo "::set-output name=num::$(cat changes/pr_num.txt)"
-      - uses: hasura/comment-progress@v2
+      # - uses: hasura/comment-progress@v2
+      - uses: hasura/comment-progress@0c4393d5f4d4de95d11b5129506ab87190e892f9
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           repository: ${{ github.repository }}
@@ -42,7 +44,8 @@ jobs:
           urls=$(printf '%s' "$myblueprints" | jq --raw-input --slurp '.')
           echo "::set-output name=urls::$urls"
       - if: ${{ hashFiles('changes/blueprints.txt') != '' }}
-        uses: hasura/comment-progress@v2
+        # uses: hasura/comment-progress@v2
+        uses: hasura/comment-progress@0c4393d5f4d4de95d11b5129506ab87190e892f9
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           repository: ${{ github.repository }}
@@ -62,7 +65,8 @@ jobs:
     if: ${{ github.actor != 'dependabot[bot]' && github.event.workflow_run.conclusion == 'failure' }}
     steps:
       - name: Download failure reports
-        uses: dawidd6/action-download-artifact@v8
+        # uses: dawidd6/action-download-artifact@v8
+        uses: dawidd6/action-download-artifact@20319c5641d495c8a52e688b7dc5fada6c3a9fbc
         with:
           commit: ${{ github.event.workflow_run.head_sha }}
           workflow: ci_pr.yml
@@ -70,7 +74,8 @@ jobs:
       - id: pr_info
         run: echo "::set-output name=num::$(cat changes/pr_num.txt)"
       - name: Create comment to report failure
-        uses: hasura/comment-progress@v2
+        # uses: hasura/comment-progress@v2
+        uses: hasura/comment-progress@0c4393d5f4d4de95d11b5129506ab87190e892f9
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           repository: ${{ github.repository }}
@@ -84,7 +89,8 @@ jobs:
       # if the artifact exists, linters failed
       - if: ${{ hashFiles('lint/results.txt') != '' }}
         name: Report linters failure
-        uses: hasura/comment-progress@v2
+        # uses: hasura/comment-progress@v2
+        uses: hasura/comment-progress@0c4393d5f4d4de95d11b5129506ab87190e892f9
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           repository: ${{ github.repository }}
@@ -96,7 +102,8 @@ jobs:
       # if the artifact exists, formatters failed
       - if: ${{ hashFiles('format-lint/results.txt') != '' }}
         name: Report formatters failure
-        uses: hasura/comment-progress@v2
+        # uses: hasura/comment-progress@v2
+        uses: hasura/comment-progress@0c4393d5f4d4de95d11b5129506ab87190e892f9
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           repository: ${{ github.repository }}
@@ -106,7 +113,8 @@ jobs:
           message: |
             * Your files are not properly formatted. Did you remember to run `npm run format` before submitting your changes?
       - name: Create comment to report failure
-        uses: hasura/comment-progress@v2
+        # uses: hasura/comment-progress@v2
+        uses: hasura/comment-progress@0c4393d5f4d4de95d11b5129506ab87190e892f9
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           repository: ${{ github.repository }}

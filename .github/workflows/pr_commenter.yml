@@ -21,7 +21,8 @@ jobs:
           fi
         env:
           TYPE: ${{ github.event.action }}
-      - uses: hasura/comment-progress@v2
+      # - uses: hasura/comment-progress@v2
+      - uses: hasura/comment-progress@0c4393d5f4d4de95d11b5129506ab87190e892f9
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           repository: ${{ github.repository }}

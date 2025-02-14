@@ -12,14 +12,17 @@ jobs:
 
     steps:
       - name: Check out Git repository
-        uses: actions/checkout@v4
+        # uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
       - name: Setup Node.JS
-        uses: actions/setup-node@v4
+        # uses: actions/setup-node@v4
+        uses: actions/setup-node@8f152de45cc393bb48ce5d89d36b731f54556e65
         with:
           node-version: '22'
       - name: Cache node modules
-        uses: actions/cache@v4.2.0
-        env:
+        # uses: actions/cache@v4.2.0
+        uses: actions/cache@1bd1e32a3bdc45362d1e726936510720a7c30a57
+      env:
           cache-name: cache-node-modules
         with:
           # npm cache files are stored in `~/.npm` on Linux/macOS
@@ -33,7 +36,8 @@ jobs:
         run: cd website && npm ci
       - id: yamllint
         name: Yamllint
-        uses: reviewdog/action-yamllint@v1
+        # uses: reviewdog/action-yamllint@v1
+        uses: reviewdog/action-yamllint@3f44a3c4def1e6fbbae499295b94cb6b596ce677
         with:
           github_token: ${{ secrets.github_token }}
           reporter: github-check
@@ -43,7 +47,8 @@ jobs:
       - if: always()
         id: eslint
         name: ESLint
-        uses: reviewdog/action-eslint@v1.33
+        # uses: reviewdog/action-eslint@v1.33
+        uses: reviewdog/action-eslint@9b5b0150e399e1f007ee3c27bc156549810a64e3
         with:
           github_token: ${{ secrets.github_token }}
           reporter: github-check
@@ -58,13 +63,16 @@ jobs:
 
     steps:
       - name: Check out Git repository
-        uses: actions/checkout@v4
+        # uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
       - name: Setup Node.JS
-        uses: actions/setup-node@v4
+        # uses: actions/setup-node@v4
+        uses: actions/setup-node@8f152de45cc393bb48ce5d89d36b731f54556e65
         with:
           node-version: '22'
       - name: Cache node modules
-        uses: actions/cache@v4.2.0
+        # uses: actions/cache@v4.2.0
+        uses: actions/cache@1bd1e32a3bdc45362d1e726936510720a7c30a57
         env:
           cache-name: cache-node-modules
         with:
@@ -79,7 +87,8 @@ jobs:
         run: npm ci
       - id: prettier
         name: Prettier
-        uses: creyD/prettier_action@v4.3
+        # uses: creyD/prettier_action@v4.3
+        uses: creyD/prettier_action@31355f8eef017f8aeba2e0bc09d8502b13dbbad1
         with:
           dry: true
           prettier_options: --write .
@@ -95,15 +104,18 @@ jobs:
 
     steps:
       - name: Check out Git repository
-        uses: actions/checkout@v4
+        # uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
           ref: ${{ github.head_ref }}
       - name: Setup Node.JS
-        uses: actions/setup-node@v4
+        # uses: actions/setup-node@v4
+        uses: actions/setup-node@8f152de45cc393bb48ce5d89d36b731f54556e65
         with:
           node-version: '22'
       - name: Cache node modules
-        uses: actions/cache@v4.2.0
+        # uses: actions/cache@v4.2.0
+        uses: actions/cache@1bd1e32a3bdc45362d1e726936510720a7c30a57
         env:
           cache-name: cache-node-modules
         with:
@@ -123,7 +135,8 @@ jobs:
       - name: Create .nojekyll file
         run: touch website/build/.nojekyll
       - name: Deploy to GitHub Pages
-        uses: s0/git-publish-subdir-action@v2.6.0
+        # uses: s0/git-publish-subdir-action@v2.6.0
+        uses: s0/git-publish-subdir-action@92faf786f11dfa44fc366ac3eb274d193ca1af7e
         env:
           REPO: self
           BRANCH: gh-pages

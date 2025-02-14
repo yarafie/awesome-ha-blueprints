@@ -11,13 +11,16 @@ jobs:
 
     steps:
       - name: Check out Git repository
-        uses: actions/checkout@v4
+        # uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
       - name: Setup Node.JS
-        uses: actions/setup-node@v4
+        # uses: actions/setup-node@v4
+        uses: actions/setup-node@8f152de45cc393bb48ce5d89d36b731f54556e65
         with:
           node-version: '22'
       - name: Cache node modules
-        uses: actions/cache@v4.2.0
+        # uses: actions/cache@v4.2.0
+        uses: actions/cache@1bd1e32a3bdc45362d1e726936510720a7c30a57
         env:
           cache-name: cache-node-modules
         with:
@@ -32,7 +35,8 @@ jobs:
         run: cd website && npm ci
       - id: yamllint
         name: Yamllint
-        uses: reviewdog/action-yamllint@v1
+        # uses: reviewdog/action-yamllint@v1
+        uses: reviewdog/action-yamllint@3f44a3c4def1e6fbbae499295b94cb6b596ce677
         with:
           github_token: ${{ secrets.github_token }}
           reporter: github-pr-check
@@ -42,7 +46,8 @@ jobs:
         continue-on-error: true
       - id: eslint
         name: ESLint
-        uses: reviewdog/action-eslint@v1.33
+        # uses: reviewdog/action-eslint@v1.33
+        uses: reviewdog/action-eslint@9b5b0150e399e1f007ee3c27bc156549810a64e3
         with:
           github_token: ${{ secrets.github_token }}
           reporter: github-pr-check
@@ -55,7 +60,8 @@ jobs:
         run: mkdir -p lint && echo "yamllint" >> lint/results.txt
       - if: ${{ steps.eslint.outcome == 'failure' }}
         run: mkdir -p lint && echo "eslint" >> lint/results.txt
-      - uses: actions/upload-artifact@v4
+      # - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@c7d193f32edcb7bfad88892161225aeda64e9392
         with:
           name: lint
           path: lint/results.txt
@@ -71,13 +77,16 @@ jobs:
 
     steps:
       - name: Check out Git repository
-        uses: actions/checkout@v4
+        # uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
       - name: Setup Node.JS
-        uses: actions/setup-node@v4
+        # uses: actions/setup-node@v4
+        uses: actions/setup-node@8f152de45cc393bb48ce5d89d36b731f54556e65
         with:
           node-version: '22'
       - name: Cache node modules
-        uses: actions/cache@v4.2.0
+        # uses: actions/cache@v4.2.0
+        uses: actions/cache@1bd1e32a3bdc45362d1e726936510720a7c30a57
         env:
           cache-name: cache-node-modules
         with:
@@ -94,7 +103,8 @@ jobs:
         run: cd website && npm ci
       - id: prettier
         name: Prettier Check
-        uses: creyD/prettier_action@v4.3
+        # uses: creyD/prettier_action@v4.3
+        uses: creyD/prettier_action@31355f8eef017f8aeba2e0bc09d8502b13dbbad1
         with:
           dry: true
           prettier_options: --write .
@@ -104,7 +114,8 @@ jobs:
       - if: ${{ always() && steps.prettier.outcome == 'failure' }}
         run: mkdir -p format-lint && echo "prettier" >> format-lint/results.txt
       - if: ${{ always() && steps.prettier.outcome == 'failure' }}
-        uses: actions/upload-artifact@v4
+        # uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@c7d193f32edcb7bfad88892161225aeda64e9392
         with:
           name: format-lint
           path: format-lint/results.txt
@@ -116,13 +127,16 @@ jobs:
 
     steps:
       - name: Check out Git repository
-        uses: actions/checkout@v4
+        # uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
       - name: Setup Node.JS
-        uses: actions/setup-node@v4
+        # uses: actions/setup-node@v4
+        uses: actions/setup-node@8f152de45cc393bb48ce5d89d36b731f54556e65
         with:
           node-version: '22'
       - name: Cache node modules
-        uses: actions/cache@v4.2.0
+        # uses: actions/cache@v4.2.0
+        uses: actions/cache@1bd1e32a3bdc45362d1e726936510720a7c30a57
         env:
           cache-name: cache-node-modules
         with:
@@ -146,8 +160,10 @@ jobs:
 
     steps:
       - name: Check out Git repository
-        uses: actions/checkout@v4
-      - uses: dorny/paths-filter@v3
+        # uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      # - uses: dorny/paths-filter@v3
+      - uses: dorny/paths-filter@0bc4621a3135347011ad047f9ecf449bf72ce2bd
         id: changes
         with:
           list-files: json
@@ -165,13 +181,15 @@ jobs:
       - env:
           PR_NUM: ${{ github.event.number }}
         run: echo $PR_NUM > pr_num.txt
-      - uses: actions/upload-artifact@v4
+      # - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@c7d193f32edcb7bfad88892161225aeda64e9392
         with:
           name: changes
           path: blueprints.txt
           retention-days: 5
           if-no-files-found: ignore
-      - uses: actions/upload-artifact@v4
+      # - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@c7d193f32edcb7bfad88892161225aeda64e9392
         with:
           name: changes
           path: pr_num.txt
