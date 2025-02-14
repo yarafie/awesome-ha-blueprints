@@ -12,15 +12,15 @@ jobs:
 
     steps:
       # uses: actions/checkout@v4
+      # uses: actions/setup-node@v4
+      # uses: actions/cache@v4.2.0
       - name: Check out Git repository
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
       - name: Setup Node.JS
-        # uses: actions/setup-node@v4
         uses: actions/setup-node@8f152de45cc393bb48ce5d89d36b731f54556e65
         with:
           node-version: '22'
       - name: Cache node modules
-        # uses: actions/cache@v4.2.0
         uses: actions/cache@1bd1e32a3bdc45362d1e726936510720a7c30a57
       env:
           cache-name: cache-node-modules
