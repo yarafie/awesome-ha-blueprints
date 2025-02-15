@@ -7,9 +7,6 @@ name: PR Commenter
 
 jobs:
   thank-you-message:
-    permissions:
-      contents: read
-      pull-requests: write
     name: Thank you message
     runs-on: ubuntu-latest
     if: ${{ github.actor != 'dependabot[bot]' }}
@@ -24,7 +21,7 @@ jobs:
           fi
         env:
           TYPE: ${{ github.event.action }}
-      - uses: hasura/comment-progress@0c4393d5f4d4de95d11b5129506ab87190e892f9
+      - uses: hasura/comment-progress@v2
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           repository: ${{ github.repository }}
