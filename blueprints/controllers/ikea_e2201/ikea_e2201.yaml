@@ -598,7 +598,7 @@ actions:
                                     - condition: template
                                       value_template: '{{ wait.trigger.idx is defined }}'
                                   then:
-                                    - stop: action_button_up_released
+                                    - stop: action button up released
       #
       # Actions for Button Down Long Press
       - conditions:
@@ -654,7 +654,7 @@ actions:
                                     - condition: template
                                       value_template: '{{ wait.trigger.idx is defined }}'
                                   then:
-                                    - stop: action_button_down_released
+                                    - stop: action button down released
       #
       # Actions for up button long press released
       - conditions:
