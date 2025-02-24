@@ -542,6 +542,7 @@ actions:
               - choose:
                   - conditions: []
                     sequence: !input action_button_down_short
+
       #
       # Actions for Button Up Long Press
       - conditions:
@@ -551,14 +552,14 @@ actions:
               - zha-button-up-long
               - dcz-button-up-long
         sequence:
+          - event: ahb_controller_event
+            event_data:
+              controller: '{{ controller_id }}'
+              action: button_up_long
           - repeat:
               count: !input button_up_long_max_loop_repeats
               sequence:
                 - parallel:
-                    - event: ahb_controller_event
-                      event_data:
-                        controller: '{{ controller_id }}'
-                        action: button_up_long
                     - sequence:
                         - choose:
                             - conditions: []
@@ -597,11 +598,7 @@ actions:
                                     - condition: template
                                       value_template: '{{ wait.trigger.idx is defined }}'
                                   then:
-                                    - event: ahb_controller_event
-                                      event_data:
-                                        controller: '{{ controller_id }}'
-                                        action: button_up_release
-                                    - stop: button_up_released
+                                    - stop: action_button_up_released
       #
       # Actions for Button Down Long Press
       - conditions:
@@ -611,14 +608,14 @@ actions:
               - zha-button-down-long
               - dcz-button-down-long
         sequence:
+          - event: ahb_controller_event
+            event_data:
+              controller: '{{ controller_id }}'
+              action: button_down_long
           - repeat:
               count: !input button_down_long_max_loop_repeats
               sequence:
                 - parallel:
-                    - event: ahb_controller_event
-                      event_data:
-                        controller: '{{ controller_id }}'
-                        action: button_down_long
                     - sequence:
                         - choose:
                             - conditions: []
@@ -657,11 +654,7 @@ actions:
                                     - condition: template
                                       value_template: '{{ wait.trigger.idx is defined }}'
                                   then:
-                                    - event: ahb_controller_event
-                                      event_data:
-                                        controller: '{{ controller_id }}'
-                                        action: button_down_release
-                                    - stop: button_down_released
+                                    - stop: action_button_down_released
       #
       # Actions for up button long press released
       - conditions:
