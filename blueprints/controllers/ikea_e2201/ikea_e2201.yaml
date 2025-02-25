@@ -541,7 +541,7 @@ actions:
                                                 device_id: !input controller_device
                                                 event: '1003'
                                           timeout:
-                                            milliseconds: !input helper_hold_delay
+                                            milliseconds: !input helper_long_press_delay
                                           continue_on_timeout: true
                                         - if:
                                             - condition: template
@@ -720,7 +720,7 @@ actions:
                                                 device_id: !input controller_device
                                                 event: '1003'
                                           timeout:
-                                            milliseconds: !input helper_hold_delay
+                                            milliseconds: !input helper_long_press_delay
                                           continue_on_timeout: true
                                         - if:
                                             - condition: template
