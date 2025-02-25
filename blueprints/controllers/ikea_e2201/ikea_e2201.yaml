@@ -498,7 +498,7 @@ actions:
               - z2m-button-up-long
               - zha-button-up-long
               - dcz-button-up-long
-        sequence:
+        - sequence:
           # fire the ahb event only once, the ahb hook will take care of looping
           - event: ahb_controller_event
             event_data:
