@@ -670,7 +670,7 @@ actions:
                   - conditions: []
                     sequence: !input action_button_down_short
       #
-      # Actions for Down Button Long Press
+      # Actions for down Button Long Press
       - conditions:
           - condition: trigger
             id:
@@ -678,16 +678,12 @@ actions:
               - zha-button-down-long
               - dcz-button-down-long
         sequence:
-          # fire the ahb event only once, the ahb hook will take care of looping
-          - event: ahb_controller_event
-            event_data:
-              controller: '{{ controller_id }}'
-              action: button_down_long
-          # handle custom action looping
-          - choose
-              # if looping is enabled, loop the custom action for a finite number of iterations
-              - conditions: '{{ button_down_long_loop }}'
-                sequence:
+          - if:
+              - condition: template
+                value_template: '{{ button_down_long_loop }}'
+            # Handle down Double Press Event
+            then:
+              - choose:
                   - repeat:
                       count: !input button_down_long_max_loop_repeats
                       sequence:
@@ -714,7 +710,7 @@ actions:
                                               event_type: zha_event
                                               event_data:
                                                 device_id: !input controller_device
-                                                command: stop
+                                                command: stop_with_on_off
                                                 cluster_id: 8
                                                 endpoint_id: 1
                                             # dcz triggers
@@ -722,7 +718,7 @@ actions:
                                               event_type: deconz_event
                                               event_data:
                                                 device_id: !input controller_device
-                                                event: '2003'
+                                                event: '1003'
                                           timeout:
                                             milliseconds: !input helper_hold_delay
                                           continue_on_timeout: true
@@ -731,8 +727,17 @@ actions:
                                               value_template: "{{ wait.trigger.idx is defined }}"
                                           then:
                                             - stop: button released
-            # if looping is not enabled run the custom action only once
-            default: !input action_button_down_long
+            # Not down Double Handle down Single Press Event
+            else:
+              # fire the ahb hook event
+              - event: ahb_controller_event
+                event_data:
+                  controller: '{{ controller_id }}'
+                  action: button_down_long
+              # run the custom action
+              - choose:
+                  - conditions: []
+                    sequence: !input action_button_down_long
       #
       # Actions for Down Button long press released
       - conditions:
