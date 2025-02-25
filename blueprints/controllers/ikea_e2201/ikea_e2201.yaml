@@ -490,10 +490,9 @@ actions:
               - choose:
                   - conditions: []
                     sequence: !input action_button_up_short
-      #
       # Actions for Up Button Long Press
       - conditions:
-          - condition: trigger
+        - condition: trigger
             id:
               - z2m-button-up-long
               - zha-button-up-long
