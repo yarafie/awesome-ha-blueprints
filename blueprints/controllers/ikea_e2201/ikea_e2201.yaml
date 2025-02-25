@@ -627,7 +627,7 @@ actions:
       #
       # Actions for down Button Long Press
       - conditions:
-        # '{{ trigger_action | string in button_down_long }}'
+          # '{{ trigger_action | string in button_down_long }}'
           - condition: trigger
             id:
               - z2m-button-down-long
