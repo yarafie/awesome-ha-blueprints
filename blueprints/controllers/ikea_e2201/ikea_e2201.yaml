@@ -552,7 +552,7 @@ actions:
                                           continue_on_timeout: true
                                         - if:
                                             - condition: template
-                                              value_template: "{{ wait.trigger.idx is defined }}"
+                                              value_template: '{{ wait.trigger.idx is defined }}'
                                           then:
                                             - stop: button released
       #
@@ -727,7 +727,7 @@ actions:
                                           continue_on_timeout: true
                                         - if:
                                             - condition: template
-                                              value_template: "{{ wait.trigger.idx is defined }}"
+                                              value_template: '{{ wait.trigger.idx is defined }}'
                                           then:
                                             - stop: button released
       #
