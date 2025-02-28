@@ -105,6 +105,24 @@ blueprint:
       icon: mdi:remote
       collapsed: true
       input:
+        click_long_loop:
+          name: (Optional) Click long - loop until stop
+          description: Loop the click long action until the rotation is stopped.
+          default: false
+          selector:
+            boolean:
+        click_long_max_loop_repeats:
+          name: (Optional) Click long - Maximum loop repeats
+          description: >-
+            Maximum number of repeats for the custom action, when looping is enabled.
+            Use it as a safety limit to prevent an endless loop in case the corresponding stop event is not received.
+          default: 500
+          selector:
+            number:
+              min: 1
+              max: 5000
+              mode: slider
+              step: 1
         rotate_left_loop:
           name: (Optional) Rotate left - loop until stop
           description: Loop the rotate left action until the rotation is stopped.
@@ -221,6 +239,8 @@ variables:
   # integration type is set from trigger.id
   integration_id: '{{ trigger.id.split("-")[0] }}'
   # convert input tags to variables, to be used in templates
+  click_long_loop: !input click_long_loop
+  click_long_max_loop_repeats: !input click_long_max_loop_repeats
   rotate_left_loop: !input rotate_left_loop
   rotate_left_max_loop_repeats: !input rotate_left_max_loop_repeats
   rotate_right_loop: !input rotate_right_loop
@@ -230,7 +250,7 @@ variables:
   rotate_right_withpress_loop: !input rotate_right_withpress_loop
   rotate_right_withpress_max_loop_repeats: !input rotate_right_withpress_max_loop_repeats
   helper_long_press_delay: !input helper_long_press_delay
-  click_double_press_exposed: !input button_down_double_press_exposed
+  click_double_press_exposed: !input click_double_press_exposed
   helper_double_press_delay: !input helper_double_press_delay
   # mapping between actions and integrations
   actions_mapping:

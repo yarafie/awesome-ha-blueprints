@@ -79,6 +79,16 @@ Hooks allow to easily create controller-based automations for interacting with l
   selector='action'
 />
 <Input
+  name='Click long - loop until stop'
+  description='Loop the click long action until the rotation is stopped.'
+  selector='boolean'
+/>
+<Input
+  name='Click long - Maximum loop repeats'
+  description='Maximum number of repeats for the custom action, when looping is enabled. Use it as a safety limit to prevent an endless loop in case the corresponding stop event is not received.'
+  selector='number'
+/>
+<Input
   name='Rotate left - loop until stop'
   description='Loop the rotate left action until the rotation is stopped.'
   selector='boolean'
@@ -122,6 +132,11 @@ Hooks allow to easily create controller-based automations for interacting with l
   name='Helper - Long Press Delay'
   description='Max delay between the pushing and releasing of a button long press event. Increase this value if you notice that the long press action is not triggered properly.'
   selector='number'
+/>
+<Input
+  name='Expose Click button double press event'
+  description='Choose whether or not to expose the virtual double press event for the click button. Turn this on if you are providing an action for the click button double press event.'
+  selector='boolean'
 />
 <Input
   name='Helper - Double Press delay'
