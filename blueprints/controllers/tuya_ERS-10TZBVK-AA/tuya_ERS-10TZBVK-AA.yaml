@@ -269,18 +269,19 @@ variables:
   # pre-choose actions for buttons based on configured integration
   # mainly used to pass to hooks through ahb_controller_event
   # EVENT MODE
-  rotate_left_evnt: '{{ actions_mapping[integration_id]["rotate_left"] }}'
-  rotate_right_evnt: '{{ actions_mapping[integration_id]["rotate_right"] }}'
-  click_short_evnt: '{{ actions_mapping[integration_id]["click_short"] }}'
-  click_double_evnt: '{{ actions_mapping[integration_id]["click_double"] }}'
-  click_long_evnt: '{{ actions_mapping[integration_id]["click_long"] }}'
+  rotate_left_evnt: '{{ actions_mapping[integration_id]["rotate_left_evnt"] }}'
+  rotate_right_evnt: '{{ actions_mapping[integration_id]["rotate_right_evnt"] }}'
+  click_short_evnt: '{{ actions_mapping[integration_id]["click_short_evnt"] }}'
+  click_double_evnt: '{{ actions_mapping[integration_id]["click_double_evnt"] }}'
+  click_long_evnt: '{{ actions_mapping[integration_id]["click_long_evnt"] }}'
   # COMMAND MODE
-  rotate_left_cmnd: '{{ actions_mapping[integration_id]["rotate_left"] }}'
-  rotate_right_cmnd: '{{ actions_mapping[integration_id]["rotate_right"] }}'
-  rotate_left_withpress_cmnd: '{{ actions_mapping[integration_id]["rotate_left_withpress"] }}'
-  rotate_right_withpress_cmnd: '{{ actions_mapping[integration_id]["rotate_right_withpress"] }}'
-  click_short_cmnd: '{{ actions_mapping[integration_id]["click_short"] }}'
-  click_long_cmnd: '{{ actions_mapping[integration_id]["click_long"] }}'
+  rotate_left_cmnd: '{{ actions_mapping[integration_id]["rotate_left_cmnd"] }}'
+  rotate_right_cmnd: '{{ actions_mapping[integration_id]["rotate_right_cmnd"] }}'
+  rotate_left_withpress_cmnd: '{{ actions_mapping[integration_id]["rotate_left_withpress_cmnd"] }}'
+  rotate_right_withpress_cmnd: '{{ actions_mapping[integration_id]["rotate_right_withpress_cmnd"] }}'
+  click_short_cmnd: '{{ actions_mapping[integration_id]["click_short_cmnd"] }}'
+  click_long_cmnd: '{{ actions_mapping[integration_id]["click_long_cmnd"] }}'
+  click_release_cmnd: '{{ actions_mapping[integration_id]["click_release_cmnd"] }}'
 #
 # Mode Block
 mode: single
@@ -291,74 +292,74 @@ triggers:
   # triggers for zigbee2mqtt
   # event mode
   - trigger: device
-    id: z2m-rotate-evnt-left
+    id: z2m-rotate-left-evnt
     domain: mqtt
     device_id: !input controller_device
     type: action
     subtype: rotate_left
   - trigger: device
-    id: z2m-rotate-evnt-right
+    id: z2m-rotate-right-evnt
     domain: mqtt
     device_id: !input controller_device
     type: action
     subtype: rotate_right
   - trigger: device
-    id: z2m-click-evnt-short
+    id: z2m-click-short-evnt
     domain: mqtt
     device_id: !input controller_device
     type: action
     subtype: single
   - trigger: device
-    id: z2m-click-evnt-double
+    id: z2m-click-double-evnt
     domain: mqtt
     device_id: !input controller_device
     type: action
     subtype: double
   - trigger: device
-    id: z2m-click-evnt-long
+    id: z2m-click-long-evnt
     domain: mqtt
     device_id: !input controller_device
     type: action
     subtype: hold
   # command mode
   - trigger: device
-    id: z2m-rotate-cmnd-left
+    id: z2m-rotate-left-cmnd
     domain: mqtt
     device_id: !input controller_device
     type: action
     subtype: brightness_step_down
   - trigger: device
-    id: z2m-rotate-cmnd-right
+    id: z2m-rotate-right-cmnd
     domain: mqtt
     device_id: !input controller_device
     type: action
     subtype: brightness_step_up
   - trigger: device
-    id: z2m-rotate-cmnd-left-withpress
+    id: z2m-rotate-left-withpress-cmnd
     domain: mqtt
     device_id: !input controller_device
     type: action
     subtype: color_temperature_step_down
   - trigger: device
-    id: z2m-rotate-cmnd-right-withpress
+    id: z2m-rotate-right-withpress-cmnd
     domain: mqtt
     device_id: !input controller_device
     type: action
     subtype: color_temperature_step_up
   - trigger: device
-    id: z2m-click-cmnd-short
+    id: z2m-click-short-cmnd
     domain: mqtt
     device_id: !input controller_device
     type: action
     subtype: toggle
   - trigger: device
-    id: z2m-click-cmnd-long
+    id: z2m-click-long-cmnd
     domain: mqtt
     device_id: !input controller_device
     type: action
     subtype: hue_move
   - trigger: device
-    id: z2m-click-cmnd-long-stop
+    id: z2m-click-long-stop-cmnd
     domain: mqtt
     device_id: !input controller_device
     type: action
@@ -366,38 +367,38 @@ triggers:
   # triggers for ZHA
   # event mode
   - trigger: event
-    id: zha-rotate-evnt-left
+    id: zha-rotate-left-evnt
     event_type: zha_event
     event_data:
       device_id: !input controller_device
       command: left
   - trigger: event
-    id: zha-rotate-evnt-right
+    id: zha-rotate-right-evnt
     event_type: zha_event
     event_data:
       device_id: !input controller_device
       command: right
   - trigger: event
-    id: zha-click-evnt-short
+    id: zha-click-short-evnt
     event_type: zha_event
     event_data:
       device_id: !input controller_device
       command: remote_button_short_press
   - trigger: event
-    id: zha-click-evnt-double
+    id: zha-click-double-evnt
     event_type: zha_event
     event_data:
       device_id: !input controller_device
       command: remote_button_double_press
   - trigger: event
-    id: zha-click-evnt-long
+    id: zha-click-long-evnt
     event_type: zha_event
     event_data:
       device_id: !input controller_device
       command: remote_button_long_press
   # command mode
   - trigger: event
-    id: zha-rotate-cmnd-left
+    id: zha-rotate-left-cmnd
     event_type: zha_event
     event_data:
       device_id: !input controller_device
@@ -406,7 +407,7 @@ triggers:
       cluster_id: 8
       args: [1]
   - trigger: event
-    id: zha-rotate-cmnd-right
+    id: zha-rotate-right-cmnd
     event_type: zha_event
     event_data:
       device_id: !input controller_device
@@ -415,7 +416,7 @@ triggers:
       cluster_id: 8
       args: [0]
   - trigger: event
-    id: zha-rotate-cmnd-left-withpress
+    id: zha-rotate-left-withpress-cmnd
     event_type: zha_event
     event_data:
       device_id: !input controller_device
@@ -424,7 +425,7 @@ triggers:
       cluster_id: 768
       args: [3]
   - trigger: event
-    id: zha-rotate-cmnd-right-withpress
+    id: zha-rotate-right-withpress-cmnd
     event_type: zha_event
     event_data:
       device_id: !input controller_device
@@ -433,7 +434,7 @@ triggers:
       cluster_id: 768
       args: [1]
   - trigger: event
-    id: zha-click-cmnd-short
+    id: zha-click-short-cmnd
     event_type: zha_event
     event_data:
       device_id: !input controller_device
@@ -441,7 +442,7 @@ triggers:
       endpoint_id: 1
       cluster_id: 6
   - trigger: event
-    id: zha-click-cmnd-long
+    id: zha-click-long-cmnd
     event_type: zha_event
     event_data:
       device_id: !input controller_device
@@ -449,7 +450,7 @@ triggers:
       endpoint_id: 1
       cluster_id: 768
   - trigger: event
-    id: zha-click-cmnd-long-stop
+    id: zha-click-long-stop-cmnd
     event_type: zha_event
     event_data:
       device_id: !input controller_device
@@ -484,10 +485,10 @@ actions:
       - conditions:
           - condition: trigger
             id:
-              - z2m-rotate-evnt-left
-              - zha-rotate-evnt-left
-              - z2m-rotate-cmnd-left
-              - zha-rotate-cmnd-left
+              - z2m-rotate-left-evnt
+              - zha-rotate-left-evnt
+              - z2m-rotate-left-cmnd
+              - zha-rotate-left-cmnd
         sequence:
           # fire the ahb event only once, the ahb hook will take care of looping
           - event: ahb_controller_event
@@ -510,10 +511,10 @@ actions:
       - conditions:
           - condition: trigger
             id:
-              - z2m-rotate-evnt-right
-              - zha-rotate-evnt-right
-              - z2m-rotate-cmnd-right
-              - zha-rotate-cmnd-right
+              - z2m-rotate-right-evnt
+              - zha-rotate-right-evnt
+              - z2m-rotate-right-cmnd
+              - zha-rotate-right-cmnd
         sequence:
           # fire the ahb event only once, the ahb hook will take care of looping
           - event: ahb_controller_event
@@ -536,8 +537,8 @@ actions:
       - conditions:
           - condition: trigger
             id:
-              - z2m-rotate-cmnd-left-withpress
-              - zha-rotate-cmnd-left-withpress
+              - z2m-rotate-left-withpress-cmnd
+              - zha-rotate-left-withpress-cmnd
         sequence:
           # fire the ahb event only once, the ahb hook will take care of looping
           - event: ahb_controller_event
@@ -560,8 +561,8 @@ actions:
       - conditions:
           - condition: trigger
             id:
-              - z2m-rotate-cmnd-right-withpress
-              - zha-rotate-cmnd-right-withpress
+              - z2m-rotate-right-withpress-cmnd
+              - zha-rotate-right-withpress-cmnd
         sequence:
           # fire the ahb event only once, the ahb hook will take care of looping
           - event: ahb_controller_event
@@ -584,8 +585,8 @@ actions:
       - conditions:
           - condition: trigger
             id:
-              - z2m-click-evnt-short
-              - zha-click-evnt-short
+              - z2m-click-short-evnt
+              - zha-click-short-evnt
         sequence:
           # fire the ahb hook event
           - event: ahb_controller_event
@@ -601,8 +602,8 @@ actions:
       - conditions:
           - condition: trigger
             id:
-              - z2m-click-evnt-double
-              - zha-click-evnt-double
+              - z2m-click-double-evnt
+              - zha-click-double-evnt
         sequence:
           # fire the ahb hook event
           - event: ahb_controller_event
@@ -618,8 +619,8 @@ actions:
       - conditions:
           - condition: trigger
             id:
-              - z2m-click-cmnd-short
-              - zha-click-cmnd-short
+              - z2m-click-short-cmnd
+              - zha-click-short-cmnd
         sequence:
           - if:
               - condition: template
@@ -631,8 +632,8 @@ actions:
                   - conditions:
                       - condition: trigger
                         id:
-                          - z2m-click-cmnd-short
-                          - zha-click-cmnd-short
+                          - z2m-click-short-cmnd
+                          - zha-click-short-cmnd
                     sequence:
                       - wait_for_trigger:
                           # z2m trigger
@@ -702,8 +703,8 @@ actions:
       - conditions:
           - condition: trigger
             id:
-              - z2m-click-evnt-long
-              - zha-click-evnt-long
+              - z2m-click-long-evnt
+              - zha-click-long-evnt
         sequence:
           # fire the ahb hook event
           - event: ahb_controller_event
@@ -719,8 +720,8 @@ actions:
       - conditions:
           - condition: trigger
             id:
-              - z2m-click-cmnd-long
-              - zha-click-cmnd-long
+              - z2m-click-long-cmnd
+              - zha-click-long-cmnd
         sequence:
           # fire the ahb event only once, the ahb hook will take care of looping
           - event: ahb_controller_event
@@ -745,8 +746,8 @@ actions:
                                     - conditions:
                                         - condition: trigger
                                           id:
-                                            - z2m-click-cmnd-long
-                                            - zha-click-cmnd-long
+                                            - z2m-click-long-cmnd
+                                            - zha-click-long-cmnd
                                       sequence:
                                         - wait_for_trigger:
                                             # z2m triggers
