@@ -15,23 +15,15 @@ blueprint:
 
     🚀 This blueprint is part of the **[Awesome HA Blueprints](https://yarafie.github.io/awesome-ha-blueprints) project**.
 
-    ℹ️ Version 2025.02.28
+    ℹ️ Version 2025.03.03
   source_url: https://github.com/yarafie/awesome-ha-blueprints/blob/main/blueprints/controllers/smarthjemmet_dk_quad_zig_sw/smarthjemmet_dk_quad_zig_sw.yaml
   domain: automation
   homeassistant:
     min_version: 2024.10.0
   input:
-    integration:
-      name: (Required) Integration
-      description: Integration used for connecting the remote with Home Assistant. Select one of the available values.
-      selector:
-        select:
-          options:
-            - label: Zigbee2MQTT
-              value: zigbee2mqtt
     controller_device:
-      name: (Required) (deCONZ, ZHA, Zigbee2MQTT) Controller Device
-      description: The controller device to use for the automation. Choose a value only if the remote is integrated with deCONZ, ZHA, Zigbee2MQTT.
+      name: (Required) (Zigbee2MQTT) Controller Device
+      description: The controller device to use for the automation. Choose a value only if the remote is integrated with Zigbee2MQTT.
       default: ''
       selector:
         device:
@@ -41,13 +33,6 @@ blueprint:
               manufacturer: smarthjemmet.dk
               model: FUGA compatible switch from Smarthjemmet.dk
           multiple: false
-    helper_last_controller_event:
-      name: (Required) Helper - Last Controller Event
-      description: Input Text used to store the last event fired by the controller. You will need to manually create a text input entity for this, please read the blueprint Additional Notes for more info.
-      default: ''
-      selector:
-        entity:
-          domain: input_text
     # inputs for custom actions
     action_button_1_short:
       name: (Optional) Button 1 short press
@@ -258,8 +243,10 @@ blueprint:
           step: 10
 # Automation schema
 variables:
+  # integration id used to select items in the action mapping
+  # integration type is set from trigger.id
+  integration_id: '{{ trigger.id.split("-")[0] }}'
   # convert input tags to variables, to be used in templates
-  integration_id: !input integration
   button_1_long_loop: !input button_1_long_loop
   button_1_long_max_loop_repeats: !input button_1_long_max_loop_repeats
   button_2_long_loop: !input button_2_long_loop
@@ -268,11 +255,10 @@ variables:
   button_3_long_max_loop_repeats: !input button_3_long_max_loop_repeats
   button_4_long_loop: !input button_4_long_loop
   button_4_long_max_loop_repeats: !input button_4_long_max_loop_repeats
-  helper_last_controller_event: !input helper_last_controller_event
   helper_debounce_delay: !input helper_debounce_delay
   # mapping between actions and integrations
   actions_mapping:
-    zigbee2mqtt:
+    z2m:
       # source: https://www.zigbee2mqtt.io/devices/QUAD-ZIG-SW.html
       button_1_short: [button_1_single]
       button_1_long: [button_1_hold]
@@ -316,110 +302,128 @@ variables:
   button_4_release: '{{ actions_mapping[integration_id]["button_4_release"] }}'
   button_4_double: '{{ actions_mapping[integration_id]["button_4_double"] }}'
   button_4_triple: '{{ actions_mapping[integration_id]["button_4_triple"] }}'
-  # integrations which need to store the previous press event to determine which button was released
-  integrations_with_prev_event_storage: [zigbee2mqtt]
   # build data to send within a controller event
   controller_id: !input controller_device
 mode: restart
 max_exceeded: silent
 triggers:
   # triggers for zigbee2mqtt mqtt device action
-  - platform: device
+  - trigger: device
+    id: z2m-button-1-single
     domain: mqtt
     device_id: !input controller_device
     type: action
     subtype: button_1_single
-  - platform: device
+  - trigger: device
+    id: z2m-button-1-hold
     domain: mqtt
     device_id: !input controller_device
     type: action
     subtype: button_1_hold
-  - platform: device
+  - trigger: device
+    id: z2m-button-1-release
     domain: mqtt
     device_id: !input controller_device
     type: action
     subtype: button_1_release
-  - platform: device
+  - trigger: device
+    id: z2m-button-1-double
     domain: mqtt
     device_id: !input controller_device
     type: action
     subtype: button_1_double
-  - platform: device
+  - trigger: device
+    id: z2m-button-1-triple
     domain: mqtt
     device_id: !input controller_device
     type: action
     subtype: button_1_triple
-  - platform: device
+  - trigger: device
+    id: z2m-button-2-single
     domain: mqtt
     device_id: !input controller_device
     type: action
     subtype: button_2_single
-  - platform: device
+  - trigger: device
+    id: z2m-button-2-hold
     domain: mqtt
     device_id: !input controller_device
     type: action
     subtype: button_2_hold
-  - platform: device
+  - trigger: device
+    id: z2m-button-2-release
     domain: mqtt
     device_id: !input controller_device
     type: action
     subtype: button_2_release
-  - platform: device
+  - trigger: device
+    id: z2m-button-2-double
     domain: mqtt
     device_id: !input controller_device
     type: action
     subtype: button_2_double
-  - platform: device
+  - trigger: device
+    id: z2m-button-2-triple
     domain: mqtt
     device_id: !input controller_device
     type: action
     subtype: button_2_triple
-  - platform: device
+  - trigger: device
+    id: z2m-button-3-single
     domain: mqtt
     device_id: !input controller_device
     type: action
     subtype: button_3_single
-  - platform: device
+  - trigger: device
+    id: z2m-button-3-hold
     domain: mqtt
     device_id: !input controller_device
     type: action
     subtype: button_3_hold
-  - platform: device
+  - trigger: device
+    id: z2m-button-3-release
     domain: mqtt
     device_id: !input controller_device
     type: action
     subtype: button_3_release
-  - platform: device
+  - trigger: device
+    id: z2m-button-3-double
     domain: mqtt
     device_id: !input controller_device
     type: action
     subtype: button_3_double
-  - platform: device
+  - trigger: device
+    id: z2m-button-3-triple
     domain: mqtt
     device_id: !input controller_device
     type: action
     subtype: button_3_triple
-  - platform: device
+  - trigger: device
+    id: z2m-button-4-single
     domain: mqtt
     device_id: !input controller_device
     type: action
     subtype: button_4_single
-  - platform: device
+  - trigger: device
+    id: z2m-button-4-hold
     domain: mqtt
     device_id: !input controller_device
     type: action
     subtype: button_4_hold
-  - platform: device
+  - trigger: device
+    id: z2m-button-4-release
     domain: mqtt
     device_id: !input controller_device
     type: action
     subtype: button_4_release
-  - platform: device
+  - trigger: device
+    id: z2m-button-4-double
     domain: mqtt
     device_id: !input controller_device
     type: action
     subtype: button_4_double
-  - platform: device
+  - trigger: device
+    id: z2m-button-4-triple
     domain: mqtt
     device_id: !input controller_device
     type: action
@@ -430,7 +434,7 @@ conditions:
       # check that the button event is not empty
       - >-
         {%- set trigger_action -%}
-        {%- if integration_id == "zigbee2mqtt" -%}
+        {%- if integration_id == "z2m" -%}
         {{ trigger.payload }}
         {%- endif -%}
         {%- endset -%}
@@ -445,20 +449,9 @@ actions:
   # provide a single string value to check against
   - variables:
       trigger_action: >-
-        {%- if integration_id == "zigbee2mqtt" -%}
+        {%- if integration_id == "z2m" -%}
         {{ trigger.payload }}
-        {%- elif integration_id == "deconz" -%}
-        {{ trigger.event.data.event }}
-        {%- elif integration_id == "zha" -%}
-        {{ trigger.event.data.command }}
         {%- endif -%}
-      trigger_delta: '{{ (as_timestamp(now()) - ((states(helper_last_controller_event) | from_json).t if helper_last_controller_event is not none and (states(helper_last_controller_event) | regex_match("^\{((\"a\": \".*\"|\"t\": \d+\.\d+)(, )?){2}\}$")) else as_timestamp("1970-01-01 00:00:00"))) * 1000 }}'
-      last_controller_event: '{{ (states(helper_last_controller_event) | from_json).a if helper_last_controller_event is not none and (states(helper_last_controller_event) | regex_match("^\{((\"a\":\".*\"|\"t\":\d+\.\d+)(,)?){2}\}$")) else "" }}'
-  # update helper
-  - action: input_text.set_value
-    data:
-      entity_id: !input helper_last_controller_event
-      value: '{{ {"a":trigger_action,"t":as_timestamp(now())} | to_json }}'
   # choose the sequence to run based on the received button event
   - choose:
       - conditions: '{{ trigger_action | string in button_1_short }}'
@@ -490,8 +483,6 @@ actions:
             default: !input action_button_1_long
       - conditions:
           - '{{ trigger_action | string in button_1_release }}'
-          # for integrations which need to store the last controller event, need to check the previous button event, stored in the provided input_text
-          - '{{ not integration_id in integrations_with_prev_event_storage or last_controller_event | string in button_1_long }}'
         sequence:
           # fire the event
           - event: ahb_controller_event
@@ -553,8 +544,6 @@ actions:
             default: !input action_button_2_long
       - conditions:
           - '{{ trigger_action | string in button_2_release }}'
-          # for integrations which need to store the last controller event, need to check the previous button event, stored in the provided input_text
-          - '{{ not integration_id in integrations_with_prev_event_storage or last_controller_event | string in button_2_long }}'
         sequence:
           # fire the event
           - event: ahb_controller_event
@@ -616,8 +605,6 @@ actions:
             default: !input action_button_3_long
       - conditions:
           - '{{ trigger_action | string in button_3_release }}'
-          # for integrations which need to store the last controller event, need to check the previous button event, stored in the provided input_text
-          - '{{ not integration_id in integrations_with_prev_event_storage or last_controller_event | string in button_3_long }}'
         sequence:
           # fire the event
           - event: ahb_controller_event
@@ -679,8 +666,6 @@ actions:
             default: !input action_button_4_long
       - conditions:
           - '{{ trigger_action | string in button_4_release }}'
-          # for integrations which need to store the last controller event, need to check the previous button event, stored in the provided input_text
-          - '{{ not integration_id in integrations_with_prev_event_storage or last_controller_event | string in button_4_long }}'
         sequence:
           # fire the event
           - event: ahb_controller_event
