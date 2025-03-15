@@ -445,7 +445,7 @@ triggers:
     device_id: !input controller_device
     type: action
     subtype: track_previous
-  # Center Button (Two actions firmware <=1.0.32 toggle - firmware 1.0.35 play_pause) 
+  # Center Button (Two actions firmware <=1.0.32 toggle - firmware 1.0.35 play_pause)
   - trigger: device
     id: z2m-button-center-playpause
     domain: mqtt
