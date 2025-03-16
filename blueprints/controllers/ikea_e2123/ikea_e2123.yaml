@@ -830,7 +830,7 @@ actions:
       #
       # Actions for Dots1 Button initial press
       - conditions:
-          - condition: '{{ button_dots_initial_enabled }}'
+          - '{{ button_dots_initial_enabled }}'
           - condition: trigger
             id:
               - z2m-button-dots1-initial
@@ -849,7 +849,7 @@ actions:
       #
       # Actions for Dots2 Button initial press
       - conditions:
-          - condition: '{{ button_dots_initial_enabled }}'
+          - '{{ button_dots_initial_enabled }}'
           - condition: trigger
             id:
               - z2m-button-dots2-initial
