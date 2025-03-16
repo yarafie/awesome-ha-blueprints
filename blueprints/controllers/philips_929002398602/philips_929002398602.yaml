@@ -497,7 +497,6 @@ triggers:
     event_data:
       device_id: !input controller_device
       command: down_long_release
-  # triggers for deCONZ
 #
 # Conditions Block
 conditions:
