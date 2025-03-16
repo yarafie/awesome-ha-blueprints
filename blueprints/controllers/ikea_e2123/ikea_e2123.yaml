@@ -1007,6 +1007,7 @@ actions:
       #
       # Actions for Dots1 Button single press
       - conditions:
+          - '{{ not button_dots_initial_enabled }}'
           - condition: trigger
             id:
               - z2m-button-dots1-short
@@ -1125,6 +1126,7 @@ actions:
       #
       # Actions for Dots2 Button single press
       - conditions:
+          - '{{ not button_dots_initial_enabled }}'
           - condition: trigger
             id:
               - z2m-button-dots2-short
