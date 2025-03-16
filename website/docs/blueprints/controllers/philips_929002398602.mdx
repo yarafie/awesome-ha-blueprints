@@ -15,48 +15,29 @@ This blueprint is part of the **Controllers-Hooks Ecosystem**. You can read more
 
 ## Description
 
-This blueprint provides universal support for running any custom action when a button is pressed on the provided Philips 929002398602 Hue Dimmer switch v2. Supports controllers integrated with Zigbee2MQTT or ZHA. Just specify the integration used to connect the remote to Home Assistant when setting up the automation, and the blueprint will take care of all the rest.
+This blueprint provides universal support for running any custom action when a button is pressed on the provided Philips 929002398602 Hue Dimmer switch v2. Supports controllers integrated with Zigbee2MQTT, ZHA. The blueprint will automagically detect the integration type and take care of all the rest.
 
 In addition of being able to provide custom actions for every kind of button press supported by the remote, the blueprint allows to loop the long press actions while the corresponding button is being held. Once released, the loop stops. This is useful when holding down a button should result in a continuous action (such as lowering the volume of a media player, or controlling a light brightness).
 
-The blueprint also adds support for virtual double button press events, which are not exposed by the controller itself.
+The blueprint also adds support for virtual double button press events, which are not exposed by the controller device itself. However, It needs to be enabled in the blueprint.
 
 :::tip
 Automations created with this blueprint can be connected with one or more [Hooks](/docs/blueprints/hooks) supported by this controller.
-Hooks allow to easily create controller-based automations for interacting with media players, lights, covers and more. See the list of [Hooks available for this controller](/docs/blueprints/controllers/philips_929002398602#available-hooks) for additional details.
+Hooks allow to easily create controller-based automations for interacting with lights, media players, covers and maybe more in the future. See the list of [Hooks available for this controller](/docs/blueprints/controllers/philips_929002398602#available-hooks) for additional details.
 :::
 
 ## Requirements
 
-<Requirement id='zigbee2mqtt'/>
-<Requirement id='zha'/>
-<Requirement name='Input Text Integration' required>
-
-This integration provides the entity which must be provided to the blueprint in the **Helper - Last Controller Event** input. Learn more about this helper by reading the dedicated section in the [Additional Notes](#helper---last-controller-event).
-
-[Input Text Integration Docs](https://www.home-assistant.io/integrations/input_text/)
-
-</Requirement>
+<Requirement id='zigbee2mqtt' />
+<Requirement id='zha' />
 
 ## Inputs
 
-<Input
-  name='Integration'
-  description='Integration used for connecting the remote with Home Assistant. Select one of the available values.'
-  selector='select'
-  required
-/>
 <Input
   name='Controller Device'
   description='The controller device to use for the automation. Choose a value only if the remote is integrated with Zigbee2MQTT, ZHA.'
   selector='device'
   required='Zigbee2MQTT, ZHA'
-/>
-<Input
-  name='Helper - Last Controller Event'
-  description='Input Text used to store the last event fired by the controller. You will need to manually create a text input entity for this, please read the blueprint Additional Notes for more info.'
-  selector='entity'
-  required
 />
 <Input
   name='On button short press'
@@ -183,6 +164,11 @@ This integration provides the entity which must be provided to the blueprint in 
   selector='number'
 />
 <Input
+  name='Helper - Long Press Delay'
+  description='Max delay between the pushing and releasing of a button long press event. Increase this value if you notice that the long press action is not triggered properly.'
+  selector='number'
+/>
+<Input
   name='Expose on button double press event'
   description='Choose whether or not to expose the virtual double press event for the on button. Turn this on if you are providing an action for the on button double press event.'
   selector='boolean'
@@ -207,11 +193,6 @@ This integration provides the entity which must be provided to the blueprint in 
   description='Max delay between the first and the second button press for the double press event. Provide a value only if you are using a double press action. Increase this value if you notice that the double press action is not triggered properly.'
   selector='number'
 />
-<Input
-  name='Helper - Debounce delay'
-  description='Delay used for debouncing RAW controller events, by default set to 0. A value of 0 disables the debouncing feature. Increase this value if you notice custom actions or linked Hooks running multiple times when interacting with the device. When the controller needs to be debounced, usually a value of 100 is enough to remove all duplicate events.'
-  selector='number'
-/>
 
 ## Available Hooks
 
@@ -224,7 +205,7 @@ If you are using a hook mapping which provides an action for a virtual double pr
 
 This Hook blueprint allows to build a controller-based automation to control a light. Supports brightness and color control both for white temperature and rgb lights.
 
-#### Default Mapping
+#### (Default) Mapping
 
 - On button short press -> Turn on
 - On button long press -> Color up (continuous, until release)
@@ -241,7 +222,7 @@ This Hook blueprint allows to build a controller-based automation to control a l
 
 This Hook blueprint allows to build a controller-based automation to control a media player. Supports volume setting, play/pause and track selection.
 
-#### Default Mapping
+#### (Default) Mapping
 
 - On button short press -> Play/Pause
 - On button long press -> Next track
@@ -256,13 +237,9 @@ This Hook blueprint allows to build a controller-based automation to control a m
 
 ## Additional Notes
 
-### Helper - Last Controller Event
-
-The `helper_last_controller_event` (Helper - Last Controller Event) input serves as a permanent storage area for the automation. The stored info is used to implement the blueprint's core functionality. To learn more about the helper, how it's used and why it's required, you can read the dedicated section in the [Controllers-Hooks Ecosystem documentation](/docs/controllers-hooks-ecosystem#helper---last-controller-event-input).
-
 ### Virtual double press events
 
-It's also important to note that the controller doesn't natively support double press events. Instead , this blueprint provides virtual double press events. You can read more about them in the [general Controllers-Hooks Ecosystem documentation](/docs/controllers-hooks-ecosystem#virtual-events).
+It's important to note that the controller doesn't natively support double press events. Instead , this blueprint provides virtual double press events. You can read more about them in the [general Controllers-Hooks Ecosystem documentation](/docs/controllers-hooks-ecosystem#virtual-events).
 
 ## Changelog
 
@@ -278,3 +255,4 @@ It's also important to note that the controller doesn't natively support double 
   The `controller_entity` input has been deprecated, and `controller_device` is now mandatory.
   If you are a Zigbee2MQTT user and plan to update this blueprint, please make sure to remove the `controller_entity` input from your automation config and add the device ID of your controller to the `controller_device` input.
   To obtain the device ID from your controller, configure the automation from the UI and use the device selector dropdown on the `controller_device` input to select your controller.
+- **2025-03-16**: Update blueprint with button optimizations. [Issue#713] ([@yarafie](https://github.com/yarafie))
