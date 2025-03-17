@@ -161,7 +161,6 @@ blueprint:
           default: true
           selector:
             boolean:
-      input:
         button_dots2_longdouble_enabled:
           name: (Optional) Dots2 button Long/Double press - enable/disable
           description: Enable the Dots2 button “Long Press” and “Double Press” actions. Disable to remove delay from “Single Press” actions.
