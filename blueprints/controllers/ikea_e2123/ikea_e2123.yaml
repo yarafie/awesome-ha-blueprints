@@ -5,9 +5,11 @@ blueprint:
     # Controller - IKEA E2123 SYMFONISK sound remote, gen 2
 
     Controller automation for executing any kind of action triggered by the provided IKEA E2123 SYMFONISK sound remote, gen 2.
-    The blueprint handles double button press events natively for the dots1/dots2 buttons as it is supported by the controller device itself.
-    Long and Double press events can be disabled for the dots1/dots2 buttons to get extra speed in recognizing single press events.
+
     Supports Zigbee2MQTT, ZHA, deCONZ.
+
+    The blueprint handles double button press events natively for the dots1/dots2 buttons as it is supported by the controller device itself.
+    Long and Double press events can be enabled/disabled for each of the dots1/dots2 buttons to get extra speed in recognizing single press events.
 
     Automations created with this blueprint can be connected with one or more [Hooks](https://yarafie.github.io/awesome-ha-blueprints/docs/blueprints/hooks) supported by this controller.
     Hooks allow to easily create controller-based automations for interacting with lights, covers, media players, and potentially more.
@@ -147,16 +149,23 @@ blueprint:
       default: []
       selector:
         action:
-    # inputs for dots1/dots2 initial press actions to enable or disable
-    initial_press_options_section:
-      name: Dots Initial Press options
+    # Special inputs for dots1/dots2 Long/Double press actions to enable or disable
+    dots12_special_options_section:
+      name: Dots1 and Dots2 Long/Double Press options
       icon: mdi:remote
       collapsed: true
       input:
-        button_dots_initial_enabled:
-          name: (Optional) Dots1/Dots2 button initial press - enable/disable
-          description: Enable/Disable the Dots buttons initial press actions. If enabled Long Press and Double press will be disabled for the dots buttons.
-          default: false
+        button_dots1_longdouble_enabled:
+          name: (Optional) Dots1 button Long/Double press - enable/disable
+          description: Enable the Dots1 button “Long Press” and “Double Press” actions. Disable to remove delay from “Single Press” actions.
+          default: true
+          selector:
+            boolean:
+      input:
+        button_dots2_longdouble_enabled:
+          name: (Optional) Dots2 button Long/Double press - enable/disable
+          description: Enable the Dots2 button “Long Press” and “Double Press” actions. Disable to remove delay from “Single Press” actions.
+          default: true
           selector:
             boolean:
     # inputs for looping custom actions on long button press events until the corresponding release event is received
@@ -311,7 +320,8 @@ variables:
   # integration type is set from trigger.id
   integration_id: '{{ trigger.id.split("-")[0] }}'
   # convert input tags to variables, to be used in templates
-  button_dots_initial_enabled: !input button_dots_initial_enabled
+  button_dots1_longdouble_enabled: !input button_dots1_longdouble_enabled
+  button_dots2_longdouble_enabled: !input button_dots2_longdouble_enabled
   button_up_long_loop: !input button_up_long_loop
   button_up_long_max_loop_repeats: !input button_up_long_max_loop_repeats
   button_down_long_loop: !input button_down_long_loop
@@ -338,11 +348,11 @@ variables:
       button_right_short: [track_next]
       button_left_short: [track_previous]
       button_center_short: [toggle, play_pause]
-      button_dots1_short: [dots_1_short_release]
+      button_dots1_short: [dots_1_initial_press, dots_1_short_release]
       button_dots1_long: [dots_1_long_press]
       button_dots1_release: [dots_1_long_release]
       button_dots1_double: [dots_1_double_press]
-      button_dots2_short: [dots_2_short_release]
+      button_dots2_short: [dots_2_initial_press, dots_2_short_release]
       button_dots2_long: [dots_2_long_press]
       button_dots2_release: [dots_2_long_release]
       button_dots2_double: [dots_2_double_press]
@@ -355,11 +365,11 @@ variables:
       button_right_short: [step_8_1_0]
       button_left_short: [step_8_1_1]
       button_center_short: [toggle_6_1]
-      button_dots1_short: [short_release_2]
+      button_dots1_short: [initial_press_2, short_release_2]
       button_dots1_long: [long_press_2]
       button_dots1_release: [long_release_2]
       button_dots1_double: [multi_press_complete_2]
-      button_dots2_short: [short_release_3]
+      button_dots2_short: [initial_press_3, short_release_3]
       button_dots2_long: [long_press_3]
       button_dots2_release: [long_release_3]
       button_dots2_double: [multi_press_complete_3]
@@ -372,11 +382,11 @@ variables:
       button_right_short: ['5002']
       button_left_short: ['4002']
       button_center_short: ['1002']
-      button_dots1_short: ['6003']
+      button_dots1_short: ['6001', '6003']
       button_dots1_long: ['6002']
       button_dots1_release: ['6004']
       button_dots1_double: ['6006']
-      button_dots2_short: ['7003']
+      button_dots2_short: ['7001', '7003']
       button_dots2_long: ['7002']
       button_dots2_release: ['7004']
       button_dots2_double: ['7006']
@@ -830,7 +840,7 @@ actions:
       #
       # Actions for Dots1 Button initial press
       - conditions:
-          - '{{ button_dots_initial_enabled }}'
+          - '{{ not button_dots1_longdouble_enabled }}'
           - condition: trigger
             id:
               - z2m-button-dots1-initial
@@ -849,7 +859,7 @@ actions:
       #
       # Actions for Dots2 Button initial press
       - conditions:
-          - '{{ button_dots_initial_enabled }}'
+          - '{{ not button_dots2_longdouble_enabled }}'
           - condition: trigger
             id:
               - z2m-button-dots2-initial
@@ -1007,7 +1017,7 @@ actions:
       #
       # Actions for Dots1 Button single press
       - conditions:
-          - '{{ not button_dots_initial_enabled }}'
+          - '{{ button_dots1_longdouble_enabled }}'
           - condition: trigger
             id:
               - z2m-button-dots1-short
@@ -1026,6 +1036,7 @@ actions:
       #
       # Actions for Dots1 Button Long Press
       - conditions:
+          - '{{ button_dots1_longdouble_enabled }}'
           - condition: trigger
             id:
               - z2m-button-dots1-long
@@ -1108,6 +1119,7 @@ actions:
       #
       # Actions for Dots1 Button double press
       - conditions:
+          - '{{ button_dots1_longdouble_enabled }}'
           - condition: trigger
             id:
               - z2m-button-dots1-double
@@ -1126,7 +1138,7 @@ actions:
       #
       # Actions for Dots2 Button single press
       - conditions:
-          - '{{ not button_dots_initial_enabled }}'
+          - '{{ button_dots2_longdouble_enabled }}'
           - condition: trigger
             id:
               - z2m-button-dots2-short
@@ -1145,6 +1157,7 @@ actions:
       #
       # Actions for Dots2 Button Long Press
       - conditions:
+          - '{{ button_dots2_longdouble_enabled }}'
           - condition: trigger
             id:
               - z2m-button-dots2-long
@@ -1227,6 +1240,7 @@ actions:
       #
       # Actions for Dots2 Button double press
       - conditions:
+          - '{{ button_dots2_longdouble_enabled }}'
           - condition: trigger
             id:
               - z2m-button-dots2-double

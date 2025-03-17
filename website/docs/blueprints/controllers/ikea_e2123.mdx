@@ -18,7 +18,7 @@ This blueprint is part of the **Controllers-Hooks Ecosystem**. You can read more
 This blueprint provides universal support for running any custom action when a button is pressed on the provided IKEA E2123 SYMFONISK sound remote, gen 2. Supports controllers integrated with Zigbee2MQTT, ZHA, deCONZ. The blueprint will automagically detect the integration type and take care of all the rest.
 
 The blueprint handles double button press events natively for the dots1/dots2 buttons as it is supported by the controller device itself.
-However Long and Double press events can be disabled for the dots1/dots2 buttons to get extra speed in recognizing single press events by enabling initial press actions.
+Long and Double press events can be enabled/disabled for each of the dots1/dots2 buttons to get extra speed in recognizing single press events.
 
 :::tip
 Automations created with this blueprint can be connected with one or more [Hooks](/docs/blueprints/hooks) supported by this controller.
@@ -115,8 +115,15 @@ Hooks allow to easily create controller-based automations for interacting with l
   selector='action'
 />
 <Input
-  name='Dots1/Dots2 button initial press - enable/disable'
-  description='Enable/Disable the Dots buttons initial press custom actions. If enabled Long Press and Double press will be disabled for the dots buttons.'
+  name='Dots1 button Long/Double press - enable/disable'
+  description=''
+  description:'Enable the Dots1 button “Long Press” and “Double Press” actions. Disable to remove delay from “Single Press” actions.'
+  selector='boolean'
+/>
+<Input
+  name='Dots2 button Long/Double press - enable/disable'
+  description=''
+  description:'Enable the Dots2 button “Long Press” and “Double Press” actions. Disable to remove delay from “Single Press” actions.'
   selector='boolean'
 />
 <Input
@@ -255,6 +262,11 @@ This Hook blueprint allows to build a controller-based automation to control a c
 [Cover Hook docs](/docs/blueprints/hooks/cover)
 
 ## Additional Notes
+
+### Dots1 and Dots2 Long/Double press custom actions
+
+The blueprint handles double button press events natively for the dots1/dots2 buttons as it is supported by the controller device itself.
+Long and Double press events can be enabled/disabled for each of the dots1/dots2 buttons to get extra speed in recognizing single press events.
 
 ### Firmware compatability
 
