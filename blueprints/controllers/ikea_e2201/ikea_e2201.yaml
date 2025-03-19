@@ -17,7 +17,7 @@ blueprint:
 
     ## More Info
 
-    ℹ️ Version 2025.02.20
+    ℹ️ Version 2025.03.20
     📝 [Changelog](https://yarafie.github.io/awesome-ha-blueprints/docs/blueprints/controllers/ikea_e2201/#changelog)
     📕 Full documentation regarding this blueprint is available [here](https://yarafie.github.io/awesome-ha-blueprints/docs/blueprints/controllers/ikea_e2201).
 
@@ -109,12 +109,6 @@ blueprint:
       icon: mdi:remote
       collapsed: true
       input:
-        button_up_long_loop:
-          name: (Optional) Up button long press - loop until release
-          description: Loop the up button action until the button is released.
-          default: false
-          selector:
-            boolean:
         button_up_long_max_loop_repeats:
           name: (Optional) Up button long press - Maximum loop repeats
           description: >-
@@ -127,12 +121,6 @@ blueprint:
               max: 1000.0
               mode: slider
               step: 1.0
-        button_down_long_loop:
-          name: (Optional) Down button long press - loop until release
-          description: Loop the down button action until the button is released.
-          default: false
-          selector:
-            boolean:
         button_down_long_max_loop_repeats:
           name: (Optional) Down button long press - Maximum loop repeats
           description: >-
@@ -195,13 +183,11 @@ variables:
   # integration type is set from trigger.id
   integration_id: '{{ trigger.id.split("-")[0] }}'
   # convert input tags to variables, to be used in templates
-  button_up_long_loop: !input button_up_long_loop
   button_up_long_max_loop_repeats: !input button_up_long_max_loop_repeats
-  button_up_double_press_exposed: !input button_up_double_press_exposed
-  button_down_long_loop: !input button_down_long_loop
   button_down_long_max_loop_repeats: !input button_down_long_max_loop_repeats
-  button_down_double_press_exposed: !input button_down_double_press_exposed
   helper_long_press_delay: !input helper_long_press_delay
+  button_up_double_press_exposed: !input button_up_double_press_exposed
+  button_down_double_press_exposed: !input button_down_double_press_exposed
   helper_double_press_delay: !input helper_double_press_delay
   # mapping between actions and integrations
   actions_mapping:
@@ -407,20 +393,15 @@ actions:
               - zha-button-up-short
               - dcz-button-up-short
         sequence:
+          # Check If Double Press is Exposed
           - if:
               - condition: template
                 value_template: '{{ button_up_double_press_exposed }}'
-            # Handle Up Double Press Event
             then:
+              # Handle Double Press
               - choose:
-                  # wait for z2m/zha/dcz triggers for double press
-                  - conditions:
-                      - condition: trigger
-                        id:
-                          - z2m-button-up-short
-                          - zha-button-up-short
-                          - dcz-button-up-short
-                    sequence:
+                  # Wait for z2m/zha/dcz triggers for second Button Press to treat as a Double Press
+                  - sequence:
                       - wait_for_trigger:
                           # z2m trigger
                           - trigger: device
@@ -445,9 +426,11 @@ actions:
                         timeout:
                           milliseconds: '{{ helper_double_press_delay }}'
                         continue_on_timeout: true
+                      # If a second button short press is triggered wait.trigger.idx will be defined
                       - if:
                           - condition: template
                             value_template: '{{ wait.trigger.idx is defined }}'
+                        # Second short press trigger was received send Hook and Custom Actions as a Double Press
                         then:
                           # fire the ahb hook event
                           - event: ahb_controller_event
@@ -458,6 +441,7 @@ actions:
                           - choose:
                               - conditions: []
                                 sequence: !input action_button_up_double
+                        # Second short press trigger was not received send Hook and Custom Actions as a Single Press
                         else:
                           # fire the ahb hook event
                           - event: ahb_controller_event
@@ -468,18 +452,7 @@ actions:
                           - choose:
                               - conditions: []
                                 sequence: !input action_button_up_short
-                # Not Up Double Handle Up Single Press Event
-                default:
-                  # fire the ahb hook event
-                  - event: ahb_controller_event
-                    event_data:
-                      controller: '{{ controller_id }}'
-                      action: button_up_short
-                  # run the custom action
-                  - choose:
-                      - conditions: []
-                        sequence: !input action_button_up_short
-            # Not Up Double Handle Up Single Press Event
+            # Double Press is Not Exposed So send Hook and Custom Actions as a Single Press
             else:
               # fire the ahb hook event
               - event: ahb_controller_event
@@ -491,89 +464,6 @@ actions:
                   - conditions: []
                     sequence: !input action_button_up_short
       #
-      # Actions for Up Button Long Press
-      - conditions:
-          - condition: trigger
-            id:
-              - z2m-button-up-long
-              - zha-button-up-long
-              - dcz-button-up-long
-        sequence:
-          # fire the ahb event only once, the ahb hook will take care of looping
-          - event: ahb_controller_event
-            event_data:
-              controller: '{{ controller_id }}'
-              action: button_up_long
-          # run the custom action only once before entering repeat
-          - choose:
-              - conditions: []
-                sequence: !input action_button_up_long
-          # handle custom action looping if looping is enabled
-          - choose:
-              - conditions: '{{ button_up_long_loop }}'
-                sequence:
-                  - repeat:
-                      count: !input button_up_long_max_loop_repeats
-                      sequence:
-                        - parallel:
-                            - sequence: !input action_button_up_long
-                            - sequence:
-                                - choose:
-                                    - conditions:
-                                        - condition: trigger
-                                          id:
-                                            - z2m-button-up-long
-                                            - zha-button-up-long
-                                            - dcz-button-up-long
-                                      sequence:
-                                        - wait_for_trigger:
-                                            # z2m triggers
-                                            - trigger: device
-                                              domain: mqtt
-                                              device_id: !input controller_device
-                                              type: action
-                                              subtype: brightness_stop
-                                            # zha triggers
-                                            - trigger: event
-                                              event_type: zha_event
-                                              event_data:
-                                                device_id: !input controller_device
-                                                command: stop_with_on_off
-                                                endpoint_id: 1
-                                                cluster_id: 8
-                                            # dcz triggers
-                                            - trigger: event
-                                              event_type: deconz_event
-                                              event_data:
-                                                device_id: !input controller_device
-                                                event: '1003'
-                                          timeout:
-                                            milliseconds: !input helper_long_press_delay
-                                          continue_on_timeout: true
-                                        - if:
-                                            - condition: template
-                                              value_template: '{{ wait.trigger.idx is defined }}'
-                                          then:
-                                            - stop: button released
-      #
-      # Actions for Up Button long press released
-      - conditions:
-          - condition: trigger
-            id:
-              - z2m-button-up-release
-              - zha-button-up-release
-              - dcz-button-up-release
-        sequence:
-          # fire the ahb hook event
-          - event: ahb_controller_event
-            event_data:
-              controller: '{{ controller_id }}'
-              action: button_up_release
-          # run the custom action
-          - choose:
-              - conditions: []
-                sequence: !input action_button_up_release
-      #
       # Actions for Down Button Single Press / Double Press Virtual
       - conditions:
           - condition: trigger
@@ -582,20 +472,15 @@ actions:
               - zha-button-down-short
               - dcz-button-down-short
         sequence:
+          # Check If Double Press is Exposed
           - if:
               - condition: template
                 value_template: '{{ button_down_double_press_exposed }}'
-            # Handle Down Double Press Event
+            # Handle Double Press
             then:
               - choose:
-                  # wait for z2m/zha/dcz triggers for double press
-                  - conditions:
-                      - condition: trigger
-                        id:
-                          - z2m-button-down-short
-                          - zha-button-down-short
-                          - dcz-button-down-short
-                    sequence:
+                  # Wait for z2m/zha/dcz triggers for second Button Press to treat as a Double Press
+                  - sequence:
                       - wait_for_trigger:
                           # z2m trigger
                           - trigger: device
@@ -620,9 +505,11 @@ actions:
                         timeout:
                           milliseconds: '{{ helper_double_press_delay }}'
                         continue_on_timeout: true
+                      # If a second button short press is triggered wait.trigger.idx will be defined
                       - if:
                           - condition: template
                             value_template: '{{ wait.trigger.idx is defined }}'
+                        # Second short press trigger was received send Hook and Custom Actions as a Double Press
                         then:
                           # fire the ahb hook event
                           - event: ahb_controller_event
@@ -633,6 +520,7 @@ actions:
                           - choose:
                               - conditions: []
                                 sequence: !input action_button_down_double
+                        # Second short press trigger was not received send Hook and Custom Actions as a Single Press
                         else:
                           # fire the ahb hook event
                           - event: ahb_controller_event
@@ -643,18 +531,7 @@ actions:
                           - choose:
                               - conditions: []
                                 sequence: !input action_button_down_short
-                # Not Down Double Handle Down Single Press Event
-                default:
-                  # fire the ahb hook event
-                  - event: ahb_controller_event
-                    event_data:
-                      controller: '{{ controller_id }}'
-                      action: button_down_short
-                  # run the custom action
-                  - choose:
-                      - conditions: []
-                        sequence: !input action_button_down_short
-            # Not Down Double Handle Down Single Press Event
+            # Double Press is Not Exposed So send Hook and Custom Actions as a Single Press
             else:
               # fire the ahb hook event
               - event: ahb_controller_event
@@ -666,7 +543,70 @@ actions:
                   - conditions: []
                     sequence: !input action_button_down_short
       #
-      # Actions for Down Button Long Press
+      # Actions for Button Up Long Press
+      - conditions:
+          - condition: trigger
+            id:
+              - z2m-button-up-long
+              - zha-button-up-long
+              - dcz-button-up-long
+        sequence:
+          # Repeat the Long Press Actions for the set number of loops
+          - repeat:
+              count: !input button_up_long_max_loop_repeats
+              sequence:
+                - parallel:
+                    - event: ahb_controller_event
+                      event_data:
+                        controller: '{{ controller_id }}'
+                        action: button_up_long
+                    - sequence:
+                        - choose:
+                            - conditions: []
+                              sequence: !input action_button_up_long
+                    - sequence:
+                        - choose:
+                            # Wait for z2m/zha/dcz triggers for Button Long Press Release to stop looping
+                            - sequence:
+                                - wait_for_trigger:
+                                    - trigger: device
+                                      domain: mqtt
+                                      device_id: !input controller_device
+                                      type: action
+                                      subtype: brightness_stop
+                                    - trigger: event
+                                      event_type: zha_event
+                                      event_data:
+                                        device_id: !input controller_device
+                                        command: stop_with_on_off
+                                        cluster_id: 8
+                                        endpoint_id: 1
+                                    - trigger: event
+                                      event_type: deconz_event
+                                      event_data:
+                                        device_id: !input controller_device
+                                        event: '1003'
+                                  timeout:
+                                    milliseconds: !input helper_long_press_delay
+                                  continue_on_timeout: true
+                                # If a Button Long Release is triggered wait.trigger.idx will be defined stop the loop before long_max_loop_repeats 
+                                - if:
+                                    - condition: template
+                                      value_template: '{{ wait.trigger.idx is defined }}'
+                                  then:
+                                    # fire the event
+                                    - event: ahb_controller_event
+                                      event_data:
+                                        controller: '{{ controller_id }}'
+                                        action: button_up_release
+                                    # run the custom action
+                                    - choose:
+                                        - conditions: []
+                                          sequence: !input action_button_up_release
+                                    # Stop the repeat loop
+                                    - stop: button_up_released
+      #
+      # Actions for Button Down Long Press
       - conditions:
           - condition: trigger
             id:
@@ -674,62 +614,78 @@ actions:
               - zha-button-down-long
               - dcz-button-down-long
         sequence:
-          # fire the ahb event only once, the ahb hook will take care of looping
+          # Repeat the Long Press Actions for the set number of loops
+          - repeat:
+              count: !input button_down_long_max_loop_repeats
+              sequence:
+                - parallel:
+                    - event: ahb_controller_event
+                      event_data:
+                        controller: '{{ controller_id }}'
+                        action: button_down_long
+                    - sequence:
+                        - choose:
+                            - conditions: []
+                              sequence: !input action_button_down_long
+                    - sequence:
+                        - choose:
+                            # Wait for z2m/zha/dcz triggers for Button Long Press Release to stop looping
+                            - sequence:
+                                - wait_for_trigger:
+                                    - trigger: device
+                                      domain: mqtt
+                                      device_id: !input controller_device
+                                      type: action
+                                      subtype: brightness_stop
+                                    - trigger: event
+                                      event_type: zha_event
+                                      event_data:
+                                        device_id: !input controller_device
+                                        command: stop
+                                        cluster_id: 8
+                                        endpoint_id: 1
+                                    - trigger: event
+                                      event_type: deconz_event
+                                      event_data:
+                                        device_id: !input controller_device
+                                        event: '2003'
+                                  timeout:
+                                    milliseconds: !input helper_long_press_delay
+                                  continue_on_timeout: true
+                                # If a Button Long Release is triggered wait.trigger.idx will be defined stop the loop before long_max_loop_repeats 
+                                - if:
+                                    - condition: template
+                                      value_template: '{{ wait.trigger.idx is defined }}'
+                                  then:
+                                    # fire the event
+                                    - event: ahb_controller_event
+                                      event_data:
+                                        controller: '{{ controller_id }}'
+                                        action: button_down_release
+                                    # run the custom action
+                                    - choose:
+                                        - conditions: []
+                                          sequence: !input action_button_down_release
+                                    # Stop the repeat loop
+                                    - stop: button_down_released
+      #
+      # Actions for Up Button long press released
+      - conditions:
+          - condition: trigger
+            id:
+              - z2m-button-up-release
+              - zha-button-up-release
+              - dcz-button-up-release
+        sequence:
+          # fire the ahb hook event
           - event: ahb_controller_event
             event_data:
               controller: '{{ controller_id }}'
-              action: button_down_long
-          # run the custom action only once before entering repeat
+              action: button_up_release
+          # run the custom action
           - choose:
               - conditions: []
-                sequence: !input action_button_down_long
-          # handle custom action looping if looping is enabled
-          - choose:
-              - conditions: '{{ button_down_long_loop }}'
-                sequence:
-                  - repeat:
-                      count: !input button_down_long_max_loop_repeats
-                      sequence:
-                        - parallel:
-                            - sequence: !input action_button_down_long
-                            - sequence:
-                                - choose:
-                                    - conditions:
-                                        - condition: trigger
-                                          id:
-                                            - z2m-button-down-long
-                                            - zha-button-down-long
-                                            - dcz-button-down-long
-                                      sequence:
-                                        - wait_for_trigger:
-                                            # z2m triggers
-                                            - trigger: device
-                                              domain: mqtt
-                                              device_id: !input controller_device
-                                              type: action
-                                              subtype: brightness_stop
-                                            # zha triggers
-                                            - trigger: event
-                                              event_type: zha_event
-                                              event_data:
-                                                device_id: !input controller_device
-                                                command: stop
-                                                endpoint_id: 1
-                                                cluster_id: 8
-                                            # dcz triggers
-                                            - trigger: event
-                                              event_type: deconz_event
-                                              event_data:
-                                                device_id: !input controller_device
-                                                event: '2003'
-                                          timeout:
-                                            milliseconds: !input helper_long_press_delay
-                                          continue_on_timeout: true
-                                        - if:
-                                            - condition: template
-                                              value_template: '{{ wait.trigger.idx is defined }}'
-                                          then:
-                                            - stop: button released
+                sequence: !input action_button_up_release
       #
       # Actions for Down Button long press released
       - conditions:
