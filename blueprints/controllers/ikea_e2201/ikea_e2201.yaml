@@ -592,7 +592,7 @@ actions:
                                   timeout:
                                     milliseconds: !input helper_long_press_delay
                                   continue_on_timeout: true
-                                # If a Button Long Release is triggered wait.trigger.idx will be defined stop the loop before long_max_loop_repeats 
+                                # If a Button Long Release is triggered wait.trigger.idx will be defined stop the loop before long_max_loop_repeats
                                 - if:
                                     - condition: template
                                       value_template: '{{ wait.trigger.idx is defined }}'
@@ -656,7 +656,7 @@ actions:
                                   timeout:
                                     milliseconds: !input helper_long_press_delay
                                   continue_on_timeout: true
-                                # If a Button Long Release is triggered wait.trigger.idx will be defined stop the loop before long_max_loop_repeats 
+                                # If a Button Long Release is triggered wait.trigger.idx will be defined stop the loop before long_max_loop_repeats
                                 - if:
                                     - condition: template
                                       value_template: '{{ wait.trigger.idx is defined }}'
