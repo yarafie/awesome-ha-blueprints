@@ -481,7 +481,8 @@ actions:
             then:
               - choose:
                   # Wait for z2m/zha/dcz triggers for second Button Press to treat as a Double Press
-                  sequence:
+                  - conditions: []
+                    sequence:
                       - wait_for_trigger:
                           # z2m trigger
                           - trigger: device
@@ -568,7 +569,8 @@ actions:
                     - sequence:
                         - choose:
                             # Wait for z2m/zha/dcz triggers for Button Long Press Release to stop looping
-                            sequence:
+                            - conditions: []
+                              sequence:
                                 - wait_for_trigger:
                                     - trigger: device
                                       domain: mqtt
@@ -631,7 +633,8 @@ actions:
                     - sequence:
                         - choose:
                             # Wait for z2m/zha/dcz triggers for Button Long Press Release to stop looping
-                            sequence:
+                            - conditions: []
+                              sequence:
                                 - wait_for_trigger:
                                     - trigger: device
                                       domain: mqtt
