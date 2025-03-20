@@ -6,31 +6,29 @@ blueprint:
 
     Controller automation for executing any kind of action triggered by the provided IKEA E2201 RODRET Dimmer.
     Allows to optionally loop an action on a button long press.
-    The blueprint also adds support for virtual double button press events, which are not exposed by the controller device itself. However, It needs to be enabled in the blueprint.
+    Allows for Virtual Double Presses. Needs to be enabled in blueprint.
     Supports Zigbee2MQTT, ZHA, deCONZ.
 
-    Automations created with this blueprint can be connected with one or more [Hooks](https://yarafie.github.io/awesome-ha-blueprints/docs/blueprints/hooks) supported by this controller.
+    Automations created with this blueprint can be connected with one or more [Hooks](https://epmatt.github.io/awesome-ha-blueprints/docs/blueprints/hooks) supported by this controller.
     Hooks allow to easily create controller-based automations for interacting with lights, covers, media players, and potentially more.
-    See the list of [Hooks available for this controller](https://yarafie.github.io/awesome-ha-blueprints/docs/blueprints/controllers/ikea_e2201#available-hooks) for additional details.
-
-    A small note, avoid using both custom actions and Hooks in the same blueprint, otherwise strange things may occur.
+    See the list of [Hooks available for this controller](https://epmatt.github.io/awesome-ha-blueprints/docs/blueprints/controllers/ikea_e2201#available-hooks) for additional details.
 
     ## More Info
 
-    ℹ️ Version 2025.03.20
-    📝 [Changelog](https://yarafie.github.io/awesome-ha-blueprints/docs/blueprints/controllers/ikea_e2201/#changelog)
-    📕 Full documentation regarding this blueprint is available [here](https://yarafie.github.io/awesome-ha-blueprints/docs/blueprints/controllers/ikea_e2201).
+    ℹ️ Version 2025.03.20c
+    📝 [Changelog](https://epmatt.github.io/awesome-ha-blueprints/docs/blueprints/controllers/ikea_e2201/#changelog)
+    📕 Full documentation regarding this blueprint is available [here](https://epmatt.github.io/awesome-ha-blueprints/docs/blueprints/controllers/ikea_e2201).
 
-    🚀 This blueprint is part of the **[Awesome HA Blueprints](https://yarafie.github.io/awesome-ha-blueprints) project**. Please consider **[leaving a star on GitHub](https://github.com/EPMatt/awesome-ha-blueprints)**! 🌟
+    🚀 This blueprint is part of the **[Awesome HA Blueprints](https://epmatt.github.io/awesome-ha-blueprints) project**. Please consider **[leaving a star on GitHub](https://github.com/EPMatt/awesome-ha-blueprints)**! 🌟
 
-  source_url: https://github.com/yarafie/awesome-ha-blueprints/blob/main/blueprints/controllers/ikea_e2201/ikea_e2201.yaml
+  source_url: https://github.com/EPMatt/awesome-ha-blueprints/blob/main/blueprints/controllers/ikea_e2201/ikea_e2201.yaml
   domain: automation
   homeassistant:
     min_version: 2024.10.0
   # Device Selector
   input:
     controller_device:
-      name: (Required) (Zigbee2MQTT, ZHA, deCONZ) Controller Device
+      name: (Zigbee2MQTT, ZHA, deCONZ Required) Controller Device
       description: The controller device to use for the automation. Choose a value only if the remote is integrated with Zigbee2MQTT, ZHA, deCONZ.
       default: ''
       selector:
@@ -74,7 +72,7 @@ blueprint:
       selector:
         action:
     action_button_up_double:
-      name: (Optional) Up button double press
+      name: (Optional) (Virtual) Up button double press
       description: Action to run on double up button press.
       default: []
       selector:
@@ -98,7 +96,7 @@ blueprint:
       selector:
         action:
     action_button_down_double:
-      name: (Optional) Down button double press
+      name: (Optional) (Virtual) Down button double press
       description: Action to run on double down button press.
       default: []
       selector:
@@ -183,12 +181,14 @@ variables:
   # integration type is set from trigger.id
   integration_id: '{{ trigger.id.split("-")[0] }}'
   # convert input tags to variables, to be used in templates
+  # Button Inputs For Loop
+  helper_long_press_delay: !input helper_long_press_delay
   button_up_long_max_loop_repeats: !input button_up_long_max_loop_repeats
   button_down_long_max_loop_repeats: !input button_down_long_max_loop_repeats
-  helper_long_press_delay: !input helper_long_press_delay
+  # Button Inputs for Virtual Double Press
+  helper_double_press_delay: !input helper_double_press_delay
   button_up_double_press_exposed: !input button_up_double_press_exposed
   button_down_double_press_exposed: !input button_down_double_press_exposed
-  helper_double_press_delay: !input helper_double_press_delay
   # mapping between actions and integrations
   actions_mapping:
     z2m:
