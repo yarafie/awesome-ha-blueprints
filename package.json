@@ -15,8 +15,5 @@
     "lint-staged": "^15.5.0",
     "prettier": "^3.5.0",
     "turbo": "^2.4.4"
-  },
-  "dependencies": {
-    "pnpm": "^10.6.5"
   }
 }
