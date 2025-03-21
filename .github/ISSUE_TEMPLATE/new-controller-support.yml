@@ -13,7 +13,7 @@ body:
 
         Please keep the template as is—it helps us process your request faster.
 
-        This template is for **proposing support for a new Controller blueprint**. For other issues, [pick a different template](https://github.com/EPMatt/awesome-ha-blueprints/issues/new/choose). Got a question? [Start a discussion here](https://github.com/EPMatt/awesome-ha-blueprints/discussions/new).
+        This template is for **proposing support for a new Controller blueprint**. For other issues, [pick a different template](https://github.com/yarafie/awesome-ha-blueprints/issues/new/choose). Got a question? [Start a discussion here](https://github.com/yarafie/awesome-ha-blueprints/discussions/new).
   - type: input
     attributes:
       label: Manufacturer
