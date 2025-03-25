@@ -6,7 +6,11 @@ interface ShellyRequirementProps {
   children: React.ReactNode
 }
 
-function ShellyRequirement({ required, refers, children }: ShellyRequirementProps) {
+function ShellyRequirement({
+  required,
+  refers,
+  children,
+}: ShellyRequirementProps) {
   return (
     <CustomRequirement name='Shelly Integration' required={required}>
       <p>
