@@ -14,7 +14,7 @@ blueprint:
 
     ## More Info
 
-    ℹ️ Version 2025.03.20
+    ℹ️ Version 2025.03.25
     📝 [Changelog](https://yarafie.github.io/awesome-ha-blueprints/docs/blueprints/hooks/cover/#changelog)
     📕 Full documentation regarding this blueprint is available [here](https://yarafie.github.io/awesome-ha-blueprints/docs/blueprints/hooks/cover).
 
@@ -44,6 +44,8 @@ blueprint:
             - IKEA E2201 RODRET Dimmer
             - IKEA E2213 SOMRIG shortcut button
             - Shelly SHBTN-2 Button 1
+            - Shelly SNSN-0024x Plus i4 with Wall switch 4
+            - Shelly SNSN-0024x Plus i4 with Wall switch 4 (#2)
             - SONOFF SNZB-01 Wireless Switch
             - Xiaomi WXCJKG11LM Aqara Opple 2 button remote
             - Xiaomi WXCJKG12LM Aqara Opple 4 button remote
@@ -110,6 +112,18 @@ variables:
       open_cover: button_button_short
       close_cover: button_button_double
       stop_cover_all: button_button_long
+    Shelly SNSN-0024x Plus i4 with Wall switch 4:
+      open_cover: button_button1_short
+      open_cover_tilt: button_button1_long
+      close_cover: button_button2_short
+      close_cover_tilt: button_button2_long
+      stop_all: button_button2_double
+    Shelly SNSN-0024x Plus i4 with Wall switch 4 (#2):
+      open_cover: button_button3_short
+      open_cover_tilt: button_button3_long
+      close_cover: button_button4_short
+      close_cover_tilt: button_button4_long
+      stop_all: button_button4_double
     SONOFF SNZB-01 Wireless Switch:
       open_cover: button_short
       stop_cover_all: button_long
