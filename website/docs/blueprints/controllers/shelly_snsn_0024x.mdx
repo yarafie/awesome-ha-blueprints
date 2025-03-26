@@ -28,6 +28,7 @@ This blueprint provides universal support for running any custom action when a b
 
 In addition of being able to provide custom actions for every kind of button press supported by the remote, the blueprint allows to loop the long press actions while the corresponding button is being held. Once released, the loop stops. This is useful when holding down a button should result in a continuous action (such as lowering the volume of a media player, or controlling a light brightness).
 
+
 :::tip
 Automations created with this blueprint can be connected with one or more [Hooks](/docs/blueprints/hooks) supported by this controller.
 Hooks allow to easily create controller-based automations for interacting with lights, media players, covers and maybe more in the future. See the list of [Hooks available for this controller](/docs/blueprints/controllers/shelly_snsn_0024x#available-hooks) for additional details.
@@ -52,15 +53,15 @@ This Hook blueprint allows to build a controller-based automation to control a l
 - Button button1 short press -> Turn on
 - Button button1 long press -> Brightness up (continuous, until release)
 - Button button1 double press -> Color up
-- Button button2 short press -> Turn off
-- Button button2 long press -> Brightness down (continuous, until release)
-- Button button2 double press -> Color down
+- Button button3 short press -> Turn off
+- Button button3 long press -> Brightness down (continuous, until release)
+- Button button3 double press -> Color down
 
 #### (Option1) Mapping
 
-- Button button3 short press -> Turn on
-- Button button3 long press -> Brightness up (continuous, until release)
-- Button button3 double press -> Color up
+- Button button2 short press -> Turn on
+- Button button2 long press -> Brightness up (continuous, until release)
+- Button button2 double press -> Color up
 - Button button4 short press -> Turn off
 - Button button4 long press -> Brightness down (continuous, until release)
 - Button button4 double press -> Color down
@@ -76,15 +77,15 @@ This Hook blueprint allows to build a controller-based automation to control a m
 - Button button1 short press -> Volume up
 - Button button1 long press -> Volume up (continuous, until release)
 - Button button1 double press -> Next track
-- Button button2 short press -> Volume down
-- Button button2 long press -> Volume down (continuous, until release)
-- Button button2 double press -> Play/Pause
+- Button button3 short press -> Volume down
+- Button button3 long press -> Volume down (continuous, until release)
+- Button button3 double press -> Play/Pause
 
 #### (Option1) Mapping
 
-- Button button3 short press -> Volume up
-- Button button3 long press -> Volume up (continuous, until release)
-- Button button3 double press -> Next track
+- Button button2 short press -> Volume up
+- Button button2 long press -> Volume up (continuous, until release)
+- Button button2 double press -> Next track
 - Button button4 short press -> Volume down
 - Button button4 long press -> Volume down (continuous, until release)
 - Button button4 double press -> Play/Pause
@@ -99,14 +100,14 @@ This Hook blueprint allows to build a controller-based automation to control a c
 
 - Button button1 short press -> Open cover
 - Button button1 long press -> Open the cover tilt
-- Button button2 short press -> Close cover
-- Button button2 long press -> Close the cover tilt
-- Button button2 double press -> Stop cover and cover tilt
+- Button button3 short press -> Close cover
+- Button button3 long press -> Close the cover tilt
+- Button button3 double press -> Stop cover and cover tilt
 
 #### (Option1) Mapping
 
-- Button button3 short press -> Open cover
-- Button button3 long press -> Open the cover tilt
+- Button button2 short press -> Open cover
+- Button button2 long press -> Open the cover tilt
 - Button button4 short press -> Close cover
 - Button button4 long press -> Close the cover tilt
 - Button button4 double press -> Stop cover and cover tilt
@@ -115,7 +116,18 @@ This Hook blueprint allows to build a controller-based automation to control a c
 
 ## Additional Notes
 
-### Specifics related to Shelly Integration
+### Button Order
+
+The button order is based on the plus i4 wiring and is as follows:
+
+SW1 -> Button 1 (Top Left)
+SW2 -> Button 2 (Top Right)
+SW3 -> Button 3 (Bottom Left)
+SW4 -> Button 4 (Bottom Right)
+
+Additional details [Shelly Plus i4](https://kb.shelly.cloud/knowledge-base/shelly-plus-i4)
+
+### Specifics related to Home Assistant Shelly Integration
 
 Only supports firmware 1.0 and later installed on Shelly SNSN-0024x Plus i4.
 Check [Home Assistant Shelly Integration](https://www.home-assistant.io/integrations/shelly) for additional details.
