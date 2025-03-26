@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="generator" content="Docusaurus v3.7.0">
 <title data-rh="true">Controller - Shelly SNSN-0024x Plus i4 with Wall switch 4 | Awesome HA Blueprints</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:url" content="https://yarafie.github.io/awesome-ha-blueprints/docs/blueprints/controllers/shelly_snsn_0024x"><meta data-rh="true" property="og:locale" content="en"><meta data-rh="true" name="docusaurus_locale" content="en"><meta data-rh="true" name="docsearch:language" content="en"><meta data-rh="true" name="docusaurus_version" content="current"><meta data-rh="true" name="docusaurus_tag" content="docs-default-current"><meta data-rh="true" name="docsearch:version" content="current"><meta data-rh="true" name="docsearch:docusaurus_tag" content="docs-default-current"><meta data-rh="true" property="og:title" content="Controller - Shelly SNSN-0024x Plus i4 with Wall switch 4 | Awesome HA Blueprints"><meta data-rh="true" name="description" content="Controller automation for executing any kind of action triggered by the provided Shelly SNSN-0024x Plus i4 with Wall switch 4. Supports Shelly."><meta data-rh="true" property="og:description" content="Controller automation for executing any kind of action triggered by the provided Shelly SNSN-0024x Plus i4 with Wall switch 4. Supports Shelly."><link data-rh="true" rel="icon" href="/awesome-ha-blueprints/img/favicon.ico"><link data-rh="true" rel="canonical" href="https://yarafie.github.io/awesome-ha-blueprints/docs/blueprints/controllers/shelly_snsn_0024x"><link data-rh="true" rel="alternate" href="https://yarafie.github.io/awesome-ha-blueprints/docs/blueprints/controllers/shelly_snsn_0024x" hreflang="en"><link data-rh="true" rel="alternate" href="https://yarafie.github.io/awesome-ha-blueprints/docs/blueprints/controllers/shelly_snsn_0024x" hreflang="x-default"><script src="/awesome-ha-blueprints/js/google-tag-manager.js"></script><link rel="stylesheet" href="/awesome-ha-blueprints/assets/css/styles.30b821bc.css">
-<script src="/awesome-ha-blueprints/assets/js/runtime~main.2660bec3.js" defer="defer"></script>
+<script src="/awesome-ha-blueprints/assets/js/runtime~main.3ee02426.js" defer="defer"></script>
 <script src="/awesome-ha-blueprints/assets/js/main.cca3cafc.js" defer="defer"></script>
 </head>
 <body class="navigation-with-keyboard">
@@ -28,15 +28,15 @@ Hooks allow to easily create controller-based automations for interacting with l
 <li>Button button1 short press -&gt; Turn on</li>
 <li>Button button1 long press -&gt; Brightness up (continuous, until release)</li>
 <li>Button button1 double press -&gt; Color up</li>
-<li>Button button2 short press -&gt; Turn off</li>
-<li>Button button2 long press -&gt; Brightness down (continuous, until release)</li>
-<li>Button button2 double press -&gt; Color down</li>
+<li>Button button3 short press -&gt; Turn off</li>
+<li>Button button3 long press -&gt; Brightness down (continuous, until release)</li>
+<li>Button button3 double press -&gt; Color down</li>
 </ul>
 <h4 class="anchor anchorWithStickyNavbar_jARI" id="option1-mapping">(Option1) Mapping<a href="#option1-mapping" class="hash-link" aria-label="Direct link to (Option1) Mapping" title="Direct link to (Option1) Mapping">​</a></h4>
 <ul>
-<li>Button button3 short press -&gt; Turn on</li>
-<li>Button button3 long press -&gt; Brightness up (continuous, until release)</li>
-<li>Button button3 double press -&gt; Color up</li>
+<li>Button button2 short press -&gt; Turn on</li>
+<li>Button button2 long press -&gt; Brightness up (continuous, until release)</li>
+<li>Button button2 double press -&gt; Color up</li>
 <li>Button button4 short press -&gt; Turn off</li>
 <li>Button button4 long press -&gt; Brightness down (continuous, until release)</li>
 <li>Button button4 double press -&gt; Color down</li>
@@ -49,15 +49,15 @@ Hooks allow to easily create controller-based automations for interacting with l
 <li>Button button1 short press -&gt; Volume up</li>
 <li>Button button1 long press -&gt; Volume up (continuous, until release)</li>
 <li>Button button1 double press -&gt; Next track</li>
-<li>Button button2 short press -&gt; Volume down</li>
-<li>Button button2 long press -&gt; Volume down (continuous, until release)</li>
-<li>Button button2 double press -&gt; Play/Pause</li>
+<li>Button button3 short press -&gt; Volume down</li>
+<li>Button button3 long press -&gt; Volume down (continuous, until release)</li>
+<li>Button button3 double press -&gt; Play/Pause</li>
 </ul>
 <h4 class="anchor anchorWithStickyNavbar_jARI" id="option1-mapping-1">(Option1) Mapping<a href="#option1-mapping-1" class="hash-link" aria-label="Direct link to (Option1) Mapping" title="Direct link to (Option1) Mapping">​</a></h4>
 <ul>
-<li>Button button3 short press -&gt; Volume up</li>
-<li>Button button3 long press -&gt; Volume up (continuous, until release)</li>
-<li>Button button3 double press -&gt; Next track</li>
+<li>Button button2 short press -&gt; Volume up</li>
+<li>Button button2 long press -&gt; Volume up (continuous, until release)</li>
+<li>Button button2 double press -&gt; Next track</li>
 <li>Button button4 short press -&gt; Volume down</li>
 <li>Button button4 long press -&gt; Volume down (continuous, until release)</li>
 <li>Button button4 double press -&gt; Play/Pause</li>
@@ -69,26 +69,33 @@ Hooks allow to easily create controller-based automations for interacting with l
 <ul>
 <li>Button button1 short press -&gt; Open cover</li>
 <li>Button button1 long press -&gt; Open the cover tilt</li>
-<li>Button button2 short press -&gt; Close cover</li>
-<li>Button button2 long press -&gt; Close the cover tilt</li>
-<li>Button button2 double press -&gt; Stop cover and cover tilt</li>
+<li>Button button3 short press -&gt; Close cover</li>
+<li>Button button3 long press -&gt; Close the cover tilt</li>
+<li>Button button3 double press -&gt; Stop cover and cover tilt</li>
 </ul>
 <h4 class="anchor anchorWithStickyNavbar_jARI" id="option1-mapping-2">(Option1) Mapping<a href="#option1-mapping-2" class="hash-link" aria-label="Direct link to (Option1) Mapping" title="Direct link to (Option1) Mapping">​</a></h4>
 <ul>
-<li>Button button3 short press -&gt; Open cover</li>
-<li>Button button3 long press -&gt; Open the cover tilt</li>
+<li>Button button2 short press -&gt; Open cover</li>
+<li>Button button2 long press -&gt; Open the cover tilt</li>
 <li>Button button4 short press -&gt; Close cover</li>
 <li>Button button4 long press -&gt; Close the cover tilt</li>
 <li>Button button4 double press -&gt; Stop cover and cover tilt</li>
 </ul>
 <p><a href="/awesome-ha-blueprints/docs/blueprints/hooks/cover">Cover Hook docs</a></p>
 <h2 class="anchor anchorWithStickyNavbar_jARI" id="additional-notes">Additional Notes<a href="#additional-notes" class="hash-link" aria-label="Direct link to Additional Notes" title="Direct link to Additional Notes">​</a></h2>
-<h3 class="anchor anchorWithStickyNavbar_jARI" id="specifics-related-to-shelly-integration">Specifics related to Shelly Integration<a href="#specifics-related-to-shelly-integration" class="hash-link" aria-label="Direct link to Specifics related to Shelly Integration" title="Direct link to Specifics related to Shelly Integration">​</a></h3>
+<h3 class="anchor anchorWithStickyNavbar_jARI" id="button-order">Button Order<a href="#button-order" class="hash-link" aria-label="Direct link to Button Order" title="Direct link to Button Order">​</a></h3>
+<p>The button order is based on the plus i4 wiring and is as follows:</p>
+<p>SW1 -&gt; Button 1 (Top Left)
+SW2 -&gt; Button 2 (Top Right)
+SW3 -&gt; Button 3 (Bottom Left)
+SW4 -&gt; Button 4 (Bottom Right)</p>
+<p>Additional details <a href="https://kb.shelly.cloud/knowledge-base/shelly-plus-i4" target="_blank" rel="noopener noreferrer">Shelly Plus i4</a></p>
+<h3 class="anchor anchorWithStickyNavbar_jARI" id="specifics-related-to-home-assistant-shelly-integration">Specifics related to Home Assistant Shelly Integration<a href="#specifics-related-to-home-assistant-shelly-integration" class="hash-link" aria-label="Direct link to Specifics related to Home Assistant Shelly Integration" title="Direct link to Specifics related to Home Assistant Shelly Integration">​</a></h3>
 <p>Only supports firmware 1.0 and later installed on Shelly SNSN-0024x Plus i4.
 Check <a href="https://www.home-assistant.io/integrations/shelly" target="_blank" rel="noopener noreferrer">Home Assistant Shelly Integration</a> for additional details.</p>
 <h2 class="anchor anchorWithStickyNavbar_jARI" id="changelog">Changelog<a href="#changelog" class="hash-link" aria-label="Direct link to Changelog" title="Direct link to Changelog">​</a></h2>
 <ul>
 <li><strong>2025-03-20</strong>: Initial release. (<a href="https://github.com/yarafie" target="_blank" rel="noopener noreferrer">@yarafie</a>) <!-- -->🎉</li>
-</ul></div><footer class="theme-doc-footer docusaurus-mt-lg"><div class="row margin-top--sm theme-doc-footer-edit-meta-row"><div class="col"><a href="https://github.com/yarafie/awesome-ha-blueprints/edit/main/docs/blueprints/controllers/shelly_snsn_0024x.mdx" target="_blank" rel="noopener noreferrer" class="theme-edit-this-page"><svg fill="currentColor" height="20" width="20" viewBox="0 0 40 40" class="iconEdit_OzKF" aria-hidden="true"><g><path d="m34.5 11.7l-3 3.1-6.3-6.3 3.1-3q0.5-0.5 1.2-0.5t1.1 0.5l3.9 3.9q0.5 0.4 0.5 1.1t-0.5 1.2z m-29.5 17.1l18.4-18.5 6.3 6.3-18.4 18.4h-6.3v-6.2z"></path></g></svg>Edit this page</a></div><div class="col lastUpdated_RHzS"></div></div></footer></article><nav class="pagination-nav docusaurus-mt-lg" aria-label="Docs pages"></nav></div></div><div class="col col--3"><div class="tableOfContents_Wsc1 thin-scrollbar theme-doc-toc-desktop"><ul class="table-of-contents table-of-contents__left-border"><li><a href="#description" class="table-of-contents__link toc-highlight">Description</a></li><li><a href="#requirements" class="table-of-contents__link toc-highlight">Requirements</a></li><li><a href="#inputs" class="table-of-contents__link toc-highlight">Inputs</a></li><li><a href="#available-hooks" class="table-of-contents__link toc-highlight">Available Hooks</a><ul><li><a href="#light" class="table-of-contents__link toc-highlight">Light</a></li><li><a href="#media-player" class="table-of-contents__link toc-highlight">Media Player</a></li><li><a href="#cover" class="table-of-contents__link toc-highlight">Cover</a></li></ul></li><li><a href="#additional-notes" class="table-of-contents__link toc-highlight">Additional Notes</a><ul><li><a href="#specifics-related-to-shelly-integration" class="table-of-contents__link toc-highlight">Specifics related to Shelly Integration</a></li></ul></li><li><a href="#changelog" class="table-of-contents__link toc-highlight">Changelog</a></li></ul></div></div></div></div></main></div></div></div><footer class="footer"><div class="container container-fluid"><div class="footer__bottom text--center"><div class="footer__copyright">Awesome HA Blueprints is maintained by <a href="https://github.com/EPMatt">Matteo Agnoletto</a>.<br>Licensed under the <a href="https://github.com/yarafie/awesome-ha-blueprints/blob/main/LICENSE">GPL-3.0 License</a></div></div></div></footer></div>
+</ul></div><footer class="theme-doc-footer docusaurus-mt-lg"><div class="row margin-top--sm theme-doc-footer-edit-meta-row"><div class="col"><a href="https://github.com/yarafie/awesome-ha-blueprints/edit/main/docs/blueprints/controllers/shelly_snsn_0024x.mdx" target="_blank" rel="noopener noreferrer" class="theme-edit-this-page"><svg fill="currentColor" height="20" width="20" viewBox="0 0 40 40" class="iconEdit_OzKF" aria-hidden="true"><g><path d="m34.5 11.7l-3 3.1-6.3-6.3 3.1-3q0.5-0.5 1.2-0.5t1.1 0.5l3.9 3.9q0.5 0.4 0.5 1.1t-0.5 1.2z m-29.5 17.1l18.4-18.5 6.3 6.3-18.4 18.4h-6.3v-6.2z"></path></g></svg>Edit this page</a></div><div class="col lastUpdated_RHzS"></div></div></footer></article><nav class="pagination-nav docusaurus-mt-lg" aria-label="Docs pages"></nav></div></div><div class="col col--3"><div class="tableOfContents_Wsc1 thin-scrollbar theme-doc-toc-desktop"><ul class="table-of-contents table-of-contents__left-border"><li><a href="#description" class="table-of-contents__link toc-highlight">Description</a></li><li><a href="#requirements" class="table-of-contents__link toc-highlight">Requirements</a></li><li><a href="#inputs" class="table-of-contents__link toc-highlight">Inputs</a></li><li><a href="#available-hooks" class="table-of-contents__link toc-highlight">Available Hooks</a><ul><li><a href="#light" class="table-of-contents__link toc-highlight">Light</a></li><li><a href="#media-player" class="table-of-contents__link toc-highlight">Media Player</a></li><li><a href="#cover" class="table-of-contents__link toc-highlight">Cover</a></li></ul></li><li><a href="#additional-notes" class="table-of-contents__link toc-highlight">Additional Notes</a><ul><li><a href="#button-order" class="table-of-contents__link toc-highlight">Button Order</a></li><li><a href="#specifics-related-to-home-assistant-shelly-integration" class="table-of-contents__link toc-highlight">Specifics related to Home Assistant Shelly Integration</a></li></ul></li><li><a href="#changelog" class="table-of-contents__link toc-highlight">Changelog</a></li></ul></div></div></div></div></main></div></div></div><footer class="footer"><div class="container container-fluid"><div class="footer__bottom text--center"><div class="footer__copyright">Awesome HA Blueprints is maintained by <a href="https://github.com/EPMatt">Matteo Agnoletto</a>.<br>Licensed under the <a href="https://github.com/yarafie/awesome-ha-blueprints/blob/main/LICENSE">GPL-3.0 License</a></div></div></div></footer></div>
 </body>
 </html>
