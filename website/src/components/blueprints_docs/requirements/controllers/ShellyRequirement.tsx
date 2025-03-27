@@ -20,7 +20,8 @@ function ShellyRequirement({
         required hardware and how to set up Shelly on your system.
       </p>
       <p>{children}</p>
-      <a href='https://www.home-assistant.io/integrations/shelly/'>Shelly Docs</a>
+      <a href='https://www.home-assistant.io/integrations/shelly/'>
+        Shelly Docs</a>
     </CustomRequirement>
   )
 }
