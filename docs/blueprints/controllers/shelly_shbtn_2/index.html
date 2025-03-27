@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="generator" content="Docusaurus v3.7.0">
 <title data-rh="true">Controller - Shelly SHBTN-2 Button 1 | Awesome HA Blueprints</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:url" content="https://yarafie.github.io/awesome-ha-blueprints/docs/blueprints/controllers/shelly_shbtn_2"><meta data-rh="true" property="og:locale" content="en"><meta data-rh="true" name="docusaurus_locale" content="en"><meta data-rh="true" name="docsearch:language" content="en"><meta data-rh="true" name="docusaurus_version" content="current"><meta data-rh="true" name="docusaurus_tag" content="docs-default-current"><meta data-rh="true" name="docsearch:version" content="current"><meta data-rh="true" name="docsearch:docusaurus_tag" content="docs-default-current"><meta data-rh="true" property="og:title" content="Controller - Shelly SHBTN-2 Button 1 | Awesome HA Blueprints"><meta data-rh="true" name="description" content="Controller automation for executing any kind of action triggered by the provided Shelly SHBTN-2 Button 1. Supports Shelly."><meta data-rh="true" property="og:description" content="Controller automation for executing any kind of action triggered by the provided Shelly SHBTN-2 Button 1. Supports Shelly."><link data-rh="true" rel="icon" href="/awesome-ha-blueprints/img/favicon.ico"><link data-rh="true" rel="canonical" href="https://yarafie.github.io/awesome-ha-blueprints/docs/blueprints/controllers/shelly_shbtn_2"><link data-rh="true" rel="alternate" href="https://yarafie.github.io/awesome-ha-blueprints/docs/blueprints/controllers/shelly_shbtn_2" hreflang="en"><link data-rh="true" rel="alternate" href="https://yarafie.github.io/awesome-ha-blueprints/docs/blueprints/controllers/shelly_shbtn_2" hreflang="x-default"><script src="/awesome-ha-blueprints/js/google-tag-manager.js"></script><link rel="stylesheet" href="/awesome-ha-blueprints/assets/css/styles.30b821bc.css">
-<script src="/awesome-ha-blueprints/assets/js/runtime~main.3ee02426.js" defer="defer"></script>
+<script src="/awesome-ha-blueprints/assets/js/runtime~main.6af3b463.js" defer="defer"></script>
 <script src="/awesome-ha-blueprints/assets/js/main.cca3cafc.js" defer="defer"></script>
 </head>
 <body class="navigation-with-keyboard">
@@ -17,7 +17,7 @@
 <div class="theme-admonition theme-admonition-tip admonition_mQu2 alert alert--success"><div class="admonitionHeading_HeTV"><span class="admonitionIcon_CZtV"><svg viewBox="0 0 12 16"><path fill-rule="evenodd" d="M6.5 0C3.48 0 1 2.19 1 5c0 .92.55 2.25 1 3 1.34 2.25 1.78 2.78 2 4v1h5v-1c.22-1.22.66-1.75 2-4 .45-.75 1-2.08 1-3 0-2.81-2.48-5-5.5-5zm3.64 7.48c-.25.44-.47.8-.67 1.11-.86 1.41-1.25 2.06-1.45 3.23-.02.05-.02.11-.02.17H5c0-.06 0-.13-.02-.17-.2-1.17-.59-1.83-1.45-3.23-.2-.31-.42-.67-.67-1.11C2.44 6.78 2 5.65 2 5c0-2.2 2.02-4 4.5-4 1.22 0 2.36.42 3.22 1.19C10.55 2.94 11 3.94 11 5c0 .66-.44 1.78-.86 2.48zM4 14h5c-.23 1.14-1.3 2-2.5 2s-2.27-.86-2.5-2z"></path></svg></span>tip</div><div class="admonitionContent_P4AV"><p>Automations created with this blueprint can be connected with one or more <a href="/awesome-ha-blueprints/docs/blueprints/hooks">Hooks</a> supported by this controller.
 Hooks allow to easily create controller-based automations for interacting with lights, media players, covers and maybe more in the future. See the list of <a href="/awesome-ha-blueprints/docs/blueprints/controllers/shelly_shbtn_2#available-hooks">Hooks available for this controller</a> for additional details.</p></div></div>
 <h2 class="anchor anchorWithStickyNavbar_jARI" id="requirements">Requirements<a href="#requirements" class="hash-link" aria-label="Direct link to Requirements" title="Direct link to Requirements">​</a></h2>
-<div class="margin-bottom--lg"><div style="padding-bottom:0.8rem"><h3 style="display:inline">Shelly Integration<!-- --> </h3><span class="badge badge--info">Optional</span></div><p>If you plan to integrate the <!-- --> with Shelly, you must have this integration set up. The Shelly integration can be configured from the Home Assistant UI. Check the documentation for full details on the required hardware and how to set up Shelly on your system.</p><p></p><a href="https://www.home-assistant.io/integrations/shelly/">Shelly Integration Docs</a></div>
+<div class="margin-bottom--lg"><div style="padding-bottom:0.8rem"><h3 style="display:inline">Shelly Integration<!-- --> </h3><span class="badge badge--info">Optional</span></div><p>If you plan to integrate the <!-- --> with Shelly, you must have this integration set up. The Shelly integration can be configured from the Home Assistant UI. Check the documentation for full details on the required hardware and how to set up Shelly on your system.</p><p></p><a href="https://www.home-assistant.io/integrations/shelly/">Shelly Docs</a></div>
 <h2 class="anchor anchorWithStickyNavbar_jARI" id="inputs">Inputs<a href="#inputs" class="hash-link" aria-label="Direct link to Inputs" title="Direct link to Inputs">​</a></h2>
 <div class="blueprint-inputs"></div>
 <h2 class="anchor anchorWithStickyNavbar_jARI" id="available-hooks">Available Hooks<a href="#available-hooks" class="hash-link" aria-label="Direct link to Available Hooks" title="Direct link to Available Hooks">​</a></h2>
@@ -26,19 +26,19 @@ Hooks allow to easily create controller-based automations for interacting with l
 <h4 class="anchor anchorWithStickyNavbar_jARI" id="default-mapping">Default Mapping<a href="#default-mapping" class="hash-link" aria-label="Direct link to Default Mapping" title="Direct link to Default Mapping">​</a></h4>
 <ul>
 <li>Button button short press -&gt; Toggle</li>
-<li>Button button long press -&gt; Brightness up (continuous, until release)</li>
 <li>Button button double press -&gt; Brightness up</li>
 <li>Button button triple press -&gt; Brightness down</li>
+<li>Button button long press -&gt; Brightness up (continuous, until release)</li>
 </ul>
 <p><a href="/awesome-ha-blueprints/docs/blueprints/hooks/light">Light Hook docs</a></p>
 <h3 class="anchor anchorWithStickyNavbar_jARI" id="media-player">Media Player<a href="#media-player" class="hash-link" aria-label="Direct link to Media Player" title="Direct link to Media Player">​</a></h3>
 <p>This Hook blueprint allows to build a controller-based automation to control a media player. Supports volume setting, play/pause and track selection.</p>
 <h4 class="anchor anchorWithStickyNavbar_jARI" id="default-mapping-1">Default Mapping<a href="#default-mapping-1" class="hash-link" aria-label="Direct link to Default Mapping" title="Direct link to Default Mapping">​</a></h4>
 <ul>
-<li>Button button short press -&gt; Play_pause</li>
+<li>Button button short press -&gt; Play pause</li>
+<li>Button button double press -&gt; Next track</li>
+<li>Button button triple press -&gt; Previous track</li>
 <li>Button button long press -&gt; Stop</li>
-<li>Button button double press -&gt; Next_track</li>
-<li>Button button triple press -&gt; Previous_track</li>
 </ul>
 <p><a href="/awesome-ha-blueprints/docs/blueprints/hooks/media_player">Media Player Hook docs</a></p>
 <h3 class="anchor anchorWithStickyNavbar_jARI" id="cover">Cover<a href="#cover" class="hash-link" aria-label="Direct link to Cover" title="Direct link to Cover">​</a></h3>
