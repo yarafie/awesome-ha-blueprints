@@ -6,7 +6,7 @@ blueprint:
 
     Controller automation for executing any kind of action triggered by the provided Shelly SHBTN-2 Button 1.
     Allows to optionally loop an action on a button long press.
-    Supports Shelly.
+    Supports Shelly Integration.
 
     Automations created with this blueprint can be connected with one or more [Hooks](https://yarafie.github.io/awesome-ha-blueprints/docs/blueprints/hooks) supported by this controller.
     Hooks allow to easily create controller-based automations for interacting with lights, covers, media players, and potentially more.
@@ -21,7 +21,6 @@ blueprint:
     🚀 This blueprint is part of the **[Awesome HA Blueprints](https://yarafie.github.io/awesome-ha-blueprints) project**. Please consider **[leaving a star on GitHub](https://github.com/EPMatt/awesome-ha-blueprints)**! 🌟
 
   source_url: https://github.com/yarafie/awesome-ha-blueprints/blob/main/blueprints/controllers/shelly_shbtn_2/shelly_shbtn_2.yaml
-
   domain: automation
   homeassistant:
     min_version: 2024.10.0
@@ -49,12 +48,6 @@ blueprint:
     action_button_button_long:
       name: (Optional) Button button long press
       description: Action to run on long button button press.
-      default: []
-      selector:
-        action:
-    action_button_button_release:
-      name: (Optional) Button button release
-      description: Action to run on button button release after long press.
       default: []
       selector:
         action:
@@ -123,14 +116,12 @@ variables:
       # source: https://www.home-assistant.io/integrations/shelly
       button_button_short: [single_1]
       button_button_long: [long_1]
-      button_button_release: [long_single_1]
       button_button_double: [double_1]
       button_button_triple: [triple_1]
   # pre-choose actions for buttons based on configured integration
   # mainly used to pass to hooks through ahb_controller_event
   button_button_short: '{{ actions_mapping[integration_id]["button_button_short"] }}'
   button_button_long: '{{ actions_mapping[integration_id]["button_button_long"] }}'
-  button_button_release: '{{ actions_mapping[integration_id]["button_button_release"] }}'
   button_button_double: '{{ actions_mapping[integration_id]["button_button_double"] }}'
   button_button_triple: '{{ actions_mapping[integration_id]["button_button_triple"] }}'
 #
@@ -154,13 +145,6 @@ triggers:
     event_data:
       device_id: !input controller_device
       click_type: long
-      channel: 1
-  - trigger: event
-    id: sly-button-button-release
-    event_type: shelly.click
-    event_data:
-      device_id: !input controller_device
-      click_type: long_single
       channel: 1
   - trigger: event
     id: sly-button-button-double
@@ -212,69 +196,27 @@ actions:
               - conditions: []
                 sequence: !input action_button_button_short
       #
-      # Actions for Button Button Long Press
+      # Actions for Button Button Long Press No Release
       - conditions:
           - condition: trigger
             id:
               - sly-button-button-long
         sequence:
-          # fire the ahb event only once, the ahb hook will take care of looping
+          # fire the ahb hook event only once before looping the action
           - event: ahb_controller_event
             event_data:
               controller: '{{ controller_id }}'
               action: button_button_long
-          # run the custom action only once before entering repeat
           - choose:
-              - conditions: []
-                sequence: !input action_button_button_long
-          # handle custom action looping if looping is enabled
-          - choose:
+              # if looping is enabled, loop the custom action for a finite number of iterations
               - conditions: '{{ button_button_long_loop }}'
                 sequence:
-                  # Repeat the Long Press Actions for the set number of loops
                   - repeat:
-                      count: !input button_button_long_max_loop_repeats
-                      sequence:
-                        - parallel:
-                            - sequence: !input action_button_button_long
-                            - sequence:
-                                - choose:
-                                    - conditions: []
-                                      sequence:
-                                        # Wait for z2m/zha/dcz triggers for Button Long Press Release to stop looping
-                                        - wait_for_trigger:
-                                            # sly triggers
-                                            - trigger: event
-                                              event_type: shelly.click
-                                              event_data:
-                                                device_id: !input controller_device
-                                                click_type: long_single
-                                                channel: 1
-                                          timeout:
-                                            milliseconds: !input helper_long_press_delay
-                                          continue_on_timeout: true
-                                        # If a Button Long Release is triggered wait.trigger.idx will be defined stop the loop before long_max_loop_repeats
-                                        - if:
-                                            - condition: template
-                                              value_template: '{{ wait.trigger.idx is defined }}'
-                                          then:
-                                            - stop: button_button_released
-      #
-      # Actions for Button Button long press released
-      - conditions:
-          - condition: trigger
-            id:
-              - sly-button-button-release
-        sequence:
-          # fire the ahb hook event
-          - event: ahb_controller_event
-            event_data:
-              controller: '{{ controller_id }}'
-              action: button_button_release
-          # run the custom action
-          - choose:
-              - conditions: []
-                sequence: !input action_button_button_release
+                      while: '{{ repeat.index < button_button_long_max_loop_repeats | int }}'
+                      sequence: !input action_button_button_long
+            # if looping is not enabled run the custom action only once
+            default: !input action_button_button_long
+
       #
       # Actions for Button Button double press
       - conditions:
