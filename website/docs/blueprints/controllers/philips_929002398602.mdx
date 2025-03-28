@@ -55,7 +55,7 @@ If you are using a hook mapping which provides an action for a virtual double pr
 
 This Hook blueprint allows to build a controller-based automation to control a light. Supports brightness and color control both for white temperature and rgb lights.
 
-#### (Default) Mapping
+#### Default Mapping
 
 - On button short press -> Turn on
 - On button long press -> Color up (continuous, until release)
@@ -72,7 +72,7 @@ This Hook blueprint allows to build a controller-based automation to control a l
 
 This Hook blueprint allows to build a controller-based automation to control a media player. Supports volume setting, play/pause and track selection.
 
-#### (Default) Mapping
+#### Default Mapping
 
 - On button short press -> Play/Pause
 - On button long press -> Next track
@@ -106,4 +106,5 @@ It's important to note that the controller doesn't natively support double press
   If you are a Zigbee2MQTT user and plan to update this blueprint, please make sure to remove the `controller_entity` input from your automation config and add the device ID of your controller to the `controller_device` input.
   To obtain the device ID from your controller, configure the automation from the UI and use the device selector dropdown on the `controller_device` input to select your controller.
 
-- **2025-03-16**: Update blueprint with button optimizations. [Issue#713] ([@yarafie](https://github.com/yarafie))
+- **2025-03-20**: Standardized input naming format for controller devices and virtual button actions. No functionality changes.
+- **2025-03-xx**: Update blueprint with button optimizations. [Issue#713] ([@yarafie](https://github.com/yarafie))
