@@ -118,14 +118,14 @@ blueprint:
     helper_double_press_delay:
       name: (Optional) Helper - Double Press delay
       description: Max delay between the first and the second button press for the double press event. Provide a value only if you are using a double press action. Increase this value if you notice that the double press action is not triggered properly.
-      default: 500
+      default: 250
       selector:
         number:
-          min: 100
-          max: 5000
+          min: 100.0
+          max: 5000.0
           unit_of_measurement: milliseconds
           mode: box
-          step: 10
+          step: 10.0
     helper_debounce_delay:
       name: (Optional) Helper - Debounce delay
       description:
@@ -262,19 +262,19 @@ actions:
                             domain: mqtt
                             device_id: !input controller_device
                             type: action
-                            subtype: brightness_stop
+                            subtype: 'on'
                           # zha trigger
                           - trigger: event
                             event_type: zha_event
                             event_data:
                               device_id: !input controller_device
-                              command: stop
+                              command: 'on'
                           # dcz trigger
                           - trigger: event
                             event_type: deconz_event
                             event_data:
                               device_id: !input controller_device
-                              event: '1003'
+                              event: '1002'
                         timeout:
                           milliseconds: '{{ adjusted_double_press_delay }}'
                         continue_on_timeout: true
