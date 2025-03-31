@@ -83,7 +83,7 @@ blueprint:
       selector:
         action:
     action_button_double:
-      name: (Optional) (Virtual) Button double press
+      name: (Optional) Button double press
       description: Action to run on double button press.
       default: []
       selector:
