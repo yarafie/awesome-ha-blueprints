@@ -107,25 +107,6 @@ blueprint:
           max: 5000
           mode: slider
           step: 1
-    # inputs for enabling double press events
-    button_double_press:
-      name: (Optional) Expose button double press event
-      description: Choose whether or not to expose the virtual double press event for the button. Turn this on if you are providing an action for the button double press event.
-      default: false
-      selector:
-        boolean:
-    # helpers used to properly recognize the remote button events
-    helper_double_press_delay:
-      name: (Optional) Helper - Double Press delay
-      description: Max delay between the first and the second button press for the double press event. Provide a value only if you are using a double press action. Increase this value if you notice that the double press action is not triggered properly.
-      default: 250
-      selector:
-        number:
-          min: 100.0
-          max: 5000.0
-          unit_of_measurement: milliseconds
-          mode: box
-          step: 10.0
     helper_debounce_delay:
       name: (Optional) Helper - Debounce delay
       description:
@@ -145,35 +126,34 @@ variables:
   integration: !input integration
   button_long_loop: !input button_long_loop
   button_long_max_loop_repeats: !input button_long_max_loop_repeats
-  button_double_press: !input button_double_press
   helper_last_controller_event: !input helper_last_controller_event
-  helper_double_press_delay: !input helper_double_press_delay
   helper_debounce_delay: !input helper_debounce_delay
   # integration id used to select items in the action mapping
   integration_id: '{{ integration | lower }}'
-  # adjusted debounce delay so that the resulting double press delay is exactly as specified by the user when running the action, taking also account of debouncing
-  # make sure it never goes below the minimum double press delay
-  adjusted_double_press_delay: '{{ [helper_double_press_delay - helper_debounce_delay, 100] | max }}'
   # mapping between actions and integrations
   actions_mapping:
     deconz:
       button_short: ['1002']
       button_long: ['1001']
       button_release: ['1003']
+      button_double: ['1004']
     zha:
       button_short: ['on']
       button_long: [move_with_on_off_0_83]
       button_release: [stop]
+      button_double: ['off']
     zigbee2mqtt:
       # source: https://www.zigbee2mqtt.io/devices/E1812.html#ikea-e1812
       button_short: ['on']
       button_long: [brightness_move_up]
       button_release: [brightness_stop]
+      button_double: ['off']
   # pre-choose actions for buttons based on configured integration
   # no need to perform this task at automation runtime
   button_short: '{{ actions_mapping[integration_id]["button_short"] }}'
   button_long: '{{ actions_mapping[integration_id]["button_long"] }}'
   button_release: '{{ actions_mapping[integration_id]["button_release"] }}'
+  button_double: '{{ actions_mapping[integration_id]["button_double"] }}'
   # build data to send within a controller event
   controller_id: !input controller_device
 mode: single
@@ -195,6 +175,11 @@ triggers:
     device_id: !input controller_device
     type: action
     subtype: brightness_stop
+  - trigger: device
+    domain: mqtt
+    device_id: !input controller_device
+    type: action
+    subtype: 'off'
   # triggers for other integrations
   - trigger: event
     event_type:
@@ -243,78 +228,18 @@ actions:
   # choose the sequence to run based on the received button event
   - choose:
       #
-      # Actions for Button Single Press / Double Press Virtual
+      # Actions for Button Single Press
       - conditions: '{{ trigger_action | string in button_short }}'
         sequence:
-          # Check If Double Press is Exposed
-          - if:
-              - condition: template
-                value_template: '{{ button_double_press }}'
-            # Handle Double Press Event
-            then:
-              - choose:
-                  # Wait for trigger for second Button Press to treat as a Double Press
-                  - conditions: []
-                    sequence:
-                      - wait_for_trigger:
-                          # z2m trigger
-                          - trigger: device
-                            domain: mqtt
-                            device_id: !input controller_device
-                            type: action
-                            subtype: 'on'
-                          # zha trigger
-                          - trigger: event
-                            event_type: zha_event
-                            event_data:
-                              device_id: !input controller_device
-                              command: 'on'
-                          # dcz trigger
-                          - trigger: event
-                            event_type: deconz_event
-                            event_data:
-                              device_id: !input controller_device
-                              event: '1002'
-                        timeout:
-                          milliseconds: '{{ adjusted_double_press_delay }}'
-                        continue_on_timeout: true
-                      # If a second button short press is triggered wait.trigger.idx will be defined
-                      - if:
-                          - condition: template
-                            value_template: '{{ wait.trigger.idx is defined }}'
-                        # Second short press trigger was received send Hook and Custom Actions as a Double Press
-                        then:
-                          # fire the ahb hook event
-                          - event: ahb_controller_event
-                            event_data:
-                              controller: '{{ controller_id }}'
-                              action: button_double
-                          # run the custom action
-                          - choose:
-                              - conditions: []
-                                sequence: !input action_button_double
-                        # Second short press trigger was not received send Hook and Custom Actions as a Single Press
-                        else:
-                          # fire the ahb hook event
-                          - event: ahb_controller_event
-                            event_data:
-                              controller: '{{ controller_id }}'
-                              action: button__short
-                          # run the custom action
-                          - choose:
-                              - conditions: []
-                                sequence: !input action_button_short
-            # Double Press is Not Exposed So send Hook and Custom Actions as a Single Press
-            else:
-              # fire the ahb hook event
-              - event: ahb_controller_event
-                event_data:
-                  controller: '{{ controller_id }}'
-                  action: button_short
-              # run the custom action
-              - choose:
-                  - conditions: []
-                    sequence: !input action_button_short
+          # fire the event
+          - event: ahb_controller_event
+            event_data:
+              controller: '{{ controller_id }}'
+              action: button_short
+          # run the custom action
+          - choose:
+              - conditions: []
+                sequence: !input action_button_short
       #
       # Actions for Button Long Press
       - conditions: '{{ trigger_action | string in button_long }}'
@@ -346,3 +271,16 @@ actions:
           - choose:
               - conditions: []
                 sequence: !input action_button_release
+      #
+      # Actions for Button Double Press
+      - conditions: '{{ trigger_action | string in button_double }}'
+        sequence:
+          # fire the event
+          - event: ahb_controller_event
+            event_data:
+              controller: '{{ controller_id }}'
+              action: button_double
+          # run the custom action
+          - choose:
+              - conditions: []
+                sequence: !input action_button_double
