@@ -256,9 +256,6 @@ conditions:
         {%- endif -%}
         {%- endset -%}
         {{ trigger_action not in ["","None","unknown"] }}
-
-
-
 #
 # Actions Block
 actions:
