@@ -35,16 +35,9 @@ Hooks allow to easily create controller-based automations for interacting with m
 
 ## Requirements
 
-<Requirement id='zigbee2mqtt'/>
-<Requirement id='zha'/>
-<Requirement id='deconz'/>
-<Requirement name='Input Text Integration' required>
-
-This integration provides the entity which must be provided to the blueprint in the **Helper - Last Controller Event** input. Learn more about this helper by reading the dedicated section in the [Additional Notes](#helper---last-controller-event).
-
-[Input Text Integration Docs](https://www.home-assistant.io/integrations/input_text/)
-
-</Requirement>
+<Requirement id='zigbee2mqtt' />
+<Requirement id='zha' />
+<Requirement id='deconz' />
 
 ## Inputs
 
@@ -89,10 +82,6 @@ This Hook blueprint allows to build a controller-based automation to control a c
 
 ## Additional Notes
 
-### Helper - Last Controller Event
-
-The `helper_last_controller_event` (Helper - Last Controller Event) input serves as a permanent storage area for the automation. The stored info is used to implement the blueprint's core functionality. To learn more about the helper, how it's used and why it's required, you can read the dedicated section in the [Controllers-Hooks Ecosystem documentation](/docs/controllers-hooks-ecosystem#helper---last-controller-event-input).
-
 ## Changelog
 
 - **2021-03-14**: first blueprint version :tada:
@@ -134,4 +123,4 @@ The `helper_last_controller_event` (Helper - Last Controller Event) input serves
   To obtain the device ID from your controller, configure the automation from the UI and use the device selector dropdown on the `controller_device` input to select your controller.
 
 - **2025-03-20**: Standardized input naming format for controller devices and virtual button actions. No functionality changes.
-- **2025-03-30**: Updated to add new double press to triggers. ([@yarafie](https://github.com/yarafie))
+- **2025-04-03**: Updated to add new double press to triggers and refactored blueprint to use triggers and trigger-id. ([@yarafie](https://github.com/yarafie))
