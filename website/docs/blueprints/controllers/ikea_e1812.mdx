@@ -123,4 +123,20 @@ This Hook blueprint allows to build a controller-based automation to control a c
   To obtain the device ID from your controller, configure the automation from the UI and use the device selector dropdown on the `controller_device` input to select your controller.
 
 - **2025-03-20**: Standardized input naming format for controller devices and virtual button actions. No functionality changes.
-- **2025-04-03**: Updated to add new double press to triggers and refactored blueprint to use triggers and trigger-id. ([@yarafie](https://github.com/yarafie))
+- **2025-04-06**: Fix double-click detection logic. ([@danleongjy](https://github.com/danleongjy))
+- **2025-04-12**:
+
+  :warning: **Breaking Change**:
+
+  Updated to add new double press to triggers and refactored blueprint to use triggers and trigger-id. ([@yarafie](https://github.com/yarafie))
+
+  The blueprint needs to be re-downloaded and automations using the blueprint needs to be set-up again.
+
+  This is due to the changes below:
+
+  - The need for selection of `integration` type has been removed from the inputs, the blueprint/automation will detect it automatically.
+  - The `helper_last_controller_event` text input is no longer needed and has been removed from the inputs.
+
+  **Other changes:**
+
+  Double press events are now natively supported.
