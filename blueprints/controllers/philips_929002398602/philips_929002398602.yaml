@@ -17,7 +17,7 @@ blueprint:
 
     ## More Info
 
-    ℹ️ Version 2025.03.20
+    ℹ️ Version 2025.04.17
     📝 [Changelog](https://yarafie.github.io/awesome-ha-blueprints/docs/blueprints/controllers/philips_929002398602/#changelog)
     📕 Full documentation regarding this blueprint is available [here](https://yarafie.github.io/awesome-ha-blueprints/docs/blueprints/controllers/philips_929002398602).
 
@@ -48,6 +48,16 @@ blueprint:
             # source: https://github.com/zigpy/zha-device-handlers/blob/dev/zhaquirks/
             - integration: zha
               manufacturer: Philips
+              # **TBConfirmed** model:
+            - integration: zha
+              manufacturer: Signify Netherlands B.V.
+              # **TBConfirmed** model:
+            - integration: deconz
+              manufacturer: Philips
+              # **TBConfirmed** model:
+            - integration: deconz
+              manufacturer: Signify Netherlands B.V.
+              # **TBConfirmed** model:
           multiple: false
     # inputs for custom actions
     action_button_on_short:
