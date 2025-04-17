@@ -36,6 +36,7 @@ blueprint:
         select:
           options:
             - Aqara WXKG11LM Wireless Mini Switch
+            - Aqara WXKG13LM Wireless Mini Switch T1
             - IKEA E1524/E1810 TRÅDFRI Wireless 5-Button Remote
             - IKEA E1743 TRÅDFRI On/Off Switch & Dimmer
             - IKEA E1766 TRÅDFRI Open/Close Remote
@@ -67,6 +68,10 @@ variables:
   # supported controllers and mappings
   controller_mapping:
     Aqara WXKG11LM Wireless Mini Switch:
+      open_cover: button_short
+      stop_cover_all: button_long
+      close_cover: button_double
+    Aqara WXKG13LM Wireless Mini Switch T1:
       open_cover: button_short
       stop_cover_all: button_long
       close_cover: button_double
