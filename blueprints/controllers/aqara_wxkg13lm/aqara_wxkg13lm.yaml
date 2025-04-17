@@ -138,7 +138,7 @@ variables:
   # convert input tags to variables, to be used in templates
   button_long_loop: !input button_long_loop
   button_long_max_loop_repeats: !input button_long_max_loop_repeats
-  helper_debounce_delay: !input helper_debounce_delay
+  helper_long_press_delay: !input helper_long_press_delay
   # mapping between actions and integrations
   actions_mapping:
     z2m:
