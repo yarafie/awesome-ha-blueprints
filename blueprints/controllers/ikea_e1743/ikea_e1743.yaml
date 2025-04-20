@@ -13,9 +13,9 @@ blueprint:
 
     ## More Info
 
-    ℹ️ Version 2025.03.20
+    ℹ️ Version 2025.04.19
     📝 [Changelog](https://yarafie.github.io/awesome-ha-blueprints/docs/blueprints/controllers/ikea_e1743/#changelog)
-    📕 [Full documentation](https://yarafie.github.io/awesome-ha-blueprints/docs/blueprints/controllers/ikea_e1743)
+    📕 Full documentation regarding this blueprint is available [here](https://yarafie.github.io/awesome-ha-blueprints/docs/blueprints/controllers/ikea_e1743).
 
     🚀 This blueprint is part of the **[Awesome HA Blueprints](https://yarafie.github.io/awesome-ha-blueprints) project**. Please consider **[leaving a star on GitHub](https://github.com/EPMatt/awesome-ha-blueprints)**! 🌟
 
@@ -217,11 +217,11 @@ variables:
       button_down_release: ['2003']
     zha:
       button_up_short: ['on']
-      button_up_long: [move_with_on_off_0_83]
-      button_up_release: [stop]
+      button_up_long: [move_with_on_off_MoveMode.Up_83, move_with_on_off_0_83]
+      button_up_release: [stop_with_on_off, stop]
       button_down_short: ['off']
-      button_down_long: [move_1_83]
-      button_down_release: [stop]
+      button_down_long: [move_MoveMode.Down_83_bitmap8.0_bitmap8.0, move_1_83]
+      button_down_release: [stop_with_on_off, stop]
     zigbee2mqtt:
       # source: https://www.zigbee2mqtt.io/devices/E1743.html#ikea-e1743
       button_up_short: ['on']
@@ -310,8 +310,9 @@ actions:
         {%- elif integration_id == "zha" -%}
         {{ trigger.event.data.command }}{{"_" if trigger.event.data.args|length > 0}}{{ trigger.event.data.args|join("_") }}
         {%- endif -%}
-      trigger_delta: '{{ (as_timestamp(now()) - ((states(helper_last_controller_event) | from_json).t if helper_last_controller_event is not none and (states(helper_last_controller_event) | regex_match("^\{((\"a\":\".*\"|\"t\":\d+\.\d+)(,)?){2}\}$")) else as_timestamp("1970-01-01 00:00:00"))) * 1000 }}'
-      last_controller_event: '{{ (states(helper_last_controller_event) | from_json).a if helper_last_controller_event is not none and (states(helper_last_controller_event) | regex_match("^\{((\"a\":\".*\"|\"t\":\d+\.\d+)(,)?){2}\}$")) else "" }}'
+      deserialized_state: '{{ (states(helper_last_controller_event) | from_json) if helper_last_controller_event is not none and (states(helper_last_controller_event) | regex_match("^\{\s*?((\"a\":\s*?\".*\"|\"t\":\s*?\d+\.\d+)(,\s*?)?){2}\s*?\}$")) else {} }}'
+      trigger_delta: '{{ (as_timestamp(now()) - (deserialized_state.t | default(0))) * 1000 }}'
+      last_controller_event: '{{ (deserialized_state.a | default("")) }}'
   # update helper
   - action: input_text.set_value
     data:
@@ -327,13 +328,13 @@ actions:
                 sequence:
                   - choose:
                       # if previous event was a short press
-                      - conditions: '{{ trigger_action | string in states(helper_last_controller_event) and trigger_delta | int <= helper_double_press_delay | int }}'
+                      - conditions: '{{ trigger_action | string == last_controller_event and trigger_delta | int <= helper_double_press_delay | int }}'
                         sequence:
                           # store the double press event in the last controller event helper
                           - action: input_text.set_value
                             data:
                               entity_id: !input helper_last_controller_event
-                              value: '{{ {"a":"double_press","t":as_timestamp(now())} | to_json }}'
+                              value: '{{ {"a":"double_press_up","t":as_timestamp(now())} | to_json }}'
                           # run the double press action
                           # fire the event
                           - event: ahb_controller_event
@@ -410,13 +411,13 @@ actions:
                 sequence:
                   - choose:
                       # if previous event was a short press
-                      - conditions: '{{ trigger_action | string in states(helper_last_controller_event) and trigger_delta | int <= helper_double_press_delay | int }}'
+                      - conditions: '{{ trigger_action | string == last_controller_event and trigger_delta | int <= helper_double_press_delay | int }}'
                         sequence:
                           # store the double press event in the last controller event helper
                           - action: input_text.set_value
                             data:
                               entity_id: !input helper_last_controller_event
-                              value: '{{ {"a":"double_press","t":as_timestamp(now())} | to_json }}'
+                              value: '{{ {"a":"double_press_down","t":as_timestamp(now())} | to_json }}'
                           # run the double press action
                           # fire the event
                           - event: ahb_controller_event
