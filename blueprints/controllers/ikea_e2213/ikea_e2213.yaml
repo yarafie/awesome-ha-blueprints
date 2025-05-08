@@ -48,11 +48,11 @@ blueprint:
             # source: https://github.com/zigpy/zha-device-handlers/blob/dev/zhaquirks/ikea/somrigsmartbtn.py#L149
             - integration: zha
               manufacturer: IKEA of Sweden
-              model: SOMRIG Shortcut Button
+              model: SOMRIG shortcut button
             # source: https://github.com/dresden-elektronik/deconz-rest-plugin/blob/8ae69a976bca13f22e8002a13ebe798d1e26c086/button_maps.json#L343
             - integration: deconz
               manufacturer: IKEA of Sweden
-              model: SOMRIG Shortcut Button
+              model: SOMRIG shortcut button
           multiple: false
     # inputs for custom actions
     action_button_dots1_short:
@@ -194,14 +194,14 @@ variables:
       button_dots2_double: [multi_press_complete_2]
     dcz:
       # source: https://github.com/dresden-elektronik/deconz-rest-plugin/blob/8ae69a976bca13f22e8002a13ebe798d1e26c086/button_maps.json#L343
-      button_dots1_short: ['1003']
-      button_dots1_long: ['1002']
-      button_dots1_release: ['1004']
-      button_dots1_double: ['1006']
-      button_dots2_short: ['2003']
-      button_dots2_long: ['2002']
-      button_dots2_release: ['2004']
-      button_dots2_double: ['2006']
+      button_dots1_short: ['1002']
+      button_dots1_long: ['1001']
+      button_dots1_release: ['1003']
+      button_dots1_double: ['1004']
+      button_dots2_short: ['2002']
+      button_dots2_long: ['2001']
+      button_dots2_release: ['2003']
+      button_dots2_double: ['2004']
   # pre-choose actions for buttons based on configured integration
   # mainly used to pass to hooks through ahb_controller_event
   button_dots1_short: '{{ actions_mapping[integration_id]["button_dots1_short"] }}'
@@ -340,56 +340,56 @@ triggers:
       - deconz_event
     event_data:
       device_id: !input controller_device
-      event: '1003'
+      event: '1002'
   - trigger: event
     id: dcz-button-dots1-long
     event_type:
       - deconz_event
     event_data:
       device_id: !input controller_device
-      event: '1002'
+      event: '1001'
   - trigger: event
     id: dcz-button-dots1-release
     event_type:
       - deconz_event
     event_data:
       device_id: !input controller_device
-      event: '1004'
+      event: '1003'
   - trigger: event
     id: dcz-button-dots1-double
     event_type:
       - deconz_event
     event_data:
       device_id: !input controller_device
-      event: '1006'
+      event: '1004'
   - trigger: event
     id: dcz-button-dots2-short
     event_type:
       - deconz_event
     event_data:
       device_id: !input controller_device
-      event: '2003'
+      event: '2002'
   - trigger: event
     id: dcz-button-dots2-long
     event_type:
       - deconz_event
     event_data:
       device_id: !input controller_device
-      event: '2002'
+      event: '2001'
   - trigger: event
     id: dcz-button-dots2-release
     event_type:
       - deconz_event
     event_data:
       device_id: !input controller_device
-      event: '2004'
+      event: '2003'
   - trigger: event
     id: dcz-button-dots2-double
     event_type:
       - deconz_event
     event_data:
       device_id: !input controller_device
-      event: '2006'
+      event: '2004'
 #
 # Conditions Block
 conditions:
