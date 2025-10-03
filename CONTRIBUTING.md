@@ -63,7 +63,6 @@ Awesome! Follow these steps to contribute your new blueprint to this project:
    ```
 
 10. **Open a Pull Request (PR)**:
-
     - Go to your fork on GitHub, navigate to the **Pull Requests** tab, and click **New Pull Request**.
     - Select awesome-ha-blueprints/main as the base branch.
     - Provide a clear description of your blueprint.
