@@ -42,7 +42,6 @@ Awesome! Follow these steps to contribute your new blueprint to this project:
    - **Write your blueprint code** inside the renamed .yaml file. Ensure you follow the [Blueprint Guidelines](#blueprint-guidelines).
 
 7. **Update the blueprint docs** in the website/docs/blueprints section:
-
    - Copy the example documentation file in a new folder for the blueprint:
      ```sh
      cp website/docs/blueprints/automation/example.mdx website/docs/blueprints/automation/my-new-blueprint.mdx
