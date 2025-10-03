@@ -38,7 +38,6 @@ Awesome! Follow these steps to contribute your new blueprint to this project:
    ```
 
 6. **Inside your blueprint folder** (blueprints/automation/my-new-blueprint):
-
    - **Rename** \example.yaml to match your blueprint name.
    - **Write your blueprint code** inside the renamed .yaml file. Ensure you follow the [Blueprint Guidelines](#blueprint-guidelines).
 
