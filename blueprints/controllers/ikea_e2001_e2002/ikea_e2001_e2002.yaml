@@ -13,7 +13,7 @@ blueprint:
 
     ## More Info
 
-    ℹ️ Version 2025.04.19
+    ℹ️ Version 2025.10.05
     📝 [Changelog](https://yarafie.github.io/awesome-ha-blueprints/docs/blueprints/controllers/ikea_e2001_e2002/#changelog)
     📕 Full documentation regarding this blueprint is available [here](https://yarafie.github.io/awesome-ha-blueprints/docs/blueprints/controllers/ikea_e2001_e2002).
 
@@ -48,6 +48,13 @@ blueprint:
             - integration: mqtt
               manufacturer: IKEA
               model: STYRBAR remote control (E2001/E2002)
+            # STYRBAR (Z2M) – include additional common variants
+            - integration: mqtt
+              manufacturer: IKEA
+              model: E2001/E2002
+            - integration: mqtt
+              manufacturer: IKEA
+              model: Remote Control N2 # STYRBAR Zigbee model in Z2M
             # source: https://github.com/dresden-elektronik/deconz-rest-plugin/wiki/Supported-Devices
             - integration: zha
               manufacturer: IKEA of Sweden
