@@ -37,16 +37,9 @@ Hooks allow to easily create controller-based automations for interacting with m
 
 ## Requirements
 
-<Requirement id='zigbee2mqtt'/>
-<Requirement id='zha'/>
-<Requirement id='deconz'/>
-<Requirement name='Input Text Integration' required>
-
-This integration provides the entity which must be provided to the blueprint in the **Helper - Last Controller Event** input. Learn more about this helper by reading the dedicated section in the [Additional Notes](#helper---last-controller-event).
-
-[Input Text Integration Docs](https://www.home-assistant.io/integrations/input_text/)
-
-</Requirement>
+<Requirement id='zigbee2mqtt' />
+<Requirement id='zha' />
+<Requirement id='deconz' />
 
 ## Inputs
 
@@ -114,15 +107,9 @@ This Hook blueprint allows to build a controller-based automation to control a c
 
 ## Additional Notes
 
-### Helper - Last Controller Event
-
-The `helper_last_controller_event` (Helper - Last Controller Event) input serves as a permanent storage area for the automation. The stored info is used to implement the blueprint's core functionality. To learn more about the helper, how it's used and why it's required, you can read the dedicated section in the [Controllers-Hooks Ecosystem documentation](/docs/controllers-hooks-ecosystem#helper---last-controller-event-input).
-
-The helper is used to determine button release events when the controller is integrated with Zigbee2MQTT, ZHA, because of the actions mapping for the controller with these integrations. Natively, the controller doesn't allow to distinguish between different button release events, so the blueprint must store the previous clicked button.
-
 ### Virtual double press events
 
-It's also important to note that the controller doesn't natively support double press events. Instead , this blueprint provides virtual double press events. You can read more about them in the [general Controllers-Hooks Ecosystem documentation](/docs/controllers-hooks-ecosystem#virtual-events).
+It's important to note that the controller doesn't natively support double press events. Instead , this blueprint provides virtual double press events. You can read more about them in the [general Controllers-Hooks Ecosystem documentation](/docs/controllers-hooks-ecosystem#virtual-events).
 
 ## Changelog
 
@@ -153,6 +140,7 @@ It's also important to note that the controller doesn't natively support double 
   If you plan to update this blueprint, please make sure to provide a valid `input_text` entity for the `helper_last_controller_event` input. You should create a separate `input_text` for each Controller blueprint you're configuring, since using the same for multiple automation could lead to inconsistencies and undefined behaviour.
 
   **Other changes:**
+
   - :tada: Add Debouncing support. Debouncing avoids duplicate action runs which might occur with certain controllers and integrations. The feature is disabled by default, check the documentation to find out how to enable it
   - Prevent undesired endless loops, which might occur in rare cases when the corresponding stop event is not received, by running loop actions a finite number of times, customizable with two new blueprint inputs
   - Fix inputs wrongly marked as required
@@ -177,3 +165,4 @@ It's also important to note that the controller doesn't natively support double 
 - **2025-04-01**: Fix double-click detection logic. ([@danleongjy](https://github.com/danleongjy))
 - **2025-04-16**: Update ZHA long press and release actions ([@notherealmarco](https://github.com/notherealmarco))
 - **2025-04-19**: Improve Last Controller Event Helper JSON Regex with more lenient matching.
+- **2025-10-12**: Refactored blueprint to use triggers and trigger-id, removed having to supply integration type and removed last controller helper logic. ([@yarafie](https://github.com/yarafie))
