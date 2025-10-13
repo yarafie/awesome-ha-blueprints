@@ -60,8 +60,8 @@ importers:
         specifier: ^2.1.0
         version: 2.1.0
       react-json-view-lite:
-        specifier: ^2.3.0
-        version: 2.4.1(react@19.2.0)
+        specifier: ^2.5.0
+        version: 2.5.0(react@19.2.0)
     devDependencies:
       '@docusaurus/module-type-aliases':
         specifier: ^3.9.1
@@ -4868,8 +4868,8 @@ packages:
     peerDependencies:
       react: ^16.13.1 || ^17.0.0 || ^18.0.0
 
-  react-json-view-lite@2.4.1:
-    resolution: {integrity: sha512-fwFYknRIBxjbFm0kBDrzgBy1xa5tDg2LyXXBepC5f1b+MY3BUClMCsvanMPn089JbV1Eg3nZcrp0VCuH43aXnA==}
+  react-json-view-lite@2.5.0:
+    resolution: {integrity: sha512-tk7o7QG9oYyELWHL8xiMQ8x4WzjCzbWNyig3uexmkLb54r8jO0yH3WCWx8UZS0c49eSA4QUmG5caiRJ8fAn58g==}
     engines: {node: '>=18'}
     peerDependencies:
       react: ^18.0.0 || ^19.0.0
@@ -12366,7 +12366,7 @@ snapshots:
     dependencies:
       react: 19.2.0
 
-  react-json-view-lite@2.4.1(react@19.2.0):
+  react-json-view-lite@2.5.0(react@19.2.0):
     dependencies:
       react: 19.2.0
 
