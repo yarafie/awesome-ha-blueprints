@@ -2,6 +2,10 @@
 # yamllint disable rule:line-length
 # Workflows which handle labels in repository issues and PRs
 name: Issues & PRs label management
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
 
 'on':
   issues:
