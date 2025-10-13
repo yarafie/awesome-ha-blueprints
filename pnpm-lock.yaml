@@ -48,8 +48,8 @@ importers:
         specifier: ^19.0.0
         version: 19.0.0
       react-bootstrap-icons:
-        specifier: ^1.11.5
-        version: 1.11.5(react@19.0.0)
+        specifier: ^1.11.6
+        version: 1.11.6(react@19.0.0)
       react-cookie-consent:
         specifier: ^9.0.0
         version: 9.0.0(react@19.0.0)
@@ -4779,8 +4779,8 @@ packages:
     resolution: {integrity: sha512-y3bGgqKj3QBdxLbLkomlohkvsA8gdAiUQlSBJnBhfn+BPxg4bc62d8TcBW15wavDfgexCgccckhcZvywyQYPOw==}
     hasBin: true
 
-  react-bootstrap-icons@1.11.5:
-    resolution: {integrity: sha512-eOhtFJMUqw98IJcfKJsSMZkFHCeNPTTwXZAe9V9d4mT22ARmbrISxPO9GmtWWuf72zQctLeZMGodX/q6wrbYYg==}
+  react-bootstrap-icons@1.11.6:
+    resolution: {integrity: sha512-ycXiyeSyzbS1C4+MlPTYe0riB+UlZ7LV7YZQYqlERV2cxDiKtntI0huHmP/3VVvzPt4tGxqK0K+Y6g7We3U6tQ==}
     peerDependencies:
       react: '>=16.8.6'
 
@@ -12112,7 +12112,7 @@ snapshots:
       minimist: 1.2.8
       strip-json-comments: 2.0.1
 
-  react-bootstrap-icons@1.11.5(react@19.0.0):
+  react-bootstrap-icons@1.11.6(react@19.0.0):
     dependencies:
       prop-types: 15.8.1
       react: 19.0.0

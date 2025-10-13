@@ -15,7 +15,7 @@ blueprint:
 
     ## More Info
 
-    ℹ️ Version 2025.03.20c
+    ℹ️ Version 2025.10.01
     📝 [Changelog](https://yarafie.github.io/awesome-ha-blueprints/docs/blueprints/controllers/ikea_e2201/#changelog)
     📕 Full documentation regarding this blueprint is available [here](https://yarafie.github.io/awesome-ha-blueprints/docs/blueprints/controllers/ikea_e2201).
 
@@ -47,6 +47,9 @@ blueprint:
             - integration: zha
               manufacturer: IKEA of Sweden
               model: RODRET Dimmer
+            - integration: zha
+              manufacturer: IKEA of Sweden
+              model: RODRET wireless dimmer
             # source: https://github.com/dresden-elektronik/deconz-rest-plugin/blob/8ae69a976bca13f22e8002a13ebe798d1e26c086/button_maps.json#L236
             - integration: deconz
               manufacturer: IKEA of Sweden
