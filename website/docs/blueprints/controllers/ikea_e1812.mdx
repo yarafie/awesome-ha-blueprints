@@ -102,6 +102,7 @@ This Hook blueprint allows to build a controller-based automation to control a c
   If you plan to update this blueprint, please make sure to provide a valid `input_text` entity for the `helper_last_controller_event` input. You should create a separate `input_text` for each Controller blueprint you're configuring, since using the same for multiple automation could lead to inconsistencies and undefined behaviour.
 
   **Other changes:**
+
   - :tada: Add Debouncing support. Debouncing avoids duplicate action runs which might occur with certain controllers and integrations. The feature is disabled by default, check the documentation to find out how to enable it
   - Prevent undesired endless loops, which might occur in rare cases when the corresponding stop event is not received, by running loop actions a finite number of times, customizable with a new blueprint input
   - Fix inputs wrongly marked as required
@@ -132,6 +133,7 @@ This Hook blueprint allows to build a controller-based automation to control a c
   The blueprint needs to be re-downloaded and automations using the blueprint needs to be set-up again.
 
   This is due to the changes below:
+
   - The need for selection of `integration` type has been removed from the inputs, the blueprint/automation will detect it automatically.
   - The `helper_last_controller_event` text input is no longer needed and has been removed from the inputs.
 
