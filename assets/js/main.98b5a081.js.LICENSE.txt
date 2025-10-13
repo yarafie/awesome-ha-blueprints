@@ -9,19 +9,6 @@
  * Released under the MIT license
  */
 
-/*! Bundled license information:
-
-prismjs/prism.js:
-  (**
-   * Prism: Lightweight, robust, elegant syntax highlighting
-   *
-   * @license MIT <https://opensource.org/licenses/MIT>
-   * @author Lea Verou <https://lea.verou.me>
-   * @namespace
-   * @public
-   *)
-*/
-
 /*! js-cookie v3.0.5 | MIT */
 
 /**
