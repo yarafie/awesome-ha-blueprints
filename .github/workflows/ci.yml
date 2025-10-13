@@ -1,5 +1,8 @@
 name: CI - Push
 
+permissions:
+  contents: read
+
 'on':
   push:
     branches:
@@ -70,6 +73,8 @@ jobs:
 
   gh-pages:
     name: Deploy to GH Pages
+    permissions:
+      contents: write
     needs:
       - lint
       - prettier
