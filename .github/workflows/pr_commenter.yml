@@ -5,6 +5,9 @@ name: PR Commenter
     branches:
       - main
 
+permissions:
+  contents: read
+  pull-requests: write
 jobs:
   thank-you-message:
     name: Thank you message
