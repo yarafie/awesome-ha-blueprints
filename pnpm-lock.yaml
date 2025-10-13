@@ -64,8 +64,8 @@ importers:
         version: 2.4.1(react@19.2.0)
     devDependencies:
       '@docusaurus/module-type-aliases':
-        specifier: ^3.7.0
-        version: 3.7.0(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+        specifier: ^3.9.1
+        version: 3.9.1(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       '@docusaurus/tsconfig':
         specifier: ^3.9.1
         version: 3.9.1
@@ -1073,6 +1073,12 @@ packages:
 
   '@docusaurus/module-type-aliases@3.7.0':
     resolution: {integrity: sha512-g7WdPqDNaqA60CmBrr0cORTrsOit77hbsTj7xE2l71YhBn79sxdm7WMK7wfhcaafkbpIh7jv5ef5TOpf1Xv9Lg==}
+    peerDependencies:
+      react: '*'
+      react-dom: '*'
+
+  '@docusaurus/module-type-aliases@3.9.1':
+    resolution: {integrity: sha512-YBce3GbJGGcMbJTyHcnEOMvdXqg41pa5HsrMCGA5Rm4z0h0tHS6YtEldj0mlfQRhCG7Y0VD66t2tb87Aom+11g==}
     peerDependencies:
       react: '*'
       react-dom: '*'
@@ -7231,6 +7237,24 @@ snapshots:
   '@docusaurus/module-type-aliases@3.7.0(react-dom@19.2.0(react@19.2.0))(react@19.2.0)':
     dependencies:
       '@docusaurus/types': 3.7.0(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+      '@types/history': 4.7.11
+      '@types/react': 19.0.12
+      '@types/react-router-config': 5.0.11
+      '@types/react-router-dom': 5.3.3
+      react: 19.2.0
+      react-dom: 19.2.0(react@19.2.0)
+      react-helmet-async: '@slorber/react-helmet-async@1.3.0(react-dom@19.2.0(react@19.2.0))(react@19.2.0)'
+      react-loadable: '@docusaurus/react-loadable@6.0.0(react@19.2.0)'
+    transitivePeerDependencies:
+      - '@swc/core'
+      - esbuild
+      - supports-color
+      - uglify-js
+      - webpack-cli
+
+  '@docusaurus/module-type-aliases@3.9.1(react-dom@19.2.0(react@19.2.0))(react@19.2.0)':
+    dependencies:
+      '@docusaurus/types': 3.9.1(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       '@types/history': 4.7.11
       '@types/react': 19.0.12
       '@types/react-router-config': 5.0.11
