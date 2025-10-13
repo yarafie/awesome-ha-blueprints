@@ -78,7 +78,7 @@ jobs:
         with:
           dry: true
           prettier_options: --write .
-          prettier_version: 3.5.0
+          prettier_version: 3.6.2
         env:
           GITHUB_TOKEN: ${{ secrets.github_token }}
       - if: ${{ always() && steps.prettier.outcome == 'failure' }}
