@@ -22,10 +22,10 @@
     "clsx": "^2.1.1",
     "js-cookie": "^3.0.5",
     "prism-react-renderer": "^2.3.0",
-    "react": "^19.0.0",
+    "react": "^19.2.0",
     "react-bootstrap-icons": "^1.11.6",
     "react-cookie-consent": "^9.0.0",
-    "react-dom": "^19.0.0",
+    "react-dom": "^19.2.0",
     "react-ga4": "^2.1.0",
     "react-json-view-lite": "^2.3.0"
   },
