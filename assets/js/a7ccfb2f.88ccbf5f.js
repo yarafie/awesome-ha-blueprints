@@ -1,0 +1,1 @@
+"use strict";(globalThis.webpackChunkawesome_ha_blueprints_website=globalThis.webpackChunkawesome_ha_blueprints_website||[]).push([[2037],{1665:e=>{e.exports=JSON.parse('{"name":"blueprint-routes-plugin","id":"default"}')}}]);
