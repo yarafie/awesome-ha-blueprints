@@ -14,7 +14,7 @@ export default function blueprintRoutesPlugin(context) {
       const { siteDir } = context
       const blueprintsDir = path.resolve(siteDir, '../blueprints')
 
-      const blueprintFiles = glob.sync('**/*.yaml', {
+      const blueprintFiles = globSync('**/*.yaml', {
         cwd: blueprintsDir,
         absolute: true,
       })
