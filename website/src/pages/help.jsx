@@ -75,7 +75,7 @@ function Help() {
               <p>
                 If you love the project and want to help its future
                 developments, consider showing your support by{' '}
-                <a href='https://www.buymeacoffee.com/epmatt'>
+                <a href='https://www.buymeacoffee.com/yarafiet'>
                   making a donation
                 </a>
                 . ☕
