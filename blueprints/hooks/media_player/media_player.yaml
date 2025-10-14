@@ -14,7 +14,7 @@ blueprint:
 
     ## More Info
 
-    ℹ️ Version 2025..04.12
+    ℹ️ Version 2025..10.13
     📝 [Changelog](https://yarafie.github.io/awesome-ha-blueprints/docs/blueprints/hooks/media_player/#changelog)
     📕 Full documentation regarding this blueprint is available [here](https://yarafie.github.io/awesome-ha-blueprints/docs/blueprints/hooks/media_player).
 
@@ -56,6 +56,7 @@ blueprint:
             - Shelly SNSN-0024x Plus i4 with Wall switch 4 (#2)
             - SONOFF SNZB-01 Wireless Switch
             - Tuya ERS-10TZBVK-AA Smart knob
+            - Tuya ZG-101Z/D Smart knob
             - Xiaomi WXCJKG11LM Aqara Opple 2 button remote
             - Xiaomi WXCJKG12LM Aqara Opple 4 button remote
             - Xiaomi WXCJKG12LM Aqara Opple 4 button remote (#2)
@@ -223,6 +224,12 @@ variables:
       stop: button_long
       next_track: button_double
     Tuya ERS-10TZBVK-AA Smart knob:
+      volume_up: rotate_right
+      volume_down: rotate_left
+      play_pause: click_short
+      next_track: click_double
+      prev_track: click_long
+    Tuya ZG-101Z/D Smart knob:
       volume_up: rotate_right
       volume_down: rotate_left
       play_pause: click_short
