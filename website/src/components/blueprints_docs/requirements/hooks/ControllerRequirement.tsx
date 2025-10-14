@@ -24,7 +24,7 @@ const ControllerRequirement: React.FC<ControllerRequirementProps> = ({
       </p>
       <p>{children}</p>
       <a href='#supported-controllers'>List of Supported Controllers</a> -{' '}
-      <a href='https://yarafie.github.io/awesome-ha-blueprints/blueprints/controllers'>
+      <a href='https://yarafie.github.io/awesome-ha-blueprints/docs/blueprints/controllers'>
         Controllers Docs
       </a>
     </CustomRequirement>
