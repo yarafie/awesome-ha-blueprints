@@ -17,7 +17,7 @@ blueprint:
 
     ## More Info
 
-    ℹ️ Version 2025.04.17
+    ℹ️ Version 2025.10.16
     📝 [Changelog](https://yarafie.github.io/awesome-ha-blueprints/docs/blueprints/controllers/philips_929002398602/#changelog)
     📕 Full documentation regarding this blueprint is available [here](https://yarafie.github.io/awesome-ha-blueprints/docs/blueprints/controllers/philips_929002398602).
 
@@ -314,30 +314,30 @@ variables:
   actions_mapping:
     z2m:
       # source: https://www.zigbee2mqtt.io/devices/929002398602.html#philips-929002398602
-      button_on_short: [on_press]
+      button_on_short: [on_press_release]
       button_on_long: [on_hold]
       button_on_release: [on_hold_release]
-      button_off_short: [off_press]
+      button_off_short: [off_press_release]
       button_off_long: [off_hold]
       button_off_release: [off_hold_release]
-      button_up_short: [up_press]
+      button_up_short: [up_press_release]
       button_up_long: [up_hold]
       button_up_release: [up_hold_release]
-      button_down_short: [down_press]
+      button_down_short: [down_press_release]
       button_down_long: [down_hold]
       button_down_release: [down_hold_release]
     zha:
       # source: https://github.com/zigpy/zha-device-handlers/blob/dev/zhaquirks/
-      button_on_short: [on_press]
+      button_on_short: [on_press_release]
       button_on_long: [on_hold]
       button_on_release: [on_long_release]
-      button_off_short: [off_press]
+      button_off_short: [off_press_release]
       button_off_long: [off_hold]
       button_off_release: [off_long_release]
-      button_up_short: [up_press]
+      button_up_short: [up_press_release]
       button_up_long: [up_hold]
       button_up_release: [up_long_release]
-      button_down_short: [down_press]
+      button_down_short: [down_press_release]
       button_down_long: [down_hold]
       button_down_release: [down_long_release]
   # pre-choose actions for buttons based on configured integration
@@ -367,7 +367,7 @@ triggers:
     domain: mqtt
     device_id: !input controller_device
     type: action
-    subtype: on_press
+    subtype: on_press_release
   - trigger: device
     id: z2m-button-on-long
     domain: mqtt
@@ -385,7 +385,7 @@ triggers:
     domain: mqtt
     device_id: !input controller_device
     type: action
-    subtype: off_press
+    subtype: off_press_release
   - trigger: device
     id: z2m-button-off-long
     domain: mqtt
@@ -403,7 +403,7 @@ triggers:
     domain: mqtt
     device_id: !input controller_device
     type: action
-    subtype: up_press
+    subtype: up_press_release
   - trigger: device
     id: z2m-button-up-long
     domain: mqtt
@@ -421,7 +421,7 @@ triggers:
     domain: mqtt
     device_id: !input controller_device
     type: action
-    subtype: down_press
+    subtype: down_press_release
   - trigger: device
     id: z2m-button-down-long
     domain: mqtt
@@ -440,7 +440,7 @@ triggers:
     event_type: zha_event
     event_data:
       device_id: !input controller_device
-      command: on_press
+      command: on_press_release
   - trigger: event
     id: zha-button-on-long
     event_type: zha_event
@@ -458,7 +458,7 @@ triggers:
     event_type: zha_event
     event_data:
       device_id: !input controller_device
-      command: off_press
+      command: off_press_release
   - trigger: event
     id: zha-button-off-long
     event_type: zha_event
@@ -476,7 +476,7 @@ triggers:
     event_type: zha_event
     event_data:
       device_id: !input controller_device
-      command: up_press
+      command: up_press_release
   - trigger: event
     id: zha-button-up-long
     event_type: zha_event
@@ -494,7 +494,7 @@ triggers:
     event_type: zha_event
     event_data:
       device_id: !input controller_device
-      command: down_press
+      command: down_press_release
   - trigger: event
     id: zha-button-down-long
     event_type: zha_event
@@ -551,13 +551,13 @@ actions:
                             domain: mqtt
                             device_id: !input controller_device
                             type: action
-                            subtype: on_press
+                            subtype: on_press_release
                           # zha trigger
                           - trigger: event
                             event_type: zha_event
                             event_data:
                               device_id: !input controller_device
-                              command: on_press
+                              command: on_press_release
                         timeout:
                           milliseconds: '{{ helper_double_press_delay }}'
                         continue_on_timeout: true
@@ -686,13 +686,13 @@ actions:
                             domain: mqtt
                             device_id: !input controller_device
                             type: action
-                            subtype: off_press
+                            subtype: off_press_release
                           # zha trigger
                           - trigger: event
                             event_type: zha_event
                             event_data:
                               device_id: !input controller_device
-                              command: off_press
+                              command: off_press_release
                         timeout:
                           milliseconds: '{{ helper_double_press_delay }}'
                         continue_on_timeout: true
@@ -821,13 +821,13 @@ actions:
                             domain: mqtt
                             device_id: !input controller_device
                             type: action
-                            subtype: up_press
+                            subtype: up_press_release
                           # zha trigger
                           - trigger: event
                             event_type: zha_event
                             event_data:
                               device_id: !input controller_device
-                              command: up_press
+                              command: up_press_release
                         timeout:
                           milliseconds: '{{ helper_double_press_delay }}'
                         continue_on_timeout: true
@@ -956,13 +956,13 @@ actions:
                             domain: mqtt
                             device_id: !input controller_device
                             type: action
-                            subtype: down_press
+                            subtype: down_press_release
                           # zha trigger
                           - trigger: event
                             event_type: zha_event
                             event_data:
                               device_id: !input controller_device
-                              command: down_press
+                              command: down_press_release
                         timeout:
                           milliseconds: '{{ helper_double_press_delay }}'
                         continue_on_timeout: true
