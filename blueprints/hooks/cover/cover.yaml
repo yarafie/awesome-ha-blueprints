@@ -14,7 +14,7 @@ blueprint:
 
     ## More Info
 
-    ℹ️ Version 2025.04.12
+    ℹ️ Version 2025.10.20
     📝 [Changelog](https://yarafie.github.io/awesome-ha-blueprints/docs/blueprints/hooks/cover/#changelog)
     📕 Full documentation regarding this blueprint is available [here](https://yarafie.github.io/awesome-ha-blueprints/docs/blueprints/hooks/cover).
 
@@ -41,6 +41,7 @@ blueprint:
             - IKEA E1743 TRÅDFRI On/Off Switch & Dimmer
             - IKEA E1766 TRÅDFRI Open/Close Remote
             - IKEA E1812 TRÅDFRI Shortcut button
+            - IKEA E2001/E2002 STYRBAR remote control
             - IKEA E2123 SYMFONISK sound remote, gen 2
             - IKEA E2201 RODRET Dimmer
             - IKEA E2213 SOMRIG shortcut button
