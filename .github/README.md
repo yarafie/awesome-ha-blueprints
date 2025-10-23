@@ -21,7 +21,9 @@ Reliable, customizable, fully tested by the community.
 
 ## Preface
 
-**Awesome HA Blueprints (yarafie Fork)** Welcome to yarafie's Fork of awesome-ha-blueprints.
+**Awesome HA Blueprints (yarafie Fork)**
+
+Welcome to **yarafie's Fork** of awesome-ha-blueprints.
 
 I wasn't planning to come back to this fork, but I've had some time on my hands.
 I've updated this fork, cleaned it up (No Security Vulnerabilities at least according to the github tab on top, which you probably don't see anyways :100: )
