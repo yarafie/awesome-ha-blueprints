@@ -12,7 +12,8 @@ A curated collection of blueprints for Home Assistant.
 Reliable, customizable, fully tested by the community.
 
 ![Maintained](https://img.shields.io/badge/maintained-yes-brightgreen) ![GPL-3.0 License](https://img.shields.io/github/license/yarafie/awesome-ha-blueprints) ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/yarafie/awesome-ha-blueprints/Continuous%20Integration?label=checks%20and%20build) [![Community Topic here](https://img.shields.io/badge/home%20assistant%20forums-topic-blue)](https://community.home-assistant.io/t/awesome-ha-blueprints-a-curated-list-of-blueprints-easily-create-controller-based-automations-remotes-switches-for-controlling-lights-media-players-and-more/256687)
-![GitHub Discussions](https://img.shields.io/github/discussions/yarafie/awesome-ha-blueprints)
+![GitHub Discussions on yarafie fork](https://img.shields.io/github/discussions/yarafie/awesome-ha-blueprints)
+![GitHub Discussions on EPMatt](https://img.shields.io/github/discussions/EPMatt/awesome-ha-blueprints)
 
 <a href="https://www.buymeacoffee.com/yarafiet"><img width="150" alt="yellow-button" src="https://user-images.githubusercontent.com/30753195/133942263-5fef0166-4ab5-4529-b931-37b5d14f02bf.png"></a>
 
