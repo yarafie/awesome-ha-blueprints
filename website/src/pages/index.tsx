@@ -38,6 +38,8 @@ export default function Home(): React.ReactElement {
             A curated collection of blueprints for Home Assistant.
             <br />
             Reliable, customizable, fully tested by the community.
+            <br />
+            Forked and maintained by yarafie.
           </p>
           <div className={`row margin-top--xl ${styles.buttons}`}>
             <div className='col margin-bottom--lg'>
