@@ -63,7 +63,7 @@ function Help() {
               <h3>Stay up to date</h3>
               <p>
                 Visit the{' '}
-                <a href='https://github.com/EPMatt/awesome-ha-blueprints'>
+                <a href='https://github.com/yarafie/awesome-ha-blueprints'>
                   GitHub repository
                 </a>{' '}
                 for the latest updates. If you like the project, consider
