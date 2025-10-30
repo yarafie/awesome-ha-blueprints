@@ -7,9 +7,7 @@ blueprint:
     Controller automation for executing any kind of action triggered by the provided Aqara DJT11LM Vibration Sensor.
     Supports Zigbee2MQTT.
 
-    Automations created with this blueprint can be connected with one or more [Hooks](https://yarafie.github.io/awesome-ha-blueprints/docs/blueprints/hooks) supported by this controller.
-    Hooks allow to easily create controller-based automations for interacting with media players, lights, covers and more.
-    See the list of [Hooks available for this controller](https://yarafie.github.io/awesome-ha-blueprints/docs/blueprints/controllers/aqara_djt11lm#available-hooks) for additional details.
+    [See documentation for this controller](https://yarafie.github.io/awesome-ha-blueprints/docs/blueprints/controllers/aqara_djt11lm) for additional details.
 
     ## More Info
 
