@@ -42,8 +42,26 @@ blueprint:
               manufacturer: Aqara
               model: Vibration sensor (DJT11LM)
           multiple: false
-    # inputs for custom actions
-    ## inputs switch mode selection
+    ## inputs for device custom actions
+    action_device_vibrate:
+      name: (Optional) Device detects vibration
+      description: Action to run when device detects vibration.
+      default: []
+      selector:
+        action:
+    action_device_tilt:
+      name: (Optional) Device detects being tilted
+      description: Action to run when device detects being tilted.
+      default: []
+      selector:
+        action:
+    action_device_drop:
+      name: (Optional) Device detects drop
+      description: Action to run when device detects being dropped.
+      default: []
+      selector:
+        action:
+    ## inputs device sensitivity selection
     device_sensitivy_section:
       name: Device Sensitivity Options
       icon: mdi:remote
@@ -63,25 +81,6 @@ blueprint:
                 - label: Low Sensitivity
                   value: low
               mode: dropdown
-    ## inputs for device actions
-    action_device_vibrate:
-      name: (Optional) Device detects vibration
-      description: Action to run when device detects vibration.
-      default: []
-      selector:
-        action:
-    action_device_tilt:
-      name: (Optional) Device detects being tilted
-      description: Action to run when device detects being tilted.
-      default: []
-      selector:
-        action:
-    action_device_drop:
-      name: (Optional) Device detects drop
-      description: Action to run when device detects being dropped.
-      default: []
-      selector:
-        action:
 # Automation schema
 variables:
   # Controller ID
