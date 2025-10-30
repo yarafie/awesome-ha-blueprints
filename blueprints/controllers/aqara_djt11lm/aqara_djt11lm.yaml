@@ -67,7 +67,7 @@ blueprint:
       icon: mdi:remote
       collapsed: true
       input:
-        device_sensitivty:
+        device_sensitivity:
           name: (Optional) Set the sensitivity of device
           description: The sensitivity for the device
           default: medium
