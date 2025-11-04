@@ -15,7 +15,7 @@ blueprint:
 
     ## More Info
 
-    ℹ️ Version 2025.10.20
+    ℹ️ Version 2025.11.04
     📝 [Changelog](https://yarafie.github.io/awesome-ha-blueprints/docs/blueprints/controllers/ikea_e2001_e2002/#changelog)
     📕 Full documentation regarding this blueprint is available [here](https://yarafie.github.io/awesome-ha-blueprints/docs/blueprints/controllers/ikea_e2001_e2002).
 
@@ -477,7 +477,7 @@ triggers:
       endpoint_id: 1
       args: [1, 83, 0, 0]
   - trigger: event
-    id: zha-button-left-release
+    id: zha-button-down-release
     event_type: zha_event
     event_data:
       device_id: !input controller_device
@@ -732,7 +732,7 @@ actions:
               - zha-button-up-long
               - dcz-button-up-long
         sequence:
-          # fire the ahb event only once, the ahb hook will take care of looping
+          # fire the ahb event only once before entering repeat
           - event: ahb_controller_event
             event_data:
               controller: '{{ controller_id }}'
@@ -750,7 +750,16 @@ actions:
                       count: !input button_up_long_max_loop_repeats
                       sequence:
                         - parallel:
-                            - sequence: !input action_button_up_long
+                            - sequence:
+                                # fire the ahb event
+                                - event: ahb_controller_event
+                                  event_data:
+                                    controller: '{{ controller_id }}'
+                                    action: button_up_long
+                                # run the custom action
+                                - choose:
+                                    - conditions: []
+                                      sequence: !input action_button_up_long
                             - sequence:
                                 - choose:
                                     - conditions: []
@@ -786,20 +795,6 @@ actions:
                                               value_template: '{{ wait.trigger.idx is defined }}'
                                           then:
                                             - stop: button_up_released
-      #
-      # Actions for Up Button long press released
-      - conditions:
-          - condition: trigger
-            id:
-              - z2m-button-long-release
-              - zha-button-up-release
-              - dcz-button-up-release
-        sequence:
-          # fire the ahb hook event
-          - event: ahb_controller_event
-            event_data:
-              controller: '{{ controller_id }}'
-              action: button_up_release
       #
       # Actions for Down Button Single Press / Double Press Virtual
       - conditions:
@@ -889,7 +884,7 @@ actions:
               - zha-button-down-long
               - dcz-button-down-long
         sequence:
-          # fire the ahb event only once, the ahb hook will take care of looping
+          # fire the ahb event only once before entering repeat
           - event: ahb_controller_event
             event_data:
               controller: '{{ controller_id }}'
@@ -907,7 +902,16 @@ actions:
                       count: !input button_down_long_max_loop_repeats
                       sequence:
                         - parallel:
-                            - sequence: !input action_button_down_long
+                            - sequence:
+                                # fire the ahb event
+                                - event: ahb_controller_event
+                                  event_data:
+                                    controller: '{{ controller_id }}'
+                                    action: button_down_long
+                                # run the custom action
+                                - choose:
+                                    - conditions: []
+                                      sequence: !input action_button_down_long
                             - sequence:
                                 - choose:
                                     - conditions: []
@@ -943,20 +947,6 @@ actions:
                                               value_template: '{{ wait.trigger.idx is defined }}'
                                           then:
                                             - stop: button_down_released
-      #
-      # Actions for Down Button long press released
-      - conditions:
-          - condition: trigger
-            id:
-              - z2m-button-long-release
-              - zha-button-down-release
-              - dcz-button-down-release
-        sequence:
-          # fire the ahb hook event
-          - event: ahb_controller_event
-            event_data:
-              controller: '{{ controller_id }}'
-              action: button_down_release
       #
       # Actions for Left Button Single Press / Double Press Virtual
       - conditions:
@@ -1047,7 +1037,7 @@ actions:
               - zha-button-left-long
               - dcz-button-left-long
         sequence:
-          # fire the ahb event only once, the ahb hook will take care of looping
+          # fire the ahb event only once before entering repeat
           - event: ahb_controller_event
             event_data:
               controller: '{{ controller_id }}'
@@ -1065,7 +1055,16 @@ actions:
                       count: !input button_left_long_max_loop_repeats
                       sequence:
                         - parallel:
-                            - sequence: !input action_button_left_long
+                            - sequence:
+                                # fire the ahb event
+                                - event: ahb_controller_event
+                                  event_data:
+                                    controller: '{{ controller_id }}'
+                                    action: button_left_long
+                                # run the custom action
+                                - choose:
+                                    - conditions: []
+                                      sequence: !input action_button_left_long
                             - sequence:
                                 - choose:
                                     - conditions: []
@@ -1099,20 +1098,6 @@ actions:
                                               value_template: '{{ wait.trigger.idx is defined }}'
                                           then:
                                             - stop: button_left_released
-      #
-      # Actions for Left Button long press released
-      - conditions:
-          - condition: trigger
-            id:
-              - z2m-button-left-release
-              - zha-button-arrow-release
-              - dcz-button-left-release
-        sequence:
-          # fire the ahb hook event
-          - event: ahb_controller_event
-            event_data:
-              controller: '{{ controller_id }}'
-              action: button_left_release
       #
       # Actions for Right Button Single Press / Double Press Virtual
       - conditions:
@@ -1203,7 +1188,7 @@ actions:
               - zha-button-right-long
               - dcz-button-right-long
         sequence:
-          # fire the ahb event only once, the ahb hook will take care of looping
+          # fire the ahb event only once before entering repeat
           - event: ahb_controller_event
             event_data:
               controller: '{{ controller_id }}'
@@ -1221,7 +1206,16 @@ actions:
                       count: !input button_right_long_max_loop_repeats
                       sequence:
                         - parallel:
-                            - sequence: !input action_button_right_long
+                            - sequence:
+                                # fire the ahb event
+                                - event: ahb_controller_event
+                                  event_data:
+                                    controller: '{{ controller_id }}'
+                                    action: button_right_long
+                                # run the custom action
+                                - choose:
+                                    - conditions: []
+                                      sequence: !input action_button_right_long
                             - sequence:
                                 - choose:
                                     - conditions: []
@@ -1255,17 +1249,3 @@ actions:
                                               value_template: '{{ wait.trigger.idx is defined }}'
                                           then:
                                             - stop: button_right_released
-      #
-      # Actions for Right Button long press released
-      - conditions:
-          - condition: trigger
-            id:
-              - z2m-button-right-release
-              - zha-button-arrow-release
-              - dcz-button-right-release
-        sequence:
-          # fire the ahb hook event
-          - event: ahb_controller_event
-            event_data:
-              controller: '{{ controller_id }}'
-              action: button_right_release
