@@ -859,12 +859,12 @@ actions:
                         timeout:
                           milliseconds: !input helper_double_press_delay
                         continue_on_timeout: true
-                      ## Guard: ignore long-press triggers during double-press window
-                      #- condition: template
-                      #  value_template: >
-                      #    {{ not trigger.id in [
-                      #      'z2m-button-down-long', 'zha-button-down-long', 'dcz-button-down-long'
-                      #    ] }}
+                      # Guard: ignore long-press triggers during double-press window
+                      - condition: template
+                        value_template: >
+                          {{ not trigger.id in [
+                            'z2m-button-down-long', 'zha-button-down-long', 'dcz-button-down-long'
+                          ] }}
                       - if:
                           - condition: template
                             value_template: '{{ wait.trigger.idx is defined }}'
@@ -1185,12 +1185,12 @@ actions:
                         timeout:
                           milliseconds: !input helper_double_press_delay
                         continue_on_timeout: true
-                      ## Guard: ignore long-press triggers during double-press window
-                      #- condition: template
-                      #  value_template: >
-                      #    {{ not trigger.id in [
-                      #      'z2m-button-left-long', 'zha-button-left-long', 'dcz-button-left-long'
-                      #    ] }}
+                      # Guard: ignore long-press triggers during double-press window
+                      - condition: template
+                        value_template: >
+                          {{ not trigger.id in [
+                            'z2m-button-left-long', 'zha-button-left-long', 'dcz-button-left-long'
+                          ] }}
                       - if:
                           - condition: template
                             value_template: '{{ wait.trigger.idx is defined }}'
