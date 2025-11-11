@@ -15,7 +15,7 @@ blueprint:
 
     ## More Info
 
-    ℹ️ Version 2025.11.04
+    ℹ️ Version 2025.11.11
     📝 [Changelog](https://yarafie.github.io/awesome-ha-blueprints/docs/blueprints/controllers/ikea_e2001_e2002/#changelog)
     📕 Full documentation regarding this blueprint is available [here](https://yarafie.github.io/awesome-ha-blueprints/docs/blueprints/controllers/ikea_e2001_e2002).
 
@@ -354,7 +354,7 @@ variables:
   button_left_release: '{{ actions_mapping[integration_id]["button_left_release"] }}'
 #
 # Mode Block
-mode: single
+mode: restart
 max_exceeded: silent
 #
 # Triggers Block
@@ -643,8 +643,9 @@ actions:
   #
   # choose the sequence to run based on the received button event
   - choose:
-      #
-      # Actions for Up Button Single Press / Double Press Virtual
+      # ===================================
+      # 🔼 UP BUTTON SHORT & DOUBLE PRESS
+      # ===================================
       - conditions:
           - condition: trigger
             id:
@@ -652,16 +653,31 @@ actions:
               - zha-button-up-short
               - dcz-button-up-short
         sequence:
+          # Added: guard against long-press overlap
+          - condition: template
+            value_template: >
+              {{ trigger.id not in [
+                'z2m-button-up-long', 'z2m-button-down-long',
+                'z2m-button-left-long', 'z2m-button-right-long',
+                'zha-button-up-long', 'zha-button-down-long',
+                'zha-button-left-long', 'zha-button-right-long',
+                'dcz-button-up-long', 'dcz-button-down-long',
+                'dcz-button-left-long', 'dcz-button-right-long'
+              ] }}
+          # Added: debounce check (200 ms)
+          - condition: template
+            value_template: >
+              {{ (as_timestamp(now()) - (state_attr(this.entity_id, 'last_triggered') | default(0))) > 0.2 }}
           # Check If Double Press is Exposed
           - if:
               - condition: template
                 value_template: '{{ button_up_double_press_exposed }}'
-            # Handle Up Double Press Event
+            # Handle Double Press Event
             then:
               - choose:
-                  # Wait for trigger for second Button Press to treat as a Double Press
                   - conditions: []
                     sequence:
+                      # Wait for trigger for second Button Press to treat as a Double Press
                       - wait_for_trigger:
                           # z2m trigger
                           - trigger: device
@@ -684,7 +700,7 @@ actions:
                               device_id: !input controller_device
                               event: '1002'
                         timeout:
-                          milliseconds: '{{ helper_double_press_delay }}'
+                          milliseconds: !input helper_double_press_delay
                         continue_on_timeout: true
                       # If a second button short press is triggered wait.trigger.idx will be defined
                       - if:
@@ -723,8 +739,9 @@ actions:
               - choose:
                   - conditions: []
                     sequence: !input action_button_up_short
-      #
-      # Actions for Up Button Long Press
+      # ===================================
+      # 🔼 UP BUTTON LONG PRESS (SAFE-STOP)
+      # ===================================
       - conditions:
           - condition: trigger
             id:
@@ -745,9 +762,14 @@ actions:
           - choose:
               - conditions: '{{ button_up_long_loop }}'
                 sequence:
+                  - variables:
+                      released: false
+                      max_repeats: !input button_up_long_max_loop_repeats
                   # Repeat the Long Press Actions for the set number of loops
                   - repeat:
-                      count: !input button_up_long_max_loop_repeats
+                      while:
+                        - condition: template
+                          value_template: '{{ not released and repeat.index < max_repeats }}'
                       sequence:
                         - parallel:
                             - sequence:
@@ -761,42 +783,44 @@ actions:
                                     - conditions: []
                                       sequence: !input action_button_up_long
                             - sequence:
-                                - choose:
-                                    - conditions: []
-                                      sequence:
-                                        # Wait for trigger for Button Long Press Release to stop looping
-                                        - wait_for_trigger:
-                                            # z2m triggers
-                                            - trigger: device
-                                              domain: mqtt
-                                              device_id: !input controller_device
-                                              type: action
-                                              subtype: brightness_stop
-                                            # zha triggers
-                                            - trigger: event
-                                              event_type: zha_event
-                                              event_data:
-                                                device_id: !input controller_device
-                                                command: stop_on_off
-                                                cluster_id: 8
-                                                endpoint_id: 1
-                                            # dcz triggers
-                                            - trigger: event
-                                              event_type: deconz_event
-                                              event_data:
-                                                device_id: !input controller_device
-                                                event: '1003'
-                                          timeout:
-                                            milliseconds: !input helper_long_press_delay
-                                          continue_on_timeout: true
-                                        # If a Button Long Release is triggered wait.trigger.idx will be defined stop the loop before long_max_loop_repeats
-                                        - if:
-                                            - condition: template
-                                              value_template: '{{ wait.trigger.idx is defined }}'
-                                          then:
-                                            - stop: button_up_released
-      #
-      # Actions for Down Button Single Press / Double Press Virtual
+                                # Wait for trigger for Button Long Press Release to stop looping
+                                - wait_for_trigger:
+                                    # z2m triggers
+                                    - trigger: device
+                                      domain: mqtt
+                                      device_id: !input controller_device
+                                      type: action
+                                      subtype: brightness_stop
+                                    # zha triggers
+                                    - trigger: event
+                                      event_type: zha_event
+                                      event_data:
+                                        device_id: !input controller_device
+                                        command: stop_on_off
+                                        cluster_id: 8
+                                        endpoint_id: 1
+                                    # dcz triggers
+                                    - trigger: event
+                                      event_type: deconz_event
+                                      event_data:
+                                        device_id: !input controller_device
+                                        event: '1003'
+                                  timeout:
+                                    milliseconds: !input helper_long_press_delay
+                                  continue_on_timeout: true
+                                # If a Button Long Release is triggered wait.trigger.idx will be defined stop the loop before long_max_loop_repeats
+                                - if:
+                                    - condition: template
+                                      value_template: '{{ wait.trigger.idx is defined }}'
+                                  then:
+                                    - variables:
+                                        released: true
+                                    # Added: short cooldown delay to prevent flicker or immediate retrigger
+                                    - delay:
+                                        milliseconds: 100
+      # ===================================
+      # 🔽 DOWN BUTTON SHORT & DOUBLE PRESS
+      # ===================================
       - conditions:
           - condition: trigger
             id:
@@ -804,16 +828,31 @@ actions:
               - zha-button-down-short
               - dcz-button-down-short
         sequence:
+          # Added: guard against long-press overlap
+          - condition: template
+            value_template: >
+              {{ trigger.id not in [
+                'z2m-button-up-long', 'z2m-button-down-long',
+                'z2m-button-left-long', 'z2m-button-right-long',
+                'zha-button-up-long', 'zha-button-down-long',
+                'zha-button-left-long', 'zha-button-right-long',
+                'dcz-button-up-long', 'dcz-button-down-long',
+                'dcz-button-left-long', 'dcz-button-right-long'
+              ] }}
+          # Added: debounce check (200 ms)
+          - condition: template
+            value_template: >
+              {{ (as_timestamp(now()) - (state_attr(this.entity_id, 'last_triggered') | default(0))) > 0.2 }}
           # Check If Double Press is Exposed
           - if:
               - condition: template
                 value_template: '{{ button_down_double_press_exposed }}'
-            # Handle Down Double Press Event
+            # Handle Double Press Event
             then:
               - choose:
-                  # Wait for trigger for second Button Press to treat as a Double Press
                   - conditions: []
                     sequence:
+                      # Wait for trigger for second Button Press to treat as a Double Press
                       - wait_for_trigger:
                           # z2m trigger
                           - trigger: device
@@ -836,7 +875,7 @@ actions:
                               device_id: !input controller_device
                               event: '2002'
                         timeout:
-                          milliseconds: '{{ helper_double_press_delay }}'
+                          milliseconds: !input helper_double_press_delay
                         continue_on_timeout: true
                       # If a second button short press is triggered wait.trigger.idx will be defined
                       - if:
@@ -875,8 +914,10 @@ actions:
               - choose:
                   - conditions: []
                     sequence: !input action_button_down_short
-      #
-      # Actions for Down Button Long Press
+
+      # ===================================
+      # 🔽 DOWN BUTTON LONG PRESS (SAFE-STOP)
+      # ===================================
       - conditions:
           - condition: trigger
             id:
@@ -897,9 +938,14 @@ actions:
           - choose:
               - conditions: '{{ button_down_long_loop }}'
                 sequence:
+                  - variables:
+                      released: false
+                      max_repeats: !input button_down_long_max_loop_repeats
                   # Repeat the Long Press Actions for the set number of loops
                   - repeat:
-                      count: !input button_down_long_max_loop_repeats
+                      while:
+                        - condition: template
+                          value_template: '{{ not released and repeat.index < max_repeats }}'
                       sequence:
                         - parallel:
                             - sequence:
@@ -913,42 +959,44 @@ actions:
                                     - conditions: []
                                       sequence: !input action_button_down_long
                             - sequence:
-                                - choose:
-                                    - conditions: []
-                                      sequence:
-                                        # Wait for trigger for Button Long Press Release to stop looping
-                                        - wait_for_trigger:
-                                            # z2m triggers
-                                            - trigger: device
-                                              domain: mqtt
-                                              device_id: !input controller_device
-                                              type: action
-                                              subtype: brightness_stop
-                                            # zha triggers
-                                            - trigger: event
-                                              event_type: zha_event
-                                              event_data:
-                                                device_id: !input controller_device
-                                                command: stop
-                                                cluster_id: 8
-                                                endpoint_id: 1
-                                            # dcz triggers
-                                            - trigger: event
-                                              event_type: deconz_event
-                                              event_data:
-                                                device_id: !input controller_device
-                                                event: '2003'
-                                          timeout:
-                                            milliseconds: !input helper_long_press_delay
-                                          continue_on_timeout: true
-                                        # If a Button Long Release is triggered wait.trigger.idx will be defined stop the loop before long_max_loop_repeats
-                                        - if:
-                                            - condition: template
-                                              value_template: '{{ wait.trigger.idx is defined }}'
-                                          then:
-                                            - stop: button_down_released
-      #
-      # Actions for Right Button Single Press / Double Press Virtual
+                                # Wait for trigger for Button Long Press Release to stop looping
+                                - wait_for_trigger:
+                                    # z2m triggers
+                                    - trigger: device
+                                      domain: mqtt
+                                      device_id: !input controller_device
+                                      type: action
+                                      subtype: brightness_stop
+                                    # zha triggers
+                                    - trigger: event
+                                      event_type: zha_event
+                                      event_data:
+                                        device_id: !input controller_device
+                                        command: stop
+                                        cluster_id: 8
+                                        endpoint_id: 1
+                                    # dcz triggers
+                                    - trigger: event
+                                      event_type: deconz_event
+                                      event_data:
+                                        device_id: !input controller_device
+                                        event: '2003'
+                                  timeout:
+                                    milliseconds: !input helper_long_press_delay
+                                  continue_on_timeout: true
+                                # If a Button Long Release is triggered wait.trigger.idx will be defined stop the loop before long_max_loop_repeats
+                                - if:
+                                    - condition: template
+                                      value_template: '{{ wait.trigger.idx is defined }}'
+                                  then:
+                                    - variables:
+                                        released: true
+                                    # Added: short cooldown delay to prevent flicker or immediate retrigger
+                                    - delay:
+                                        milliseconds: 100
+      # ===================================
+      # ▶️ RIGHT BUTTON SHORT & DOUBLE PRESS
+      # ===================================
       - conditions:
           - condition: trigger
             id:
@@ -956,16 +1004,31 @@ actions:
               - zha-button-right-short
               - dcz-button-right-short
         sequence:
+          # Added: guard against long-press overlap
+          - condition: template
+            value_template: >
+              {{ trigger.id not in [
+                'z2m-button-up-long', 'z2m-button-down-long',
+                'z2m-button-left-long', 'z2m-button-right-long',
+                'zha-button-up-long', 'zha-button-down-long',
+                'zha-button-left-long', 'zha-button-right-long',
+                'dcz-button-up-long', 'dcz-button-down-long',
+                'dcz-button-left-long', 'dcz-button-right-long'
+              ] }}
+          # Added: debounce check (200 ms)
+          - condition: template
+            value_template: >
+              {{ (as_timestamp(now()) - (state_attr(this.entity_id, 'last_triggered') | default(0))) > 0.2 }}
           # Check If Double Press is Exposed
           - if:
               - condition: template
                 value_template: '{{ button_right_double_press_exposed }}'
-            # Handle Right Double Press Event
+            # Handle Double Press Event
             then:
               - choose:
-                  # Wait for trigger for second Button Press to treat as a Double Press
                   - conditions: []
                     sequence:
+                      # Wait for trigger for second Button Press to treat as a Double Press
                       - wait_for_trigger:
                           # z2m trigger
                           - trigger: device
@@ -981,7 +1044,10 @@ actions:
                               command: press
                               cluster_id: 5
                               endpoint_id: 1
-                              args: [256, 13, 0]
+                              args:
+                                - 256
+                                - 13
+                                - 0
                           # dcz trigger
                           - trigger: event
                             event_type: deconz_event
@@ -989,7 +1055,7 @@ actions:
                               device_id: !input controller_device
                               event: '4002'
                         timeout:
-                          milliseconds: '{{ helper_double_press_delay }}'
+                          milliseconds: !input helper_double_press_delay
                         continue_on_timeout: true
                       # If a second button short press is triggered wait.trigger.idx will be defined
                       - if:
@@ -1028,8 +1094,9 @@ actions:
               - choose:
                   - conditions: []
                     sequence: !input action_button_right_short
-      #
-      # Actions for Right Button Long Press
+      # ===================================
+      # ▶️ RIGHT BUTTON LONG PRESS (SAFE-STOP)
+      # ===================================
       - conditions:
           - condition: trigger
             id:
@@ -1050,9 +1117,14 @@ actions:
           - choose:
               - conditions: '{{ button_right_long_loop }}'
                 sequence:
+                  - variables:
+                      released: false
+                      max_repeats: !input button_right_long_max_loop_repeats
                   # Repeat the Long Press Actions for the set number of loops
                   - repeat:
-                      count: !input button_right_long_max_loop_repeats
+                      while:
+                        - condition: template
+                          value_template: '{{ not released and repeat.index < max_repeats }}'
                       sequence:
                         - parallel:
                             - sequence:
@@ -1066,40 +1138,42 @@ actions:
                                     - conditions: []
                                       sequence: !input action_button_right_long
                             - sequence:
-                                - choose:
-                                    - conditions: []
-                                      sequence:
-                                        # Wait for trigger for Button Long Press Release to stop looping
-                                        - wait_for_trigger:
-                                            # z2m triggers
-                                            - trigger: device
-                                              domain: mqtt
-                                              device_id: !input controller_device
-                                              type: action
-                                              subtype: arrow_right_release
-                                            # zha triggers
-                                            - trigger: event
-                                              event_type: zha_event
-                                              event_data:
-                                                device_id: !input controller_device
-                                                command: release
-                                            # dcz triggers
-                                            - trigger: event
-                                              event_type: deconz_event
-                                              event_data:
-                                                device_id: !input controller_device
-                                                event: '4003'
-                                          timeout:
-                                            milliseconds: !input helper_long_press_delay
-                                          continue_on_timeout: true
-                                        # If a Button Long Release is triggered wait.trigger.idx will be defined stop the loop before long_max_loop_repeats
-                                        - if:
-                                            - condition: template
-                                              value_template: '{{ wait.trigger.idx is defined }}'
-                                          then:
-                                            - stop: button_right_released
-      #
-      # Actions for Left Button Single Press / Double Press Virtual
+                                # Wait for trigger for Button Long Press Release to stop looping
+                                - wait_for_trigger:
+                                    # z2m triggers
+                                    - trigger: device
+                                      domain: mqtt
+                                      device_id: !input controller_device
+                                      type: action
+                                      subtype: arrow_right_release
+                                    # zha triggers
+                                    - trigger: event
+                                      event_type: zha_event
+                                      event_data:
+                                        device_id: !input controller_device
+                                        command: release
+                                    # dcz triggers
+                                    - trigger: event
+                                      event_type: deconz_event
+                                      event_data:
+                                        device_id: !input controller_device
+                                        event: '4003'
+                                  timeout:
+                                    milliseconds: !input helper_long_press_delay
+                                  continue_on_timeout: true
+                                # If a Button Long Release is triggered wait.trigger.idx will be defined stop the loop before long_max_loop_repeats
+                                - if:
+                                    - condition: template
+                                      value_template: '{{ wait.trigger.idx is defined }}'
+                                  then:
+                                    - variables:
+                                        released: true
+                                    # Added: short cooldown delay to prevent flicker or immediate retrigger
+                                    - delay:
+                                        milliseconds: 100
+      # ===================================
+      # ◀️ LEFT BUTTON SHORT & DOUBLE PRESS
+      # ===================================
       - conditions:
           - condition: trigger
             id:
@@ -1107,16 +1181,31 @@ actions:
               - zha-button-left-short
               - dcz-button-left-short
         sequence:
+          # Added: guard against long-press overlap
+          - condition: template
+            value_template: >
+              {{ trigger.id not in [
+                'z2m-button-up-long', 'z2m-button-down-long',
+                'z2m-button-left-long', 'z2m-button-right-long',
+                'zha-button-up-long', 'zha-button-down-long',
+                'zha-button-left-long', 'zha-button-right-long',
+                'dcz-button-up-long', 'dcz-button-down-long',
+                'dcz-button-left-long', 'dcz-button-right-long'
+              ] }}
+          # Added: debounce check (200 ms)
+          - condition: template
+            value_template: >
+              {{ (as_timestamp(now()) - (state_attr(this.entity_id, 'last_triggered') | default(0))) > 0.2 }}
           # Check If Double Press is Exposed
           - if:
               - condition: template
                 value_template: '{{ button_left_double_press_exposed }}'
-            # Handle Left Double Press Event
+            # Handle Double Press Event
             then:
               - choose:
-                  # Wait for trigger for second Button Press to treat as a Double Press
                   - conditions: []
                     sequence:
+                      # Wait for trigger for second Button Press to treat as a Double Press
                       - wait_for_trigger:
                           # z2m trigger
                           - trigger: device
@@ -1132,7 +1221,10 @@ actions:
                               command: press
                               cluster_id: 5
                               endpoint_id: 1
-                              args: [257, 13, 0]
+                              args:
+                                - 257
+                                - 13
+                                - 0
                           # dcz trigger
                           - trigger: event
                             event_type: deconz_event
@@ -1140,7 +1232,7 @@ actions:
                               device_id: !input controller_device
                               event: '3002'
                         timeout:
-                          milliseconds: '{{ helper_double_press_delay }}'
+                          milliseconds: !input helper_double_press_delay
                         continue_on_timeout: true
                       # If a second button short press is triggered wait.trigger.idx will be defined
                       - if:
@@ -1179,8 +1271,10 @@ actions:
               - choose:
                   - conditions: []
                     sequence: !input action_button_left_short
-      #
-      # Actions for Left Button Long Press
+
+      # ===================================
+      # ◀️ LEFT BUTTON LONG PRESS (SAFE-STOP)
+      # ===================================
       - conditions:
           - condition: trigger
             id:
@@ -1201,9 +1295,14 @@ actions:
           - choose:
               - conditions: '{{ button_left_long_loop }}'
                 sequence:
+                  - variables:
+                      released: false
+                      max_repeats: !input button_left_long_max_loop_repeats
                   # Repeat the Long Press Actions for the set number of loops
                   - repeat:
-                      count: !input button_left_long_max_loop_repeats
+                      while:
+                        - condition: template
+                          value_template: '{{ not released and repeat.index < max_repeats }}'
                       sequence:
                         - parallel:
                             - sequence:
@@ -1217,35 +1316,36 @@ actions:
                                     - conditions: []
                                       sequence: !input action_button_left_long
                             - sequence:
-                                - choose:
-                                    - conditions: []
-                                      sequence:
-                                        # Wait for trigger for Button Long Press Release to stop looping
-                                        - wait_for_trigger:
-                                            # z2m triggers
-                                            - trigger: device
-                                              domain: mqtt
-                                              device_id: !input controller_device
-                                              type: action
-                                              subtype: arrow_left_release
-                                            # zha triggers
-                                            - trigger: event
-                                              event_type: zha_event
-                                              event_data:
-                                                device_id: !input controller_device
-                                                command: release
-                                            # dcz triggers
-                                            - trigger: event
-                                              event_type: deconz_event
-                                              event_data:
-                                                device_id: !input controller_device
-                                                event: '3003'
-                                          timeout:
-                                            milliseconds: !input helper_long_press_delay
-                                          continue_on_timeout: true
-                                        # If a Button Long Release is triggered wait.trigger.idx will be defined stop the loop before long_max_loop_repeats
-                                        - if:
-                                            - condition: template
-                                              value_template: '{{ wait.trigger.idx is defined }}'
-                                          then:
-                                            - stop: button_left_released
+                                # Wait for trigger for Button Long Press Release to stop looping
+                                - wait_for_trigger:
+                                    # z2m triggers
+                                    - trigger: device
+                                      domain: mqtt
+                                      device_id: !input controller_device
+                                      type: action
+                                      subtype: arrow_left_release
+                                    # zha triggers
+                                    - trigger: event
+                                      event_type: zha_event
+                                      event_data:
+                                        device_id: !input controller_device
+                                        command: release
+                                    # dcz triggers
+                                    - trigger: event
+                                      event_type: deconz_event
+                                      event_data:
+                                        device_id: !input controller_device
+                                        event: '3003'
+                                  timeout:
+                                    milliseconds: !input helper_long_press_delay
+                                  continue_on_timeout: true
+                                # If a Button Long Release is triggered wait.trigger.idx will be defined stop the loop before long_max_loop_repeats
+                                - if:
+                                    - condition: template
+                                      value_template: '{{ wait.trigger.idx is defined }}'
+                                  then:
+                                    - variables:
+                                        released: true
+                                    # Added: short cooldown delay to prevent flicker or immediate retrigger
+                                    - delay:
+                                        milliseconds: 100
