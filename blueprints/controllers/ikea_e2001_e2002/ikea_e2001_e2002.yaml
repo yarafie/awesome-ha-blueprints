@@ -653,39 +653,40 @@ actions:
               - zha-button-up-short
               - dcz-button-up-short
         sequence:
-          # Added: guard against long-press overlap
+          # Guard against long-press overlap
           - condition: template
             value_template: >
               {{ trigger.id not in [
                 'z2m-button-up-long', 'z2m-button-down-long',
-                'z2m-button-left-long', 'z2m-button-right-long',
-                'zha-button-up-long', 'zha-button-down-long',
-                'zha-button-left-long', 'zha-button-right-long',
-                'dcz-button-up-long', 'dcz-button-down-long',
-                'dcz-button-left-long', 'dcz-button-right-long'
+                'z2m-button-left-long', 'z2m-button-right-long'
               ] }}
-          # Added: debounce check (200 ms)
+          # Compact debounce guard (200 ms)
+          - condition: template
+            alias: Debounce Guard (200 ms)
+            value_template: >
+              {{ (as_timestamp(now()) - (this.attributes.last_triggered | as_timestamp(0))) > 0.2 }}
+          # Added: self-contained debounce (200 ms)
+          - variables:
+              debounce_now: '{{ as_timestamp(now()) }}'
+              debounce_last: '{{ this.attributes.last_triggered | as_timestamp(0) }}'
           - condition: template
             value_template: >
-              {{ (as_timestamp(now()) - (state_attr(this.entity_id, 'last_triggered') | default(0))) > 0.2 }}
-          # Check If Double Press is Exposed
+              {% set delta = debounce_now - debounce_last %}
+              {{ delta > 0.2 }}
+          # Double press logic
           - if:
               - condition: template
                 value_template: '{{ button_up_double_press_exposed }}'
-            # Handle Double Press Event
             then:
               - choose:
                   - conditions: []
                     sequence:
-                      # Wait for trigger for second Button Press to treat as a Double Press
                       - wait_for_trigger:
-                          # z2m trigger
                           - trigger: device
                             domain: mqtt
                             device_id: !input controller_device
                             type: action
                             subtype: 'on'
-                          # zha trigger
                           - trigger: event
                             event_type: zha_event
                             event_data:
@@ -693,7 +694,6 @@ actions:
                               command: 'on'
                               cluster_id: 6
                               endpoint_id: 1
-                          # dcz trigger
                           - trigger: event
                             event_type: deconz_event
                             event_data:
@@ -702,43 +702,25 @@ actions:
                         timeout:
                           milliseconds: !input helper_double_press_delay
                         continue_on_timeout: true
-                      # If a second button short press is triggered wait.trigger.idx will be defined
                       - if:
                           - condition: template
                             value_template: '{{ wait.trigger.idx is defined }}'
-                        # Second short press trigger was received send Hook and Custom Actions as a Double Press
                         then:
-                          # fire the ahb hook event
                           - event: ahb_controller_event
                             event_data:
                               controller: '{{ controller_id }}'
                               action: button_up_double
-                          # run the custom action
                           - choose:
                               - conditions: []
                                 sequence: !input action_button_up_double
-                        # Second short press trigger was not received send Hook and Custom Actions as a Single Press
                         else:
-                          # fire the ahb hook event
                           - event: ahb_controller_event
                             event_data:
                               controller: '{{ controller_id }}'
                               action: button_up_short
-                          # run the custom action
                           - choose:
                               - conditions: []
                                 sequence: !input action_button_up_short
-            # Double Press is Not Exposed So send Hook and Custom Actions as a Single Press
-            else:
-              # fire the ahb hook event
-              - event: ahb_controller_event
-                event_data:
-                  controller: '{{ controller_id }}'
-                  action: button_up_short
-              # run the custom action
-              - choose:
-                  - conditions: []
-                    sequence: !input action_button_up_short
       # ===================================
       # 🔼 UP BUTTON LONG PRESS (SAFE-STOP)
       # ===================================
@@ -828,39 +810,35 @@ actions:
               - zha-button-down-short
               - dcz-button-down-short
         sequence:
-          # Added: guard against long-press overlap
+          # Guard against long-press overlap
           - condition: template
             value_template: >
               {{ trigger.id not in [
                 'z2m-button-up-long', 'z2m-button-down-long',
-                'z2m-button-left-long', 'z2m-button-right-long',
-                'zha-button-up-long', 'zha-button-down-long',
-                'zha-button-left-long', 'zha-button-right-long',
-                'dcz-button-up-long', 'dcz-button-down-long',
-                'dcz-button-left-long', 'dcz-button-right-long'
+                'z2m-button-left-long', 'z2m-button-right-long'
               ] }}
-          # Added: debounce check (200 ms)
+          # Added: self-contained debounce (200 ms)
+          - variables:
+              debounce_now: '{{ as_timestamp(now()) }}'
+              debounce_last: '{{ this.attributes.last_triggered | as_timestamp(0) }}'
           - condition: template
             value_template: >
-              {{ (as_timestamp(now()) - (state_attr(this.entity_id, 'last_triggered') | default(0))) > 0.2 }}
-          # Check If Double Press is Exposed
+              {% set delta = debounce_now - debounce_last %}
+              {{ delta > 0.2 }}
+          # Double press logic with Long-Press Guard
           - if:
               - condition: template
                 value_template: '{{ button_down_double_press_exposed }}'
-            # Handle Double Press Event
             then:
               - choose:
                   - conditions: []
                     sequence:
-                      # Wait for trigger for second Button Press to treat as a Double Press
                       - wait_for_trigger:
-                          # z2m trigger
                           - trigger: device
                             domain: mqtt
                             device_id: !input controller_device
                             type: action
                             subtype: 'off'
-                          # zha trigger
                           - trigger: event
                             event_type: zha_event
                             event_data:
@@ -868,7 +846,6 @@ actions:
                               command: 'off'
                               cluster_id: 6
                               endpoint_id: 1
-                          # dcz trigger
                           - trigger: event
                             event_type: deconz_event
                             event_data:
@@ -877,44 +854,31 @@ actions:
                         timeout:
                           milliseconds: !input helper_double_press_delay
                         continue_on_timeout: true
-                      # If a second button short press is triggered wait.trigger.idx will be defined
+                      # Guard: ignore long-press triggers during double-press window
+                      - condition: template
+                        value_template: >
+                          {{ not trigger.id in [
+                            'z2m-button-down-long', 'zha-button-down-long', 'dcz-button-down-long'
+                          ] }}
                       - if:
                           - condition: template
                             value_template: '{{ wait.trigger.idx is defined }}'
-                        # Second short press trigger was received send Hook and Custom Actions as a Double Press
                         then:
-                          # fire the ahb hook event
                           - event: ahb_controller_event
                             event_data:
                               controller: '{{ controller_id }}'
                               action: button_down_double
-                          # run the custom action
                           - choose:
                               - conditions: []
                                 sequence: !input action_button_down_double
-                        # Second short press trigger was not received send Hook and Custom Actions as a Single Press
                         else:
-                          # fire the ahb hook event
                           - event: ahb_controller_event
                             event_data:
                               controller: '{{ controller_id }}'
                               action: button_down_short
-                          # run the custom action
                           - choose:
                               - conditions: []
                                 sequence: !input action_button_down_short
-            # Double Press is Not Exposed So send Hook and Custom Actions as a Single Press
-            else:
-              # fire the ahb hook event
-              - event: ahb_controller_event
-                event_data:
-                  controller: '{{ controller_id }}'
-                  action: button_down_short
-              # run the custom action
-              - choose:
-                  - conditions: []
-                    sequence: !input action_button_down_short
-
       # ===================================
       # 🔽 DOWN BUTTON LONG PRESS (SAFE-STOP)
       # ===================================
@@ -1004,39 +968,35 @@ actions:
               - zha-button-right-short
               - dcz-button-right-short
         sequence:
-          # Added: guard against long-press overlap
+          # Guard against long-press overlap
           - condition: template
             value_template: >
               {{ trigger.id not in [
                 'z2m-button-up-long', 'z2m-button-down-long',
-                'z2m-button-left-long', 'z2m-button-right-long',
-                'zha-button-up-long', 'zha-button-down-long',
-                'zha-button-left-long', 'zha-button-right-long',
-                'dcz-button-up-long', 'dcz-button-down-long',
-                'dcz-button-left-long', 'dcz-button-right-long'
+                'z2m-button-left-long', 'z2m-button-right-long'
               ] }}
-          # Added: debounce check (200 ms)
+          # Added: self-contained debounce (200 ms)
+          - variables:
+              debounce_now: '{{ as_timestamp(now()) }}'
+              debounce_last: '{{ this.attributes.last_triggered | as_timestamp(0) }}'
           - condition: template
             value_template: >
-              {{ (as_timestamp(now()) - (state_attr(this.entity_id, 'last_triggered') | default(0))) > 0.2 }}
-          # Check If Double Press is Exposed
+              {% set delta = debounce_now - debounce_last %}
+              {{ delta > 0.2 }}
+          # Double press logic
           - if:
               - condition: template
                 value_template: '{{ button_right_double_press_exposed }}'
-            # Handle Double Press Event
             then:
               - choose:
                   - conditions: []
                     sequence:
-                      # Wait for trigger for second Button Press to treat as a Double Press
                       - wait_for_trigger:
-                          # z2m trigger
                           - trigger: device
                             domain: mqtt
                             device_id: !input controller_device
                             type: action
                             subtype: arrow_right_click
-                          # zha trigger
                           - trigger: event
                             event_type: zha_event
                             event_data:
@@ -1048,7 +1008,6 @@ actions:
                                 - 256
                                 - 13
                                 - 0
-                          # dcz trigger
                           - trigger: event
                             event_type: deconz_event
                             event_data:
@@ -1057,43 +1016,25 @@ actions:
                         timeout:
                           milliseconds: !input helper_double_press_delay
                         continue_on_timeout: true
-                      # If a second button short press is triggered wait.trigger.idx will be defined
                       - if:
                           - condition: template
                             value_template: '{{ wait.trigger.idx is defined }}'
-                        # Second short press trigger was received send Hook and Custom Actions as a Double Press
                         then:
-                          # fire the ahb hook event
                           - event: ahb_controller_event
                             event_data:
                               controller: '{{ controller_id }}'
                               action: button_right_double
-                          # run the custom action
                           - choose:
                               - conditions: []
                                 sequence: !input action_button_right_double
-                        # Second short press trigger was not received send Hook and Custom Actions as a Single Press
                         else:
-                          # fire the ahb hook event
                           - event: ahb_controller_event
                             event_data:
                               controller: '{{ controller_id }}'
                               action: button_right_short
-                          # run the custom action
                           - choose:
                               - conditions: []
                                 sequence: !input action_button_right_short
-            # Double Press is Not Exposed So send Hook and Custom Actions as a Single Press
-            else:
-              # fire the ahb hook event
-              - event: ahb_controller_event
-                event_data:
-                  controller: '{{ controller_id }}'
-                  action: button_right_short
-              # run the custom action
-              - choose:
-                  - conditions: []
-                    sequence: !input action_button_right_short
       # ===================================
       # ▶️ RIGHT BUTTON LONG PRESS (SAFE-STOP)
       # ===================================
@@ -1181,39 +1122,35 @@ actions:
               - zha-button-left-short
               - dcz-button-left-short
         sequence:
-          # Added: guard against long-press overlap
+          # Guard against long-press overlap
           - condition: template
             value_template: >
               {{ trigger.id not in [
                 'z2m-button-up-long', 'z2m-button-down-long',
-                'z2m-button-left-long', 'z2m-button-right-long',
-                'zha-button-up-long', 'zha-button-down-long',
-                'zha-button-left-long', 'zha-button-right-long',
-                'dcz-button-up-long', 'dcz-button-down-long',
-                'dcz-button-left-long', 'dcz-button-right-long'
+                'z2m-button-left-long', 'z2m-button-right-long'
               ] }}
-          # Added: debounce check (200 ms)
+          # Added: self-contained debounce (200 ms)
+          - variables:
+              debounce_now: '{{ as_timestamp(now()) }}'
+              debounce_last: '{{ this.attributes.last_triggered | as_timestamp(0) }}'
           - condition: template
             value_template: >
-              {{ (as_timestamp(now()) - (state_attr(this.entity_id, 'last_triggered') | default(0))) > 0.2 }}
-          # Check If Double Press is Exposed
+              {% set delta = debounce_now - debounce_last %}
+              {{ delta > 0.2 }}
+          # Double press logic with Long-Press Guard
           - if:
               - condition: template
                 value_template: '{{ button_left_double_press_exposed }}'
-            # Handle Double Press Event
             then:
               - choose:
                   - conditions: []
                     sequence:
-                      # Wait for trigger for second Button Press to treat as a Double Press
                       - wait_for_trigger:
-                          # z2m trigger
                           - trigger: device
                             domain: mqtt
                             device_id: !input controller_device
                             type: action
                             subtype: arrow_left_click
-                          # zha trigger
                           - trigger: event
                             event_type: zha_event
                             event_data:
@@ -1225,7 +1162,6 @@ actions:
                                 - 257
                                 - 13
                                 - 0
-                          # dcz trigger
                           - trigger: event
                             event_type: deconz_event
                             event_data:
@@ -1234,44 +1170,31 @@ actions:
                         timeout:
                           milliseconds: !input helper_double_press_delay
                         continue_on_timeout: true
-                      # If a second button short press is triggered wait.trigger.idx will be defined
+                      # Guard: ignore long-press triggers during double-press window
+                      - condition: template
+                        value_template: >
+                          {{ not trigger.id in [
+                            'z2m-button-left-long', 'zha-button-left-long', 'dcz-button-left-long'
+                          ] }}
                       - if:
                           - condition: template
                             value_template: '{{ wait.trigger.idx is defined }}'
-                        # Second short press trigger was received send Hook and Custom Actions as a Double Press
                         then:
-                          # fire the ahb hook event
                           - event: ahb_controller_event
                             event_data:
                               controller: '{{ controller_id }}'
                               action: button_left_double
-                          # run the custom action
                           - choose:
                               - conditions: []
                                 sequence: !input action_button_left_double
-                        # Second short press trigger was not received send Hook and Custom Actions as a Single Press
                         else:
-                          # fire the ahb hook event
                           - event: ahb_controller_event
                             event_data:
                               controller: '{{ controller_id }}'
                               action: button_left_short
-                          # run the custom action
                           - choose:
                               - conditions: []
                                 sequence: !input action_button_left_short
-            # Double Press is Not Exposed So send Hook and Custom Actions as a Single Press
-            else:
-              # fire the ahb hook event
-              - event: ahb_controller_event
-                event_data:
-                  controller: '{{ controller_id }}'
-                  action: button_left_short
-              # run the custom action
-              - choose:
-                  - conditions: []
-                    sequence: !input action_button_left_short
-
       # ===================================
       # ◀️ LEFT BUTTON LONG PRESS (SAFE-STOP)
       # ===================================
