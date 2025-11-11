@@ -354,7 +354,7 @@ variables:
   button_left_release: '{{ actions_mapping[integration_id]["button_left_release"] }}'
 #
 # Mode Block
-mode: single
+mode: restart
 max_exceeded: silent
 #
 # Triggers Block
