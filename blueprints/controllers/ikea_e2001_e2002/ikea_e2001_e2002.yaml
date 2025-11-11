@@ -833,7 +833,7 @@ actions:
               {% set delta = debounce_now - debounce_prev %}
               {{ delta > 0.2 }}
 
-          # Double press logic with Long-Press Guard
+          # Double press logic with strict validation and Long-Press Guard
           - if:
               - condition: template
                 value_template: '{{ button_down_double_press_exposed }}'
@@ -841,6 +841,7 @@ actions:
               - choose:
                   - conditions: []
                     sequence:
+                      # Wait only for second short click
                       - wait_for_trigger:
                           - trigger: device
                             domain: mqtt
@@ -860,12 +861,12 @@ actions:
                               device_id: !input controller_device
                               event: '2002'
                         timeout:
-                          milliseconds: 700
+                          milliseconds: !input helper_double_press_delay
                         continue_on_timeout: true
 
-                      # Ignore long press events during the double-click window
+                      # Filter: ignore long press or move triggers during double-click window
                       - condition: template
-                        alias: Prevent Long from Cancelling Double
+                        alias: Filter Hold Triggers
                         value_template: >
                           {{ wait.trigger is defined and (
                                wait.trigger.id not in [
@@ -875,20 +876,20 @@ actions:
                                ])
                           }}
 
+                      # Strict check: must be a short press (not long or release)
                       - if:
                           - condition: template
                             alias: Valid Double Press Check
                             value_template: >
                               {{ wait.trigger is defined
-                                 and
-                                 (
-                                      (wait.trigger.platform == 'device' and wait.trigger.subtype == 'off')
-                                       or
-                                      (wait.trigger.platform == 'event' and (
-                                          (wait.trigger.event.data.command | default('')) == 'off'
-                                          or
-                                          (wait.trigger.event.data.event | string) == '2002')
-                                      )
+                                 and (
+                                   (wait.trigger.platform == 'device' and wait.trigger.subtype == 'off')
+                                   or
+                                   (wait.trigger.platform == 'event' and (
+                                     (wait.trigger.event.data.command | default('')) == 'off'
+                                     or
+                                     (wait.trigger.event.data.event | string) == '2002'
+                                   ))
                                  )
                               }}
                         then:
@@ -1178,7 +1179,7 @@ actions:
               {% set delta = debounce_now - debounce_prev %}
               {{ delta > 0.2 }}
 
-          # Double press logic with Long-Press Guard
+          # Double press logic with strict validation and Hold suppression
           - if:
               - condition: template
                 value_template: '{{ button_left_double_press_exposed }}'
@@ -1186,6 +1187,7 @@ actions:
               - choose:
                   - conditions: []
                     sequence:
+                      # Wait only for a second short click
                       - wait_for_trigger:
                           - trigger: device
                             domain: mqtt
@@ -1209,12 +1211,12 @@ actions:
                               device_id: !input controller_device
                               event: '3002'
                         timeout:
-                          milliseconds: 700
+                          milliseconds: !input helper_double_press_delay
                         continue_on_timeout: true
 
-                      # Ignore long press events during the double-click window
+                      # Filter: ignore long press or hold triggers during double-click window
                       - condition: template
-                        alias: Prevent Long from Cancelling Double
+                        alias: Filter Hold Triggers
                         value_template: >
                           {{ wait.trigger is defined and (
                                wait.trigger.id not in [
@@ -1224,20 +1226,20 @@ actions:
                                ])
                           }}
 
+                      # Strict validation: must be a short click only
                       - if:
                           - condition: template
                             alias: Valid Double Press Check
                             value_template: >
                               {{ wait.trigger is defined
-                                 and
-                                 (
-                                      (wait.trigger.platform == 'device' and wait.trigger.subtype == 'arrow_left_click')
-                                       or
-                                      (wait.trigger.platform == 'event' and (
-                                          (wait.trigger.event.data.command | default('')) == 'press'
-                                          or
-                                          (wait.trigger.event.data.event | string) == '3002')
-                                      )
+                                 and (
+                                   (wait.trigger.platform == 'device' and wait.trigger.subtype == 'arrow_left_click')
+                                   or
+                                   (wait.trigger.platform == 'event' and (
+                                     (wait.trigger.event.data.command | default('')) == 'press'
+                                     or
+                                     (wait.trigger.event.data.event | string) == '3002'
+                                   ))
                                  )
                               }}
                         then:
