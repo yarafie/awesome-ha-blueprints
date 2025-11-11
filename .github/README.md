@@ -32,6 +32,8 @@ I've rolled in and fixed many issues that were reported on EPMatts Repo and fold
 
 I'll try to keep this fork updated as much as possible, but I'm the sole maintainer so I'll get to things when I get to them :+1: .
 
+Please note, that many of the blueprints will be trying to use new techniques, so things may break, be warned :)
+
 For now, just enjoy.
 
 **12 October, 2025**
