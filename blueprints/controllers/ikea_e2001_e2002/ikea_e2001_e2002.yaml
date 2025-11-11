@@ -817,19 +817,22 @@ actions:
                 'z2m-button-up-long', 'z2m-button-down-long',
                 'z2m-button-left-long', 'z2m-button-right-long'
               ] }}
-          # Compact debounce guard (200 ms)
+
+          # Safe self-contained debounce (200 ms)
+          - variables:
+              debounce_now: '{{ as_timestamp(now()) }}'
+              debounce_prev: >-
+                {% if trigger.entity_id is defined %}
+                  {{ state_attr(trigger.entity_id, 'last_triggered') | as_timestamp(0) }}
+                {% else %}
+                  0
+                {% endif %}
           - condition: template
             alias: Debounce Guard (200 ms)
             value_template: >
-              {{ (as_timestamp(now()) - (this.attributes.last_triggered | as_timestamp(0))) > 0.2 }}
-          # Added: self-contained debounce (200 ms)
-          - variables:
-              debounce_now: '{{ as_timestamp(now()) }}'
-              debounce_last: '{{ this.attributes.last_triggered | as_timestamp(0) }}'
-          - condition: template
-            value_template: >
-              {% set delta = debounce_now - debounce_last %}
+              {% set delta = debounce_now - debounce_prev %}
               {{ delta > 0.2 }}
+
           # Double press logic with Long-Press Guard
           - if:
               - condition: template
@@ -857,17 +860,24 @@ actions:
                               device_id: !input controller_device
                               event: '2002'
                         timeout:
-                          milliseconds: !input helper_double_press_delay
+                          milliseconds: 700
                         continue_on_timeout: true
-                      # Guard: ignore long-press triggers during double-press window
+
+                      # Ignore long press events during the double-click window
                       - condition: template
+                        alias: Prevent Long from Cancelling Double
                         value_template: >
-                          {{ not trigger.id in [
-                            'z2m-button-down-long', 'zha-button-down-long', 'dcz-button-down-long'
-                          ] }}
+                          {{ wait.trigger is defined and (
+                               wait.trigger.id not in [
+                                 'z2m-button-down-long',
+                                 'zha-button-down-long',
+                                 'dcz-button-down-long'
+                               ])
+                          }}
+
                       - if:
                           - condition: template
-                            value_template: '{{ wait.trigger.idx is defined }}'
+                            value_template: '{{ wait.trigger is defined }}'
                         then:
                           - event: ahb_controller_event
                             event_data:
@@ -1139,19 +1149,22 @@ actions:
                 'z2m-button-up-long', 'z2m-button-down-long',
                 'z2m-button-left-long', 'z2m-button-right-long'
               ] }}
-          # Compact debounce guard (200 ms)
+
+          # Safe self-contained debounce (200 ms)
+          - variables:
+              debounce_now: '{{ as_timestamp(now()) }}'
+              debounce_prev: >-
+                {% if trigger.entity_id is defined %}
+                  {{ state_attr(trigger.entity_id, 'last_triggered') | as_timestamp(0) }}
+                {% else %}
+                  0
+                {% endif %}
           - condition: template
             alias: Debounce Guard (200 ms)
             value_template: >
-              {{ (as_timestamp(now()) - (this.attributes.last_triggered | as_timestamp(0))) > 0.2 }}
-          # Added: self-contained debounce (200 ms)
-          - variables:
-              debounce_now: '{{ as_timestamp(now()) }}'
-              debounce_last: '{{ this.attributes.last_triggered | as_timestamp(0) }}'
-          - condition: template
-            value_template: >
-              {% set delta = debounce_now - debounce_last %}
+              {% set delta = debounce_now - debounce_prev %}
               {{ delta > 0.2 }}
+
           # Double press logic with Long-Press Guard
           - if:
               - condition: template
@@ -1183,17 +1196,24 @@ actions:
                               device_id: !input controller_device
                               event: '3002'
                         timeout:
-                          milliseconds: !input helper_double_press_delay
+                          milliseconds: 700
                         continue_on_timeout: true
-                      # Guard: ignore long-press triggers during double-press window
+
+                      # Ignore long press events during the double-click window
                       - condition: template
+                        alias: Prevent Long from Cancelling Double
                         value_template: >
-                          {{ not trigger.id in [
-                            'z2m-button-left-long', 'zha-button-left-long', 'dcz-button-left-long'
-                          ] }}
+                          {{ wait.trigger is defined and (
+                               wait.trigger.id not in [
+                                 'z2m-button-left-long',
+                                 'zha-button-left-long',
+                                 'dcz-button-left-long'
+                               ])
+                          }}
+
                       - if:
                           - condition: template
-                            value_template: '{{ wait.trigger.idx is defined }}'
+                            value_template: '{{ wait.trigger is defined }}'
                         then:
                           - event: ahb_controller_event
                             event_data:
