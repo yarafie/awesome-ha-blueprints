@@ -817,6 +817,11 @@ actions:
                 'z2m-button-up-long', 'z2m-button-down-long',
                 'z2m-button-left-long', 'z2m-button-right-long'
               ] }}
+          # Compact debounce guard (200 ms)
+          - condition: template
+            alias: Debounce Guard (200 ms)
+            value_template: >
+              {{ (as_timestamp(now()) - (this.attributes.last_triggered | as_timestamp(0))) > 0.2 }}
           # Added: self-contained debounce (200 ms)
           - variables:
               debounce_now: '{{ as_timestamp(now()) }}'
@@ -1129,6 +1134,11 @@ actions:
                 'z2m-button-up-long', 'z2m-button-down-long',
                 'z2m-button-left-long', 'z2m-button-right-long'
               ] }}
+          # Compact debounce guard (200 ms)
+          - condition: template
+            alias: Debounce Guard (200 ms)
+            value_template: >
+              {{ (as_timestamp(now()) - (this.attributes.last_triggered | as_timestamp(0))) > 0.2 }}
           # Added: self-contained debounce (200 ms)
           - variables:
               debounce_now: '{{ as_timestamp(now()) }}'
