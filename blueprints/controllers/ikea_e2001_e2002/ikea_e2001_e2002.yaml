@@ -221,6 +221,15 @@ blueprint:
               unit_of_measurement: milliseconds
               mode: box
               step: 10.0
+        controller_hold_helper:
+        helper_long_press_state:
+          name: Helper Long Press State
+          description: >
+            Select the input_text helper that tracks which button is currently held.
+            This helper should be a text helper (input_text) with a blank initial value.
+          selector:
+            entity:
+              domain: input_text
     # inputs for enabling double press events
     double_press_options_section:
       name: Double Press options (Virtual)
@@ -643,9 +652,9 @@ actions:
   #
   # choose the sequence to run based on the received button event
   - choose:
-      # ===================================
-      # 🔼 UP BUTTON SHORT & DOUBLE PRESS
-      # ===================================
+      # ────────────────────────────────────────────────
+      # 🔼 UP BUTTON — Short / Double Press
+      # ────────────────────────────────────────────────
       - conditions:
           - condition: trigger
             id:
@@ -653,74 +662,320 @@ actions:
               - zha-button-up-short
               - dcz-button-up-short
         sequence:
-          # Guard against long-press overlap
           - condition: template
-            value_template: >
-              {{ trigger.id not in [
-                'z2m-button-up-long', 'z2m-button-down-long',
-                'z2m-button-left-long', 'z2m-button-right-long'
-              ] }}
-          # Compact debounce guard (200 ms)
-          - condition: template
-            alias: Debounce Guard (200 ms)
-            value_template: >
-              {{ (as_timestamp(now()) - (this.attributes.last_triggered | as_timestamp(0))) > 0.2 }}
-          # Added: self-contained debounce (200 ms)
+            alias: Skip If Held
+            value_template: "{{ states(helper_long_press_state) != 'up' }}"
           - variables:
               debounce_now: '{{ as_timestamp(now()) }}'
-              debounce_last: '{{ this.attributes.last_triggered | as_timestamp(0) }}'
+              debounce_prev: "{{ state_attr('automation.' ~ this.entity_id.split('.')[-1], 'last_triggered') | as_timestamp(0) }}"
           - condition: template
+            alias: Debounce Guard
             value_template: >
-              {% set delta = debounce_now - debounce_last %}
+              {% set delta = debounce_now - debounce_prev %}
               {{ delta > 0.2 }}
-          # Double press logic
           - if:
               - condition: template
                 value_template: '{{ button_up_double_press_exposed }}'
             then:
-              - choose:
-                  - conditions: []
-                    sequence:
-                      - wait_for_trigger:
-                          - trigger: device
-                            domain: mqtt
-                            device_id: !input controller_device
-                            type: action
-                            subtype: 'on'
-                          - trigger: event
-                            event_type: zha_event
-                            event_data:
-                              device_id: !input controller_device
-                              command: 'on'
-                              cluster_id: 6
-                              endpoint_id: 1
-                          - trigger: event
-                            event_type: deconz_event
-                            event_data:
-                              device_id: !input controller_device
-                              event: '1002'
-                        timeout:
-                          milliseconds: !input helper_double_press_delay
-                        continue_on_timeout: true
-                      - if:
-                          - condition: template
-                            value_template: '{{ wait.trigger.idx is defined }}'
-                        then:
-                          - event: ahb_controller_event
-                            event_data:
-                              controller: '{{ controller_id }}'
-                              action: button_up_double
-                          - choose:
-                              - conditions: []
-                                sequence: !input action_button_up_double
-                        else:
-                          - event: ahb_controller_event
-                            event_data:
-                              controller: '{{ controller_id }}'
-                              action: button_up_short
-                          - choose:
-                              - conditions: []
-                                sequence: !input action_button_up_short
+              - wait_for_trigger:
+                  - trigger: device
+                    domain: mqtt
+                    device_id: !input controller_device
+                    type: action
+                    subtype: 'on'
+                  - trigger: event
+                    event_type: zha_event
+                    event_data:
+                      device_id: !input controller_device
+                      command: 'on'
+                      cluster_id: 6
+                      endpoint_id: 1
+                  - trigger: event
+                    event_type: deconz_event
+                    event_data:
+                      device_id: !input controller_device
+                      event: '1002'
+                timeout:
+                  milliseconds: !input helper_double_press_delay
+                continue_on_timeout: true
+              - if:
+                  - condition: template
+                    alias: Valid Double Press Check
+                    value_template: >
+                      {{ wait.trigger is defined
+                         and states(helper_long_press_state) != 'up'
+                         and (
+                           (wait.trigger.platform == 'device' and wait.trigger.subtype == 'on')
+                           or
+                           (wait.trigger.platform == 'event' and (
+                             (wait.trigger.event.data.command | default('')) == 'on'
+                             or
+                             (wait.trigger.event.data.event | string) == '1002'
+                           ))
+                         )
+                      }}
+                then:
+                  - event: ahb_controller_event
+                    event_data:
+                      controller: '{{ controller_id }}'
+                      action: button_up_double
+                  - choose:
+                      - conditions: []
+                        sequence: !input action_button_up_double
+                else:
+                  - event: ahb_controller_event
+                    event_data:
+                      controller: '{{ controller_id }}'
+                      action: button_up_short
+                  - choose:
+                      - conditions: []
+                        sequence: !input action_button_up_short
+
+      # ────────────────────────────────────────────────
+      # 🔽 DOWN BUTTON — Short / Double Press
+      # ────────────────────────────────────────────────
+      - conditions:
+          - condition: trigger
+            id:
+              - z2m-button-down-short
+              - zha-button-down-short
+              - dcz-button-down-short
+        sequence:
+          - condition: template
+            alias: Skip If Held
+            value_template: "{{ states(helper_long_press_state) != 'down' }}"
+          - variables:
+              debounce_now: '{{ as_timestamp(now()) }}'
+              debounce_prev: "{{ state_attr('automation.' ~ this.entity_id.split('.')[-1], 'last_triggered') | as_timestamp(0) }}"
+          - condition: template
+            alias: Debounce Guard
+            value_template: >
+              {% set delta = debounce_now - debounce_prev %}
+              {{ delta > 0.2 }}
+          - if:
+              - condition: template
+                value_template: '{{ button_down_double_press_exposed }}'
+            then:
+              - wait_for_trigger:
+                  - trigger: device
+                    domain: mqtt
+                    device_id: !input controller_device
+                    type: action
+                    subtype: 'off'
+                  - trigger: event
+                    event_type: zha_event
+                    event_data:
+                      device_id: !input controller_device
+                      command: 'off'
+                      cluster_id: 6
+                      endpoint_id: 1
+                  - trigger: event
+                    event_type: deconz_event
+                    event_data:
+                      device_id: !input controller_device
+                      event: '2002'
+                timeout:
+                  milliseconds: !input helper_double_press_delay
+                continue_on_timeout: true
+              - if:
+                  - condition: template
+                    alias: Valid Double Press Check
+                    value_template: >
+                      {{ wait.trigger is defined
+                         and states(helper_long_press_state) != 'down'
+                         and (
+                           (wait.trigger.platform == 'device' and wait.trigger.subtype == 'off')
+                           or
+                           (wait.trigger.platform == 'event' and (
+                             (wait.trigger.event.data.command | default('')) == 'off'
+                             or
+                             (wait.trigger.event.data.event | string) == '2002'
+                           ))
+                         )
+                      }}
+                then:
+                  - event: ahb_controller_event
+                    event_data:
+                      controller: '{{ controller_id }}'
+                      action: button_down_double
+                  - choose:
+                      - conditions: []
+                        sequence: !input action_button_down_double
+                else:
+                  - event: ahb_controller_event
+                    event_data:
+                      controller: '{{ controller_id }}'
+                      action: button_down_short
+                  - choose:
+                      - conditions: []
+                        sequence: !input action_button_down_short
+
+      # ────────────────────────────────────────────────
+      # ◀️ LEFT BUTTON — Short / Double Press
+      # ────────────────────────────────────────────────
+      - conditions:
+          - condition: trigger
+            id:
+              - z2m-button-left-short
+              - zha-button-left-short
+              - dcz-button-left-short
+        sequence:
+          - condition: template
+            alias: Skip If Held
+            value_template: "{{ states(helper_long_press_state) != 'left' }}"
+          - variables:
+              debounce_now: '{{ as_timestamp(now()) }}'
+              debounce_prev: "{{ state_attr('automation.' ~ this.entity_id.split('.')[-1], 'last_triggered') | as_timestamp(0) }}"
+          - condition: template
+            alias: Debounce Guard
+            value_template: >
+              {% set delta = debounce_now - debounce_prev %}
+              {{ delta > 0.2 }}
+          - if:
+              - condition: template
+                value_template: '{{ button_left_double_press_exposed }}'
+            then:
+              - wait_for_trigger:
+                  - trigger: device
+                    domain: mqtt
+                    device_id: !input controller_device
+                    type: action
+                    subtype: arrow_left_click
+                  - trigger: event
+                    event_type: zha_event
+                    event_data:
+                      device_id: !input controller_device
+                      command: press
+                      cluster_id: 5
+                      endpoint_id: 1
+                      args:
+                        - 257
+                        - 13
+                        - 0
+                  - trigger: event
+                    event_type: deconz_event
+                    event_data:
+                      device_id: !input controller_device
+                      event: '3002'
+                timeout:
+                  milliseconds: !input helper_double_press_delay
+                continue_on_timeout: true
+              - if:
+                  - condition: template
+                    alias: Valid Double Press Check
+                    value_template: >
+                      {{ wait.trigger is defined
+                         and states(helper_long_press_state) != 'left'
+                         and (
+                           (wait.trigger.platform == 'device' and wait.trigger.subtype == 'arrow_left_click')
+                           or
+                           (wait.trigger.platform == 'event' and (
+                             (wait.trigger.event.data.command | default('')) == 'press'
+                             or
+                             (wait.trigger.event.data.event | string) == '3002'
+                           ))
+                         )
+                      }}
+                then:
+                  - event: ahb_controller_event
+                    event_data:
+                      controller: '{{ controller_id }}'
+                      action: button_left_double
+                  - choose:
+                      - conditions: []
+                        sequence: !input action_button_left_double
+                else:
+                  - event: ahb_controller_event
+                    event_data:
+                      controller: '{{ controller_id }}'
+                      action: button_left_short
+                  - choose:
+                      - conditions: []
+                        sequence: !input action_button_left_short
+
+      # ────────────────────────────────────────────────
+      # ▶️ RIGHT BUTTON — Short / Double Press
+      # ────────────────────────────────────────────────
+      - conditions:
+          - condition: trigger
+            id:
+              - z2m-button-right-short
+              - zha-button-right-short
+              - dcz-button-right-short
+        sequence:
+          - condition: template
+            alias: Skip If Held
+            value_template: "{{ states(helper_long_press_state) != 'right' }}"
+          - variables:
+              debounce_now: '{{ as_timestamp(now()) }}'
+              debounce_prev: "{{ state_attr('automation.' ~ this.entity_id.split('.')[-1], 'last_triggered') | as_timestamp(0) }}"
+          - condition: template
+            alias: Debounce Guard
+            value_template: >
+              {% set delta = debounce_now - debounce_prev %}
+              {{ delta > 0.2 }}
+          - if:
+              - condition: template
+                value_template: '{{ button_right_double_press_exposed }}'
+            then:
+              - wait_for_trigger:
+                  - trigger: device
+                    domain: mqtt
+                    device_id: !input controller_device
+                    type: action
+                    subtype: arrow_right_click
+                  - trigger: event
+                    event_type: zha_event
+                    event_data:
+                      device_id: !input controller_device
+                      command: press
+                      cluster_id: 5
+                      endpoint_id: 1
+                      args:
+                        - 256
+                        - 13
+                        - 0
+                  - trigger: event
+                    event_type: deconz_event
+                    event_data:
+                      device_id: !input controller_device
+                      event: '4002'
+                timeout:
+                  milliseconds: !input helper_double_press_delay
+                continue_on_timeout: true
+              - if:
+                  - condition: template
+                    alias: Valid Double Press Check
+                    value_template: >
+                      {{ wait.trigger is defined
+                         and states(helper_long_press_state) != 'right'
+                         and (
+                           (wait.trigger.platform == 'device' and wait.trigger.subtype == 'arrow_right_click')
+                           or
+                           (wait.trigger.platform == 'event' and (
+                             (wait.trigger.event.data.command | default('')) == 'press'
+                             or
+                             (wait.trigger.event.data.event | string) == '4002'
+                           ))
+                         )
+                      }}
+                then:
+                  - event: ahb_controller_event
+                    event_data:
+                      controller: '{{ controller_id }}'
+                      action: button_right_double
+                  - choose:
+                      - conditions: []
+                        sequence: !input action_button_right_double
+                else:
+                  - event: ahb_controller_event
+                    event_data:
+                      controller: '{{ controller_id }}'
+                      action: button_right_short
+                  - choose:
+                      - conditions: []
+                        sequence: !input action_button_right_short
+
       # ===================================
       # 🔼 UP BUTTON LONG PRESS (SAFE-STOP)
       # ===================================
@@ -801,114 +1056,6 @@ actions:
                                     - delay:
                                         milliseconds: 100
       # ===================================
-      # 🔽 DOWN BUTTON SHORT & DOUBLE PRESS
-      # ===================================
-      - conditions:
-          - condition: trigger
-            id:
-              - z2m-button-down-short
-              - zha-button-down-short
-              - dcz-button-down-short
-        sequence:
-          # Guard against long-press overlap
-          - condition: template
-            value_template: >
-              {{ trigger.id not in [
-                'z2m-button-up-long', 'z2m-button-down-long',
-                'z2m-button-left-long', 'z2m-button-right-long'
-              ] }}
-
-          # Safe self-contained debounce (200 ms)
-          - variables:
-              debounce_now: '{{ as_timestamp(now()) }}'
-              debounce_prev: >-
-                {% if trigger.entity_id is defined %}
-                  {{ state_attr(trigger.entity_id, 'last_triggered') | as_timestamp(0) }}
-                {% else %}
-                  0
-                {% endif %}
-          - condition: template
-            alias: Debounce Guard (200 ms)
-            value_template: >
-              {% set delta = debounce_now - debounce_prev %}
-              {{ delta > 0.2 }}
-
-          # Double press logic with strict validation and Long-Press Guard
-          - if:
-              - condition: template
-                value_template: '{{ button_down_double_press_exposed }}'
-            then:
-              - choose:
-                  - conditions: []
-                    sequence:
-                      # Wait only for second short click
-                      - wait_for_trigger:
-                          - trigger: device
-                            domain: mqtt
-                            device_id: !input controller_device
-                            type: action
-                            subtype: 'off'
-                          - trigger: event
-                            event_type: zha_event
-                            event_data:
-                              device_id: !input controller_device
-                              command: 'off'
-                              cluster_id: 6
-                              endpoint_id: 1
-                          - trigger: event
-                            event_type: deconz_event
-                            event_data:
-                              device_id: !input controller_device
-                              event: '2002'
-                        timeout:
-                          milliseconds: !input helper_double_press_delay
-                        continue_on_timeout: true
-
-                      # Filter: ignore long press or move triggers during double-click window
-                      - condition: template
-                        alias: Filter Hold Triggers
-                        value_template: >
-                          {{ wait.trigger is defined and (
-                               wait.trigger.id not in [
-                                 'z2m-button-down-long',
-                                 'zha-button-down-long',
-                                 'dcz-button-down-long'
-                               ])
-                          }}
-
-                      # Strict check: must be a short press (not long or release)
-                      - if:
-                          - condition: template
-                            alias: Valid Double Press Check
-                            value_template: >
-                              {{ wait.trigger is defined
-                                 and (
-                                   (wait.trigger.platform == 'device' and wait.trigger.subtype == 'off')
-                                   or
-                                   (wait.trigger.platform == 'event' and (
-                                     (wait.trigger.event.data.command | default('')) == 'off'
-                                     or
-                                     (wait.trigger.event.data.event | string) == '2002'
-                                   ))
-                                 )
-                              }}
-                        then:
-                          - event: ahb_controller_event
-                            event_data:
-                              controller: '{{ controller_id }}'
-                              action: button_down_double
-                          - choose:
-                              - conditions: []
-                                sequence: !input action_button_down_double
-                        else:
-                          - event: ahb_controller_event
-                            event_data:
-                              controller: '{{ controller_id }}'
-                              action: button_down_short
-                          - choose:
-                              - conditions: []
-                                sequence: !input action_button_down_short
-      # ===================================
       # 🔽 DOWN BUTTON LONG PRESS (SAFE-STOP)
       # ===================================
       - conditions:
@@ -988,88 +1135,6 @@ actions:
                                     - delay:
                                         milliseconds: 100
       # ===================================
-      # ▶️ RIGHT BUTTON SHORT & DOUBLE PRESS
-      # ===================================
-      - conditions:
-          - condition: trigger
-            id:
-              - z2m-button-right-short
-              - zha-button-right-short
-              - dcz-button-right-short
-        sequence:
-          # Guard against long-press overlap
-          - condition: template
-            value_template: >
-              {{ trigger.id not in [
-                'z2m-button-up-long', 'z2m-button-down-long',
-                'z2m-button-left-long', 'z2m-button-right-long'
-              ] }}
-          # Compact debounce guard (200 ms)
-          - condition: template
-            alias: Debounce Guard (200 ms)
-            value_template: >
-              {{ (as_timestamp(now()) - (this.attributes.last_triggered | as_timestamp(0))) > 0.2 }}
-          # Added: self-contained debounce (200 ms)
-          - variables:
-              debounce_now: '{{ as_timestamp(now()) }}'
-              debounce_last: '{{ this.attributes.last_triggered | as_timestamp(0) }}'
-          - condition: template
-            value_template: >
-              {% set delta = debounce_now - debounce_last %}
-              {{ delta > 0.2 }}
-          # Double press logic
-          - if:
-              - condition: template
-                value_template: '{{ button_right_double_press_exposed }}'
-            then:
-              - choose:
-                  - conditions: []
-                    sequence:
-                      - wait_for_trigger:
-                          - trigger: device
-                            domain: mqtt
-                            device_id: !input controller_device
-                            type: action
-                            subtype: arrow_right_click
-                          - trigger: event
-                            event_type: zha_event
-                            event_data:
-                              device_id: !input controller_device
-                              command: press
-                              cluster_id: 5
-                              endpoint_id: 1
-                              args:
-                                - 256
-                                - 13
-                                - 0
-                          - trigger: event
-                            event_type: deconz_event
-                            event_data:
-                              device_id: !input controller_device
-                              event: '4002'
-                        timeout:
-                          milliseconds: !input helper_double_press_delay
-                        continue_on_timeout: true
-                      - if:
-                          - condition: template
-                            value_template: '{{ wait.trigger.idx is defined }}'
-                        then:
-                          - event: ahb_controller_event
-                            event_data:
-                              controller: '{{ controller_id }}'
-                              action: button_right_double
-                          - choose:
-                              - conditions: []
-                                sequence: !input action_button_right_double
-                        else:
-                          - event: ahb_controller_event
-                            event_data:
-                              controller: '{{ controller_id }}'
-                              action: button_right_short
-                          - choose:
-                              - conditions: []
-                                sequence: !input action_button_right_short
-      # ===================================
       # ▶️ RIGHT BUTTON LONG PRESS (SAFE-STOP)
       # ===================================
       - conditions:
@@ -1146,118 +1211,6 @@ actions:
                                     # Added: short cooldown delay to prevent flicker or immediate retrigger
                                     - delay:
                                         milliseconds: 100
-      # ===================================
-      # ◀️ LEFT BUTTON SHORT & DOUBLE PRESS
-      # ===================================
-      - conditions:
-          - condition: trigger
-            id:
-              - z2m-button-left-short
-              - zha-button-left-short
-              - dcz-button-left-short
-        sequence:
-          # Guard against long-press overlap
-          - condition: template
-            value_template: >
-              {{ trigger.id not in [
-                'z2m-button-up-long', 'z2m-button-down-long',
-                'z2m-button-left-long', 'z2m-button-right-long'
-              ] }}
-
-          # Safe self-contained debounce (200 ms)
-          - variables:
-              debounce_now: '{{ as_timestamp(now()) }}'
-              debounce_prev: >-
-                {% if trigger.entity_id is defined %}
-                  {{ state_attr(trigger.entity_id, 'last_triggered') | as_timestamp(0) }}
-                {% else %}
-                  0
-                {% endif %}
-          - condition: template
-            alias: Debounce Guard (200 ms)
-            value_template: >
-              {% set delta = debounce_now - debounce_prev %}
-              {{ delta > 0.2 }}
-
-          # Double press logic with strict validation and Hold suppression
-          - if:
-              - condition: template
-                value_template: '{{ button_left_double_press_exposed }}'
-            then:
-              - choose:
-                  - conditions: []
-                    sequence:
-                      # Wait only for a second short click
-                      - wait_for_trigger:
-                          - trigger: device
-                            domain: mqtt
-                            device_id: !input controller_device
-                            type: action
-                            subtype: arrow_left_click
-                          - trigger: event
-                            event_type: zha_event
-                            event_data:
-                              device_id: !input controller_device
-                              command: press
-                              cluster_id: 5
-                              endpoint_id: 1
-                              args:
-                                - 257
-                                - 13
-                                - 0
-                          - trigger: event
-                            event_type: deconz_event
-                            event_data:
-                              device_id: !input controller_device
-                              event: '3002'
-                        timeout:
-                          milliseconds: !input helper_double_press_delay
-                        continue_on_timeout: true
-
-                      # Filter: ignore long press or hold triggers during double-click window
-                      - condition: template
-                        alias: Filter Hold Triggers
-                        value_template: >
-                          {{ wait.trigger is defined and (
-                               wait.trigger.id not in [
-                                 'z2m-button-left-long',
-                                 'zha-button-left-long',
-                                 'dcz-button-left-long'
-                               ])
-                          }}
-
-                      # Strict validation: must be a short click only
-                      - if:
-                          - condition: template
-                            alias: Valid Double Press Check
-                            value_template: >
-                              {{ wait.trigger is defined
-                                 and (
-                                   (wait.trigger.platform == 'device' and wait.trigger.subtype == 'arrow_left_click')
-                                   or
-                                   (wait.trigger.platform == 'event' and (
-                                     (wait.trigger.event.data.command | default('')) == 'press'
-                                     or
-                                     (wait.trigger.event.data.event | string) == '3002'
-                                   ))
-                                 )
-                              }}
-                        then:
-                          - event: ahb_controller_event
-                            event_data:
-                              controller: '{{ controller_id }}'
-                              action: button_left_double
-                          - choose:
-                              - conditions: []
-                                sequence: !input action_button_left_double
-                        else:
-                          - event: ahb_controller_event
-                            event_data:
-                              controller: '{{ controller_id }}'
-                              action: button_left_short
-                          - choose:
-                              - conditions: []
-                                sequence: !input action_button_left_short
       # ===================================
       # ◀️ LEFT BUTTON LONG PRESS (SAFE-STOP)
       # ===================================
