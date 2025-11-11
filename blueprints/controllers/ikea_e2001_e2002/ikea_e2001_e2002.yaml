@@ -877,7 +877,20 @@ actions:
 
                       - if:
                           - condition: template
-                            value_template: '{{ wait.trigger is defined }}'
+                            alias: Valid Double Press Check
+                            value_template: >
+                              {{ wait.trigger is defined
+                                 and
+                                 (
+                                      (wait.trigger.platform == 'device' and wait.trigger.subtype == 'off')
+                                       or
+                                      (wait.trigger.platform == 'event' and (
+                                          (wait.trigger.event.data.command | default('')) == 'off'
+                                          or
+                                          (wait.trigger.event.data.event | string) == '2002')
+                                      )
+                                 )
+                              }}
                         then:
                           - event: ahb_controller_event
                             event_data:
@@ -1213,7 +1226,20 @@ actions:
 
                       - if:
                           - condition: template
-                            value_template: '{{ wait.trigger is defined }}'
+                            alias: Valid Double Press Check
+                            value_template: >
+                              {{ wait.trigger is defined
+                                 and
+                                 (
+                                      (wait.trigger.platform == 'device' and wait.trigger.subtype == 'arrow_left_click')
+                                       or
+                                      (wait.trigger.platform == 'event' and (
+                                          (wait.trigger.event.data.command | default('')) == 'press'
+                                          or
+                                          (wait.trigger.event.data.event | string) == '3002')
+                                      )
+                                 )
+                              }}
                         then:
                           - event: ahb_controller_event
                             event_data:
