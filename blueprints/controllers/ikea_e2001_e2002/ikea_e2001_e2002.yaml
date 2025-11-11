@@ -221,7 +221,6 @@ blueprint:
               unit_of_measurement: milliseconds
               mode: box
               step: 10.0
-        controller_hold_helper:
         helper_long_press_state:
           name: Helper Long Press State
           description: >
@@ -295,6 +294,7 @@ variables:
   button_left_double_press_exposed: !input button_left_double_press_exposed
   helper_long_press_delay: !input helper_long_press_delay
   helper_double_press_delay: !input helper_double_press_delay
+  helper_long_press_state: !input helper_long_press_state
   # mapping between actions and integrations
   actions_mapping:
     z2m:
