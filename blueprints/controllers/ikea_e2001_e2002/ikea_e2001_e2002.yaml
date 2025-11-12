@@ -6,7 +6,7 @@ blueprint:
 
     Controller automation for executing any kind of action triggered by the provided IKEA E2001/E2002 STYRBAR Remote control.
     Allows to optionally loop an action on a button long press.
-    The blueprint also adds support for virtual double button press events, which are not exposed by the controller device itself. However, It needs to be enabled in the blueprint.
+    The blueprint also adds support for virtual double button press events, which are not enabled by the controller device itself. However, It needs to be enabled in the blueprint.
     Supports Zigbee2MQTT, ZHA, deCONZ.
 
     Automations created with this blueprint can be connected with one or more [Hooks](https://yarafie.github.io/awesome-ha-blueprints/docs/blueprints/hooks) supported by this controller.
@@ -59,6 +59,32 @@ blueprint:
               manufacturer: IKEA of Sweden
               model: Remote Control N2
           multiple: false
+    # General Helpers Section
+    general_helpers_section:
+      name: Long Press options
+      icon: mdi:remote
+      collapsed: false
+      input:
+        helper_last_controller_event:
+          name: (Required) Helper - Last Controller Event
+          description: Input Text used to store the last event fired by the controller. You will need to manually create a text input entity for this, please read the blueprint Additional Notes for more info.
+          default: ''
+          selector:
+            entity:
+              domain: input_text
+        helper_debounce_delay:
+          name: (Optional) Helper - Debounce delay
+          description:
+            Delay used for debouncing RAW controller events, by default set to 0. A value of 0 disables the debouncing feature. Increase this value if you notice custom actions or linked Hooks running multiple times when interacting with the device. When the controller needs to be debounced,
+            usually a value of 100 is enough to remove all duplicate events.
+          default: 0
+          selector:
+            number:
+              min: 0
+              max: 1000
+              unit_of_measurement: milliseconds
+              mode: box
+              step: 10
     # inputs for custom actions
     action_button_up_short:
       name: (Optional) Up button short press
@@ -132,14 +158,56 @@ blueprint:
       default: []
       selector:
         action:
+    # inputs for enabling double press events
+    double_press_options_section:
+      name: Double Press options (Virtual)
+      icon: mdi:remote
+      collapsed: true
+      input:
+        button_up_double_press_enabled:
+          name: (Optional) (Virtual) Enable up button double press event
+          description: Choose whether or not to enable the virtual double press event for the up button. Turn this on if you are providing an action for the up button double press event.
+          default: false
+          selector:
+            boolean:
+        button_down_double_press_enabled:
+          name: (Optional) (Virtual) Enable down button double press event
+          description: Choose whether or not to enable the virtual double press event for the down button. Turn this on if you are providing an action for the down button double press event.
+          default: false
+          selector:
+            boolean:
+        button_right_double_press_enabled:
+          name: (Optional) (Virtual) Enable right button double press event
+          description: Choose whether or not to enable the virtual double press event for the right button. Turn this on if you are providing an action for the right button double press event.
+          default: false
+          selector:
+            boolean:
+        button_left_double_press_enabled:
+          name: (Optional) (Virtual) Enable left button double press event
+          description: Choose whether or not to enable the virtual double press event for the left button. Turn this on if you are providing an action for the left button double press event.
+          default: false
+          selector:
+            boolean:
+        # helper used to properly adjust the remote button double press events
+        helper_double_press_delay:
+          name: (Optional) (Virtual) Helper - Double Press delay
+          description: Max delay between the first and the second button press for the double press event. Provide a value only if you are using a double press action. Increase this value if you notice that the double press action is not triggered properly.
+          default: 250
+          selector:
+            number:
+              min: 100.0
+              max: 5000.0
+              unit_of_measurement: milliseconds
+              mode: box
+              step: 10.0
     # inputs for looping custom actions on long button press events until the corresponding release event is received
     long_press_options_section:
       name: Long Press options
       icon: mdi:remote
       collapsed: true
       input:
-        button_up_long_loop:
-          name: (Optional) Up button long press - loop until release
+        button_up_long_loop_enabled:
+          name: (Optional) Up button long press - enable looping until release
           description: Loop the up button action until the button is released.
           default: false
           selector:
@@ -156,8 +224,8 @@ blueprint:
               max: 1000.0
               mode: slider
               step: 1.0
-        button_down_long_loop:
-          name: (Optional) Down button long press - loop until release
+        button_down_long_loop_enabled:
+          name: (Optional) Down button long press - enable looping until release
           description: Loop the down button action until the button is released.
           default: false
           selector:
@@ -174,8 +242,8 @@ blueprint:
               max: 1000.0
               mode: slider
               step: 1.0
-        button_right_long_loop:
-          name: (Optional) Right button long press - loop until release
+        button_right_long_loop_enabled:
+          name: (Optional) Right button long press - enable looping until release
           description: Loop the right button action until the button is released.
           default: false
           selector:
@@ -192,8 +260,8 @@ blueprint:
               max: 1000.0
               mode: slider
               step: 1.0
-        button_left_long_loop:
-          name: (Optional) Left button long press - loop until release
+        button_left_long_loop_enabled:
+          name: (Optional) Left button long press - enable looping until release
           description: Loop the left button action until the button is released.
           default: false
           selector:
@@ -221,56 +289,6 @@ blueprint:
               unit_of_measurement: milliseconds
               mode: box
               step: 10.0
-        helper_long_press_state:
-          name: Helper Long Press State
-          description: >
-            Select the input_text helper that tracks which button is currently held.
-            This helper should be a text helper (input_text) with a blank initial value.
-          selector:
-            entity:
-              domain: input_text
-    # inputs for enabling double press events
-    double_press_options_section:
-      name: Double Press options (Virtual)
-      icon: mdi:remote
-      collapsed: true
-      input:
-        button_up_double_press_exposed:
-          name: (Optional) (Virtual) Expose up button double press event
-          description: Choose whether or not to expose the virtual double press event for the up button. Turn this on if you are providing an action for the up button double press event.
-          default: false
-          selector:
-            boolean:
-        button_down_double_press_exposed:
-          name: (Optional) (Virtual) Expose down button double press event
-          description: Choose whether or not to expose the virtual double press event for the down button. Turn this on if you are providing an action for the down button double press event.
-          default: false
-          selector:
-            boolean:
-        button_right_double_press_exposed:
-          name: (Optional) (Virtual) Expose right button double press event
-          description: Choose whether or not to expose the virtual double press event for the right button. Turn this on if you are providing an action for the right button double press event.
-          default: false
-          selector:
-            boolean:
-        button_left_double_press_exposed:
-          name: (Optional) (Virtual) Expose left button double press event
-          description: Choose whether or not to expose the virtual double press event for the left button. Turn this on if you are providing an action for the left button double press event.
-          default: false
-          selector:
-            boolean:
-        # helper used to properly adjust the remote button double press events
-        helper_double_press_delay:
-          name: (Optional) (Virtual) Helper - Double Press delay
-          description: Max delay between the first and the second button press for the double press event. Provide a value only if you are using a double press action. Increase this value if you notice that the double press action is not triggered properly.
-          default: 250
-          selector:
-            number:
-              min: 100.0
-              max: 5000.0
-              unit_of_measurement: milliseconds
-              mode: box
-              step: 10.0
 #
 # Automation schema
 variables:
@@ -280,21 +298,26 @@ variables:
   # integration type is set from trigger.id
   integration_id: '{{ trigger.id.split("-")[0] }}'
   # convert input tags to variables, to be used in templates
-  button_up_long_loop: !input button_up_long_loop
+  button_up_double_press_enabled: !input button_up_double_press_enabled
+  button_up_long_loop_enabled: !input button_up_long_loop_enabled
   button_up_long_max_loop_repeats: !input button_up_long_max_loop_repeats
-  button_up_double_press_exposed: !input button_up_double_press_exposed
-  button_down_long_loop: !input button_down_long_loop
+  button_down_double_press_enabled: !input button_down_double_press_enabled
+  button_down_long_loop_enabled: !input button_down_long_loop_enabled
   button_down_long_max_loop_repeats: !input button_down_long_max_loop_repeats
-  button_down_double_press_exposed: !input button_down_double_press_exposed
-  button_right_long_loop: !input button_right_long_loop
+  button_right_double_press_enabled: !input button_right_double_press_enabled
+  button_right_long_loop_enabled: !input button_right_long_loop_enabled
   button_right_long_max_loop_repeats: !input button_right_long_max_loop_repeats
-  button_right_double_press_exposed: !input button_right_double_press_exposed
-  button_left_long_loop: !input button_left_long_loop
+  button_left_double_press_enabled: !input button_left_double_press_enabled
+  button_left_long_loop_enabled: !input button_left_long_loop_enabled
   button_left_long_max_loop_repeats: !input button_left_long_max_loop_repeats
-  button_left_double_press_exposed: !input button_left_double_press_exposed
+  # helpers
+  helper_last_controller_event: !input helper_last_controller_event
+  helper_debounce_delay: !input helper_debounce_delay
   helper_long_press_delay: !input helper_long_press_delay
   helper_double_press_delay: !input helper_double_press_delay
-  helper_long_press_state: !input helper_long_press_state
+  # adjusted debounce delay so that the resulting double press delay is exactly as specified by the user when running the action, taking also account of debouncing
+  # make sure it never goes below the minimum double press delay
+  adjusted_double_press_delay: '{{ [helper_double_press_delay - helper_debounce_delay, 100] | max }}'
   # mapping between actions and integrations
   actions_mapping:
     z2m:
@@ -361,6 +384,8 @@ variables:
   button_left_short: '{{ actions_mapping[integration_id]["button_left_short"] }}'
   button_left_long: '{{ actions_mapping[integration_id]["button_left_long"] }}'
   button_left_release: '{{ actions_mapping[integration_id]["button_left_release"] }}'
+  # integrations which need to store the previous press event to determine which button was released
+  integrations_with_prev_event_storage: [z2m, zha]
 #
 # Mode Block
 mode: restart
@@ -639,652 +664,486 @@ conditions:
         {{ trigger.payload }}
         {%- elif integration_id == "zha" -%}
         {{ trigger.event.data.command }}{{"_" if trigger.event.data.args|length > 0}}{{ trigger.event.data.args|join("_") }}
-        {%- elif integration_id == "dcz" -%}
-        {{ trigger.event.data.event }}
         {%- elif integration_id == "sly" -%}
         {{ trigger.event.data.click_type }}
+        {%- elif integration_id == "dcz" -%}
+        {{ trigger.event.data.event }}
         {%- endif -%}
         {%- endset -%}
         {{ trigger_action not in ["","None","unknown"] }}
 #
 # Actions Block
 actions:
-  #
-  # choose the sequence to run based on the received button event
+  # ================================================
+  # DEBOUNCE SECTION
+  # debouncing - when automation is triggered multiple times, the last automation run is the one which completes execution, due to mode restart
+  # therefore previous runs must wait for the debounce delay before executing any other action
+  # if the delay expires and the automation is still running it means it's the last run and execution can continue
+  # ================================================
+  - delay:
+      milliseconds: !input helper_debounce_delay
+  # ================================================
+  # CAPTURE CURRENT TRIGGER STATE
+  # ================================================
+  - variables:
+      # Use trigger.id (dynamic) as the normalized action name
+      # Example: z2m-button-up-short → "button-up-short"
+      trigger_action: "{{ trigger.id.split('-', 1)[1] }}"
+      # Deserialize stored helper state if valid JSON, else use defaults
+      #deserialized_state: '{{ (states(helper_last_controller_event) | from_json) if helper_last_controller_event is not none and (states(helper_last_controller_event) | regex_match("^\{\s*?((\"a\":\s*?\".*\"|\"t\":\s*?\d+\.\d+)(,\s*?)?){2}\s*?\}$")) else {} }}'
+      deserialized_state: >
+        {% set raw = states(!input helper_last_controller_event) %}
+        {% if raw is not none and raw | regex_match('^\{\s*".*"\s*\}$') %}
+          {{ raw | from_json }}
+        {% else %}
+          {{ {"a": "", "t": 0} }}
+        {% endif %}
+      # Calculate time delta between current and last event
+      #trigger_delta: '{{ (as_timestamp(now()) - (deserialized_state.t | default(0))) * 1000 }}'
+      trigger_delta: '{{ (as_timestamp(now()) - (deserialized_state.t | default(0))) * 1000 | int }}'
+      # Extract previous action name for comparison
+      last_controller_event: "{{ deserialized_state.a | default('') }}"
+  # ================================================
+  # STORE CURRENT EVENT (ALWAYS UPDATE HELPER)
+  # ================================================
+  - action: input_text.set_value
+    data:
+      entity_id: !input helper_last_controller_event
+      value: '{{ {"a":trigger_action,"t":as_timestamp(now())} | to_json }}'
+  # DECISION LOGIC – CHOOSE WHAT TO DO BASED ON TRIGGER
   - choose:
-      # ────────────────────────────────────────────────
-      # 🔼 UP BUTTON — Short / Double Press
-      # ────────────────────────────────────────────────
-      - conditions:
-          - condition: trigger
-            id:
-              - z2m-button-up-short
-              - zha-button-up-short
-              - dcz-button-up-short
+      # ================================================
+      # Actions for Up Button Single Press / Double Press Virtual
+      # ================================================
+      #- conditions:
+      #    - condition: trigger
+      #      id:
+      #        - z2m-button-up-short
+      #        - zha-button-up-short
+      #        - dcz-button-up-short
+      #- conditions: '{{ trigger.id in ['z2m-button-up-short', 'zha-button-up-short', 'dcz-button-up-short'] }}'
+      - conditions: "{{ trigger.id in [''z2m-button-up-short'', ''zha-button-up-short'', ''dcz-button-up-short''] }}"
         sequence:
-          - condition: template
-            alias: Skip If Held
-            value_template: "{{ states(helper_long_press_state) != 'up' }}"
-          - variables:
-              debounce_now: '{{ as_timestamp(now()) }}'
-              debounce_prev: "{{ state_attr('automation.' ~ this.entity_id.split('.')[-1], 'last_triggered') | as_timestamp(0) }}"
-          - condition: template
-            alias: Debounce Guard
-            value_template: >
-              {% set delta = debounce_now - debounce_prev %}
-              {{ delta > 0.2 }}
-          - if:
-              - condition: template
-                value_template: '{{ button_up_double_press_exposed }}'
-            then:
-              - wait_for_trigger:
-                  - trigger: device
-                    domain: mqtt
-                    device_id: !input controller_device
-                    type: action
-                    subtype: 'on'
-                  - trigger: event
-                    event_type: zha_event
-                    event_data:
-                      device_id: !input controller_device
-                      command: 'on'
-                      cluster_id: 6
-                      endpoint_id: 1
-                  - trigger: event
-                    event_type: deconz_event
-                    event_data:
-                      device_id: !input controller_device
-                      event: '1002'
-                timeout:
-                  milliseconds: !input helper_double_press_delay
-                continue_on_timeout: true
-              - if:
-                  - condition: template
-                    alias: Valid Double Press Check
-                    value_template: >
-                      {{ wait.trigger is defined
-                         and states(helper_long_press_state) != 'up'
-                         and (
-                           (wait.trigger.platform == 'device' and wait.trigger.subtype == 'on')
-                           or
-                           (wait.trigger.platform == 'event' and (
-                             (wait.trigger.event.data.command | default('')) == 'on'
-                             or
-                             (wait.trigger.event.data.event | string) == '1002'
-                           ))
-                         )
-                      }}
-                then:
-                  - event: ahb_controller_event
-                    event_data:
-                      controller: '{{ controller_id }}'
-                      action: button_up_double
+          - choose:
+              # Check if Double press feature enabled
+              - conditions: '{{ button_up_double_press_enabled }}'
+                sequence:
                   - choose:
-                      - conditions: []
-                        sequence: !input action_button_up_double
-                else:
-                  - event: ahb_controller_event
-                    event_data:
-                      controller: '{{ controller_id }}'
-                      action: button_up_short
-                  - choose:
-                      - conditions: []
-                        sequence: !input action_button_up_short
-
-      # ────────────────────────────────────────────────
-      # 🔽 DOWN BUTTON — Short / Double Press
-      # ────────────────────────────────────────────────
-      - conditions:
-          - condition: trigger
-            id:
-              - z2m-button-down-short
-              - zha-button-down-short
-              - dcz-button-down-short
+                      # Detected a double press (same action + within delay)
+                      - conditions: '{{ trigger_action == last_controller_event and (trigger_delta | int) <= (helper_double_press_delay | int) }}'
+                        sequence:
+                          # Store "trigget_action" in helper
+                          - action: call-service
+                            service: input_text.set_value
+                            data:
+                              entity_id: !input helper_last_controller_event
+                              value: '{{ {"a": trigger_action, "t": as_timestamp(now())} | to_json }}'
+                          # Fire a double-press event
+                          - action: fire-event
+                            event: ahb_controller_event
+                            event_data:
+                              controller: '{{ controller_id }}'
+                              action: button_up_double
+                          # Run user-defined double press actions
+                          - choose:
+                              - conditions: []
+                                sequence: !input action_button_up_double
+                    # If no double press detected — fallback to single
+                    default:
+                      - delay:
+                          milliseconds: '{{ adjusted_double_press_delay }}'
+                      # After delay expires → single short press
+                      - action: fire-event
+                        event: ahb_controller_event
+                        event_data:
+                          controller: '{{ controller_id }}'
+                          action: button_up_short
+                      - choose:
+                          - conditions: []
+                            sequence: !input action_button_up_short
+            # Double press feature disabled → single short press only
+            default:
+              - action: fire-event
+                event: ahb_controller_event
+                event_data:
+                  controller: '{{ controller_id }}'
+                  action: button_up_short
+              - choose:
+                  - conditions: []
+                    sequence: !input action_button_up_short
+      # ================================================
+      # DOWN BUTTON — Short / Double Press
+      # ================================================
+      - conditions: "{{ trigger.id in [''z2m-button-down-short'', ''zha-button-down-short'', 'dcz-button-down-short''] }}"
         sequence:
-          - condition: template
-            alias: Skip If Held
-            value_template: "{{ states(helper_long_press_state) != 'down' }}"
-          - variables:
-              debounce_now: '{{ as_timestamp(now()) }}'
-              debounce_prev: "{{ state_attr('automation.' ~ this.entity_id.split('.')[-1], 'last_triggered') | as_timestamp(0) }}"
-          - condition: template
-            alias: Debounce Guard
-            value_template: >
-              {% set delta = debounce_now - debounce_prev %}
-              {{ delta > 0.2 }}
-          - if:
-              - condition: template
-                value_template: '{{ button_down_double_press_exposed }}'
-            then:
-              - wait_for_trigger:
-                  - trigger: device
-                    domain: mqtt
-                    device_id: !input controller_device
-                    type: action
-                    subtype: 'off'
-                  - trigger: event
-                    event_type: zha_event
-                    event_data:
-                      device_id: !input controller_device
-                      command: 'off'
-                      cluster_id: 6
-                      endpoint_id: 1
-                  - trigger: event
-                    event_type: deconz_event
-                    event_data:
-                      device_id: !input controller_device
-                      event: '2002'
-                timeout:
-                  milliseconds: !input helper_double_press_delay
-                continue_on_timeout: true
-              - if:
-                  - condition: template
-                    alias: Valid Double Press Check
-                    value_template: >
-                      {{ wait.trigger is defined
-                         and states(helper_long_press_state) != 'down'
-                         and (
-                           (wait.trigger.platform == 'device' and wait.trigger.subtype == 'off')
-                           or
-                           (wait.trigger.platform == 'event' and (
-                             (wait.trigger.event.data.command | default('')) == 'off'
-                             or
-                             (wait.trigger.event.data.event | string) == '2002'
-                           ))
-                         )
-                      }}
-                then:
-                  - event: ahb_controller_event
-                    event_data:
-                      controller: '{{ controller_id }}'
-                      action: button_down_double
+          - choose:
+              # Check Double press feature enabled
+              - conditions: '{{ button_down_double_press_enabled }}'
+                sequence:
                   - choose:
-                      - conditions: []
-                        sequence: !input action_button_down_double
-                else:
-                  - event: ahb_controller_event
-                    event_data:
-                      controller: '{{ controller_id }}'
-                      action: button_down_short
-                  - choose:
-                      - conditions: []
-                        sequence: !input action_button_down_short
-
-      # ────────────────────────────────────────────────
-      # ◀️ LEFT BUTTON — Short / Double Press
-      # ────────────────────────────────────────────────
-      - conditions:
-          - condition: trigger
-            id:
-              - z2m-button-left-short
-              - zha-button-left-short
-              - dcz-button-left-short
+                      # Detected a double press (same action + within delay)
+                      - conditions: '{{ trigger_action == last_controller_event and (trigger_delta | int) <= (helper_double_press_delay | int) }}'
+                        sequence:
+                          # Store "trigget_action" in helper
+                          - action: call-service
+                            service: input_text.set_value
+                            data:
+                              entity_id: !input helper_last_controller_event
+                              value: '{{ {"a": trigger_action, "t": as_timestamp(now())} | to_json }}'
+                          # Fire a double-press event
+                          - action: fire-event
+                            event: ahb_controller_event
+                            event_data:
+                              controller: '{{ controller_id }}'
+                              action: button_down_double
+                          # Run user-defined double press actions
+                          - choose:
+                              - conditions: []
+                                sequence: !input action_button_down_double
+                    # If no double press detected — fallback to single
+                    default:
+                      - delay:
+                          milliseconds: '{{ adjusted_double_press_delay }}'
+                      # After delay expires → single short press
+                      - action: fire-event
+                        event: ahb_controller_event
+                        event_data:
+                          controller: '{{ controller_id }}'
+                          action: button_down_short
+                      - choose:
+                          - conditions: []
+                            sequence: !input action_button_down_short
+            # Double press feature disabled → single short press only
+            default:
+              - action: fire-event
+                event: ahb_controller_event
+                event_data:
+                  controller: '{{ controller_id }}'
+                  action: button_down_short
+              - choose:
+                  - conditions: []
+                    sequence: !input action_button_down_short
+      # ================================================
+      # LEFT BUTTON — Short / Double Press
+      # ================================================
+      - conditions: "{{ trigger.id in [''z2m-button-left-short'', 'zha-button-left-short'', ''dcz-button-left-short''] }}"
         sequence:
-          - condition: template
-            alias: Skip If Held
-            value_template: "{{ states(helper_long_press_state) != 'left' }}"
-          - variables:
-              debounce_now: '{{ as_timestamp(now()) }}'
-              debounce_prev: "{{ state_attr('automation.' ~ this.entity_id.split('.')[-1], 'last_triggered') | as_timestamp(0) }}"
-          - condition: template
-            alias: Debounce Guard
-            value_template: >
-              {% set delta = debounce_now - debounce_prev %}
-              {{ delta > 0.2 }}
-          - if:
-              - condition: template
-                value_template: '{{ button_left_double_press_exposed }}'
-            then:
-              - wait_for_trigger:
-                  - trigger: device
-                    domain: mqtt
-                    device_id: !input controller_device
-                    type: action
-                    subtype: arrow_left_click
-                  - trigger: event
-                    event_type: zha_event
-                    event_data:
-                      device_id: !input controller_device
-                      command: press
-                      cluster_id: 5
-                      endpoint_id: 1
-                      args:
-                        - 257
-                        - 13
-                        - 0
-                  - trigger: event
-                    event_type: deconz_event
-                    event_data:
-                      device_id: !input controller_device
-                      event: '3002'
-                timeout:
-                  milliseconds: !input helper_double_press_delay
-                continue_on_timeout: true
-              - if:
-                  - condition: template
-                    alias: Valid Double Press Check
-                    value_template: >
-                      {{ wait.trigger is defined
-                         and states(helper_long_press_state) != 'left'
-                         and (
-                           (wait.trigger.platform == 'device' and wait.trigger.subtype == 'arrow_left_click')
-                           or
-                           (wait.trigger.platform == 'event' and (
-                             (wait.trigger.event.data.command | default('')) == 'press'
-                             or
-                             (wait.trigger.event.data.event | string) == '3002'
-                           ))
-                         )
-                      }}
-                then:
-                  - event: ahb_controller_event
-                    event_data:
-                      controller: '{{ controller_id }}'
-                      action: button_left_double
+          - choose:
+              # Check if Double press feature enabled
+              - conditions: '{{ button_left_double_press_enabled }}'
+                sequence:
                   - choose:
-                      - conditions: []
-                        sequence: !input action_button_left_double
-                else:
-                  - event: ahb_controller_event
-                    event_data:
-                      controller: '{{ controller_id }}'
-                      action: button_left_short
-                  - choose:
-                      - conditions: []
-                        sequence: !input action_button_left_short
-
-      # ────────────────────────────────────────────────
-      # ▶️ RIGHT BUTTON — Short / Double Press
-      # ────────────────────────────────────────────────
-      - conditions:
-          - condition: trigger
-            id:
-              - z2m-button-right-short
-              - zha-button-right-short
-              - dcz-button-right-short
+                      # Detected a double press (same action + within delay)
+                      - conditions: '{{ trigger_action == last_controller_event and (trigger_delta | int) <= (helper_double_press_delay | int) }}'
+                        sequence:
+                          # Store "trigget_action" in helper
+                          - action: call-service
+                            service: input_text.set_value
+                            data:
+                              entity_id: !input helper_last_controller_event
+                              value: '{{ {"a": trigger_action, "t": as_timestamp(now())} | to_json }}'
+                          # Fire a double-press event
+                          - action: fire-event
+                            event: ahb_controller_event
+                            event_data:
+                              controller: '{{ controller_id }}'
+                              action: button_left_double
+                          # Run user-defined double press actions
+                          - choose:
+                              - conditions: []
+                                sequence: !input action_button_left_double
+                    # If no double press detected — fallback to single
+                    default:
+                      - delay:
+                          milliseconds: '{{ adjusted_double_press_delay }}'
+                      # After delay expires → single short press
+                      - action: fire-event
+                        event: ahb_controller_event
+                        event_data:
+                          controller: '{{ controller_id }}'
+                          action: button_left_short
+                      - choose:
+                          - conditions: []
+                            sequence: !input action_button_left_short
+            # Double press feature disabled → single short press only
+            default:
+              - action: fire-event
+                event: ahb_controller_event
+                event_data:
+                  controller: '{{ controller_id }}'
+                  action: button_left_short
+              - choose:
+                  - conditions: []
+                    sequence: !input action_button_left_short
+      # ================================================
+      # RIGHT BUTTON — Short / Double Press
+      # ================================================
+      - conditions: "{{ trigger.id in [''z2m-button-right-short'', ''zha-button-right-short'', ''dcz-button-right-short''] }}"
         sequence:
-          - condition: template
-            alias: Skip If Held
-            value_template: "{{ states(helper_long_press_state) != 'right' }}"
-          - variables:
-              debounce_now: '{{ as_timestamp(now()) }}'
-              debounce_prev: "{{ state_attr('automation.' ~ this.entity_id.split('.')[-1], 'last_triggered') | as_timestamp(0) }}"
-          - condition: template
-            alias: Debounce Guard
-            value_template: >
-              {% set delta = debounce_now - debounce_prev %}
-              {{ delta > 0.2 }}
-          - if:
-              - condition: template
-                value_template: '{{ button_right_double_press_exposed }}'
-            then:
-              - wait_for_trigger:
-                  - trigger: device
-                    domain: mqtt
-                    device_id: !input controller_device
-                    type: action
-                    subtype: arrow_right_click
-                  - trigger: event
-                    event_type: zha_event
-                    event_data:
-                      device_id: !input controller_device
-                      command: press
-                      cluster_id: 5
-                      endpoint_id: 1
-                      args:
-                        - 256
-                        - 13
-                        - 0
-                  - trigger: event
-                    event_type: deconz_event
-                    event_data:
-                      device_id: !input controller_device
-                      event: '4002'
-                timeout:
-                  milliseconds: !input helper_double_press_delay
-                continue_on_timeout: true
-              - if:
-                  - condition: template
-                    alias: Valid Double Press Check
-                    value_template: >
-                      {{ wait.trigger is defined
-                         and states(helper_long_press_state) != 'right'
-                         and (
-                           (wait.trigger.platform == 'device' and wait.trigger.subtype == 'arrow_right_click')
-                           or
-                           (wait.trigger.platform == 'event' and (
-                             (wait.trigger.event.data.command | default('')) == 'press'
-                             or
-                             (wait.trigger.event.data.event | string) == '4002'
-                           ))
-                         )
-                      }}
-                then:
-                  - event: ahb_controller_event
-                    event_data:
-                      controller: '{{ controller_id }}'
-                      action: button_right_double
+          - choose:
+              # Check if Double press feature enabled
+              - conditions: '{{ button_right_double_press_enabled }}'
+                sequence:
                   - choose:
-                      - conditions: []
-                        sequence: !input action_button_right_double
-                else:
-                  - event: ahb_controller_event
-                    event_data:
-                      controller: '{{ controller_id }}'
-                      action: button_right_short
-                  - choose:
-                      - conditions: []
-                        sequence: !input action_button_right_short
-
-      # ===================================
-      # 🔼 UP BUTTON LONG PRESS (SAFE-STOP)
-      # ===================================
-      - conditions:
-          - condition: trigger
-            id:
-              - z2m-button-up-long
-              - zha-button-up-long
-              - dcz-button-up-long
+                      # Detected a double press (same action + within delay)
+                      - conditions: '{{ trigger_action == last_controller_event and (trigger_delta | int) <= (helper_double_press_delay | int) }}'
+                        sequence:
+                          # Store "trigget_action" in helper
+                          - action: call-service
+                            service: input_text.set_value
+                            data:
+                              entity_id: !input helper_last_controller_event
+                              value: '{{ {"a": trigger_action, "t": as_timestamp(now())} | to_json }}'
+                          # Fire a double-press event
+                          - action: fire-event
+                            event: ahb_controller_event
+                            event_data:
+                              controller: '{{ controller_id }}'
+                              action: button_right_double
+                          # Run user-defined double press actions
+                          - choose:
+                              - conditions: []
+                                sequence: !input action_button_right_double
+                    # If no double press detected — fallback to single
+                    default:
+                      - delay:
+                          milliseconds: '{{ adjusted_double_press_delay }}'
+                      # After delay expires → single short press
+                      - action: fire-event
+                        event: ahb_controller_event
+                        event_data:
+                          controller: '{{ controller_id }}'
+                          action: button_right_short
+                      - choose:
+                          - conditions: []
+                            sequence: !input action_button_right_short
+            # Double press feature disabled → single short press only
+            default:
+              - action: fire-event
+                event: ahb_controller_event
+                event_data:
+                  controller: '{{ controller_id }}'
+                  action: button_right_short
+              - choose:
+                  - conditions: []
+                    sequence: !input action_button_right_short
+      # ================================================
+      # UP BUTTON — LONG PRESS (RESTART-SAFE LOOP)
+      # ================================================
+      - conditions: "{{ trigger.id in [''z2m-button-up-long'', ''zha-button-up-long'', ''dcz-button-up-long''] }}"
         sequence:
-          # fire the ahb event only once before entering repeat
-          - event: ahb_controller_event
+          # Fire initial long-press event
+          - action: fire-event
+            event: ahb_controller_event
             event_data:
               controller: '{{ controller_id }}'
               action: button_up_long
-          # run the custom action only once before entering repeat
+          # Run the long-press action once
           - choose:
               - conditions: []
                 sequence: !input action_button_up_long
-          # handle custom action looping if looping is enabled
+          # Optional looping while held (stops automatically on restart)
           - choose:
-              - conditions: '{{ button_up_long_loop }}'
+              - conditions: '{{ button_up_long_loop_enabled }}'
                 sequence:
                   - variables:
-                      released: false
                       max_repeats: !input button_up_long_max_loop_repeats
-                  # Repeat the Long Press Actions for the set number of loops
+                      delay_ms: '{{ helper_long_press_delay | int }}'
                   - repeat:
                       while:
                         - condition: template
-                          value_template: '{{ not released and repeat.index < max_repeats }}'
+                          value_template: '{{ repeat.index < max_repeats }}'
                       sequence:
-                        - parallel:
-                            - sequence:
-                                # fire the ahb event
-                                - event: ahb_controller_event
-                                  event_data:
-                                    controller: '{{ controller_id }}'
-                                    action: button_up_long
-                                # run the custom action
-                                - choose:
-                                    - conditions: []
-                                      sequence: !input action_button_up_long
-                            - sequence:
-                                # Wait for trigger for Button Long Press Release to stop looping
-                                - wait_for_trigger:
-                                    # z2m triggers
-                                    - trigger: device
-                                      domain: mqtt
-                                      device_id: !input controller_device
-                                      type: action
-                                      subtype: brightness_stop
-                                    # zha triggers
-                                    - trigger: event
-                                      event_type: zha_event
-                                      event_data:
-                                        device_id: !input controller_device
-                                        command: stop_on_off
-                                        cluster_id: 8
-                                        endpoint_id: 1
-                                    # dcz triggers
-                                    - trigger: event
-                                      event_type: deconz_event
-                                      event_data:
-                                        device_id: !input controller_device
-                                        event: '1003'
-                                  timeout:
-                                    milliseconds: !input helper_long_press_delay
-                                  continue_on_timeout: true
-                                # If a Button Long Release is triggered wait.trigger.idx will be defined stop the loop before long_max_loop_repeats
-                                - if:
-                                    - condition: template
-                                      value_template: '{{ wait.trigger.idx is defined }}'
-                                  then:
-                                    - variables:
-                                        released: true
-                                    # Added: short cooldown delay to prevent flicker or immediate retrigger
-                                    - delay:
-                                        milliseconds: 100
-      # ===================================
-      # 🔽 DOWN BUTTON LONG PRESS (SAFE-STOP)
-      # ===================================
-      - conditions:
-          - condition: trigger
-            id:
-              - z2m-button-down-long
-              - zha-button-down-long
-              - dcz-button-down-long
+                        - choose:
+                            - conditions: []
+                              sequence: !input action_button_up_long
+                        - delay:
+                            milliseconds: '{{ delay_ms }}'
+            # If looping disabled → just run once
+            default: !input action_button_up_long
+      # ================================================
+      # UP BUTTON — LONG PRESS RELEASE HANDLER
+      # ================================================
+      - conditions: "{{ trigger.id in [''z2m-button-up-release'', ''zha-button-up-release'', ''dcz-button-up-release''] }}"
         sequence:
-          # fire the ahb event only once before entering repeat
-          - event: ahb_controller_event
+          # Fire release event (signals end of hold)
+          - action: fire-event
+            event: ahb_controller_event
+            event_data:
+              controller: '{{ controller_id }}'
+              action: button_up_release
+          # Run any user-defined release action
+          - choose:
+              - conditions: []
+                sequence: !input action_button_up_release
+          # Update helper for last event tracking
+          - action: call-service
+            service: input_text.set_value
+            data:
+              entity_id: !input helper_last_controller_event
+              value: '{{ {"a": trigger_action, "t": as_timestamp(now())} | to_json }}'
+      # ================================================
+      # DOWN BUTTON — LONG PRESS (RESTART-SAFE LOOP)
+      # ================================================
+      - conditions: "{{ trigger.id in [''z2m-button-down-long'', ''zha-button-down-long'', ''dcz-button-down-long''] }}"
+        sequence:
+          # Fire initial long-press event
+          - action: fire-event
+            event: ahb_controller_event
             event_data:
               controller: '{{ controller_id }}'
               action: button_down_long
-          # run the custom action only once before entering repeat
+          # Run the long-press action once
           - choose:
               - conditions: []
                 sequence: !input action_button_down_long
-          # handle custom action looping if looping is enabled
+          # Optional looping while held (stops automatically on restart)
           - choose:
-              - conditions: '{{ button_down_long_loop }}'
+              - conditions: '{{ button_down_long_loop_enabled }}'
                 sequence:
                   - variables:
-                      released: false
                       max_repeats: !input button_down_long_max_loop_repeats
-                  # Repeat the Long Press Actions for the set number of loops
+                      delay_ms: '{{ helper_long_press_delay | int }}'
                   - repeat:
                       while:
                         - condition: template
-                          value_template: '{{ not released and repeat.index < max_repeats }}'
+                          value_template: '{{ repeat.index < max_repeats }}'
                       sequence:
-                        - parallel:
-                            - sequence:
-                                # fire the ahb event
-                                - event: ahb_controller_event
-                                  event_data:
-                                    controller: '{{ controller_id }}'
-                                    action: button_down_long
-                                # run the custom action
-                                - choose:
-                                    - conditions: []
-                                      sequence: !input action_button_down_long
-                            - sequence:
-                                # Wait for trigger for Button Long Press Release to stop looping
-                                - wait_for_trigger:
-                                    # z2m triggers
-                                    - trigger: device
-                                      domain: mqtt
-                                      device_id: !input controller_device
-                                      type: action
-                                      subtype: brightness_stop
-                                    # zha triggers
-                                    - trigger: event
-                                      event_type: zha_event
-                                      event_data:
-                                        device_id: !input controller_device
-                                        command: stop
-                                        cluster_id: 8
-                                        endpoint_id: 1
-                                    # dcz triggers
-                                    - trigger: event
-                                      event_type: deconz_event
-                                      event_data:
-                                        device_id: !input controller_device
-                                        event: '2003'
-                                  timeout:
-                                    milliseconds: !input helper_long_press_delay
-                                  continue_on_timeout: true
-                                # If a Button Long Release is triggered wait.trigger.idx will be defined stop the loop before long_max_loop_repeats
-                                - if:
-                                    - condition: template
-                                      value_template: '{{ wait.trigger.idx is defined }}'
-                                  then:
-                                    - variables:
-                                        released: true
-                                    # Added: short cooldown delay to prevent flicker or immediate retrigger
-                                    - delay:
-                                        milliseconds: 100
-      # ===================================
-      # ▶️ RIGHT BUTTON LONG PRESS (SAFE-STOP)
-      # ===================================
-      - conditions:
-          - condition: trigger
-            id:
-              - z2m-button-right-long
-              - zha-button-right-long
-              - dcz-button-right-long
+                        - choose:
+                            - conditions: []
+                              sequence: !input action_button_down_long
+                        - delay:
+                            milliseconds: '{{ delay_ms }}'
+            # If looping disabled → just run once
+            default: !input action_button_down_long
+      # ================================================
+      # DOWN BUTTON — LONG PRESS RELEASE
+      # ================================================
+      - conditions: "{{ trigger.id in [''z2m-button-down-release'', ''zha-button-down-release'', ''dcz-button-down-release''] }}"
         sequence:
-          # fire the ahb event only once before entering repeat
-          - event: ahb_controller_event
+          # Fire release event (signals end of hold)
+          - action: fire-event
+            event: ahb_controller_event
+            event_data:
+              controller: '{{ controller_id }}'
+              action: button_down_release
+          # Run any user-defined release action
+          - choose:
+              - conditions: []
+                sequence: !input action_button_down_release
+          # Update helper for last event tracking
+          - action: call-service
+            service: input_text.set_value
+            data:
+              entity_id: !input helper_last_controller_event
+              value: '{{ {"a": trigger_action, "t": as_timestamp(now())} | to_json }}'
+      # ================================================
+      # RIGHT BUTTON — LONG PRESS (RESTART-SAFE LOOP)
+      # ================================================
+      - conditions: "{{ trigger.id in [''z2m-button-right-long'', ''zha-button-right-long'', ''dcz-button-right-long''] }}"
+        sequence:
+          # Fire initial long-press event
+          - action: fire-event
+            event: ahb_controller_event
             event_data:
               controller: '{{ controller_id }}'
               action: button_right_long
-          # run the custom action only once before entering repeat
+          # Run the long-press action once
           - choose:
               - conditions: []
                 sequence: !input action_button_right_long
-          # handle custom action looping if looping is enabled
+          # Optional looping while held (stops automatically on restart)
           - choose:
-              - conditions: '{{ button_right_long_loop }}'
+              - conditions: '{{ button_right_long_loop_enabled }}'
                 sequence:
                   - variables:
-                      released: false
                       max_repeats: !input button_right_long_max_loop_repeats
-                  # Repeat the Long Press Actions for the set number of loops
+                      delay_ms: '{{ helper_long_press_delay | int }}'
                   - repeat:
                       while:
                         - condition: template
-                          value_template: '{{ not released and repeat.index < max_repeats }}'
+                          value_template: '{{ repeat.index < max_repeats }}'
                       sequence:
-                        - parallel:
-                            - sequence:
-                                # fire the ahb event
-                                - event: ahb_controller_event
-                                  event_data:
-                                    controller: '{{ controller_id }}'
-                                    action: button_right_long
-                                # run the custom action
-                                - choose:
-                                    - conditions: []
-                                      sequence: !input action_button_right_long
-                            - sequence:
-                                # Wait for trigger for Button Long Press Release to stop looping
-                                - wait_for_trigger:
-                                    # z2m triggers
-                                    - trigger: device
-                                      domain: mqtt
-                                      device_id: !input controller_device
-                                      type: action
-                                      subtype: arrow_right_release
-                                    # zha triggers
-                                    - trigger: event
-                                      event_type: zha_event
-                                      event_data:
-                                        device_id: !input controller_device
-                                        command: release
-                                    # dcz triggers
-                                    - trigger: event
-                                      event_type: deconz_event
-                                      event_data:
-                                        device_id: !input controller_device
-                                        event: '4003'
-                                  timeout:
-                                    milliseconds: !input helper_long_press_delay
-                                  continue_on_timeout: true
-                                # If a Button Long Release is triggered wait.trigger.idx will be defined stop the loop before long_max_loop_repeats
-                                - if:
-                                    - condition: template
-                                      value_template: '{{ wait.trigger.idx is defined }}'
-                                  then:
-                                    - variables:
-                                        released: true
-                                    # Added: short cooldown delay to prevent flicker or immediate retrigger
-                                    - delay:
-                                        milliseconds: 100
-      # ===================================
-      # ◀️ LEFT BUTTON LONG PRESS (SAFE-STOP)
-      # ===================================
-      - conditions:
-          - condition: trigger
-            id:
-              - z2m-button-left-long
-              - zha-button-left-long
-              - dcz-button-left-long
+                        - choose:
+                            - conditions: []
+                              sequence: !input action_button_right_long
+                        - delay:
+                            milliseconds: '{{ delay_ms }}'
+            # If looping disabled → just run once
+            default: !input action_button_right_long
+      # ================================================
+      # RIGHT BUTTON — LONG PRESS RELEASE
+      # ================================================
+      - conditions: "{{ trigger.id in [''z2m-button-right-release'', ''zha-button-right-release'', ''dcz-button-right-release''] }}"
         sequence:
-          # fire the ahb event only once before entering repeat
-          - event: ahb_controller_event
+          # Fire release event (signals end of hold)
+          - action: fire-event
+            event: ahb_controller_event
+            event_data:
+              controller: '{{ controller_id }}'
+              action: button_right_release
+          # Run any user-defined release action
+          - choose:
+              - conditions: []
+                sequence: !input action_button_right_release
+          # Update helper for last event tracking
+          - action: call-service
+            service: input_text.set_value
+            data:
+              entity_id: !input helper_last_controller_event
+              value: '{{ {"a": trigger_action, "t": as_timestamp(now())} | to_json }}'
+      # ================================================
+      # LEFT BUTTON — LONG PRESS (RESTART-SAFE LOOP)
+      # ================================================
+      - conditions: "{{ trigger.id in [''z2m-button-left-long'', ''zha-button-left-long'', ''dcz-button-left-long''] }}"
+        sequence:
+          # Fire initial long-press event
+          - action: fire-event
+            event: ahb_controller_event
             event_data:
               controller: '{{ controller_id }}'
               action: button_left_long
-          # run the custom action only once before entering repeat
+          # Run the long-press action once
           - choose:
               - conditions: []
                 sequence: !input action_button_left_long
-          # handle custom action looping if looping is enabled
+          # Optional looping while held (stops automatically on restart)
           - choose:
-              - conditions: '{{ button_left_long_loop }}'
+              - conditions: '{{ button_left_long_loop_enabled }}'
                 sequence:
                   - variables:
-                      released: false
                       max_repeats: !input button_left_long_max_loop_repeats
-                  # Repeat the Long Press Actions for the set number of loops
+                      delay_ms: '{{ helper_long_press_delay | int }}'
                   - repeat:
                       while:
                         - condition: template
-                          value_template: '{{ not released and repeat.index < max_repeats }}'
+                          value_template: '{{ repeat.index < max_repeats }}'
                       sequence:
-                        - parallel:
-                            - sequence:
-                                # fire the ahb event
-                                - event: ahb_controller_event
-                                  event_data:
-                                    controller: '{{ controller_id }}'
-                                    action: button_left_long
-                                # run the custom action
-                                - choose:
-                                    - conditions: []
-                                      sequence: !input action_button_left_long
-                            - sequence:
-                                # Wait for trigger for Button Long Press Release to stop looping
-                                - wait_for_trigger:
-                                    # z2m triggers
-                                    - trigger: device
-                                      domain: mqtt
-                                      device_id: !input controller_device
-                                      type: action
-                                      subtype: arrow_left_release
-                                    # zha triggers
-                                    - trigger: event
-                                      event_type: zha_event
-                                      event_data:
-                                        device_id: !input controller_device
-                                        command: release
-                                    # dcz triggers
-                                    - trigger: event
-                                      event_type: deconz_event
-                                      event_data:
-                                        device_id: !input controller_device
-                                        event: '3003'
-                                  timeout:
-                                    milliseconds: !input helper_long_press_delay
-                                  continue_on_timeout: true
-                                # If a Button Long Release is triggered wait.trigger.idx will be defined stop the loop before long_max_loop_repeats
-                                - if:
-                                    - condition: template
-                                      value_template: '{{ wait.trigger.idx is defined }}'
-                                  then:
-                                    - variables:
-                                        released: true
-                                    # Added: short cooldown delay to prevent flicker or immediate retrigger
-                                    - delay:
-                                        milliseconds: 100
+                        - choose:
+                            - conditions: []
+                              sequence: !input action_button_left_long
+                        - delay:
+                            milliseconds: '{{ delay_ms }}'
+            # If looping disabled → just run once
+            default: !input action_button_left_long
+      # ================================================
+      # LEFT BUTTON — LONG PRESS RELEASE
+      # ================================================
+      - conditions: "{{ trigger.id in [''z2m-button-left-release'', ''zha-button-left-release'', ''dcz-button-left-release''] }}"
+        sequence:
+          # Fire release event (signals end of hold)
+          - action: fire-event
+            event: ahb_controller_event
+            event_data:
+              controller: '{{ controller_id }}'
+              action: button_left_release
+          # Run any user-defined release action
+          - choose:
+              - conditions: []
+                sequence: !input action_button_left_release
+          # Update helper for last event tracking
+          - action: call-service
+            service: input_text.set_value
+            data:
+              entity_id: !input helper_last_controller_event
+              value: '{{ {"a": trigger_action, "t": as_timestamp(now())} | to_json }}'
