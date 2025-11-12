@@ -980,7 +980,7 @@ actions:
       # ================================================
       - conditions:
           - condition: template
-            value_template: "{{ trigger.id in ['z2m-button-up-release', 'zha-button-up-release', 'dcz-button-up-release'] }}"
+            value_template: "{{ trigger.id in ['z2m-button-long-release', 'zha-button-up-release', 'dcz-button-up-release'] }}"
         sequence:
           # Fire release event (signals end of hold)
           - event: ahb_controller_event
@@ -1036,7 +1036,7 @@ actions:
       # ================================================
       - conditions:
           - condition: template
-            value_template: "{{ trigger.id in ['z2m-button-down-release', 'zha-button-down-release', 'dcz-button-down-release'] }}"
+            value_template: "{{ trigger.id in ['z2m-button-long-release', 'zha-button-down-release', 'dcz-button-down-release'] }}"
         sequence:
           # Fire release event (signals end of hold)
           - event: ahb_controller_event
@@ -1092,7 +1092,7 @@ actions:
       # ================================================
       - conditions:
           - condition: template
-            value_template: "{{ trigger.id in ['z2m-button-right-release', 'zha-button-right-release', 'dcz-button-right-release'] }}"
+            value_template: "{{ trigger.id in ['z2m-button-right-release', 'zha-button-arrows-release', 'dcz-button-right-release'] }}"
         sequence:
           # Fire release event (signals end of hold)
           - event: ahb_controller_event
@@ -1148,7 +1148,7 @@ actions:
       # ================================================
       - conditions:
           - condition: template
-            value_template: "{{ trigger.id in ['z2m-button-left-release', 'zha-button-left-release', 'dcz-button-left-release'] }}"
+            value_template: "{{ trigger.id in ['z2m-button-left-release', 'zha-button-arrows-release', 'dcz-button-left-release'] }}"
         sequence:
           # Fire release event (signals end of hold)
           - event: ahb_controller_event
