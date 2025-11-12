@@ -752,9 +752,8 @@ actions:
                       # Detected a double press (same action + within delay)
                       - conditions: '{{ trigger_action == last_controller_event and (trigger_delta | int) <= (helper_double_press_delay | int) }}'
                         sequence:
-                          # Store "trigget_action" in helper
-                          - action: call-service
-                            service: input_text.set_value
+                          # Store "trigger_action" in helper
+                          - action: input_text.set_value
                             data:
                               entity_id: !input helper_last_controller_event
                               value: '{{ {"a": trigger_action, "t": as_timestamp(now())} | to_json }}'
@@ -805,8 +804,7 @@ actions:
                       - conditions: '{{ trigger_action == last_controller_event and (trigger_delta | int) <= (helper_double_press_delay | int) }}'
                         sequence:
                           # Store "trigget_action" in helper
-                          - action: call-service
-                            service: input_text.set_value
+                          - action: input_text.set_value
                             data:
                               entity_id: !input helper_last_controller_event
                               value: '{{ {"a": trigger_action, "t": as_timestamp(now())} | to_json }}'
@@ -857,8 +855,7 @@ actions:
                       - conditions: '{{ trigger_action == last_controller_event and (trigger_delta | int) <= (helper_double_press_delay | int) }}'
                         sequence:
                           # Store "trigget_action" in helper
-                          - action: call-service
-                            service: input_text.set_value
+                          - action: input_text.set_value
                             data:
                               entity_id: !input helper_last_controller_event
                               value: '{{ {"a": trigger_action, "t": as_timestamp(now())} | to_json }}'
@@ -909,8 +906,7 @@ actions:
                       - conditions: '{{ trigger_action == last_controller_event and (trigger_delta | int) <= (helper_double_press_delay | int) }}'
                         sequence:
                           # Store "trigget_action" in helper
-                          - action: call-service
-                            service: input_text.set_value
+                          - action: input_text.set_value
                             data:
                               entity_id: !input helper_last_controller_event
                               value: '{{ {"a": trigger_action, "t": as_timestamp(now())} | to_json }}'
@@ -996,8 +992,7 @@ actions:
               - conditions: []
                 sequence: !input action_button_up_release
           # Update helper for last event tracking
-          - action: call-service
-            service: input_text.set_value
+          - action: input_text.set_value
             data:
               entity_id: !input helper_last_controller_event
               value: '{{ {"a": trigger_action, "t": as_timestamp(now())} | to_json }}'
@@ -1053,8 +1048,7 @@ actions:
               - conditions: []
                 sequence: !input action_button_down_release
           # Update helper for last event tracking
-          - action: call-service
-            service: input_text.set_value
+          - action: input_text.set_value
             data:
               entity_id: !input helper_last_controller_event
               value: '{{ {"a": trigger_action, "t": as_timestamp(now())} | to_json }}'
@@ -1110,8 +1104,7 @@ actions:
               - conditions: []
                 sequence: !input action_button_right_release
           # Update helper for last event tracking
-          - action: call-service
-            service: input_text.set_value
+          - action: input_text.set_value
             data:
               entity_id: !input helper_last_controller_event
               value: '{{ {"a": trigger_action, "t": as_timestamp(now())} | to_json }}'
@@ -1167,8 +1160,7 @@ actions:
               - conditions: []
                 sequence: !input action_button_left_release
           # Update helper for last event tracking
-          - action: call-service
-            service: input_text.set_value
+          - action: input_text.set_value
             data:
               entity_id: !input helper_last_controller_event
               value: '{{ {"a": trigger_action, "t": as_timestamp(now())} | to_json }}'
