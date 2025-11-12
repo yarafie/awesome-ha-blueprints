@@ -739,6 +739,9 @@ actions:
       #         - zha-button-up-short
       #         - dcz-button-up-short
       # - conditions: '{{ trigger.id in ['z2m-button-up-short', 'zha-button-up-short', 'dcz-button-up-short'] }}'
+      # - conditions:
+      #     - condition: template
+      #       value_template: "{{ trigger.id in ['z2m-button-up-short', 'zha-button-up-short', 'dcz-button-up-short'] }}"
       - conditions: "{{ trigger.id in [''z2m-button-up-short'', ''zha-button-up-short'', ''dcz-button-up-short''] }}"
         sequence:
           - choose:
@@ -788,7 +791,7 @@ actions:
       # ================================================
       # DOWN BUTTON — Short / Double Press
       # ================================================
-      - conditions: "{{ trigger.id in [''z2m-button-down-short'', ''zha-button-down-short'', 'dcz-button-down-short''] }}"
+      - conditions: "{{ trigger.id in [''z2m-button-down-short'', ''zha-button-down-short'', ''dcz-button-down-short''] }}"
         sequence:
           - choose:
               # Check Double press feature enabled
@@ -837,7 +840,7 @@ actions:
       # ================================================
       # LEFT BUTTON — Short / Double Press
       # ================================================
-      - conditions: "{{ trigger.id in [''z2m-button-left-short'', 'zha-button-left-short'', ''dcz-button-left-short''] }}"
+      - conditions: "{{ trigger.id in [''z2m-button-left-short'', ''zha-button-left-short'', ''dcz-button-left-short''] }}"
         sequence:
           - choose:
               # Check if Double press feature enabled
