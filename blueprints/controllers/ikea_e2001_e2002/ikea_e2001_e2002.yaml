@@ -738,11 +738,11 @@ actions:
       #         - z2m-button-up-short
       #         - zha-button-up-short
       #         - dcz-button-up-short
+      # - conditions: "{{ trigger.id in [''z2m-button-up-short'', ''zha-button-up-short'', ''dcz-button-up-short''] }}"
       # - conditions: '{{ trigger.id in ['z2m-button-up-short', 'zha-button-up-short', 'dcz-button-up-short'] }}'
-      # - conditions:
-      #     - condition: template
-      #       value_template: "{{ trigger.id in ['z2m-button-up-short', 'zha-button-up-short', 'dcz-button-up-short'] }}"
-      - conditions: "{{ trigger.id in [''z2m-button-up-short'', ''zha-button-up-short'', ''dcz-button-up-short''] }}"
+      - conditions:
+          - condition: template
+            value_template: "{{ trigger.id in ['z2m-button-up-short', 'zha-button-up-short', 'dcz-button-up-short'] }}"
         sequence:
           - choose:
               # Check if Double press feature enabled
@@ -791,7 +791,10 @@ actions:
       # ================================================
       # DOWN BUTTON — Short / Double Press
       # ================================================
-      - conditions: "{{ trigger.id in [''z2m-button-down-short'', ''zha-button-down-short'', ''dcz-button-down-short''] }}"
+      # - conditions: "{{ trigger.id in [''z2m-button-down-short'', ''zha-button-down-short'', ''dcz-button-down-short''] }}"
+      - conditions:
+          - condition: template
+            value_template: "{{ trigger.id in ['z2m-button-down-short', 'zha-button-down-short', 'dcz-button-down-short'] }}"
         sequence:
           - choose:
               # Check Double press feature enabled
@@ -840,7 +843,10 @@ actions:
       # ================================================
       # LEFT BUTTON — Short / Double Press
       # ================================================
-      - conditions: "{{ trigger.id in [''z2m-button-left-short'', ''zha-button-left-short'', ''dcz-button-left-short''] }}"
+      # - conditions: "{{ trigger.id in [''z2m-button-left-short'', ''zha-button-left-short'', ''dcz-button-left-short''] }}"
+      - conditions:
+          - condition: template
+            value_template: "{{ trigger.id in ['z2m-button-left-short', 'zha-button-left-short', 'dcz-button-left-short'] }}"
         sequence:
           - choose:
               # Check if Double press feature enabled
@@ -889,7 +895,10 @@ actions:
       # ================================================
       # RIGHT BUTTON — Short / Double Press
       # ================================================
-      - conditions: "{{ trigger.id in [''z2m-button-right-short'', ''zha-button-right-short'', ''dcz-button-right-short''] }}"
+      # - conditions: "{{ trigger.id in [''z2m-button-right-short'', ''zha-button-right-short'', ''dcz-button-right-short''] }}"
+      - conditions:
+          - condition: template
+            value_template: "{{ trigger.id in ['z2m-button-right-short', 'zha-button-right-short', 'dcz-button-right-short'] }}"
         sequence:
           - choose:
               # Check if Double press feature enabled
@@ -938,7 +947,9 @@ actions:
       # ================================================
       # UP BUTTON — LONG PRESS (RESTART-SAFE LOOP)
       # ================================================
-      - conditions: "{{ trigger.id in [''z2m-button-up-long'', ''zha-button-up-long'', ''dcz-button-up-long''] }}"
+      - conditions:
+          - condition: template
+            value_template: "{{ trigger.id in ['z2m-button-up-long', 'zha-button-up-long', 'dcz-button-up-long'] }}"
         sequence:
           # Fire initial long-press event
           - event: ahb_controller_event
@@ -971,7 +982,9 @@ actions:
       # ================================================
       # UP BUTTON — LONG PRESS RELEASE HANDLER
       # ================================================
-      - conditions: "{{ trigger.id in [''z2m-button-up-release'', ''zha-button-up-release'', ''dcz-button-up-release''] }}"
+      - conditions:
+          - condition: template
+            value_template: "{{ trigger.id in ['z2m-button-up-release', 'zha-button-up-release', 'dcz-button-up-release'] }}"
         sequence:
           # Fire release event (signals end of hold)
           - event: ahb_controller_event
@@ -991,7 +1004,9 @@ actions:
       # ================================================
       # DOWN BUTTON — LONG PRESS (RESTART-SAFE LOOP)
       # ================================================
-      - conditions: "{{ trigger.id in [''z2m-button-down-long'', ''zha-button-down-long'', ''dcz-button-down-long''] }}"
+      - conditions:
+          - condition: template
+            value_template: "{{ trigger.id in ['z2m-button-down-long', 'zha-button-down-long', 'dcz-button-down-long'] }}"
         sequence:
           # Fire initial long-press event
           - event: ahb_controller_event
@@ -1024,7 +1039,9 @@ actions:
       # ================================================
       # DOWN BUTTON — LONG PRESS RELEASE
       # ================================================
-      - conditions: "{{ trigger.id in [''z2m-button-down-release'', ''zha-button-down-release'', ''dcz-button-down-release''] }}"
+      - conditions:
+          - condition: template
+            value_template: "{{ trigger.id in ['z2m-button-down-release', 'zha-button-down-release', 'dcz-button-down-release'] }}"
         sequence:
           # Fire release event (signals end of hold)
           - event: ahb_controller_event
@@ -1044,7 +1061,9 @@ actions:
       # ================================================
       # RIGHT BUTTON — LONG PRESS (RESTART-SAFE LOOP)
       # ================================================
-      - conditions: "{{ trigger.id in [''z2m-button-right-long'', ''zha-button-right-long'', ''dcz-button-right-long''] }}"
+      - conditions:
+          - condition: template
+            value_template: "{{ trigger.id in ['z2m-button-right-long', 'zha-button-right-long', 'dcz-button-right-long'] }}"
         sequence:
           # Fire initial long-press event
           - event: ahb_controller_event
@@ -1077,7 +1096,9 @@ actions:
       # ================================================
       # RIGHT BUTTON — LONG PRESS RELEASE
       # ================================================
-      - conditions: "{{ trigger.id in [''z2m-button-right-release'', ''zha-button-right-release'', ''dcz-button-right-release''] }}"
+      - conditions:
+          - condition: template
+            value_template: "{{ trigger.id in ['z2m-button-right-release', 'zha-button-right-release', 'dcz-button-right-release'] }}"
         sequence:
           # Fire release event (signals end of hold)
           - event: ahb_controller_event
@@ -1097,7 +1118,9 @@ actions:
       # ================================================
       # LEFT BUTTON — LONG PRESS (RESTART-SAFE LOOP)
       # ================================================
-      - conditions: "{{ trigger.id in [''z2m-button-left-long'', ''zha-button-left-long'', ''dcz-button-left-long''] }}"
+      - conditions:
+          - condition: template
+            value_template: "{{ trigger.id in ['z2m-button-left-long', 'zha-button-left-long', 'dcz-button-left-long'] }}"
         sequence:
           # Fire initial long-press event
           - event: ahb_controller_event
@@ -1130,7 +1153,9 @@ actions:
       # ================================================
       # LEFT BUTTON — LONG PRESS RELEASE
       # ================================================
-      - conditions: "{{ trigger.id in [''z2m-button-left-release'', ''zha-button-left-release'', ''dcz-button-left-release''] }}"
+      - conditions:
+          - condition: template
+            value_template: "{{ trigger.id in ['z2m-button-left-release', 'zha-button-left-release', 'dcz-button-left-release'] }}"
         sequence:
           # Fire release event (signals end of hold)
           - event: ahb_controller_event
