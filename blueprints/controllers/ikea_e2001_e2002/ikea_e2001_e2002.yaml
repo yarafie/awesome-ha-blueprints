@@ -104,6 +104,12 @@ blueprint:
       default: []
       selector:
         action:
+    action_button_up_release:
+      name: (Optional) Up button release
+      description: Action to run on up button release after long press.
+      default: []
+      selector:
+        action:
     action_button_down_short:
       name: (Optional) Down button short press
       description: Action to run on short down button press.
@@ -119,6 +125,12 @@ blueprint:
     action_button_down_double:
       name: (Optional) (Virtual) Down button double press
       description: Action to run on double down button press.
+      default: []
+      selector:
+        action:
+    action_button_down_release:
+      name: (Optional) Down button release
+      description: Action to run on down button release after long press.
       default: []
       selector:
         action:
@@ -140,6 +152,12 @@ blueprint:
       default: []
       selector:
         action:
+    action_button_right_release:
+      name: (Optional) Right button release
+      description: Action to run on right button release after long press.
+      default: []
+      selector:
+        action:
     action_button_left_short:
       name: (Optional) Left button short press
       description: Action to run on short left button press.
@@ -155,6 +173,12 @@ blueprint:
     action_button_left_double:
       name: (Optional) (Virtual) Left button double press
       description: Action to run on double left button press.
+      default: []
+      selector:
+        action:
+    action_button_left_release:
+      name: (Optional) Left button release
+      description: Action to run on left button release after long press.
       default: []
       selector:
         action:
