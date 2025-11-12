@@ -690,7 +690,7 @@ actions:
       # Example: z2m-button-up-short → "button-up-short"
       trigger_action: "{{ trigger.id.split('-', 1)[1] }}"
       # Deserialize stored helper state if valid JSON, else use defaults
-      #deserialized_state: '{{ (states(helper_last_controller_event) | from_json) if helper_last_controller_event is not none and (states(helper_last_controller_event) | regex_match("^\{\s*?((\"a\":\s*?\".*\"|\"t\":\s*?\d+\.\d+)(,\s*?)?){2}\s*?\}$")) else {} }}'
+      # deserialized_state: '{{ (states(helper_last_controller_event) | from_json) if helper_last_controller_event is not none and (states(helper_last_controller_event) | regex_match("^\{\s*?((\"a\":\s*?\".*\"|\"t\":\s*?\d+\.\d+)(,\s*?)?){2}\s*?\}$")) else {} }}'
       deserialized_state: >
         {% set raw = states(!input helper_last_controller_event) %}
         {% if raw is not none and raw | regex_match('^\{\s*".*"\s*\}$') %}
@@ -699,7 +699,7 @@ actions:
           {{ {"a": "", "t": 0} }}
         {% endif %}
       # Calculate time delta between current and last event
-      #trigger_delta: '{{ (as_timestamp(now()) - (deserialized_state.t | default(0))) * 1000 }}'
+      # trigger_delta: '{{ (as_timestamp(now()) - (deserialized_state.t | default(0))) * 1000 }}'
       trigger_delta: '{{ (as_timestamp(now()) - (deserialized_state.t | default(0))) * 1000 | int }}'
       # Extract previous action name for comparison
       last_controller_event: "{{ deserialized_state.a | default('') }}"
@@ -715,13 +715,13 @@ actions:
       # ================================================
       # Actions for Up Button Single Press / Double Press Virtual
       # ================================================
-      #- conditions:
-      #    - condition: trigger
-      #      id:
-      #        - z2m-button-up-short
-      #        - zha-button-up-short
-      #        - dcz-button-up-short
-      #- conditions: '{{ trigger.id in ['z2m-button-up-short', 'zha-button-up-short', 'dcz-button-up-short'] }}'
+      # - conditions:
+      #     - condition: trigger
+      #       id:
+      #         - z2m-button-up-short
+      #         - zha-button-up-short
+      #         - dcz-button-up-short
+      # - conditions: '{{ trigger.id in ['z2m-button-up-short', 'zha-button-up-short', 'dcz-button-up-short'] }}'
       - conditions: "{{ trigger.id in [''z2m-button-up-short'', ''zha-button-up-short'', ''dcz-button-up-short''] }}"
         sequence:
           - choose:
