@@ -114,6 +114,12 @@ This Hook blueprint allows to build a controller-based automation to control a c
 
 ## Additional Notes
 
+### Helper - Last Controller Event
+
+The `helper_last_controller_event` (Helper - Last Controller Event) input serves as a permanent storage area for the automation. The stored info is used to implement the blueprint's core functionality. To learn more about the helper, how it's used and why it's required, you can read the dedicated section in the [Controllers-Hooks Ecosystem documentation](/docs/controllers-hooks-ecosystem#helper---last-controller-event-input).
+
+The helper is used to determine button release events when the controller is integrated with Zigbee2MQTT and ZHA, because of the actions mapping for the controller with these integrations. Natively, the controller doesn't allow to distinguish between different button release events for some of it's buttons, so the blueprint must store the previous clicked button.
+
 ### Virtual double press events
 
 It's important to note that the controller doesn't natively support double press events. Instead , this blueprint provides virtual double press events. You can read more about them in the [general Controllers-Hooks Ecosystem documentation](/docs/controllers-hooks-ecosystem#virtual-events).
