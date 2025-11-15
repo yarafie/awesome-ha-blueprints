@@ -770,10 +770,10 @@ actions:
   # [DEBUG]: Automation Started or Restarted
   # ========================================
   - choose:
-      - variables:
-          debug_note: 'Automation Started or Restarted'
       - conditions: '{{ DEBUG_ENABLED }}'
         sequence:
+          - variables:
+              debug_note: 'Automation Started or Restarted'
           - action: system_log.write
             data:
               level: info
