@@ -762,12 +762,12 @@ actions:
   # ========================================
   # [DEBUG]: Automation Started or Restarted
   # ========================================
-  #- action: logger.set_default_level
-  #  data:
-  #    level: info
-  #- action: logger.set_level
-  #  data:
-  #    homeassistant.components.automation.garage_doorbell4_ring_downloader_for_rtsp: info
+  # - action: logger.set_default_level
+  #   data:
+  #     level: info
+  # - action: logger.set_level
+  #   data:
+  #     homeassistant.components.automation.garage_doorbell4_ring_downloader_for_rtsp: info
   - choose:
       - conditions: '{{ DEBUG_ENABLED }}'
         sequence:
