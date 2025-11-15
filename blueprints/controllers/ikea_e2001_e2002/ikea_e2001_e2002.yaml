@@ -707,6 +707,7 @@ conditions:
 #
 # Actions Block
 actions:
+  #
   # ==============================================================================================================
   # DEBOUNCE SECTION: debouncing - when automation is triggered multiple times,
   # the last automation run is the one which completes execution, due to mode restart
@@ -738,15 +739,19 @@ actions:
           ('%03d' % (now().microsecond // 1000))
         }}
       # Final debug line template (note= filled later)
+      # debug_line: >
+      #   [entity_id={{ this.entity_id }}]
+      #   [name={{ states[this.entity_id].name }}]
       debug_note: ''
       debug_line: >
         [{{ debug_ts }}]
-        [automation={{ this.entity_id }}]
+        [name={{ states[this.entity_id].name }}]
+        [entity_id={{ this.entity_id }}]
         [trigger_id={{ trigger.id }}]
         [trigger_action={{ trigger_action }}]
         [last_event={{ last_controller_event }}]
         [delta_ms={{ trigger_delta }}]
-        [note={{ debug_note }}]
+        [note={{ debug_note | default('') }}]
   # ==========================================
   # STORE CURRENT EVENT (ALWAYS UPDATE HELPER)
   # ==========================================
@@ -757,11 +762,20 @@ actions:
   # ========================================
   # [DEBUG]: Automation Started or Restarted
   # ========================================
+  #- action: logger.set_default_level
+  #  data:
+  #    level: info
+  #- action: logger.set_level
+  #  data:
+  #    homeassistant.components.automation.garage_doorbell4_ring_downloader_for_rtsp: info
   - choose:
       - conditions: '{{ DEBUG_ENABLED }}'
         sequence:
           - variables:
               debug_note: 'Automation Started or Restarted'
+          - action: logger.set_level
+            data:
+              homeassistant.components.{{ this.entity_id }}: info
           - action: system_log.write
             data:
               level: info
