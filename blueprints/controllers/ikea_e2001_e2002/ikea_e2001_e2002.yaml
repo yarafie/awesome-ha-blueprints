@@ -419,19 +419,6 @@ variables:
   integrations_with_prev_event_storage: [z2m, zha]
   # [DEBUG]: VARIABLES block
   DEBUG_ENABLED: !input enable_debug
-  debug_ts: >
-    {{
-      as_local(now()).strftime('%Y-%m-%d %H:%M:%S') ~ '.' ~
-      ('%03d' % (now().microsecond // 1000))
-    }}
-  debug_line: >
-    [{{ debug_ts }}]
-    [automation={{ this.entity_id }}]
-    [trigger_id={{ trigger.id }}]
-    [trigger_action={{ trigger_action }}]
-    [last_event={{ last_controller_event }}]
-    [delta_ms={{ trigger_delta }}]
-    [note={{ debug_note }}]
 #
 # Mode Block
 mode: restart
@@ -751,6 +738,7 @@ actions:
           ('%03d' % (now().microsecond // 1000))
         }}
       # Final debug line template (note= filled later)
+      debug_note: ''
       debug_line: >
         [{{ debug_ts }}]
         [automation={{ this.entity_id }}]
