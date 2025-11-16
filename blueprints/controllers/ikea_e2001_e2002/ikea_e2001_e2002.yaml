@@ -1181,6 +1181,7 @@ actions:
       - conditions:
           - condition: template
             value_template: "{{ trigger.id in ['zha-button-arrows-release'] }}"
+        sequence:
           # Check if last_controller_event is button-right-long
           - choose:
               - conditions:
