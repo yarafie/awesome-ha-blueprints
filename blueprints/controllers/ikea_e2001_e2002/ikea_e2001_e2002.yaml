@@ -955,6 +955,11 @@ actions:
           - condition: template
             value_template: "{{ trigger.id in ['z2m-button-up-long', 'zha-button-up-long', 'dcz-button-up-long'] }}"
         sequence:
+          # Update helper for last event tracking
+          - action: input_text.set_value
+            data:
+              entity_id: !input helper_last_controller_event
+              value: '{{ {"a": trigger_action, "t": as_timestamp(now())} | to_json }}'
           # Fire initial long-press event only once the (light/media_player hooks take care of looping)
           - event: ahb_controller_event
             event_data:
@@ -990,6 +995,11 @@ actions:
           - condition: template
             value_template: "{{ trigger.id in ['zha-button-up-release', 'dcz-button-up-release'] }}"
         sequence:
+          # Update helper for last event tracking
+          - action: input_text.set_value
+            data:
+              entity_id: !input helper_last_controller_event
+              value: '{{ {"a": trigger_action, "t": as_timestamp(now())} | to_json }}'
           # Fire release event (signals end of hold)
           - event: ahb_controller_event
             event_data:
@@ -999,11 +1009,6 @@ actions:
           - choose:
               - conditions: []
                 sequence: !input action_button_up_release
-          # Update helper for last event tracking
-          - action: input_text.set_value
-            data:
-              entity_id: !input helper_last_controller_event
-              value: '{{ {"a": trigger_action, "t": as_timestamp(now())} | to_json }}'
       # ================================================
       # Down Button — LONG PRESS (RESTART-SAFE LOOP)
       # ================================================
@@ -1011,6 +1016,11 @@ actions:
           - condition: template
             value_template: "{{ trigger.id in ['z2m-button-down-long', 'zha-button-down-long', 'dcz-button-down-long'] }}"
         sequence:
+          # Update helper for last event tracking
+          - action: input_text.set_value
+            data:
+              entity_id: !input helper_last_controller_event
+              value: '{{ {"a": trigger_action, "t": as_timestamp(now())} | to_json }}'
           # Fire initial long-press event only once the (light/media_player hooks take care of looping)
           - event: ahb_controller_event
             event_data:
@@ -1046,6 +1056,11 @@ actions:
           - condition: template
             value_template: "{{ trigger.id in ['zha-button-down-release', 'dcz-button-down-release'] }}"
         sequence:
+          # Update helper for last event tracking
+          - action: input_text.set_value
+            data:
+              entity_id: !input helper_last_controller_event
+              value: '{{ {"a": trigger_action, "t": as_timestamp(now())} | to_json }}'
           # Fire release event (signals end of hold)
           - event: ahb_controller_event
             event_data:
@@ -1055,11 +1070,6 @@ actions:
           - choose:
               - conditions: []
                 sequence: !input action_button_down_release
-          # Update helper for last event tracking
-          - action: input_text.set_value
-            data:
-              entity_id: !input helper_last_controller_event
-              value: '{{ {"a": trigger_action, "t": as_timestamp(now())} | to_json }}'
       # =========================================================================
       # Z2M Up/Down Button — LONG PRESS RELEASE HANDLER
       # **Required in order to break out of current automation and restart**
@@ -1076,6 +1086,11 @@ actions:
                   - condition: template
                     value_template: "{{ last_controller_event in ['button_up_long'] }}"
                 sequence:
+                  # Update helper for last event tracking
+                  - action: input_text.set_value
+                    data:
+                      entity_id: !input helper_last_controller_event
+                      value: '{{ {"a": "button_up_release", "t": as_timestamp(now())} | to_json }}'
                   # Fire release event (signals end of hold)
                   - event: ahb_controller_event
                     event_data:
@@ -1085,17 +1100,17 @@ actions:
                   - choose:
                       - conditions: []
                         sequence: !input action_button_up_release
-                  # Update helper for last event tracking
-                  - action: input_text.set_value
-                    data:
-                      entity_id: !input helper_last_controller_event
-                      value: '{{ {"a": "button_up_release", "t": as_timestamp(now())} | to_json }}'
           # Check if last_controller_event is button-down-long
           - choose:
               - conditions:
                   - condition: template
                     value_template: "{{ last_controller_event in ['button_down_long'] }}"
                 sequence:
+                  # Update helper for last event tracking
+                  - action: input_text.set_value
+                    data:
+                      entity_id: !input helper_last_controller_event
+                      value: '{{ {"a": "button_down_release", "t": as_timestamp(now())} | to_json }}'
                   # Fire release event (signals end of hold)
                   - event: ahb_controller_event
                     event_data:
@@ -1105,11 +1120,6 @@ actions:
                   - choose:
                       - conditions: []
                         sequence: !input action_button_down_release
-                  # Update helper for last event tracking
-                  - action: input_text.set_value
-                    data:
-                      entity_id: !input helper_last_controller_event
-                      value: '{{ {"a": "button_down_release", "t": as_timestamp(now())} | to_json }}'
       # ================================================
       # Right Button — LONG PRESS (RESTART-SAFE LOOP)
       # ================================================
@@ -1117,6 +1127,11 @@ actions:
           - condition: template
             value_template: "{{ trigger.id in ['z2m-button-right-long', 'zha-button-right-long', 'dcz-button-right-long'] }}"
         sequence:
+          # Update helper for last event tracking
+          - action: input_text.set_value
+            data:
+              entity_id: !input helper_last_controller_event
+              value: '{{ {"a": trigger_action, "t": as_timestamp(now())} | to_json }}'
           # Fire initial long-press event only once the (light/media_player hooks take care of looping)
           - event: ahb_controller_event
             event_data:
@@ -1152,6 +1167,11 @@ actions:
           - condition: template
             value_template: "{{ trigger.id in ['z2m-button-right-release', 'dcz-button-right-release'] }}"
         sequence:
+          # Update helper for last event tracking
+          - action: input_text.set_value
+            data:
+              entity_id: !input helper_last_controller_event
+              value: '{{ {"a": trigger_action, "t": as_timestamp(now())} | to_json }}'
           # Fire release event (signals end of hold)
           - event: ahb_controller_event
             event_data:
@@ -1161,11 +1181,6 @@ actions:
           - choose:
               - conditions: []
                 sequence: !input action_button_right_release
-          # Update helper for last event tracking
-          - action: input_text.set_value
-            data:
-              entity_id: !input helper_last_controller_event
-              value: '{{ {"a": trigger_action, "t": as_timestamp(now())} | to_json }}'
       # ================================================
       # Left Button — LONG PRESS (RESTART-SAFE LOOP)
       # ================================================
@@ -1173,6 +1188,11 @@ actions:
           - condition: template
             value_template: "{{ trigger.id in ['z2m-button-left-long', 'zha-button-left-long', 'dcz-button-left-long'] }}"
         sequence:
+          # Update helper for last event tracking
+          - action: input_text.set_value
+            data:
+              entity_id: !input helper_last_controller_event
+              value: '{{ {"a": trigger_action, "t": as_timestamp(now())} | to_json }}'
           # Fire initial long-press event only once the (light/media_player hooks take care of looping)
           - event: ahb_controller_event
             event_data:
@@ -1208,6 +1228,11 @@ actions:
           - condition: template
             value_template: "{{ trigger.id in ['z2m-button-left-release', 'dcz-button-left-release'] }}"
         sequence:
+          # Update helper for last event tracking
+          - action: input_text.set_value
+            data:
+              entity_id: !input helper_last_controller_event
+              value: '{{ {"a": trigger_action, "t": as_timestamp(now())} | to_json }}'
           # Fire release event (signals end of hold)
           - event: ahb_controller_event
             event_data:
@@ -1217,11 +1242,6 @@ actions:
           - choose:
               - conditions: []
                 sequence: !input action_button_left_release
-          # Update helper for last event tracking
-          - action: input_text.set_value
-            data:
-              entity_id: !input helper_last_controller_event
-              value: '{{ {"a": trigger_action, "t": as_timestamp(now())} | to_json }}'
       # =========================================================================
       # ZHA Right/Left Button — LONG PRESS RELEASE HANDLER
       # **Required in order to break out of current automation and restart**
@@ -1238,6 +1258,11 @@ actions:
                   - condition: template
                     value_template: "{{ last_controller_event in ['button_right_long'] }}"
                 sequence:
+                  # Update helper for last event tracking
+                  - action: input_text.set_value
+                    data:
+                      entity_id: !input helper_last_controller_event
+                      value: '{{ {"a": "button_right_release", "t": as_timestamp(now())} | to_json }}'
                   # Fire release event (signals end of hold)
                   - event: ahb_controller_event
                     event_data:
@@ -1247,17 +1272,17 @@ actions:
                   - choose:
                       - conditions: []
                         sequence: !input action_button_right_release
-                  # Update helper for last event tracking
-                  - action: input_text.set_value
-                    data:
-                      entity_id: !input helper_last_controller_event
-                      value: '{{ {"a": "button_right_release", "t": as_timestamp(now())} | to_json }}'
           # Check if last_controller_event is button-left-long
           - choose:
               - conditions:
                   - condition: template
                     value_template: "{{ last_controller_event in ['button_left_long'] }}"
                 sequence:
+                  # Update helper for last event tracking
+                  - action: input_text.set_value
+                    data:
+                      entity_id: !input helper_last_controller_event
+                      value: '{{ {"a": "button_left_release", "t": as_timestamp(now())} | to_json }}'
                   # Fire release event (signals end of hold)
                   - event: ahb_controller_event
                     event_data:
@@ -1267,8 +1292,3 @@ actions:
                   - choose:
                       - conditions: []
                         sequence: !input action_button_left_release
-                  # Update helper for last event tracking
-                  - action: input_text.set_value
-                    data:
-                      entity_id: !input helper_last_controller_event
-                      value: '{{ {"a": "button_left_release", "t": as_timestamp(now())} | to_json }}'
