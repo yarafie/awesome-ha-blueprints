@@ -1100,7 +1100,7 @@ actions:
       # ====================================================================
       - conditions:
           - condition: template
-            value_template: "{{ trigger.id in ['z2m-button-right-release', 'zha-button-arrows-release', 'dcz-button-right-release'] }}"
+            value_template: "{{ trigger.id in ['z2m-button-right-release', 'dcz-button-right-release'] }}"
         sequence:
           # Fire release event (signals end of hold)
           - event: ahb_controller_event
@@ -1156,7 +1156,7 @@ actions:
       # ====================================================================
       - conditions:
           - condition: template
-            value_template: "{{ trigger.id in ['z2m-button-left-release', 'zha-button-arrows-release', 'dcz-button-left-release'] }}"
+            value_template: "{{ trigger.id in ['z2m-button-left-release', 'dcz-button-left-release'] }}"
         sequence:
           # Fire release event (signals end of hold)
           - event: ahb_controller_event
@@ -1172,3 +1172,52 @@ actions:
             data:
               entity_id: !input helper_last_controller_event
               value: '{{ {"a": trigger_action, "t": as_timestamp(now())} | to_json }}'
+      # =========================================================================
+      # ZHA Right/Left Button — LONG PRESS RELEASE HANDLER
+      # **Required in order to break out of current automation and restart**
+      # The release event for right/left arrows is the same
+      # Handle which release event based on the previous event right or left long
+      # =========================================================================
+      - conditions:
+          - condition: template
+            value_template: "{{ trigger.id in ['zha-button-arrows-release'] }}"
+          # Check if last_controller_event is button-right-long
+          - choose:
+              - conditions:
+                  - condition: template
+                    value_template: "{{ last_controller_event in ['button_right_long'] }}"
+                sequence:
+                  # Fire release event (signals end of hold)
+                  - event: ahb_controller_event
+                    event_data:
+                      controller: '{{ controller_id }}'
+                      action: button_right_release
+                  # Run any user-defined release action
+                  - choose:
+                      - conditions: []
+                        sequence: !input action_button_right_release
+                  # Update helper for last event tracking
+                  - action: input_text.set_value
+                    data:
+                      entity_id: !input helper_last_controller_event
+                      value: '{{ {"a": "button_right_release", "t": as_timestamp(now())} | to_json }}'
+          # Check if last_controller_event is button-left-long
+          - choose:
+              - conditions:
+                  - condition: template
+                    value_template: "{{ last_controller_event in ['button_left_long'] }}"
+                sequence:
+                  # Fire release event (signals end of hold)
+                  - event: ahb_controller_event
+                    event_data:
+                      controller: '{{ controller_id }}'
+                      action: button_left_release
+                  # Run any user-defined release action
+                  - choose:
+                      - conditions: []
+                        sequence: !input action_button_left_release
+                  # Update helper for last event tracking
+                  - action: input_text.set_value
+                    data:
+                      entity_id: !input helper_last_controller_event
+                      value: '{{ {"a": "button_left_release", "t": as_timestamp(now())} | to_json }}'
