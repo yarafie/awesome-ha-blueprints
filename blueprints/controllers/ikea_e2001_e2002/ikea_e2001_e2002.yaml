@@ -988,7 +988,7 @@ actions:
       # ====================================================================
       - conditions:
           - condition: template
-            value_template: "{{ trigger.id in ['z2m-button-long-release', 'zha-button-up-release', 'dcz-button-up-release'] }}"
+            value_template: "{{ trigger.id in ['zha-button-up-release', 'dcz-button-up-release'] }}"
         sequence:
           # Fire release event (signals end of hold)
           - event: ahb_controller_event
@@ -1044,7 +1044,7 @@ actions:
       # ====================================================================
       - conditions:
           - condition: template
-            value_template: "{{ trigger.id in ['z2m-button-long-release', 'zha-button-down-release', 'dcz-button-down-release'] }}"
+            value_template: "{{ trigger.id in ['zha-button-down-release', 'dcz-button-down-release'] }}"
         sequence:
           # Fire release event (signals end of hold)
           - event: ahb_controller_event
@@ -1060,6 +1060,56 @@ actions:
             data:
               entity_id: !input helper_last_controller_event
               value: '{{ {"a": trigger_action, "t": as_timestamp(now())} | to_json }}'
+      # =========================================================================
+      # Z2M Up/Down Button — LONG PRESS RELEASE HANDLER
+      # **Required in order to break out of current automation and restart**
+      # The release event for up/down buttons is the same
+      # Handle which release event based on the previous event up or down long
+      # =========================================================================
+      - conditions:
+          - condition: template
+            value_template: "{{ trigger.id in ['z2m-button-long-release'] }}"
+        sequence:
+          # Check if last_controller_event is button-up-long
+          - choose:
+              - conditions:
+                  - condition: template
+                    value_template: "{{ last_controller_event in ['button_up_long'] }}"
+                sequence:
+                  # Fire release event (signals end of hold)
+                  - event: ahb_controller_event
+                    event_data:
+                      controller: '{{ controller_id }}'
+                      action: button_up_release
+                  # Run any user-defined release action
+                  - choose:
+                      - conditions: []
+                        sequence: !input action_button_up_release
+                  # Update helper for last event tracking
+                  - action: input_text.set_value
+                    data:
+                      entity_id: !input helper_last_controller_event
+                      value: '{{ {"a": "button_up_release", "t": as_timestamp(now())} | to_json }}'
+          # Check if last_controller_event is button-down-long
+          - choose:
+              - conditions:
+                  - condition: template
+                    value_template: "{{ last_controller_event in ['button_down_long'] }}"
+                sequence:
+                  # Fire release event (signals end of hold)
+                  - event: ahb_controller_event
+                    event_data:
+                      controller: '{{ controller_id }}'
+                      action: button_down_release
+                  # Run any user-defined release action
+                  - choose:
+                      - conditions: []
+                        sequence: !input action_button_down_release
+                  # Update helper for last event tracking
+                  - action: input_text.set_value
+                    data:
+                      entity_id: !input helper_last_controller_event
+                      value: '{{ {"a": "button_down_release", "t": as_timestamp(now())} | to_json }}'
       # ================================================
       # Right Button — LONG PRESS (RESTART-SAFE LOOP)
       # ================================================
