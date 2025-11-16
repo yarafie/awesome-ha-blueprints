@@ -724,10 +724,10 @@ actions:
   # ==========================================
   # STORE CURRENT EVENT (ALWAYS UPDATE HELPER)
   # ==========================================
-  - action: input_text.set_value
-    data:
-      entity_id: !input helper_last_controller_event
-      value: '{{ {"a":trigger_action,"t":as_timestamp(now())} | to_json }}'
+  # - action: input_text.set_value
+  #   data:
+  #     entity_id: !input helper_last_controller_event
+  #     value: '{{ {"a":trigger_action,"t":as_timestamp(now())} | to_json }}'
   # ===================================================
   # DECISION LOGIC – CHOOSE WHAT TO DO BASED ON TRIGGER
   # ===================================================
