@@ -739,6 +739,11 @@ actions:
           - condition: template
             value_template: "{{ trigger.id in ['z2m-button-up-short', 'zha-button-up-short', 'dcz-button-up-short'] }}"
         sequence:
+          # Update helper for last event tracking
+          - action: input_text.set_value
+            data:
+              entity_id: !input helper_last_controller_event
+              value: '{{ {"a": trigger_action, "t": as_timestamp(now())} | to_json }}'
           - choose:
               # Check if Double press feature enabled
               - conditions: '{{ button_up_double_press_enabled }}'
@@ -793,6 +798,11 @@ actions:
           - condition: template
             value_template: "{{ trigger.id in ['z2m-button-down-short', 'zha-button-down-short', 'dcz-button-down-short'] }}"
         sequence:
+          # Update helper for last event tracking
+          - action: input_text.set_value
+            data:
+              entity_id: !input helper_last_controller_event
+              value: '{{ {"a": trigger_action, "t": as_timestamp(now())} | to_json }}'
           - choose:
               # Check if Double press feature enabled
               - conditions: '{{ button_down_double_press_enabled }}'
@@ -847,6 +857,11 @@ actions:
           - condition: template
             value_template: "{{ trigger.id in ['z2m-button-right-short', 'zha-button-right-short', 'dcz-button-right-short'] }}"
         sequence:
+          # Update helper for last event tracking
+          - action: input_text.set_value
+            data:
+              entity_id: !input helper_last_controller_event
+              value: '{{ {"a": trigger_action, "t": as_timestamp(now())} | to_json }}'
           - choose:
               # Check if Double press feature enabled
               - conditions: '{{ button_right_double_press_enabled }}'
@@ -901,6 +916,11 @@ actions:
           - condition: template
             value_template: "{{ trigger.id in ['z2m-button-left-short', 'zha-button-left-short', 'dcz-button-left-short'] }}"
         sequence:
+          # Update helper for last event tracking
+          - action: input_text.set_value
+            data:
+              entity_id: !input helper_last_controller_event
+              value: '{{ {"a": trigger_action, "t": as_timestamp(now())} | to_json }}'
           - choose:
               # Check if Double press feature enabled
               - conditions: '{{ button_left_double_press_enabled }}'
