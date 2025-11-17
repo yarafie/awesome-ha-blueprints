@@ -9,17 +9,17 @@ blueprint:
     The blueprint also adds support for virtual double button press events, which are not enabled by the controller device itself. However, It needs to be enabled in the blueprint.
     Supports Zigbee2MQTT, ZHA, deCONZ.
 
-    Automations created with this blueprint can be connected with one or more [Hooks](https://epmatt.github.io/awesome-ha-blueprints/docs/blueprints/hooks) supported by this controller.
+    Automations created with this blueprint can be connected with one or more [Hooks](https://yarafie.github.io/awesome-ha-blueprints/docs/blueprints/hooks) supported by this controller.
     Hooks allow to easily create controller-based automations for interacting with lights, covers, media players, and potentially more.
-    See the list of [Hooks available for this controller](https://epmatt.github.io/awesome-ha-blueprints/docs/blueprints/controllers/ikea_e2001_e2002#available-hooks) for additional details.
+    See the list of [Hooks available for this controller](https://yarafie.github.io/awesome-ha-blueprints/docs/blueprints/controllers/ikea_e2001_e2002#available-hooks) for additional details.
 
     ## More Info
 
-    ℹ️ Version 2025.11.14
-    📝 [Changelog](https://epmatt.github.io/awesome-ha-blueprints/docs/blueprints/controllers/ikea_e2001_e2002/#changelog)
-    📕 Full documentation regarding this blueprint is available [here](https://epmatt.github.io/awesome-ha-blueprints/docs/blueprints/controllers/ikea_e2001_e2002).
+    ℹ️ Version 2025.11.16
+    📝 [Changelog](https://yarafie.github.io/awesome-ha-blueprints/docs/blueprints/controllers/ikea_e2001_e2002/#changelog)
+    📕 Full documentation regarding this blueprint is available [here](https://yarafie.github.io/awesome-ha-blueprints/docs/blueprints/controllers/ikea_e2001_e2002).
 
-    🚀 This blueprint is part of the **[Awesome HA Blueprints](https://epmatt.github.io/awesome-ha-blueprints) project**. Please consider **[leaving a star on GitHub](https://github.com/EPMatt/awesome-ha-blueprints)**! 🌟
+    🚀 This blueprint is part of the **[Awesome HA Blueprints](https://yarafie.github.io/awesome-ha-blueprints) project**. Please consider **[leaving a star on GitHub](https://github.com/yarafie/awesome-ha-blueprints)**! 🌟
 
   source_url: https://raw.githubusercontent.com/yarafie/awesome-ha-blueprints/main/blueprints/controllers/ikea_e2001_e2002/ikea_e2001_e2002.yaml
   domain: automation
@@ -316,6 +316,8 @@ blueprint:
 #
 # Automation schema
 variables:
+  ahb_version: 2025.11.16
+  ahb_maintainers: [yarafie]
   # Controller ID
   controller_id: !input controller_device
   # integration id used to select items in the action mapping

@@ -178,6 +178,8 @@ blueprint:
 #
 # Automation schema
 variables:
+  ahb_version: 2025.10.01
+  ahb_maintainers: [yarafie]
   # Controller ID
   controller_id: !input controller_device
   # integration id used to select items in the action mapping
