@@ -88,7 +88,7 @@
     "date": "2025.10.16",
     "changes": [
       {
-        "description": "Changed short button presses to use \_press_release. ([EPMatt-issue#934](https://github.com/EPMatt/awesome-ha-blueprints/issues/934)) ([@queimadus](https://github.com/queimadus)) ([@yarafie](https://github.com/yarafie))",
+        "description": "Changed short button presses to use _press_release. ([EPMatt-issue#934](https://github.com/EPMatt/awesome-ha-blueprints/issues/934)) ([@queimadus](https://github.com/queimadus)) ([@yarafie](https://github.com/yarafie))",
         "breaking": false
       }
     ]
