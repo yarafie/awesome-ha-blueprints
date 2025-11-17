@@ -716,18 +716,18 @@ actions:
       trigger_action: "{{ trigger.id.split('-', 1)[1] }}"
       # Deserialize stored helper state if valid JSON, else use defaults
       deserialized_state: '{{ (states(helper_last_controller_event) | from_json) if helper_last_controller_event is not none and (states(helper_last_controller_event) | regex_match("^\{\s*?((\"a\":\s*?\".*\"|\"t\":\s*?\d+\.\d+)(,\s*?)?){2}\s*?\}$")) else {} }}'
+      # Extract previous action name for comparison
+      last_controller_event: "{{ deserialized_state.a | default('') }}"
       # Calculate time delta between current and last event
       # trigger_delta: '{{ (as_timestamp(now()) - (deserialized_state.t | default(0))) * 1000 }}'
       trigger_delta: '{{ (as_timestamp(now()) - (deserialized_state.t | default(0))) * 1000 | int }}'
-      # Extract previous action name for comparison
-      last_controller_event: "{{ deserialized_state.a | default('') }}"
   # ==========================================
   # STORE CURRENT EVENT (ALWAYS UPDATE HELPER)
   # ==========================================
-  # - action: input_text.set_value
-  #   data:
-  #     entity_id: !input helper_last_controller_event
-  #     value: '{{ {"a":trigger_action,"t":as_timestamp(now())} | to_json }}'
+  - action: input_text.set_value
+    data:
+      entity_id: !input helper_last_controller_event
+      value: '{{ {"a":trigger_action,"t":as_timestamp(now())} | to_json }}'
   # ===================================================
   # DECISION LOGIC – CHOOSE WHAT TO DO BASED ON TRIGGER
   # ===================================================
@@ -1029,6 +1029,32 @@ actions:
           - choose:
               - conditions: []
                 sequence: !input action_button_up_release
+      # ====================================================================
+      # Z2M Up Button — LONG PRESS RELEASE HANDLER
+      # **Required in order to break out of current automation and restart**
+      # The release event for up/down buttons is the same
+      # Handle which release event based on the previous event up or down long
+      # ====================================================================
+      - conditions:
+          - condition: template
+            value_template: "{{ trigger.id in ['z2m-button-long-release'] }}"
+          - condition: template
+            value_template: "{{ last_controller_event in ['button-up-long'] }}"
+        sequence:
+          # Update helper for last event tracking
+          - action: input_text.set_value
+            data:
+              entity_id: !input helper_last_controller_event
+              value: '{{ {"a": "button-up-release", "t": as_timestamp(now())} | to_json }}'
+          # Fire release event (signals end of hold)
+          - event: ahb_controller_event
+            event_data:
+              controller: '{{ controller_id }}'
+              action: button_up_release
+          # Run any user-defined release action
+          - choose:
+              - conditions: []
+                sequence: !input action_button_up_release
       # ================================================
       # Down Button — LONG PRESS (RESTART-SAFE LOOP)
       # ================================================
@@ -1090,56 +1116,32 @@ actions:
           - choose:
               - conditions: []
                 sequence: !input action_button_down_release
-      # =========================================================================
-      # Z2M Up/Down Button — LONG PRESS RELEASE HANDLER
+      # ====================================================================
+      # Down Button — LONG PRESS RELEASE
       # **Required in order to break out of current automation and restart**
       # The release event for up/down buttons is the same
       # Handle which release event based on the previous event up or down long
-      # =========================================================================
+      # ====================================================================
       - conditions:
           - condition: template
             value_template: "{{ trigger.id in ['z2m-button-long-release'] }}"
+          - condition: template
+            value_template: "{{ last_controller_event in ['button-down-long'] }}"
         sequence:
-          # Check if last_controller_event is button-up-long
+          # Update helper for last event tracking
+          - action: input_text.set_value
+            data:
+              entity_id: !input helper_last_controller_event
+              value: '{{ {"a": "button-down-release", "t": as_timestamp(now())} | to_json }}'
+          # Fire release event (signals end of hold)
+          - event: ahb_controller_event
+            event_data:
+              controller: '{{ controller_id }}'
+              action: button_down_release
+          # Run any user-defined release action
           - choose:
-              - conditions:
-                  - condition: template
-                    value_template: "{{ last_controller_event in ['button-up-long'] }}"
-                sequence:
-                  # Update helper for last event tracking
-                  - action: input_text.set_value
-                    data:
-                      entity_id: !input helper_last_controller_event
-                      value: '{{ {"a": "button-up-release", "t": as_timestamp(now())} | to_json }}'
-                  # Fire release event (signals end of hold)
-                  - event: ahb_controller_event
-                    event_data:
-                      controller: '{{ controller_id }}'
-                      action: button_up_release
-                  # Run any user-defined release action
-                  - choose:
-                      - conditions: []
-                        sequence: !input action_button_up_release
-          # Check if last_controller_event is button-down-long
-          - choose:
-              - conditions:
-                  - condition: template
-                    value_template: "{{ last_controller_event in ['button-down-long'] }}"
-                sequence:
-                  # Update helper for last event tracking
-                  - action: input_text.set_value
-                    data:
-                      entity_id: !input helper_last_controller_event
-                      value: '{{ {"a": "button-down-release", "t": as_timestamp(now())} | to_json }}'
-                  # Fire release event (signals end of hold)
-                  - event: ahb_controller_event
-                    event_data:
-                      controller: '{{ controller_id }}'
-                      action: button_down_release
-                  # Run any user-defined release action
-                  - choose:
-                      - conditions: []
-                        sequence: !input action_button_down_release
+              - conditions: []
+                sequence: !input action_button_down_release
       # ================================================
       # Right Button — LONG PRESS (RESTART-SAFE LOOP)
       # ================================================
@@ -1192,6 +1194,32 @@ actions:
             data:
               entity_id: !input helper_last_controller_event
               value: '{{ {"a": trigger_action, "t": as_timestamp(now())} | to_json }}'
+          # Fire release event (signals end of hold)
+          - event: ahb_controller_event
+            event_data:
+              controller: '{{ controller_id }}'
+              action: button_right_release
+          # Run any user-defined release action
+          - choose:
+              - conditions: []
+                sequence: !input action_button_right_release
+      # ====================================================================
+      # ZHA Right Button — LONG PRESS RELEASE HANDLER
+      # **Required in order to break out of current automation and restart**
+      # The release event for right/left arrows is the same
+      # Handle which release event based on the previous event right or left long
+      # ====================================================================
+      - conditions:
+          - condition: template
+            value_template: "{{ trigger.id in ['zha-button-arrows-release'] }}"
+          - condition: template
+            value_template: "{{ last_controller_event in ['button-right-long'] }}"
+        sequence:
+          # Update helper for last event tracking
+          - action: input_text.set_value
+            data:
+              entity_id: !input helper_last_controller_event
+              value: '{{ {"a": "button-right-release", "t": as_timestamp(now())} | to_json }}'
           # Fire release event (signals end of hold)
           - event: ahb_controller_event
             event_data:
@@ -1262,53 +1290,29 @@ actions:
           - choose:
               - conditions: []
                 sequence: !input action_button_left_release
-      # =========================================================================
-      # ZHA Right/Left Button — LONG PRESS RELEASE HANDLER
+      # ====================================================================
+      # ZHA Left Button — LONG PRESS RELEASE HANDLER
       # **Required in order to break out of current automation and restart**
       # The release event for right/left arrows is the same
       # Handle which release event based on the previous event right or left long
-      # =========================================================================
+      # ====================================================================
       - conditions:
           - condition: template
             value_template: "{{ trigger.id in ['zha-button-arrows-release'] }}"
+          - condition: template
+            value_template: "{{ last_controller_event in ['button-left-long'] }}"
         sequence:
-          # Check if last_controller_event is button-right-long
+          # Update helper for last event tracking
+          - action: input_text.set_value
+            data:
+              entity_id: !input helper_last_controller_event
+              value: '{{ {"a": "button-left-release", "t": as_timestamp(now())} | to_json }}'
+          # Fire release event (signals end of hold)
+          - event: ahb_controller_event
+            event_data:
+              controller: '{{ controller_id }}'
+              action: button_left_release
+          # Run any user-defined release action
           - choose:
-              - conditions:
-                  - condition: template
-                    value_template: "{{ last_controller_event in ['button-right-long'] }}"
-                sequence:
-                  # Update helper for last event tracking
-                  - action: input_text.set_value
-                    data:
-                      entity_id: !input helper_last_controller_event
-                      value: '{{ {"a": "button-right-release", "t": as_timestamp(now())} | to_json }}'
-                  # Fire release event (signals end of hold)
-                  - event: ahb_controller_event
-                    event_data:
-                      controller: '{{ controller_id }}'
-                      action: button_right_release
-                  # Run any user-defined release action
-                  - choose:
-                      - conditions: []
-                        sequence: !input action_button_right_release
-          # Check if last_controller_event is button-left-long
-          - choose:
-              - conditions:
-                  - condition: template
-                    value_template: "{{ last_controller_event in ['button-left-long'] }}"
-                sequence:
-                  # Update helper for last event tracking
-                  - action: input_text.set_value
-                    data:
-                      entity_id: !input helper_last_controller_event
-                      value: '{{ {"a": "button-left-release", "t": as_timestamp(now())} | to_json }}'
-                  # Fire release event (signals end of hold)
-                  - event: ahb_controller_event
-                    event_data:
-                      controller: '{{ controller_id }}'
-                      action: button_left_release
-                  # Run any user-defined release action
-                  - choose:
-                      - conditions: []
-                        sequence: !input action_button_left_release
+              - conditions: []
+                sequence: !input action_button_left_release
