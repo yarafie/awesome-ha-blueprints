@@ -111,7 +111,7 @@ const config: Config = {
         docs: {
           sidebarPath: './sidebars.js',
           editUrl:
-            'https://github.com/yarafie/awesome-ha-blueprints/edit/main/',
+            'https://github.com/yarafie/awesome-ha-blueprints/edit/main/website/',
         },
         theme: {
           customCss: './src/css/custom.css',
