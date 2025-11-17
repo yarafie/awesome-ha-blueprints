@@ -83,5 +83,14 @@
         "breaking": false
       }
     ]
+  },
+  {
+    "date": "2025.10.05",
+    "changes": [
+      {
+        "description": "STYRBAR (Z2M) – include additional common variants. ([@yarafie](https://github.com/yarafie))",
+        "breaking": false
+      }
+    ]
   }
 ]
