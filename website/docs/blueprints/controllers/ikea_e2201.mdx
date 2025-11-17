@@ -1,10 +1,10 @@
 ---
 title: Controller - IKEA E2201 RODRET Dimmer
 description: Controller automation for executing any kind of action triggered by the provided IKEA E2201 RODRET Dimmer. Supports Zigbee2MQTT, ZHA, deCONZ.
-model: E2201
 manufacturer: IKEA
-integrations: [Zigbee2MQTT, ZHA, deCONZ]
+model: E2201
 model_name: IKEA E2201 RODRET Dimmer
+integrations: [Zigbee2MQTT, ZHA, deCONZ]
 ---
 
 import {
@@ -12,6 +12,7 @@ import {
   Inputs,
   Requirement,
   ImportCard,
+  Changelog,
 } from '/src/components/blueprints_docs'
 
 <ImportCard id='ikea_e2201' category='controllers' />
@@ -113,7 +114,4 @@ It's important to note that the controller doesn't natively support double press
 
 ## Changelog
 
-- **2025-03-20**: Initial release. ([@yarafie](https://github.com/yarafie)) :tada:
-- **2025-03-20b**: Fix automation triggers. ([@yarafie](https://github.com/yarafie))
-- **2025-03-20c**: Standardized input naming format for controller devices and virtual button actions. No functionality changes.
-- **2025-10-01**: Add additional model name for ZHA. ([@yarafie](https://github.com/yarafie))
+<Changelog category='controllers' id='ikea_e2201' />

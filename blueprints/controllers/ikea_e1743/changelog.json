@@ -211,5 +211,14 @@
         "breaking": false
       }
     ]
+  },
+  {
+    "date": "2025.10.12",
+    "changes": [
+      {
+        "description": "Refactored blueprint to use triggers and trigger-id, removed having to supply integration type and removed last controller helper logic. ([@yarafie](https://github.com/yarafie))",
+        "breaking": false
+      }
+    ]
   }
 ]

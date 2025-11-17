@@ -6,12 +6,12 @@ blueprint:
 
     A simple on-off schedule, with the addition of state persistence across disruptive events, making sure the target device is always in the expected state.
 
-    📕 Full documentation regarding this blueprint is available [here](https://yarafie.github.io/awesome-ha-blueprints/docs/blueprints/automation/on_off_schedule_state_persistence).
+    📕 Full documentation regarding this blueprint is available [here](https://epmatt.github.io/awesome-ha-blueprints/docs/blueprints/automation/on_off_schedule_state_persistence).
 
-    🚀 This blueprint is part of the **[Awesome HA Blueprints](https://yarafie.github.io/awesome-ha-blueprints) project**.
+    🚀 This blueprint is part of the **[Awesome HA Blueprints](https://epmatt.github.io/awesome-ha-blueprints) project**.
 
     ℹ️ Version 2021.10.26
-  source_url: https://github.com/yarafie/awesome-ha-blueprints/blob/main/blueprints/automation/on_off_schedule_state_persistence/on_off_schedule_state_persistence.yaml
+  source_url: https://github.com/EPMatt/awesome-ha-blueprints/blob/main/blueprints/automation/on_off_schedule_state_persistence/on_off_schedule_state_persistence.yaml
   domain: automation
   input:
     automation_target:
@@ -43,6 +43,8 @@ blueprint:
         boolean:
 # Automation schema
 variables:
+  ahb_version: 2025.11.04
+  ahb_maintainers: [EPMatt]
   # convert input tags to variables, to be used in templates
   off_time: !input off_time
   on_time: !input on_time

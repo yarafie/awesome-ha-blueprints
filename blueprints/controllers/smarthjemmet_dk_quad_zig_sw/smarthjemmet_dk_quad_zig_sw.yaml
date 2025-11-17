@@ -243,6 +243,8 @@ blueprint:
           step: 10
 # Automation schema
 variables:
+  ahb_version: 2025.11.04
+  ahb_maintainers: [EPMatt]
   # integration id used to select items in the action mapping
   # integration type is set from trigger.id
   integration_id: '{{ trigger.id.split("-")[0] }}'

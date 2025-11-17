@@ -63,10 +63,32 @@
     ]
   },
   {
+    "date": "2025.04.17",
+    "changes": [
+      {
+        "description": "Add additional manufacturer name for zha/deConz. ([EPMatt-issue#766](https://github.com/EPMatt/awesome-ha-blueprints/issues/766)) ([@yarafie](https://github.com/yarafie))",
+        "breaking": false
+      }
+    ]
+  },
+  {
     "date": "2025.04.19",
     "changes": [
       {
         "description": "Improve Last Controller Event Helper JSON Regex with more lenient matching.",
+        "breaking": false
+      },
+      {
+        "description": "Update blueprint with button optimizations. ([EPMatt-issue#713](https://github.com/EPMatt/awesome-ha-blueprints/issues/713)) ([@yarafie](https://github.com/yarafie))",
+        "breaking": false
+      }
+    ]
+  },
+  {
+    "date": "2025.10.16",
+    "changes": [
+      {
+        "description": "Changed short button presses to use \_press_release. ([EPMatt-issue#934](https://github.com/EPMatt/awesome-ha-blueprints/issues/934)) ([@queimadus](https://github.com/queimadus)) ([@yarafie](https://github.com/yarafie))",
         "breaking": false
       }
     ]

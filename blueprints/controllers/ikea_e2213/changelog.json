@@ -7,5 +7,14 @@
         "breaking": false
       }
     ]
+  },
+  {
+    "date": "2025.05.08",
+    "changes": [
+      {
+        "description": "Fix deconz actions mappings. [EPMatt-issue#788] ([@yarafie](https://github.com/yarafie))",
+        "breaking": false
+      }
+    ]
   }
 ]

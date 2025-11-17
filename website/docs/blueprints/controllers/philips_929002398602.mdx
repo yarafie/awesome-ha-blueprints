@@ -1,10 +1,10 @@
 ---
 title: Controller - Philips 929002398602 Hue Dimmer switch v2
 description: Controller automation for executing any kind of action triggered by the provided Philips 929002398602 Hue Dimmer switch v2. Supports Zigbee2MQTT, ZHA.
-model: 929002398602
 manufacturer: Philips
-integrations: [Zigbee2MQTT, ZHA]
+model: 929002398602
 model_name: Philips 929002398602 Hue Dimmer switch v2
+integrations: [Zigbee2MQTT, ZHA]
 ---
 
 import {
@@ -12,6 +12,7 @@ import {
   Inputs,
   Requirement,
   ImportCard,
+  Changelog,
 } from '/src/components/blueprints_docs'
 
 <ImportCard id='philips_929002398602' category='controllers' />
@@ -93,21 +94,4 @@ It's important to note that the controller doesn't natively support double press
 
 ## Changelog
 
-- **2021-11-21**: first blueprint version :tada:
-- **2022-07-22**: Fix short press actions not being triggered by quick button clicks.
-- **2022-08-08**: Optimize characters usage for the `helper_last_controller_event` text input.
-- **2025-02-13**:
-
-  :warning: **Breaking Change**:
-
-  Migrate to Zigbee2MQTT MQTT Device Triggers. ([@yarafie](https://github.com/yarafie))
-
-  The `controller_entity` input has been deprecated, and `controller_device` is now mandatory.
-  If you are a Zigbee2MQTT user and plan to update this blueprint, please make sure to remove the `controller_entity` input from your automation config and add the device ID of your controller to the `controller_device` input.
-  To obtain the device ID from your controller, configure the automation from the UI and use the device selector dropdown on the `controller_device` input to select your controller.
-
-- **2025-03-20**: Standardized input naming format for controller devices and virtual button actions. No functionality changes.
-- **2025-04-02**: Fix trigger_delta regex, with optional whitespacing. ([@TTvanWillegen](https://github.com/TTvanWillegen))
-- **2025-04-17**: Add additional manufacturer name for zha/deConz. [EPMatt-issue#766] ([@yarafie](https://github.com/yarafie))
-- **2025-04-19**: Update blueprint with button optimizations. [EPMatt-issue#713] ([@yarafie](https://github.com/yarafie))
-- **2025-10-16**: Changed short button presses to use \_press_release. [EPMatt-issue#934] ([@queimadus](https://github.com/queimadus)) ([@yarafie](https://github.com/yarafie))
+<Changelog category='controllers' id='philips_929002398602' />

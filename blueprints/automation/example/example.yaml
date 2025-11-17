@@ -5,7 +5,7 @@ blueprint:
     A description for the blueprint
 
     Version: yyyy.mm.dd
-  source_url: https://github.com/yarafie/awesome-ha-blueprints/blob/main/blueprints/automation/example/example.yaml
+  source_url: https://github.com/EPMatt/awesome-ha-blueprints/blob/main/blueprints/automation/example/example.yaml
   domain: automation
   input:
     example_input_boolean:
@@ -32,6 +32,9 @@ blueprint:
         device:
 
 # Automation schema
+variables:
+  ahb_version: 2025.11.04
+  ahb_maintainers: [EPMatt]
 mode: restart
 
 trigger:
