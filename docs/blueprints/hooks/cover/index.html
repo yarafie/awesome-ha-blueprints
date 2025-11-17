@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="generator" content="Docusaurus v3.9.2">
 <title data-rh="true">Hook - Cover | Awesome HA Blueprints</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:url" content="https://yarafie.github.io/awesome-ha-blueprints/docs/blueprints/hooks/cover"><meta data-rh="true" property="og:locale" content="en"><meta data-rh="true" name="docusaurus_locale" content="en"><meta data-rh="true" name="docsearch:language" content="en"><meta data-rh="true" name="docusaurus_version" content="current"><meta data-rh="true" name="docusaurus_tag" content="docs-default-current"><meta data-rh="true" name="docsearch:version" content="current"><meta data-rh="true" name="docsearch:docusaurus_tag" content="docs-default-current"><meta data-rh="true" property="og:title" content="Hook - Cover | Awesome HA Blueprints"><meta data-rh="true" name="description" content="This Hook blueprint allows to build a controller-based automation to control a cover. Supports opening, closing and tilting the cover."><meta data-rh="true" property="og:description" content="This Hook blueprint allows to build a controller-based automation to control a cover. Supports opening, closing and tilting the cover."><link data-rh="true" rel="icon" href="/awesome-ha-blueprints/img/favicon.ico"><link data-rh="true" rel="canonical" href="https://yarafie.github.io/awesome-ha-blueprints/docs/blueprints/hooks/cover"><link data-rh="true" rel="alternate" href="https://yarafie.github.io/awesome-ha-blueprints/docs/blueprints/hooks/cover" hreflang="en"><link data-rh="true" rel="alternate" href="https://yarafie.github.io/awesome-ha-blueprints/docs/blueprints/hooks/cover" hreflang="x-default"><link rel="stylesheet" href="/awesome-ha-blueprints/assets/css/styles.949d6ba6.css">
-<script src="/awesome-ha-blueprints/assets/js/runtime~main.59896d25.js" defer="defer"></script>
+<script src="/awesome-ha-blueprints/assets/js/runtime~main.2051ccaf.js" defer="defer"></script>
 <script src="/awesome-ha-blueprints/assets/js/main.23e97956.js" defer="defer"></script>
 </head>
 <body class="navigation-with-keyboard">
@@ -64,73 +64,6 @@
 <h2 class="anchor anchorTargetStickyNavbar_zbda" id="additional-notes">Additional Notes<a href="#additional-notes" class="hash-link" aria-label="Direct link to Additional Notes" title="Direct link to Additional Notes" translate="no">​</a></h2>
 <p>If you want to link multiple covers to the same controller you can either use <a href="https://www.home-assistant.io/integrations/cover.group/" target="_blank" rel="noopener noreferrer" class="">Cover Groups</a> or build multiple Hooks linked to the same Controller.</p>
 <h2 class="anchor anchorTargetStickyNavbar_zbda" id="changelog">Changelog<a href="#changelog" class="hash-link" aria-label="Direct link to Changelog" title="Direct link to Changelog" translate="no">​</a></h2>
-<ul>
-<li class="">
-<p><strong>2021-03-26</strong>: first blueprint version <!-- -->🎉</p>
-</li>
-<li class="">
-<p><strong>2021-04-19</strong>: remove unused variable, fix warnings for undefined variables in Home Assistant Core &gt;=2021.4.0</p>
-</li>
-<li class="">
-<p><strong>2021-08-02</strong>: Improve inputs documentation and organization</p>
-</li>
-<li class="">
-<p><strong>2021-10-26</strong>:</p>
-<ul>
-<li class="">Standardize blueprints structure and inputs naming across the whole collection.</li>
-<li class="">Improve blueprint documentation.</li>
-<li class="">🎉<!-- --> Add support for alternate mappings. Additional mappings for currently supported controllers will be added from now on. Refer to the documentation of your controller for more details.</li>
-<li class="">⚠️<!-- --> <strong>Breaking Change</strong>: update controller names in the <code>Controller Model</code> input, to match the full name of controllers, prevent ambiguities and enable support for alternate mappings. After updating this blueprint, please reconfigure your automations by selecting again the value for the <code>Controller Model</code> input, matching the full name of the controller you&#x27;re using with this hook.</li>
-</ul>
-</li>
-<li class="">
-<p><strong>2021-10-29</strong>: Add support for IKEA E1766 TRÅDFRI Open/Close Remote.</p>
-</li>
-<li class="">
-<p><strong>2021-12-03</strong>: Add support for Xiaomi WXCJKG11LM, WXCJKG12LM, WXCJKG13LM.</p>
-</li>
-<li class="">
-<p><strong>2022-07-22</strong>: Add support for Xiaomi WXKG11LM.</p>
-</li>
-<li class="">
-<p><strong>2022-07-30</strong>: Add support for SONOFF SNZB-01.</p>
-</li>
-<li class="">
-<p><strong>2025-02-13</strong>:</p>
-<p>⚠️<!-- --> <strong>Breaking Change</strong>:</p>
-<p>Migrate to Zigbee2MQTT MQTT Device Triggers. (<a href="https://github.com/yarafie" target="_blank" rel="noopener noreferrer" class="">@yarafie</a>)</p>
-<p>The <code>controller_entity</code> input has been deprecated, and <code>controller_device</code> is now mandatory.
-If you are a Zigbee2MQTT user and plan to update this blueprint, please make sure to remove the <code>controller_entity</code> input from your automation config and add the device ID of your controller to the <code>controller_device</code> input.
-To obtain the device ID from your controller, configure the automation from the UI and use the device selector dropdown on the <code>controller_device</code> input to select your controller.</p>
-</li>
-<li class="">
-<p><strong>2025-02-16</strong>:</p>
-<p>⚠️<!-- --> <strong>Breaking Change</strong>:</p>
-<p>Add support for Xiaomi WXKG01LM Mi Wireless Switch, rename Xiaomi WXKG11LM Aqara Wireless Switch Mini to Aqara WXKG11LM Wireless Mini Switch</p>
-<p>If you had configured the <code>controller_model</code> input to <code>Xiaomi WXKG11LM Aqara Wireless Switch Mini</code>, please change it to <code>Aqara WXKG11LM Wireless Mini Switch</code>.
-The change has been implemented to match the controller with the correct manufacturer name (Aqara).</p>
-</li>
-<li class="">
-<p><strong>2025-03-20</strong>: Added support for IKEA E2201 RODRET Dimmer. (<a href="https://github.com/yarafie" target="_blank" rel="noopener noreferrer" class="">@yarafie</a>)</p>
-</li>
-<li class="">
-<p><strong>2025-03-25</strong>: Added support for Shelly SNSN-0024x Plus i4 with Wall switch 4. (<a href="https://github.com/yarafie" target="_blank" rel="noopener noreferrer" class="">@yarafie</a>)</p>
-</li>
-<li class="">
-<p><strong>2025-03-26</strong>: Added support for IKEA E2213 SOMRIG shortcut button. (<a href="https://github.com/yarafie" target="_blank" rel="noopener noreferrer" class="">@yarafie</a>)</p>
-</li>
-<li class="">
-<p><strong>2025-03-28</strong>: Added support for IKEA E2123 SYMFONISK sound remote, gen 2. (<a href="https://github.com/yarafie" target="_blank" rel="noopener noreferrer" class="">@yarafie</a>)</p>
-</li>
-<li class="">
-<p><strong>2025-04-12</strong>: Added support for Shelly Button 1. (<a href="https://github.com/yarafie" target="_blank" rel="noopener noreferrer" class="">@yarafie</a>)</p>
-</li>
-<li class="">
-<p><strong>2025-04-12</strong>: Added support for Aqara WXKG13LM Wireless Mini Switch T1. (<a href="https://github.com/yarafie" target="_blank" rel="noopener noreferrer" class="">@yarafie</a>)</p>
-</li>
-<li class="">
-<p><strong>2025-10-20</strong>: Added support for IKEA E2001/E2002 STYRBAR Remote control. (<a href="https://github.com/yarafie" target="_blank" rel="noopener noreferrer" class="">@yarafie</a>)</p>
-</li>
-</ul></div><footer class="theme-doc-footer docusaurus-mt-lg"><div class="row margin-top--sm theme-doc-footer-edit-meta-row"><div class="col noPrint_hKps"><a href="https://github.com/yarafie/awesome-ha-blueprints/edit/main/docs/blueprints/hooks/cover.mdx" target="_blank" rel="noopener noreferrer" class="theme-edit-this-page"><svg fill="currentColor" height="20" width="20" viewBox="0 0 40 40" class="iconEdit_LoF3" aria-hidden="true"><g><path d="m34.5 11.7l-3 3.1-6.3-6.3 3.1-3q0.5-0.5 1.2-0.5t1.1 0.5l3.9 3.9q0.5 0.4 0.5 1.1t-0.5 1.2z m-29.5 17.1l18.4-18.5 6.3 6.3-18.4 18.4h-6.3v-6.2z"></path></g></svg>Edit this page</a></div><div class="col lastUpdated_XQlz"></div></div></footer></article><nav class="docusaurus-mt-lg pagination-nav" aria-label="Docs pages"></nav></div></div><div class="col col--3"><div class="tableOfContents_OyeN thin-scrollbar theme-doc-toc-desktop"><ul class="table-of-contents table-of-contents__left-border"><li><a href="#description" class="table-of-contents__link toc-highlight">Description</a></li><li><a href="#requirements" class="table-of-contents__link toc-highlight">Requirements</a></li><li><a href="#inputs" class="table-of-contents__link toc-highlight">Inputs</a></li><li><a href="#supported-controllers" class="table-of-contents__link toc-highlight">Supported Controllers</a></li><li><a href="#additional-notes" class="table-of-contents__link toc-highlight">Additional Notes</a></li><li><a href="#changelog" class="table-of-contents__link toc-highlight">Changelog</a></li></ul></div></div></div></div></main></div></div></div><footer class="theme-layout-footer footer"><div class="container container-fluid"><div class="footer__bottom text--center"><div class="footer__copyright">Awesome HA Blueprints is maintained by <a href="https://github.com/EPMatt">Matteo Agnoletto</a>.<br>This Fork is maintained by <a href="https://github.com/yarafie">yarafie</a>.<br>Licensed under the <a href="https://github.com/yarafie/awesome-ha-blueprints/blob/main/LICENSE">GPL-3.0 License</a></div></div></div></footer></div>
+<p style="margin:0;color:var(--ifm-color-emphasis-600)">Loading changelog…</p></div><footer class="theme-doc-footer docusaurus-mt-lg"><div class="row margin-top--sm theme-doc-footer-edit-meta-row"><div class="col noPrint_hKps"><a href="https://github.com/yarafie/awesome-ha-blueprints/edit/main/docs/blueprints/hooks/cover.mdx" target="_blank" rel="noopener noreferrer" class="theme-edit-this-page"><svg fill="currentColor" height="20" width="20" viewBox="0 0 40 40" class="iconEdit_LoF3" aria-hidden="true"><g><path d="m34.5 11.7l-3 3.1-6.3-6.3 3.1-3q0.5-0.5 1.2-0.5t1.1 0.5l3.9 3.9q0.5 0.4 0.5 1.1t-0.5 1.2z m-29.5 17.1l18.4-18.5 6.3 6.3-18.4 18.4h-6.3v-6.2z"></path></g></svg>Edit this page</a></div><div class="col lastUpdated_XQlz"></div></div></footer></article><nav class="docusaurus-mt-lg pagination-nav" aria-label="Docs pages"></nav></div></div><div class="col col--3"><div class="tableOfContents_OyeN thin-scrollbar theme-doc-toc-desktop"><ul class="table-of-contents table-of-contents__left-border"><li><a href="#description" class="table-of-contents__link toc-highlight">Description</a></li><li><a href="#requirements" class="table-of-contents__link toc-highlight">Requirements</a></li><li><a href="#inputs" class="table-of-contents__link toc-highlight">Inputs</a></li><li><a href="#supported-controllers" class="table-of-contents__link toc-highlight">Supported Controllers</a></li><li><a href="#additional-notes" class="table-of-contents__link toc-highlight">Additional Notes</a></li><li><a href="#changelog" class="table-of-contents__link toc-highlight">Changelog</a></li></ul></div></div></div></div></main></div></div></div><footer class="theme-layout-footer footer"><div class="container container-fluid"><div class="footer__bottom text--center"><div class="footer__copyright">Awesome HA Blueprints is maintained by <a href="https://github.com/EPMatt">Matteo Agnoletto</a>.<br>This Fork is maintained by <a href="https://github.com/yarafie">yarafie</a>.<br>Licensed under the <a href="https://github.com/yarafie/awesome-ha-blueprints/blob/main/LICENSE">GPL-3.0 License</a></div></div></div></footer></div>
 </body>
 </html>
