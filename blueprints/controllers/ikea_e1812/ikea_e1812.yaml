@@ -19,7 +19,7 @@ blueprint:
     📝 [Changelog](https://yarafie.github.io/awesome-ha-blueprints/docs/blueprints/controllers/ikea_e1812/#changelog)
     📕 Full documentation regarding this blueprint is available [here](https://yarafie.github.io/awesome-ha-blueprints/docs/blueprints/controllers/ikea_e1812).
 
-    🚀 This blueprint is part of the **[Awesome HA Blueprints](https://yarafie.github.io/awesome-ha-blueprints) project**. Please consider **[leaving a star on GitHub](https://github.com/EPMatt/awesome-ha-blueprints)**! 🌟
+    🚀 This blueprint is part of the **[Awesome HA Blueprints](https://yarafie.github.io/awesome-ha-blueprints) project**. Please consider **[leaving a star on GitHub](https://github.com/yarafie/awesome-ha-blueprints)**! 🌟
 
   source_url: https://github.com/yarafie/awesome-ha-blueprints/blob/main/blueprints/controllers/ikea_e1812/ikea_e1812.yaml
   domain: automation
