@@ -92,5 +92,14 @@
         "breaking": false
       }
     ]
+  },
+  {
+    "date": "2025.11.16",
+    "changes": [
+      {
+        "description": "Blueprint was refactored to add back `helper_last_controller_event` in order to fix Long Press/Release Logic for both hooks and custom actions. This will close ([EPMatt-issue#949](https://github.com/EPMatt/awesome-ha-blueprints/issues/949)). See note at top regarding **Helper - Last Controller Event** input. ([@yarafie](https://github.com/yarafie))",
+        "breaking": true
+      }
+    ]
   }
 ]
