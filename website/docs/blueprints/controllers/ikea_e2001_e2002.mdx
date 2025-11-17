@@ -37,9 +37,16 @@ Hooks allow to easily create controller-based automations for interacting with l
 
 ## Requirements
 
-<Requirement id='zigbee2mqtt' />
-<Requirement id='zha' />
-<Requirement id='deconz' />
+<Requirement id='zigbee2mqtt'/>
+<Requirement id='zha'/>
+<Requirement id='deconz'/>
+<Requirement name='Input Text Integration' required>
+
+This integration provides the entity which must be provided to the blueprint in the **Helper - Last Controller Event** input. Learn more about this helper by reading the dedicated section in the [Additional Notes](#helper---last-controller-event).
+
+[Input Text Integration Docs](https://www.home-assistant.io/integrations/input_text/)
+
+</Requirement>
 
 ## Inputs
 
@@ -118,11 +125,17 @@ This Hook blueprint allows to build a controller-based automation to control a c
 
 The `helper_last_controller_event` (Helper - Last Controller Event) input serves as a permanent storage area for the automation. The stored info is used to implement the blueprint's core functionality. To learn more about the helper, how it's used and why it's required, you can read the dedicated section in the [Controllers-Hooks Ecosystem documentation](/docs/controllers-hooks-ecosystem#helper---last-controller-event-input).
 
-The helper is used to determine button release events when the controller is integrated with Zigbee2MQTT and ZHA, because of the actions mapping for the controller with these integrations. Natively, the controller doesn't allow to distinguish between different button release events for some of it's buttons, so the blueprint must store the previous clicked button.
+The helper is used to determine button release events when the controller is integrated with Zigbee2MQTT or ZHA, because of the actions mapping for the controller with these integrations. Natively, the controller doesn't allow to distinguish between different button release events for some of it's buttons, so the blueprint must store the previous clicked button.
 
 ### Virtual double press events
 
-It's important to note that the controller doesn't natively support double press events. Instead , this blueprint provides virtual double press events. You can read more about them in the [general Controllers-Hooks Ecosystem documentation](/docs/controllers-hooks-ecosystem#virtual-events).
+It's also important to note that the controller doesn't natively support double press events. Instead , this blueprint provides virtual double press events. You can read more about them in the [general Controllers-Hooks Ecosystem documentation](/docs/controllers-hooks-ecosystem#virtual-events).
+
+### Issues with Zigbee2MQTT and the device firing duplicate events
+
+It has been reported that IKEA E2001/E2002 controllers integrated with Zigbee2MQTT might fire duplicate events from time to time, during interaction. This issue is not relative to the blueprint itself.
+
+If you notice your controller is not behaving as expected please reset the device and repeat the pairing process with Zigbee2MQTT, then try again.
 
 ## Changelog
 
@@ -147,6 +160,10 @@ It's important to note that the controller doesn't natively support double press
 - **2025-04-16**: Fix Long Press Down not releasing ([@kkthxbye-code](https://github.com/kkthxbye-code))
 - **2025-04-19**: Improve Last Controller Event Helper JSON Regex with more lenient matching.
 - **2025-10-05**: STYRBAR (Z2M) – include additional common variants. ([@yarafie](https://github.com/yarafie))
-- **2025-11-04**: Fix Long Press/Release Logic for both hooks and custom actions. ([EPMatt-issue#949](https://github.com/EPMatt/awesome-ha-blueprints/issues/949)) ([@yarafie](https://github.com/yarafie))
-- **2025-11-11**: Refactored - Added back Helpers to Fix Single/Double/Long Press/Release Logic for both hooks and custom actions. ([EPMatt-issue#949](https://github.com/EPMatt/awesome-ha-blueprints/issues/949)) ([@yarafie](https://github.com/yarafie))
-- **2025-11-16**: Fixed ZHA Up Button Long/Release event triggers. ([@yarafie](https://github.com/yarafie))
+- **2025-11-16**:
+
+  :warning: **Breaking Change**:
+
+  Blueprint was refactored to add back `helper_last_controller_event` in order to fix Long Press/Release Logic for both hooks and custom actions.
+  This will close ([EPMatt-issue#949](https://github.com/EPMatt/awesome-ha-blueprints/issues/949)).
+  See note at top regarding **Helper - Last Controller Event** input. ([@yarafie](https://github.com/yarafie))
