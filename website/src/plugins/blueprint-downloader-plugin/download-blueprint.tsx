@@ -23,7 +23,7 @@ export default function DownloadBlueprint(props: {
 
   const version = getVersion()
 
-  const githubUrl = `https://raw.githubusercontent.com/EPMatt/awesome-ha-blueprints/main/blueprints/${category}/${id}/${id}.yaml`
+  const githubUrl = `https://raw.githubusercontent.com/yarafie/awesome-ha-blueprints/main/blueprints/${category}/${id}/${id}.yaml`
   const myHomeAssistantURL = `https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=${encodeURIComponent(githubUrl)}`
 
   useEffect(() => {
