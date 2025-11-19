@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { marked, Renderer } from 'marked'
 import { changelogsContext } from '../../utils'
 
-// FULL EMOJI MAP (all GitHub shortcodes)
+// Import the full emoji map
 import { emojiMap } from '../../utils/emojiMap'
 
 // ─────────────────────────────────────────────
@@ -30,7 +30,7 @@ type ChangelogState =
   | { status: 'ready'; entries: ChangelogEntry[] }
 
 // ─────────────────────────────────────────────
-// Inline styles (unchanged)
+// Inline styles
 // ─────────────────────────────────────────────
 const styles = {
   list: {
@@ -55,20 +55,10 @@ const styles = {
 }
 
 // ─────────────────────────────────────────────
-// Build emoji lookup map from JSON (GitHub Compatible)
+// Emoji replacement — uses imported emojiMap
 // ─────────────────────────────────────────────
-const emojiMap: Record<string, string> = {}
-
-emojiMapJson.forEach((entry: any) => {
-  if (entry.names && entry.emoji) {
-    entry.names.forEach((name: string) => {
-      emojiMap[`:${name}:`] = entry.emoji
-    })
-  }
-})
-
 const replaceEmojiCodes = (text: string): string => {
-  // Support all GitHub shortcodes, including +1, -1, snake_case
+  // Supports +1, -1, underscores, skin-tones, flags, etc.
   return text.replace(
     /:([a-zA-Z0-9_+-]+):/g,
     (match) => emojiMap[match] || match,
@@ -78,33 +68,35 @@ const replaceEmojiCodes = (text: string): string => {
 // ─────────────────────────────────────────────
 // Marked v17 configuration
 // ─────────────────────────────────────────────
+// Configure marked for inline markdown parsing
+// Customize link renderer to open links in new tab
 const renderer = new Renderer()
-
 renderer.link = ({ href, title, text }) => {
   const titleAttr = title ? ` title="${title}"` : ''
   return `<a href="${href}" target="_blank" rel="noopener noreferrer"${titleAttr}>${text}</a>`
 }
 
 marked.setOptions({
-  gfm: true,
-  breaks: true,
-  async: false, // REQUIRED for synchronous parse()
+  breaks: true, // Convert line breaks to <br>
+  gfm: true, // GitHub Flavored Markdown
+  async: false, // required for synchronous parse() marked 17
   renderer,
 })
 
 // ─────────────────────────────────────────────
-// Markdown → Inline-safe HTML
+// Markdown → HTML (inline safe)
 // ─────────────────────────────────────────────
 const markdownToHtml = (markdown: string): string => {
   const withEmojis = replaceEmojiCodes(markdown)
+  // Use parse() to handle line breaks properly, then strip <p> wrapper tags
+  // to avoid extra spacing in inline contexts
   let html = marked.parse(withEmojis) as string
-
-  // Remove surrounding <p> to keep inline formatting correct
+  // Remove leading/trailing <p> tags and their content wrappers
   html = html.replace(/^<p>/, '').replace(/<\/p>\s*$/, '')
   return html.trim()
 }
 
-const renderDescription = (description: string): React.ReactNode => (
+const renderDescription = (description: string) => (
   <span dangerouslySetInnerHTML={{ __html: markdownToHtml(description) }} />
 )
 
@@ -132,10 +124,15 @@ const Changelog: React.FC<ChangelogProps> = ({ category, id }) => {
         setState({ status: 'ready', entries: parsed })
       } catch (error) {
         if (!isMounted) return
+
+        // If the file is not found by the context, consider it empty
         const message =
           error instanceof Error ? error.message : 'Unable to load changelog.'
 
-        if (/not found/i.test(message)) {
+        if (
+          /^\.\/.+changelog\.json$/.test(message) ||
+          /not found/i.test(message)
+        ) {
           setState({ status: 'empty' })
         } else {
           setState({ status: 'error', message })
@@ -144,12 +141,13 @@ const Changelog: React.FC<ChangelogProps> = ({ category, id }) => {
     }
 
     loadChangelog()
+
     return () => {
       isMounted = false
     }
   }, [category, id])
 
-  // STATES
+  // RENDER STATE
   if (state.status === 'loading') {
     return <p style={styles.inlineMessage}>Loading changelog…</p>
   }
@@ -170,36 +168,39 @@ const Changelog: React.FC<ChangelogProps> = ({ category, id }) => {
 
   // READY
   return (
-    <ul style={styles.list}>
-      {state.entries.map((entry) => {
-        const hasMultiple = entry.changes.length > 1
-        const hasBreaking = entry.changes.some((c) => c.breaking)
+    <>
+      <ul style={styles.list}>
+        {state.entries.map((entry) => {
+          const hasMultipleChanges = entry.changes.length > 1
+          const hasBreakingChanges = entry.changes.some(
+            (change) => change.breaking,
+          )
 
-        return (
-          <li key={entry.date} style={styles.entry}>
-            <strong>{entry.date}</strong>
-
-            {hasMultiple || hasBreaking ? (
-              <ul style={styles.nestedList}>
-                {entry.changes.map((change, index) => (
-                  <li key={`${entry.date}-${index}`}>
-                    {change.breaking && (
-                      <span style={styles.warning}>
-                        <strong>🚨 Breaking Change</strong> :
-                      </span>
-                    )}
-                    {change.breaking && ' '}
-                    {renderDescription(change.description)}
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <>: {renderDescription(entry.changes[0]?.description || '')}</>
-            )}
-          </li>
-        )
-      })}
-    </ul>
+          return (
+            <li key={entry.date} style={styles.entry}>
+              <strong>{entry.date}</strong>
+              {hasMultipleChanges || hasBreakingChanges ? (
+                <ul style={styles.nestedList}>
+                  {entry.changes.map((change, index) => (
+                    <li key={`${entry.date}-${index}`}>
+                      {change.breaking && (
+                        <span style={styles.warning}>
+                          <strong>🚨 Breaking Change</strong> :
+                        </span>
+                      )}
+                      {change.breaking && ' '}
+                      {renderDescription(change.description)}
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <>: {renderDescription(entry.changes[0]?.description ?? '')}</>
+              )}
+            </li>
+          )
+        })}
+      </ul>
+    </>
   )
 }
 
