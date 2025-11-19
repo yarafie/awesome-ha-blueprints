@@ -177,7 +177,7 @@ const Changelog: React.FC<ChangelogProps> = ({ category, id }) => {
           )
 
           return (
-            <li key={entry.date} style={styles.entry}>
+            <li key={`${entry.date}`} style={styles.entry}>
               <strong>{entry.date}</strong>
               {hasMultipleChanges || hasBreakingChanges ? (
                 <ul style={styles.nestedList}>
