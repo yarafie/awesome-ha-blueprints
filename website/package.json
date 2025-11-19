@@ -30,7 +30,7 @@
     "react-dom": "^19.2.0",
     "react-ga4": "^2.1.0",
     "react-json-view-lite": "^2.5.0",
-    "marked": "^12.0.0",
+    "marked": "^16.0.0",
     "react-select": "^5.10.2",
     "glob": "^12.0.0"
   },
