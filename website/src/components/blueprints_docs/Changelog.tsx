@@ -2,6 +2,9 @@ import React, { useEffect, useState } from 'react'
 import { marked, Renderer } from 'marked'
 import { changelogsContext } from '../../utils'
 
+// FULL EMOJI MAP (all GitHub shortcodes)
+import { emojiMap } from '../../utils/emojiMap'
+
 // ─────────────────────────────────────────────
 // Types
 // ─────────────────────────────────────────────
@@ -9,14 +12,17 @@ interface ChangelogChange {
   description: string
   breaking: boolean
 }
+
 interface ChangelogEntry {
   date: string
   changes: ChangelogChange[]
 }
+
 interface ChangelogProps {
   category: string
   id: string
 }
+
 type ChangelogState =
   | { status: 'loading' }
   | { status: 'error'; message: string }
@@ -30,53 +36,70 @@ const styles = {
   list: {
     listStyleType: 'disc',
     marginLeft: '1.5rem',
-  },
+  } as React.CSSProperties,
   entry: {
     marginBottom: '0.5rem',
-  },
+  } as React.CSSProperties,
   nestedList: {
     listStyleType: 'disc',
     marginTop: '0.5rem',
     marginLeft: '1.5rem',
-  },
+  } as React.CSSProperties,
   inlineMessage: {
     margin: 0,
     color: 'var(--ifm-color-emphasis-600)',
-  },
+  } as React.CSSProperties,
   warning: {
     fontWeight: 600,
-  },
+  } as React.CSSProperties,
 }
 
 // ─────────────────────────────────────────────
-// Marked 17 Renderer + Options (PATCHED)
+// Build emoji lookup map from JSON (GitHub Compatible)
 // ─────────────────────────────────────────────
+const emojiMap: Record<string, string> = {}
 
-// Correct Renderer import for v17+
+emojiMapJson.forEach((entry: any) => {
+  if (entry.names && entry.emoji) {
+    entry.names.forEach((name: string) => {
+      emojiMap[`:${name}:`] = entry.emoji
+    })
+  }
+})
+
+const replaceEmojiCodes = (text: string): string => {
+  // Support all GitHub shortcodes, including +1, -1, snake_case
+  return text.replace(
+    /:([a-zA-Z0-9_+-]+):/g,
+    (match) => emojiMap[match] || match,
+  )
+}
+
+// ─────────────────────────────────────────────
+// Marked v17 configuration
+// ─────────────────────────────────────────────
 const renderer = new Renderer()
 
-// NEW MARKED 17 LINK SIGNATURE: ({ href, title, text })
 renderer.link = ({ href, title, text }) => {
   const titleAttr = title ? ` title="${title}"` : ''
   return `<a href="${href}" target="_blank" rel="noopener noreferrer"${titleAttr}>${text}</a>`
 }
 
-// MUST set async:false for synchronous return of `parse()`
 marked.setOptions({
   gfm: true,
   breaks: true,
-  async: false, // REQUIRED for Marked 17
+  async: false, // REQUIRED for synchronous parse()
   renderer,
 })
 
 // ─────────────────────────────────────────────
-// Markdown → HTML (unchanged except Marked v17 fix)
+// Markdown → Inline-safe HTML
 // ─────────────────────────────────────────────
 const markdownToHtml = (markdown: string): string => {
-  // marked.parse() now always returns a string because async:false
-  let html = marked.parse(markdown) as string
+  const withEmojis = replaceEmojiCodes(markdown)
+  let html = marked.parse(withEmojis) as string
 
-  // Remove surrounding <p>...</p> for inline text
+  // Remove surrounding <p> to keep inline formatting correct
   html = html.replace(/^<p>/, '').replace(/<\/p>\s*$/, '')
   return html.trim()
 }
@@ -109,14 +132,10 @@ const Changelog: React.FC<ChangelogProps> = ({ category, id }) => {
         setState({ status: 'ready', entries: parsed })
       } catch (error) {
         if (!isMounted) return
-
         const message =
           error instanceof Error ? error.message : 'Unable to load changelog.'
 
-        if (
-          /^\.\/.+changelog\.json$/.test(message) ||
-          /not found/i.test(message)
-        ) {
+        if (/not found/i.test(message)) {
           setState({ status: 'empty' })
         } else {
           setState({ status: 'error', message })
@@ -130,12 +149,11 @@ const Changelog: React.FC<ChangelogProps> = ({ category, id }) => {
     }
   }, [category, id])
 
-  // ─────────────────────────────────────────
-  // Rendering States
-  // ─────────────────────────────────────────
+  // STATES
   if (state.status === 'loading') {
     return <p style={styles.inlineMessage}>Loading changelog…</p>
   }
+
   if (state.status === 'error') {
     return (
       <p style={styles.inlineMessage}>
@@ -143,28 +161,25 @@ const Changelog: React.FC<ChangelogProps> = ({ category, id }) => {
       </p>
     )
   }
+
   if (state.status === 'empty') {
     return (
       <p style={styles.inlineMessage}>No changelog entries available yet.</p>
     )
   }
 
-  // ─────────────────────────────────────────
-  // Render final changelog
-  // ─────────────────────────────────────────
+  // READY
   return (
     <ul style={styles.list}>
       {state.entries.map((entry) => {
-        const hasMultipleChanges = entry.changes.length > 1
-        const hasBreakingChanges = entry.changes.some(
-          (change) => change.breaking,
-        )
+        const hasMultiple = entry.changes.length > 1
+        const hasBreaking = entry.changes.some((c) => c.breaking)
 
         return (
           <li key={entry.date} style={styles.entry}>
             <strong>{entry.date}</strong>
 
-            {hasMultipleChanges || hasBreakingChanges ? (
+            {hasMultiple || hasBreaking ? (
               <ul style={styles.nestedList}>
                 {entry.changes.map((change, index) => (
                   <li key={`${entry.date}-${index}`}>
@@ -179,7 +194,7 @@ const Changelog: React.FC<ChangelogProps> = ({ category, id }) => {
                 ))}
               </ul>
             ) : (
-              <>: {renderDescription(entry.changes[0]?.description ?? '')}</>
+              <>: {renderDescription(entry.changes[0]?.description || '')}</>
             )}
           </li>
         )
