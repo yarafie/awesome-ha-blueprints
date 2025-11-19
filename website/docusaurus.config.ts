@@ -44,11 +44,7 @@ const config: Config = {
   url: 'https://yarafie.github.io',
   baseUrl: '/awesome-ha-blueprints/',
   onBrokenLinks: 'throw',
-  markdown: {
-    hooks: {
-      onBrokenMarkdownLinks: 'warn',
-    },
-  },
+  onBrokenMarkdownLinks: 'warn',
   favicon: 'img/favicon.ico',
   organizationName: 'yarafie',
   projectName: 'awesome-ha-blueprints',
