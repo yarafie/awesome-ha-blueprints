@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Layout from '@theme/Layout'
 import {
-  LineChart,
   AreaChart,
   Area,
   XAxis,
@@ -43,7 +42,6 @@ type CategoryChartData = ChartPoint & {
   value: number
   category: string
 }
-type RadialChartData = { name: string; value: number; fill: string }
 
 interface MetricsState {
   loading: boolean
@@ -501,7 +499,7 @@ const DownloadMetricsPage: React.FC = () => {
                           verticalAlign='middle'
                           align='left'
                           wrapperStyle={{ fontSize: '12px' }}
-                          formatter={(value, entry) => (
+                          formatter={(_, entry) => (
                             <span
                               className='text-xs text-gray-600'
                               title={entry.payload.name}
