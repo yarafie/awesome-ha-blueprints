@@ -430,9 +430,9 @@ const DownloadMetricsPage: React.FC = () => {
                             outerRadius={60} // Reduced outer radius
                             fill='#8884d8'
                             labelLine={false}
-                            label={({ name, percent }) =>
+                            label={({ percent }) =>
                               `${(percent * 100).toFixed(0)}%`
-                            } // Simplified label
+                            } // Simplified label, removed unused 'name'
                           >
                             {categoryData.map((entry, index) => (
                               <Cell
