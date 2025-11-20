@@ -1,16 +1,23 @@
 import React, { useEffect, useState } from 'react'
 import Layout from '@theme/Layout'
 import {
-  BarChart,
-  Bar,
   LineChart,
-  Line,
+  AreaChart,
+  Area,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+  RadialBarChart,
+  RadialBar,
+  Legend,
 } from 'recharts'
+import { scaleOrdinal } from 'd3-scale'
+import { schemeCategory10 } from 'd3-scale-chromatic'
 
 // --- Type Definitions based on SQL RPC Functions ---
 type TotalMetric = { total: string }
@@ -25,10 +32,18 @@ type DailyMetric = {
   total: string
 }
 
-type DailyChartPoint = {
+type ChartPoint = {
   label: string // e.g. "Nov 18"
   total: number
 }
+
+// Define the shape of data for charts
+type CategoryChartData = ChartPoint & {
+  name: string
+  value: number
+  category: string
+}
+type RadialChartData = { name: string; value: number; fill: string }
 
 interface MetricsState {
   loading: boolean
@@ -36,8 +51,11 @@ interface MetricsState {
   totalDownloads: number
   byCategory: CategoryMetric[]
   topBlueprints: TopBlueprintMetric[]
-  daily: DailyChartPoint[]
+  daily: ChartPoint[]
 }
+
+// Define a stable color palette for the Pie Chart
+const colors = scaleOrdinal(schemeCategory10).range()
 
 const DownloadMetricsPage: React.FC = () => {
   const [metrics, setMetrics] = useState<MetricsState>({
@@ -52,8 +70,8 @@ const DownloadMetricsPage: React.FC = () => {
   const { loading, error, totalDownloads, byCategory, topBlueprints, daily } =
     metrics
 
-  // Empty dependency array ([]) ensures this runs only once on the client side,
-  // fixing the ReferenceError during Docusaurus SSR.
+  // Empty dependency array ([]) is crucial here. It makes sure the fetch logic
+  // runs only once on the client side, fixing the ReferenceError during Docusaurus SSR.
   useEffect(() => {
     // Access global environment variables
     const supabaseUrl = (window as any)?.env?.SUPABASE_URL
@@ -150,7 +168,7 @@ const DownloadMetricsPage: React.FC = () => {
           ? topJson
           : []
 
-        const dailyParsed: DailyChartPoint[] = Array.isArray(dailyJson)
+        const dailyParsed: ChartPoint[] = Array.isArray(dailyJson)
           ? dailyJson
               .map((row: DailyMetric) => {
                 const d = new Date(row.day)
@@ -163,7 +181,7 @@ const DownloadMetricsPage: React.FC = () => {
                   total: Number(row.total),
                 }
               })
-              .sort((a: DailyChartPoint, b: DailyChartPoint) => {
+              .sort((a: ChartPoint, b: ChartPoint) => {
                 const dateA = new Date(a.label)
                 const dateB = new Date(b.label)
                 return dateA.getTime() - dateB.getTime()
@@ -195,10 +213,69 @@ const DownloadMetricsPage: React.FC = () => {
   const formatBigNumber = (num: number) => {
     return num.toLocaleString()
   }
-  const maxTopDownload = Math.max(
-    ...topBlueprints.map((bp) => Number(bp.total)),
-    1,
-  )
+
+  // Transform category data for Pie Chart
+  const categoryData: CategoryChartData[] = byCategory.map((item) => ({
+    name: item.blueprint_category,
+    category: item.blueprint_category,
+    value: Number(item.total),
+    total: Number(item.total),
+    label: item.blueprint_category,
+  }))
+
+  // Transform top blueprints data for Radial Bar Chart (Top 10)
+  const top10Blueprints = topBlueprints
+    .slice(0, 10)
+    .map((bp, index) => ({
+      name: bp.blueprint_id,
+      value: Number(bp.total),
+      fill: colors[index % colors.length], // Assign a color from the palette
+    }))
+    .reverse() // Reverse for better stacking visualization
+
+  const maxRadialValue = Math.max(...top10Blueprints.map((bp) => bp.value), 1)
+
+  const CustomTooltip = ({ active, payload, label }: any) => {
+    if (active && payload && payload.length) {
+      const data = payload[0].payload
+      return (
+        <div className='p-3 bg-white border border-gray-300 shadow-xl rounded-lg text-sm text-gray-700'>
+          <p className='font-bold text-indigo-600 mb-1'>{data.name || label}</p>
+          <p>
+            <span className='font-semibold'>Downloads:</span>{' '}
+            {formatBigNumber(data.value || payload[0].value)}
+          </p>
+        </div>
+      )
+    }
+    return null
+  }
+
+  const RadialLegend = (props: any) => {
+    const { payload } = props
+    if (!payload || payload.length === 0) return null
+
+    return (
+      <div className='p-4 bg-gray-50 border border-gray-200 rounded-lg max-h-48 overflow-y-auto'>
+        <p className='font-semibold text-sm mb-2 text-gray-700'>
+          Top Blueprints
+        </p>
+        <ul className='space-y-1'>
+          {payload.map((entry: any, index: number) => (
+            <li key={`item-${index}`} className='flex items-center text-xs'>
+              <span
+                className='w-3 h-3 rounded-full mr-2'
+                style={{ backgroundColor: entry.color }}
+              ></span>
+              <span className='text-gray-600 truncate' title={entry.value}>
+                {entry.value}
+              </span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    )
+  }
 
   // --- Render Components ---
 
@@ -208,17 +285,17 @@ const DownloadMetricsPage: React.FC = () => {
       description='Download metrics for Awesome HA Blueprints'
     >
       <main className='container margin-vert--lg'>
-        <h1 className='text--center margin-bottom--lg'>
+        <h1 className='text--center margin-bottom--lg text-3xl font-bold text-gray-800'>
           Blueprint Download Metrics
         </h1>
         {loading && (
-          <div className='text--center margin-vert--lg p-4 bg-gray-100 rounded-lg'>
-            <div className='margin-bottom--sm text-xl font-semibold text-gray-700'>
+          <div className='text--center margin-vert--lg p-6 bg-indigo-50 border-2 border-indigo-200 rounded-xl shadow-lg'>
+            <div className='margin-bottom--sm text-xl font-semibold text-indigo-700'>
               Loading metrics from Supabase...
             </div>
-            <small className='text-gray-500'>
-              Please ensure your Supabase URL / Anon key are set and the RPC
-              functions are public.
+            <small className='text-indigo-500'>
+              Fetching data from RPCs. Please ensure your Supabase config is
+              correct.
             </small>
           </div>
         )}
@@ -233,38 +310,40 @@ const DownloadMetricsPage: React.FC = () => {
             {/* Top metric cards */}
             <section className='row'>
               <div className='col col--4 mb-4'>
-                <div className='card shadow-lg hover:shadow-xl transition-shadow duration-300'>
-                  <div className='card__header bg-blue-500 text-white rounded-t-lg'>
-                    <h3 className='font-bold text-lg'>Total Downloads</h3>
+                <div className='card shadow-2xl hover:shadow-3xl transition-shadow duration-500'>
+                  <div className='card__header bg-indigo-600 text-white rounded-t-lg p-4'>
+                    <h3 className='font-extrabold text-xl'>Total Downloads</h3>
                   </div>
-                  <div className='card__body'>
-                    <p className='text-5xl font-extrabold text-blue-700 m-0'>
+                  <div className='card__body p-6'>
+                    <p className='text-6xl font-black text-indigo-700 m-0'>
                       {formatBigNumber(totalDownloads)}
                     </p>
                   </div>
                 </div>
               </div>
               <div className='col col--4 mb-4'>
-                <div className='card shadow-lg hover:shadow-xl transition-shadow duration-300'>
-                  <div className='card__header bg-green-500 text-white rounded-t-lg'>
-                    <h3 className='font-bold text-lg'>Unique Categories</h3>
+                <div className='card shadow-2xl hover:shadow-3xl transition-shadow duration-500'>
+                  <div className='card__header bg-teal-600 text-white rounded-t-lg p-4'>
+                    <h3 className='font-extrabold text-xl'>
+                      Unique Categories
+                    </h3>
                   </div>
-                  <div className='card__body'>
-                    <p className='text-5xl font-extrabold text-green-700 m-0'>
+                  <div className='card__body p-6'>
+                    <p className='text-6xl font-black text-teal-700 m-0'>
                       {formatBigNumber(byCategory.length)}
                     </p>
                   </div>
                 </div>
               </div>
               <div className='col col--4 mb-4'>
-                <div className='card shadow-lg hover:shadow-xl transition-shadow duration-300'>
-                  <div className='card__header bg-purple-500 text-white rounded-t-lg'>
-                    <h3 className='font-bold text-lg'>
+                <div className='card shadow-2xl hover:shadow-3xl transition-shadow duration-500'>
+                  <div className='card__header bg-purple-600 text-white rounded-t-lg p-4'>
+                    <h3 className='font-extrabold text-xl'>
                       Top Blueprints Tracked
                     </h3>
                   </div>
-                  <div className='card__body'>
-                    <p className='text-5xl font-extrabold text-purple-700 m-0'>
+                  <div className='card__body p-6'>
+                    <p className='text-6xl font-black text-purple-700 m-0'>
                       {formatBigNumber(topBlueprints.length)}
                     </p>
                   </div>
@@ -272,13 +351,13 @@ const DownloadMetricsPage: React.FC = () => {
               </div>
             </section>
 
-            {/* Charts row: Daily line + Category bar */}
+            {/* Charts row: Daily line + Category pie */}
             <section className='row'>
               <div className='col col--6 mb-4'>
-                <div className='card shadow-lg'>
-                  <div className='card__header'>
-                    <h3 className='font-semibold text-xl'>
-                      Downloads in Last 30 Days
+                <div className='card shadow-2xl'>
+                  <div className='card__header p-4'>
+                    <h3 className='font-bold text-xl text-gray-700'>
+                      Daily Downloads (Last 30 Days)
                     </h3>
                   </div>
                   <div className='card__body' style={{ height: 350 }}>
@@ -288,36 +367,52 @@ const DownloadMetricsPage: React.FC = () => {
                       </div>
                     ) : (
                       <ResponsiveContainer width='100%' height='100%'>
-                        <LineChart
+                        <AreaChart
                           data={daily}
-                          margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                          margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
                         >
+                          <defs>
+                            <linearGradient
+                              id='colorTotal'
+                              x1='0'
+                              y1='0'
+                              x2='0'
+                              y2='1'
+                            >
+                              <stop
+                                offset='5%'
+                                stopColor='#4f46e5'
+                                stopOpacity={0.8}
+                              />
+                              <stop
+                                offset='95%'
+                                stopColor='#4f46e5'
+                                stopOpacity={0}
+                              />
+                            </linearGradient>
+                          </defs>
                           <CartesianGrid
-                            strokeDasharray='3 3'
-                            stroke='#f0f0f0'
+                            strokeDasharray='5 5'
+                            stroke='#e5e7eb'
                           />
                           <XAxis
                             dataKey='label'
-                            stroke='#555'
+                            stroke='#6b7280'
                             tick={{ fontSize: 10 }}
+                            padding={{ left: 10, right: 10 }}
                           />
-                          <YAxis allowDecimals={false} stroke='#555' />
-                          <Tooltip
-                            formatter={(value) => [
-                              `${formatBigNumber(value as number)} downloads`,
-                              'Total',
-                            ]}
-                            labelFormatter={(label) => `Date: ${label}`}
-                          />
-                          <Line
+                          <YAxis allowDecimals={false} stroke='#6b7280' />
+                          <Tooltip content={<CustomTooltip />} />
+                          <Area
                             type='monotone'
                             dataKey='total'
-                            stroke='#3b82f6'
+                            stroke='#4f46e5'
                             strokeWidth={3}
-                            dot={{ fill: '#3b82f6', r: 3 }}
-                            activeDot={{ r: 5 }}
+                            fill='url(#colorTotal)'
+                            dot={{ fill: '#4f46e5', r: 4 }}
+                            activeDot={{ r: 6, strokeWidth: 2, stroke: '#fff' }}
                           />
-                        </LineChart>
+                        </AreaChart>
                       </ResponsiveContainer>
                     )}
                   </div>
@@ -325,52 +420,50 @@ const DownloadMetricsPage: React.FC = () => {
               </div>
 
               <div className='col col--6 mb-4'>
-                <div className='card shadow-lg'>
-                  <div className='card__header'>
-                    <h3 className='font-semibold text-xl'>
-                      Downloads by Category
+                <div className='card shadow-2xl'>
+                  <div className='card__header p-4'>
+                    <h3 className='font-bold text-xl text-gray-700'>
+                      Downloads by Category (Proportion)
                     </h3>
                   </div>
                   <div className='card__body' style={{ height: 350 }}>
-                    {byCategory.length === 0 ? (
+                    {categoryData.length === 0 ? (
                       <div className='flex justify-center items-center h-full text-gray-500'>
                         No data yet. Download some blueprints to see metrics
                         here.
                       </div>
                     ) : (
                       <ResponsiveContainer width='100%' height='100%'>
-                        <BarChart
-                          data={byCategory.map((c) => ({
-                            ...c,
-                            total: Number(c.total),
-                          }))}
-                          layout='vertical'
-                          margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-                        >
-                          <CartesianGrid
-                            strokeDasharray='3 3'
-                            stroke='#f0f0f0'
+                        <PieChart>
+                          <Pie
+                            data={categoryData}
+                            dataKey='value'
+                            nameKey='category'
+                            cx='50%'
+                            cy='50%'
+                            outerRadius={100}
+                            fill='#8884d8'
+                            labelLine={false}
+                            label={({ name, percent }) =>
+                              `${name} (${(percent * 100).toFixed(0)}%)`
+                            }
+                          >
+                            {categoryData.map((entry, index) => (
+                              <Cell
+                                key={`cell-${index}`}
+                                fill={colors[index % colors.length]}
+                              />
+                            ))}
+                          </Pie>
+                          <Tooltip content={<CustomTooltip />} />
+                          <Legend
+                            layout='vertical'
+                            verticalAlign='middle'
+                            align='right'
+                            iconType='circle'
+                            wrapperStyle={{ fontSize: '12px' }}
                           />
-                          <XAxis
-                            type='number'
-                            allowDecimals={false}
-                            stroke='#555'
-                          />
-                          <YAxis
-                            dataKey='blueprint_category'
-                            type='category'
-                            stroke='#555'
-                            tick={{ fontSize: 10 }}
-                          />
-                          <Tooltip
-                            formatter={(value) => [
-                              `${formatBigNumber(value as number)} downloads`,
-                              'Total',
-                            ]}
-                            labelFormatter={(label) => `Category: ${label}`}
-                          />
-                          <Bar dataKey='total' fill='#10b981' />
-                        </BarChart>
+                        </PieChart>
                       </ResponsiveContainer>
                     )}
                   </div>
@@ -378,53 +471,69 @@ const DownloadMetricsPage: React.FC = () => {
               </div>
             </section>
 
-            {/* Top Blueprints List/Visualization */}
+            {/* Top Blueprints Radial Chart */}
             <section className='row'>
               <div className='col col--12'>
-                <div className='card shadow-lg'>
-                  <div className='card__header'>
-                    <h3 className='font-semibold text-xl'>Top Blueprints</h3>
+                <div className='card shadow-2xl'>
+                  <div className='card__header p-4'>
+                    <h3 className='font-bold text-xl text-gray-700'>
+                      Top 10 Blueprints Ranking (Radial)
+                    </h3>
                   </div>
-                  <div className='card__body'>
-                    {topBlueprints.length === 0 ? (
+                  <div className='card__body' style={{ height: 400 }}>
+                    {top10Blueprints.length === 0 ? (
                       <p className='text-gray-500'>
                         No downloads recorded yet for individual blueprints.
                       </p>
                     ) : (
-                      <div className='space-y-2'>
-                        {/* Only show the top 25 blueprints for performance/readability */}
-                        {topBlueprints.slice(0, 25).map((bp, index) => (
-                          <div
-                            key={`${bp.blueprint_category}-${bp.blueprint_id}-${index}`}
-                            className='flex items-center space-x-4 p-2 border-b last:border-b-0 border-gray-100'
+                      <ResponsiveContainer width='100%' height='100%'>
+                        <RadialBarChart
+                          innerRadius='10%'
+                          outerRadius='100%'
+                          data={top10Blueprints}
+                          startAngle={90}
+                          endAngle={-270}
+                          barSize={15}
+                        >
+                          <RadialBar
+                            minAngle={15}
+                            label={{
+                              position: 'insideStart',
+                              fill: '#fff',
+                              fontSize: 10,
+                              offset: 5,
+                            }}
+                            background
+                            clockWise
+                            dataKey='value'
+                          />
+                          <Tooltip content={<CustomTooltip />} />
+                          <Legend
+                            iconSize={10}
+                            layout='vertical'
+                            verticalAlign='middle'
+                            align='left'
+                            formatter={(value, entry) => (
+                              <span
+                                className='text-xs text-gray-600'
+                                title={entry.payload.name}
+                              >
+                                {`${entry.payload.name} (${formatBigNumber(entry.payload.value)})`}
+                              </span>
+                            )}
+                          />
+                          <text
+                            x={'50%'}
+                            y={20}
+                            fill='#666'
+                            textAnchor='middle'
+                            dominantBaseline='hanging'
                           >
-                            <span className='font-mono text-xs w-6 text-center text-gray-500'>
-                              {index + 1}.
-                            </span>
-                            <span className='flex-1 font-medium text-gray-800'>
-                              <span className='font-semibold'>
-                                {bp.blueprint_category}
-                              </span>
-                              <span className='text-gray-400'> / </span>
-                              {bp.blueprint_id}
-                            </span>
-                            <div className='flex items-center space-x-2 w-32 justify-end'>
-                              <span className='text-sm font-bold text-indigo-600 w-12 text-right'>
-                                {formatBigNumber(Number(bp.total))}
-                              </span>
-                              {/* Simple Bar Visualization */}
-                              <div className='relative w-20 h-2 bg-gray-200 rounded-full overflow-hidden'>
-                                <div
-                                  className='absolute inset-y-0 left-0 bg-indigo-400 rounded-full transition-all duration-500'
-                                  style={{
-                                    width: `${(Number(bp.total) / maxTopDownload) * 100}%`,
-                                  }}
-                                />
-                              </div>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
+                            Top 10 Blueprint Rankings (Max:{' '}
+                            {formatBigNumber(maxRadialValue)})
+                          </text>
+                        </RadialBarChart>
+                      </ResponsiveContainer>
                     )}
                   </div>
                 </div>
