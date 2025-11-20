@@ -13,7 +13,6 @@ import {
 } from 'recharts'
 
 // --- Type Definitions based on SQL RPC Functions ---
-// Supabase returns bigint as string, so we type these fields as string for safety during fetch.
 type TotalMetric = { total: string }
 type CategoryMetric = { blueprint_category: string; total: string }
 type TopBlueprintMetric = {
@@ -50,16 +49,16 @@ const DownloadMetricsPage: React.FC = () => {
     daily: [],
   })
 
-  // Destructure for easy access
   const { loading, error, totalDownloads, byCategory, topBlueprints, daily } =
     metrics
 
+  // Empty dependency array ([]) ensures this runs only once on the client side,
+  // fixing the ReferenceError during Docusaurus SSR.
   useEffect(() => {
-    // Access global environment variables set by the Docusaurus environment plugin
+    // Access global environment variables
     const supabaseUrl = (window as any)?.env?.SUPABASE_URL
     const supabaseAnonKey = (window as any)?.env?.SUPABASE_ANON_KEY
 
-    // Dependency check for environment variables
     if (!supabaseUrl || !supabaseAnonKey) {
       setMetrics((prev) => ({
         ...prev,
@@ -76,7 +75,7 @@ const DownloadMetricsPage: React.FC = () => {
       Authorization: `Bearer ${supabaseAnonKey}`,
     }
 
-    // Exponential backoff retry logic for API calls
+    // Exponential backoff retry logic
     const fetchWithRetry = async (
       url: string,
       options: RequestInit,
@@ -85,17 +84,13 @@ const DownloadMetricsPage: React.FC = () => {
       for (let i = 0; i < retries; i++) {
         try {
           const response = await fetch(url, options)
-          // Check if the response failed (e.g., 400 or 500 error)
           if (response.ok) {
             return response
           } else if (response.status === 429 && i < retries - 1) {
-            // 429 Too Many Requests
-            // Implement exponential backoff delay
             const delay = Math.pow(2, i) * 1000 + Math.random() * 1000
             await new Promise((resolve) => setTimeout(resolve, delay))
             continue
           } else {
-            // Throw error for non-retryable status codes or after final attempt
             const text = await response.text()
             throw new Error(
               `HTTP error! Status: ${response.status}. Response: ${text.substring(0, 100)}...`,
@@ -103,14 +98,12 @@ const DownloadMetricsPage: React.FC = () => {
           }
         } catch (error: any) {
           if (i === retries - 1) throw error
-          // Continue to next retry attempt
         }
       }
     }
 
     async function fetchMetrics() {
       try {
-        // Use Promise.all to fetch all metrics concurrently
         const [totalRes, catRes, topRes, dailyRes] = await Promise.all([
           fetchWithRetry(`${supabaseUrl}/rest/v1/rpc/get_total_downloads`, {
             method: 'POST',
@@ -137,55 +130,42 @@ const DownloadMetricsPage: React.FC = () => {
           }),
         ])
 
-        // Parse JSON
         const totalJson: TotalMetric[] | number = await totalRes.json()
         const catJson: CategoryMetric[] = await catRes.json()
         const topJson: TopBlueprintMetric[] = await topRes.json()
         const dailyJson: DailyMetric[] = await dailyRes.json()
 
         // --- Data Transformation and Parsing ---
-
-        // 1. Total Downloads (Expected: [{ total: "N" }] or just N)
         let totalDownloads = 0
         if (Array.isArray(totalJson) && totalJson.length > 0) {
-          // Safely extract total from the array response and convert string bigint to number
           totalDownloads = Number(totalJson[0].total)
         } else if (typeof totalJson === 'number') {
-          // Handle scalar response
           totalDownloads = totalJson
         }
 
-        // 2. By Category (Ensure it's an array for safety)
         const byCategoryParsed: CategoryMetric[] = Array.isArray(catJson)
           ? catJson
           : []
-
-        // 3. Top Blueprints (Ensure it's an array for safety)
         const topBlueprintsParsed: TopBlueprintMetric[] = Array.isArray(topJson)
           ? topJson
           : []
 
-        // 4. Daily data → map to chart-friendly labels (converts string BigInts to numbers)
         const dailyParsed: DailyChartPoint[] = Array.isArray(dailyJson)
           ? dailyJson
               .map((row: DailyMetric) => {
                 const d = new Date(row.day)
-                // Format: e.g., "Nov 20"
                 const label = d.toLocaleDateString(undefined, {
                   month: 'short',
                   day: 'numeric',
                 })
                 return {
                   label,
-                  total: Number(row.total), // Coerce string BigInt to number
+                  total: Number(row.total),
                 }
               })
-              // Sorting is crucial for line charts
               .sort((a: DailyChartPoint, b: DailyChartPoint) => {
-                // Attempt to parse date from the formatted label for sorting consistency
                 const dateA = new Date(a.label)
                 const dateB = new Date(b.label)
-                // Use date timestamps for reliable numeric sort
                 return dateA.getTime() - dateB.getTime()
               })
           : []
@@ -209,16 +189,12 @@ const DownloadMetricsPage: React.FC = () => {
     }
 
     fetchMetrics()
-  }, [supabaseUrl, supabaseAnonKey])
+  }, [])
 
   // --- Render Helpers ---
-
-  // Formats large numbers with thousand separators
   const formatBigNumber = (num: number) => {
     return num.toLocaleString()
   }
-
-  // Calculate the maximum download count for the bar visualization in the Top Blueprints list
   const maxTopDownload = Math.max(
     ...topBlueprints.map((bp) => Number(bp.total)),
     1,
