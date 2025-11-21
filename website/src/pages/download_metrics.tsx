@@ -61,6 +61,9 @@ const DownloadMetricsPage: React.FC = () => {
     daily: [],
   })
 
+  // NEW STATE: State for the currently selected time range in days (default: 15)
+  const [selectedDays, setSelectedDays] = useState(15)
+
   // State to track current theme (dark/light)
   const [isDark, setIsDark] = useState(false)
 
@@ -103,6 +106,7 @@ const DownloadMetricsPage: React.FC = () => {
   }, [])
 
   // --- DATA FETCHING LOGIC ---
+  // DEPENDENCY ARRAY NOW INCLUDES selectedDays
   useEffect(() => {
     const supabaseUrl = (window as any)?.env?.SUPABASE_URL
     const supabaseAnonKey = (window as any)?.env?.SUPABASE_ANON_KEY
@@ -118,10 +122,10 @@ const DownloadMetricsPage: React.FC = () => {
     const formatApiDate = (date: Date): string =>
       date.toISOString().split('T')[0]
 
-    // Function to create a full 15-day range and fill missing days with 0 downloads
+    // Function to create a full N-day range and fill missing days with 0 downloads
     const fillMissingDailyData = (
       dailyData: DailyMetric[],
-      days: number = 15,
+      days: number,
     ): ChartPoint[] => {
       const dailyMap = new Map(
         dailyData.map((item) => [item.day, Number(item.total)]),
@@ -182,7 +186,11 @@ const DownloadMetricsPage: React.FC = () => {
         { day: formatApiDate(new Date()), total: '22' },
       ]
 
-      const dailyParsed: ChartPoint[] = fillMissingDailyData(mockDaily, 15)
+      // Use selectedDays for mock data generation
+      const dailyParsed: ChartPoint[] = fillMissingDailyData(
+        mockDaily,
+        selectedDays,
+      )
 
       setMetrics((prev) => ({
         ...prev,
@@ -232,6 +240,9 @@ const DownloadMetricsPage: React.FC = () => {
     }
 
     async function fetchMetrics() {
+      // Show loading state while fetching
+      setMetrics((prev) => ({ ...prev, loading: true }))
+
       try {
         const [totalRes, catRes, topRes, dailyRes] = await Promise.all([
           fetchWithRetry(`${supabaseUrl}/rest/v1/rpc/get_total_downloads`, {
@@ -252,10 +263,11 @@ const DownloadMetricsPage: React.FC = () => {
             headers,
             body: JSON.stringify({}),
           }),
+          // USE DYNAMIC selectedDays FOR THE RPC CALL
           fetchWithRetry(`${supabaseUrl}/rest/v1/rpc/get_daily_downloads`, {
             method: 'POST',
             headers,
-            body: JSON.stringify({ p_days: 15 }), // 15 days of daily data
+            body: JSON.stringify({ p_days: selectedDays }),
           }),
         ])
 
@@ -278,18 +290,18 @@ const DownloadMetricsPage: React.FC = () => {
           ? topJson
           : []
 
-        // Fill in missing days with 0
+        // Fill in missing days with 0, using selectedDays as the range
         const dailyParsed: ChartPoint[] = fillMissingDailyData(
           Array.isArray(dailyJson) ? dailyJson : [],
-          15,
+          selectedDays,
         )
 
         setMetrics({
           loading: false,
           error: undefined,
           totalDownloads,
-          byCategory: byCategoryParsed, // Kept for Pie Chart
-          topBlueprints: topBlueprintsParsed, // Kept in descending order
+          byCategory: byCategoryParsed,
+          topBlueprints: topBlueprintsParsed,
           daily: dailyParsed,
         })
       } catch (err: any) {
@@ -305,7 +317,7 @@ const DownloadMetricsPage: React.FC = () => {
     }
 
     fetchMetrics()
-  }, [])
+  }, [selectedDays]) // Dependency added here
 
   // --- Data Formatting Helpers ---
   const formatBigNumber = (num: number) => {
@@ -388,9 +400,52 @@ const DownloadMetricsPage: React.FC = () => {
     )
   }
 
+  // --- UI Component for Time Range Selection ---
+  const TimeRangeSelector: React.FC<{
+    current: number
+    onSelect: (days: number) => void
+  }> = ({ current, onSelect }) => {
+    const ranges = [7, 15, 30, 90]
+    const activeStyle = (days: number): React.CSSProperties => ({
+      padding: '6px 12px',
+      margin: '0 4px',
+      borderRadius: '4px',
+      cursor: 'pointer',
+      fontWeight: 'bold',
+      backgroundColor: current === days ? '#4f46e5' : THEME.cardBg,
+      color: current === days ? 'white' : THEME.textPrimary,
+      // Use a subtle border on the non-selected buttons, but a stronger color on the active one
+      border: `1px solid ${current === days ? '#4f46e5' : THEME.gridLine}`,
+      transition: 'all 0.2s',
+      boxShadow: current === days ? '0 2px 4px rgba(0,0,0,0.2)' : 'none',
+      fontSize: '14px',
+    })
+
+    return (
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          marginBottom: '20px',
+          paddingTop: '10px',
+        }}
+      >
+        {ranges.map((days) => (
+          <button
+            key={days}
+            onClick={() => onSelect(days)}
+            style={activeStyle(days)}
+          >
+            {days}D
+          </button>
+        ))}
+      </div>
+    )
+  }
+
   // --- STYLES (Inline for guaranteed layout) ---
 
-  // New style for the two KPI cards
+  // Style for the two KPI cards
   const gridStyleKPIs: React.CSSProperties = {
     display: 'grid',
     gridTemplateColumns: '1fr 1fr', // Force 2 columns for KPIs
@@ -500,7 +555,6 @@ const DownloadMetricsPage: React.FC = () => {
                   </p>
                 </div>
               </div>
-              {/* REMOVED: Unique Categories Card */}
               <div style={cardStyle}>
                 <div style={cardHeaderStyle('#9333ea')}>Tracked Blueprints</div>
                 <div style={cardBodyStyle}>
@@ -522,7 +576,14 @@ const DownloadMetricsPage: React.FC = () => {
             <section style={gridStyle2Col}>
               {/* Daily Downloads */}
               <div style={cardStyle}>
-                <h3 style={chartHeaderStyle}>Daily Downloads (Last 15 Days)</h3>
+                <h3 style={chartHeaderStyle}>
+                  Daily Downloads (Last {selectedDays} Days)
+                </h3>
+                {/* Time Range Selector UI added here */}
+                <TimeRangeSelector
+                  current={selectedDays}
+                  onSelect={setSelectedDays}
+                />
                 <div style={{ height: '350px', padding: '10px' }}>
                   <ResponsiveContainer width='100%' height='100%'>
                     <AreaChart
