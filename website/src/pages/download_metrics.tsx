@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import Layout from '@theme/Layout'
 import {
   AreaChart,
@@ -41,9 +41,7 @@ type ChartPoint = {
 // Define the shape of data for charts
 type ChartData = ChartPoint & { name: string; value: number; category?: string }
 
-interface MetricsState {
-  loading: boolean
-  error?: string
+interface MetricsData {
   totalDownloads: number
   byCategory: CategoryMetric[]
   topBlueprints: TopBlueprintMetric[]
@@ -52,169 +50,61 @@ interface MetricsState {
 
 const DownloadMetricsPage: React.FC = () => {
   // --- STATE MANAGEMENT ---
-  const [metrics, setMetrics] = useState<MetricsState>({
-    loading: true,
-    error: undefined,
+  const [metricsData, setMetricsData] = useState<MetricsData>({
     totalDownloads: 0,
     byCategory: [],
     topBlueprints: [],
     daily: [],
   })
 
-  // NEW STATE: State for the currently selected time range in days (default: 15)
+  const [isInitialLoading, setIsInitialLoading] = useState(true)
+  const [isDailyLoading, setIsDailyLoading] = useState(true)
+  const [error, setError] = useState<string | undefined>(undefined)
   const [selectedDays, setSelectedDays] = useState(15)
-
-  // State to track current theme (dark/light)
   const [isDark, setIsDark] = useState(false)
 
-  const { loading, error, totalDownloads, byCategory, topBlueprints, daily } =
-    metrics
+  const { totalDownloads, byCategory, topBlueprints, daily } = metricsData
 
   // Initialize D3 color scale
   const d3ColorScale = scaleOrdinal(schemeCategory10)
 
-  // --- THEME DETECTION LOGIC ---
-  useEffect(() => {
-    // Function to check if Docusaurus is in dark mode
-    const checkDarkMode = () => {
-      const theme = document.documentElement.getAttribute('data-theme')
-      setIsDark(theme === 'dark')
-    }
+  // --- HELPER FUNCTIONS ---
 
-    // Check immediately on mount
-    checkDarkMode()
+  const formatApiDate = (date: Date): string => date.toISOString().split('T')[0]
+  const formatBigNumber = (num: number) => num.toLocaleString()
 
-    // Set up an observer to watch for theme changes (e.g. user clicks toggle)
-    const observer = new MutationObserver((mutations) => {
-      mutations.forEach((mutation) => {
-        if (
-          mutation.type === 'attributes' &&
-          mutation.attributeName === 'data-theme'
-        ) {
-          checkDarkMode()
-        }
+  // Function to create a full N-day range and fill missing days with 0 downloads
+  const fillMissingDailyData = (
+    dailyData: DailyMetric[],
+    days: number,
+  ): ChartPoint[] => {
+    const dailyMap = new Map(
+      dailyData.map((item) => [item.day, Number(item.total)]),
+    )
+    const fullDailyData: ChartPoint[] = []
+    const today = new Date()
+
+    for (let i = days - 1; i >= 0; i--) {
+      const d = new Date(today)
+      d.setDate(today.getDate() - i)
+
+      const apiDate = formatApiDate(d)
+      const total = dailyMap.get(apiDate) || 0
+
+      fullDailyData.push({
+        label: d.toLocaleDateString(undefined, {
+          month: 'short',
+          day: 'numeric',
+        }),
+        total: total,
       })
-    })
-
-    observer.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ['data-theme'],
-    })
-
-    // Cleanup observer on unmount
-    return () => observer.disconnect()
-  }, [])
-
-  // --- DATA FETCHING LOGIC ---
-  // DEPENDENCY ARRAY NOW INCLUDES selectedDays
-  useEffect(() => {
-    const supabaseUrl = (window as any)?.env?.SUPABASE_URL
-    const supabaseAnonKey = (window as any)?.env?.SUPABASE_ANON_KEY
-
-    // Helper function to format a Date object into a short label (e.g., "Nov 18")
-    const formatDateLabel = (date: Date): string =>
-      date.toLocaleDateString(undefined, {
-        month: 'short',
-        day: 'numeric',
-      })
-
-    // Helper function to format Date object into YYYY-MM-DD string for API lookup
-    const formatApiDate = (date: Date): string =>
-      date.toISOString().split('T')[0]
-
-    // Function to create a full N-day range and fill missing days with 0 downloads
-    const fillMissingDailyData = (
-      dailyData: DailyMetric[],
-      days: number,
-    ): ChartPoint[] => {
-      const dailyMap = new Map(
-        dailyData.map((item) => [item.day, Number(item.total)]),
-      )
-      const fullDailyData: ChartPoint[] = []
-      const today = new Date()
-
-      for (let i = days - 1; i >= 0; i--) {
-        const d = new Date(today)
-        d.setDate(today.getDate() - i) // Go back i days
-
-        const apiDate = formatApiDate(d)
-        const total = dailyMap.get(apiDate) || 0 // Default to 0 if key is missing
-
-        fullDailyData.push({
-          label: formatDateLabel(d),
-          total: total,
-        })
-      }
-      return fullDailyData
     }
+    return fullDailyData
+  }
 
-    if (!supabaseUrl || !supabaseAnonKey) {
-      // Use mock data for immediate feedback if env vars are missing
-      const mockTotalDownloads = 1234567
-      const mockByCategory: CategoryMetric[] = [
-        { blueprint_category: 'controllers', total: '900000' },
-        { blueprint_category: 'hooks', total: '280000' },
-        { blueprint_category: 'templates', total: '54000' },
-      ]
-      const mockTopBlueprints: TopBlueprintMetric[] = [
-        {
-          blueprint_category: 'hooks',
-          blueprint_id: 'thertetsat_controlv2_30_days_ago',
-          total: '50000',
-        },
-        {
-          blueprint_category: 'hooks',
-          blueprint_id: 'rgb_light_cycle',
-          total: '45000',
-        },
-        {
-          blueprint_category: 'controllers',
-          blueprint_id: 'motion_automation',
-          total: '40000',
-        },
-      ]
-      const mockDaily: DailyMetric[] = [
-        // Using only a subset of days to test the filler logic
-        {
-          day: formatApiDate(new Date(Date.now() - 10 * 24 * 60 * 60 * 1000)),
-          total: '10',
-        },
-        {
-          day: formatApiDate(new Date(Date.now() - 5 * 24 * 60 * 60 * 1000)),
-          total: '20',
-        },
-        { day: formatApiDate(new Date()), total: '22' },
-      ]
-
-      // Use selectedDays for mock data generation
-      const dailyParsed: ChartPoint[] = fillMissingDailyData(
-        mockDaily,
-        selectedDays,
-      )
-
-      setMetrics((prev) => ({
-        ...prev,
-        loading: false,
-        error: 'Supabase variables missing. Showing mock data.',
-        totalDownloads: mockTotalDownloads,
-        byCategory: mockByCategory,
-        topBlueprints: mockTopBlueprints,
-        daily: dailyParsed,
-      }))
-      return
-    }
-
-    const headers = {
-      'Content-Type': 'application/json',
-      apikey: supabaseAnonKey,
-      Authorization: 'Bearer ' + supabaseAnonKey,
-    }
-
-    const fetchWithRetry = async (
-      url: string,
-      options: RequestInit,
-      retries = 3,
-    ) => {
+  // Memoized fetch helper
+  const fetchWithRetry = useCallback(
+    async (url: string, options: RequestInit, retries = 3) => {
       for (let i = 0; i < retries; i++) {
         try {
           const response = await fetch(url, options)
@@ -227,24 +117,78 @@ const DownloadMetricsPage: React.FC = () => {
           } else {
             const text = await response.text()
             throw new Error(
-              `HTTP error! Status: ${response.status}. Response: ${text.substring(
-                0,
-                100,
-              )}...`,
+              `HTTP error! Status: ${
+                response.status
+              }. Response: ${text.substring(0, 100)}...`,
             )
           }
         } catch (error: any) {
           if (i === retries - 1) throw error
         }
       }
+    },
+    [],
+  )
+
+  // --- THEME DETECTION LOGIC ---
+  useEffect(() => {
+    const checkDarkMode = () => {
+      const theme = document.documentElement.getAttribute('data-theme')
+      setIsDark(theme === 'dark')
+    }
+    checkDarkMode()
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (
+          mutation.type === 'attributes' &&
+          mutation.attributeName === 'data-theme'
+        ) {
+          checkDarkMode()
+        }
+      })
+    })
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['data-theme'],
+    })
+    return () => observer.disconnect()
+  }, [])
+
+  // --- EFFECT 1: FETCH STATIC METRICS (Runs once on mount) ---
+  useEffect(() => {
+    const supabaseUrl = (window as any)?.env?.SUPABASE_URL
+    const supabaseAnonKey = (window as any)?.env?.SUPABASE_ANON_KEY
+    const headers = {
+      'Content-Type': 'application/json',
+      apikey: supabaseAnonKey,
+      Authorization: 'Bearer ' + supabaseAnonKey,
     }
 
-    async function fetchMetrics() {
-      // Show loading state while fetching
-      setMetrics((prev) => ({ ...prev, loading: true }))
+    if (!supabaseUrl || !supabaseAnonKey) {
+      // Mock data path for static metrics
+      setMetricsData((prev) => ({
+        ...prev,
+        totalDownloads: 1234567,
+        byCategory: [
+          { blueprint_category: 'controllers', total: '900000' },
+          { blueprint_category: 'hooks', total: '280000' },
+        ],
+        topBlueprints: [
+          {
+            blueprint_category: 'hooks',
+            blueprint_id: 'thertetsat_controlv2_30_days_ago',
+            total: '50000',
+          },
+        ],
+      }))
+      setError('Supabase variables missing. Showing mock data.')
+      setIsInitialLoading(false)
+      return
+    }
 
+    async function fetchStaticMetrics() {
       try {
-        const [totalRes, catRes, topRes, dailyRes] = await Promise.all([
+        const [totalRes, catRes, topRes] = await Promise.all([
           fetchWithRetry(`${supabaseUrl}/rest/v1/rpc/get_total_downloads`, {
             method: 'POST',
             headers,
@@ -263,18 +207,11 @@ const DownloadMetricsPage: React.FC = () => {
             headers,
             body: JSON.stringify({}),
           }),
-          // USE DYNAMIC selectedDays FOR THE RPC CALL
-          fetchWithRetry(`${supabaseUrl}/rest/v1/rpc/get_daily_downloads`, {
-            method: 'POST',
-            headers,
-            body: JSON.stringify({ p_days: selectedDays }),
-          }),
         ])
 
         const totalJson: TotalMetric[] | number = await totalRes.json()
         const catJson: CategoryMetric[] = await catRes.json()
         const topJson: TopBlueprintMetric[] = await topRes.json()
-        const dailyJson: DailyMetric[] = await dailyRes.json()
 
         let totalDownloads = 0
         if (Array.isArray(totalJson) && totalJson.length > 0) {
@@ -283,80 +220,141 @@ const DownloadMetricsPage: React.FC = () => {
           totalDownloads = totalJson
         }
 
-        const byCategoryParsed: CategoryMetric[] = Array.isArray(catJson)
-          ? catJson
-          : []
-        const topBlueprintsParsed: TopBlueprintMetric[] = Array.isArray(topJson)
-          ? topJson
-          : []
-
-        // Fill in missing days with 0, using selectedDays as the range
-        const dailyParsed: ChartPoint[] = fillMissingDailyData(
-          Array.isArray(dailyJson) ? dailyJson : [],
-          selectedDays,
-        )
-
-        setMetrics({
-          loading: false,
-          error: undefined,
-          totalDownloads,
-          byCategory: byCategoryParsed,
-          topBlueprints: topBlueprintsParsed,
-          daily: dailyParsed,
-        })
-      } catch (err: any) {
-        console.error('Error fetching download metrics', err)
-        setMetrics((prev) => ({
+        setMetricsData((prev) => ({
           ...prev,
-          loading: false,
-          error: `Failed to load metrics from Supabase. Error: ${
-            err.message || 'Unknown error.'
-          }`,
+          totalDownloads: totalDownloads,
+          byCategory: Array.isArray(catJson) ? catJson : [],
+          topBlueprints: Array.isArray(topJson) ? topJson : [],
         }))
+        setError(undefined)
+      } catch (err: any) {
+        console.error('Error fetching static metrics', err)
+        setError(
+          `Failed to load static metrics: ${err.message || 'Unknown error.'}`,
+        )
+      } finally {
+        setIsInitialLoading(false)
       }
     }
 
-    fetchMetrics()
-  }, [selectedDays]) // Dependency added here
+    fetchStaticMetrics()
+  }, [fetchWithRetry])
 
-  // --- Data Formatting Helpers ---
-  const formatBigNumber = (num: number) => {
-    return num.toLocaleString()
+  // --- EFFECT 2: FETCH DYNAMIC DAILY METRICS (Runs on selectedDays change) ---
+  useEffect(() => {
+    // Only proceed if the initial load is done OR if we are handling mock data.
+    if (!isInitialLoading) {
+      setIsDailyLoading(true)
+
+      const supabaseUrl = (window as any)?.env?.SUPABASE_URL
+      const supabaseAnonKey = (window as any)?.env?.SUPABASE_ANON_KEY
+      const headers = {
+        'Content-Type': 'application/json',
+        apikey: supabaseAnonKey,
+        Authorization: 'Bearer ' + supabaseAnonKey,
+      }
+
+      if (!supabaseUrl || !supabaseAnonKey) {
+        // Mock data path for daily metrics
+        const mockDaily: DailyMetric[] = [
+          {
+            day: formatApiDate(new Date(Date.now() - 10 * 24 * 60 * 60 * 1000)),
+            total: '10',
+          },
+          {
+            day: formatApiDate(new Date(Date.now() - 5 * 24 * 60 * 60 * 1000)),
+            total: '20',
+          },
+          { day: formatApiDate(new Date()), total: '22' },
+        ]
+        const dailyParsed: ChartPoint[] = fillMissingDailyData(
+          mockDaily,
+          selectedDays,
+        )
+
+        setMetricsData((prev) => ({ ...prev, daily: dailyParsed }))
+        setIsDailyLoading(false)
+        return
+      }
+
+      async function fetchDailyMetrics() {
+        try {
+          const dailyRes = await fetchWithRetry(
+            `${supabaseUrl}/rest/v1/rpc/get_daily_downloads`,
+            {
+              method: 'POST',
+              headers,
+              body: JSON.stringify({ p_days: selectedDays }),
+            },
+          )
+
+          const dailyJson: DailyMetric[] = await dailyRes.json()
+          const dailyParsed: ChartPoint[] = fillMissingDailyData(
+            Array.isArray(dailyJson) ? dailyJson : [],
+            selectedDays,
+          )
+
+          setMetricsData((prev) => ({ ...prev, daily: dailyParsed }))
+        } catch (err: any) {
+          console.error('Error fetching daily metrics', err)
+          setError(
+            `Failed to load daily metrics: ${err.message || 'Unknown error.'}`,
+          )
+        } finally {
+          setIsDailyLoading(false)
+        }
+      }
+
+      fetchDailyMetrics()
+    }
+  }, [selectedDays, isInitialLoading, fetchWithRetry])
+
+  // --- UI Component for Time Range Selection ---
+  const TimeRangeSelector: React.FC<{
+    current: number
+    onSelect: (days: number) => void
+    isDailyLoading: boolean
+  }> = ({ current, onSelect, isDailyLoading }) => {
+    const ranges = [7, 15, 30, 90]
+    const activeStyle = (days: number): React.CSSProperties => ({
+      padding: '6px 12px',
+      margin: '0 4px',
+      borderRadius: '4px',
+      cursor: isDailyLoading ? 'not-allowed' : 'pointer',
+      fontWeight: 'bold',
+      backgroundColor: current === days ? '#4f46e5' : THEME.cardBg,
+      color: current === days ? 'white' : THEME.textPrimary,
+      border: `1px solid ${current === days ? '#4f46e5' : THEME.gridLine}`,
+      transition: 'all 0.2s',
+      boxShadow: current === days ? '0 2px 4px rgba(0,0,0,0.2)' : 'none',
+      fontSize: '14px',
+      opacity: isDailyLoading && current !== days ? 0.6 : 1, // Dim non-active buttons while loading
+    })
+
+    return (
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          marginBottom: '20px',
+          paddingTop: '10px',
+        }}
+      >
+        {ranges.map((days) => (
+          <button
+            key={days}
+            onClick={() => onSelect(days)}
+            style={activeStyle(days)}
+            disabled={isDailyLoading}
+          >
+            {days}D
+          </button>
+        ))}
+      </div>
+    )
   }
 
-  // Prepare Chart Data
-  const categoryData: ChartData[] = byCategory.map((item) => ({
-    name: item.blueprint_category,
-    category: item.blueprint_category,
-    value: Number(item.total),
-    total: Number(item.total),
-    label: item.blueprint_category,
-  }))
-
-  // Top 10 data is in descending order (highest to lowest)
-  const top10BarData = topBlueprints.slice(0, 10).map((bp) => ({
-    id: bp.blueprint_id,
-    name:
-      bp.blueprint_id.length > 40
-        ? bp.blueprint_id.substring(0, 37) + '...'
-        : bp.blueprint_id,
-    value: Number(bp.total),
-  }))
-
-  // --- Dynamic Theme Colors ---
-  // Define color sets for Light vs Dark mode
-  const THEME = {
-    bg: isDark ? '#1b1b1d' : '#f9fafb', // Main container BG
-    cardBg: isDark ? '#242526' : '#ffffff', // Card BG
-    textPrimary: isDark ? '#e5e7eb' : '#1f2937', // Main headings
-    textSecondary: isDark ? '#9ca3af' : '#6b7280', // Axis labels
-    gridLine: isDark ? '#444' : '#e5e7eb', // Chart grid lines
-    tooltipBg: isDark ? '#242526' : '#ffffff', // Tooltip BG
-    tooltipBorder: isDark ? '#444' : '#ccc', // Tooltip Border
-    tooltipText: isDark ? '#e5e7eb' : '#333', // Tooltip Text
-  }
-
-  // --- Custom Recharts Components ---
+  // --- Custom Recharts Components & Styles (using existing definitions) ---
 
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
@@ -400,64 +398,28 @@ const DownloadMetricsPage: React.FC = () => {
     )
   }
 
-  // --- UI Component for Time Range Selection ---
-  const TimeRangeSelector: React.FC<{
-    current: number
-    onSelect: (days: number) => void
-  }> = ({ current, onSelect }) => {
-    const ranges = [7, 15, 30, 90]
-    const activeStyle = (days: number): React.CSSProperties => ({
-      padding: '6px 12px',
-      margin: '0 4px',
-      borderRadius: '4px',
-      cursor: 'pointer',
-      fontWeight: 'bold',
-      backgroundColor: current === days ? '#4f46e5' : THEME.cardBg,
-      color: current === days ? 'white' : THEME.textPrimary,
-      // Use a subtle border on the non-selected buttons, but a stronger color on the active one
-      border: `1px solid ${current === days ? '#4f46e5' : THEME.gridLine}`,
-      transition: 'all 0.2s',
-      boxShadow: current === days ? '0 2px 4px rgba(0,0,0,0.2)' : 'none',
-      fontSize: '14px',
-    })
-
-    return (
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'center',
-          marginBottom: '20px',
-          paddingTop: '10px',
-        }}
-      >
-        {ranges.map((days) => (
-          <button
-            key={days}
-            onClick={() => onSelect(days)}
-            style={activeStyle(days)}
-          >
-            {days}D
-          </button>
-        ))}
-      </div>
-    )
+  const THEME = {
+    bg: isDark ? '#1b1b1d' : '#f9fafb',
+    cardBg: isDark ? '#242526' : '#ffffff',
+    textPrimary: isDark ? '#e5e7eb' : '#1f2937',
+    textSecondary: isDark ? '#9ca3af' : '#6b7280',
+    gridLine: isDark ? '#444' : '#e5e7eb',
+    tooltipBg: isDark ? '#242526' : '#ffffff',
+    tooltipBorder: isDark ? '#444' : '#ccc',
+    tooltipText: isDark ? '#e5e7eb' : '#333',
   }
 
-  // --- STYLES (Inline for guaranteed layout) ---
-
-  // Style for the two KPI cards
   const gridStyleKPIs: React.CSSProperties = {
     display: 'grid',
-    gridTemplateColumns: '1fr 1fr', // Force 2 columns for KPIs
+    gridTemplateColumns: '1fr 1fr',
     gap: '16px',
     marginBottom: '32px',
     width: '100%',
   }
 
-  // Style for the chart row
   const gridStyle2Col: React.CSSProperties = {
     display: 'grid',
-    gridTemplateColumns: '1fr 1fr', // Force 2 columns for charts
+    gridTemplateColumns: '1fr 1fr',
     gap: '24px',
     marginBottom: '32px',
     width: '100%',
@@ -470,7 +432,7 @@ const DownloadMetricsPage: React.FC = () => {
     overflow: 'hidden',
     color: THEME.textPrimary,
     minWidth: '0',
-    border: isDark ? '1px solid #333' : 'none', // Subtle border in dark mode
+    border: isDark ? '1px solid #333' : 'none',
   }
 
   const cardHeaderStyle = (bgColor: string): React.CSSProperties => ({
@@ -496,6 +458,24 @@ const DownloadMetricsPage: React.FC = () => {
     color: THEME.textPrimary,
     fontWeight: 'bold',
   }
+
+  // Prepare Chart Data
+  const categoryData: ChartData[] = byCategory.map((item) => ({
+    name: item.blueprint_category,
+    category: item.blueprint_category,
+    value: Number(item.total),
+    total: Number(item.total),
+    label: item.blueprint_category,
+  }))
+
+  const top10BarData = topBlueprints.slice(0, 10).map((bp) => ({
+    id: bp.blueprint_id,
+    name:
+      bp.blueprint_id.length > 40
+        ? bp.blueprint_id.substring(0, 37) + '...'
+        : bp.blueprint_id,
+    value: Number(bp.total),
+  }))
 
   return (
     <Layout
@@ -523,22 +503,24 @@ const DownloadMetricsPage: React.FC = () => {
           Blueprint Metrics Dashboard
         </h1>
 
-        {loading && (
+        {/* Global Loading or Error Indicator */}
+        {isInitialLoading && (
           <div style={{ textAlign: 'center', color: THEME.textPrimary }}>
-            Loading metrics...
+            Loading core metrics...
           </div>
         )}
 
-        {!loading && error && (
+        {!isInitialLoading && error && (
           <div className='alert alert--danger' role='alert'>
             <h4 className='alert__heading'>Error loading metrics</h4>
             <p>{error}</p>
           </div>
         )}
 
-        {!loading && !error && (
+        {/* Full Dashboard Content (Renders after static data is loaded) */}
+        {!isInitialLoading && (
           <div style={{ width: '100%', overflowX: 'auto' }}>
-            {/* 1. TOP ROW: 2 KPI CARDS (using gridStyleKPIs) */}
+            {/* 1. TOP ROW: 2 KPI CARDS */}
             <section style={gridStyleKPIs}>
               <div style={cardStyle}>
                 <div style={cardHeaderStyle('#4f46e5')}>Total Downloads</div>
@@ -572,19 +554,49 @@ const DownloadMetricsPage: React.FC = () => {
               </div>
             </section>
 
-            {/* 2. MIDDLE ROW: 2 CHARTS (using gridStyle2Col) */}
+            {/* 2. MIDDLE ROW: 2 CHARTS */}
             <section style={gridStyle2Col}>
               {/* Daily Downloads */}
               <div style={cardStyle}>
                 <h3 style={chartHeaderStyle}>
                   Daily Downloads (Last {selectedDays} Days)
                 </h3>
-                {/* Time Range Selector UI added here */}
                 <TimeRangeSelector
                   current={selectedDays}
                   onSelect={setSelectedDays}
+                  isDailyLoading={isDailyLoading}
                 />
-                <div style={{ height: '350px', padding: '10px' }}>
+                <div
+                  style={{
+                    height: '350px',
+                    padding: '10px',
+                    position: 'relative',
+                  }}
+                >
+                  {isDailyLoading && (
+                    <div
+                      style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        backgroundColor: isDark
+                          ? 'rgba(36, 37, 38, 0.8)'
+                          : 'rgba(255, 255, 255, 0.8)',
+                        zIndex: 10,
+                        borderRadius: '4px',
+                        color: THEME.textPrimary,
+                        fontSize: '1.2rem',
+                        fontWeight: 'bold',
+                      }}
+                    >
+                      Updating chart...
+                    </div>
+                  )}
                   <ResponsiveContainer width='100%' height='100%'>
                     <AreaChart
                       data={daily}
