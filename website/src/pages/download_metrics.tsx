@@ -50,6 +50,9 @@ interface MetricsState {
   daily: ChartPoint[]
 }
 
+// Color for better dark mode readability
+const CHART_TEXT_COLOR = '#6b7280'
+
 const DownloadMetricsPage: React.FC = () => {
   const [metrics, setMetrics] = useState<MetricsState>({
     loading: true,
@@ -73,11 +76,86 @@ const DownloadMetricsPage: React.FC = () => {
     const supabaseAnonKey = (window as any)?.env?.SUPABASE_ANON_KEY
 
     if (!supabaseUrl || !supabaseAnonKey) {
+      // Use mock data for immediate feedback if env vars are missing
+      const mockTotalDownloads = 1234567
+      const mockByCategory: CategoryMetric[] = [
+        { blueprint_category: 'controllers', total: '900000' },
+        { blueprint_category: 'hooks', total: '280000' },
+        { blueprint_category: 'templates', total: '54000' },
+      ]
+      const mockTopBlueprints: TopBlueprintMetric[] = [
+        {
+          blueprint_category: 'hooks',
+          blueprint_id: 'thertetsat_controlv2_30_days_ago',
+          total: '50000',
+        },
+        {
+          blueprint_category: 'hooks',
+          blueprint_id: 'rgb_light_cycle',
+          total: '45000',
+        },
+        {
+          blueprint_category: 'controllers',
+          blueprint_id: 'motion_automation',
+          total: '40000',
+        },
+      ]
+      const mockDaily: DailyMetric[] = [
+        {
+          day: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000)
+            .toISOString()
+            .split('T')[0],
+          total: '10',
+        },
+        {
+          day: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000)
+            .toISOString()
+            .split('T')[0],
+          total: '12',
+        },
+        {
+          day: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000)
+            .toISOString()
+            .split('T')[0],
+          total: '15',
+        },
+        {
+          day: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000)
+            .toISOString()
+            .split('T')[0],
+          total: '20',
+        },
+        {
+          day: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000)
+            .toISOString()
+            .split('T')[0],
+          total: '18',
+        },
+        { day: new Date().toISOString().split('T')[0], total: '22' },
+      ]
+
+      const dailyParsed: ChartPoint[] = mockDaily
+        .map((row: DailyMetric) => {
+          const d = new Date(row.day)
+          const label = d.toLocaleDateString(undefined, {
+            month: 'short',
+            day: 'numeric',
+          })
+          return { label, total: Number(row.total) }
+        })
+        .sort(
+          (a, b) => new Date(a.label).getTime() - new Date(b.label).getTime(),
+        )
+
       setMetrics((prev) => ({
         ...prev,
         loading: false,
         error:
-          'Supabase environment variables are not available. Check SUPABASE_URL and SUPABASE_ANON_KEY.',
+          'Supabase environment variables are missing. Displaying mock data for layout purposes.',
+        totalDownloads: mockTotalDownloads,
+        byCategory: mockByCategory,
+        topBlueprints: mockTopBlueprints,
+        daily: dailyParsed,
       }))
       return
     }
@@ -241,6 +319,7 @@ const DownloadMetricsPage: React.FC = () => {
     if (active && payload && payload.length) {
       const data = payload[0].payload
       return (
+        // Ensure tooltip is white and clear regardless of parent theme
         <div className='p-3 bg-white border border-gray-300 shadow-xl rounded-lg text-sm text-gray-700'>
           <p className='font-bold text-indigo-600 mb-1'>
             {data.name || data.id || label}
@@ -265,7 +344,8 @@ const DownloadMetricsPage: React.FC = () => {
           y={0}
           dy={5}
           textAnchor='end'
-          fill='#6b7280'
+          // Use the consistent CHART_TEXT_COLOR
+          fill={CHART_TEXT_COLOR}
           fontSize={10}
           title={payload.value}
         >
@@ -278,11 +358,12 @@ const DownloadMetricsPage: React.FC = () => {
   // --- Main Render Component ---
 
   return (
+    // Set a light background for the whole dashboard content to ensure readability
     <Layout
       title='Blueprint Download Metrics'
       description='Enhanced Metrics Dashboard'
     >
-      <main className='container mx-auto p-4 md:p-8'>
+      <main className='container mx-auto p-4 md:p-8 bg-gray-50 min-h-screen'>
         <h1 className='text-center mb-8 text-3xl font-extrabold text-gray-900'>
           Blueprint Metrics Dashboard
         </h1>
@@ -307,46 +388,48 @@ const DownloadMetricsPage: React.FC = () => {
         )}
         {!loading && !error && (
           <div className='space-y-8 md:space-y-12'>
-            {/* KPI Cards: Total Downloads, Categories, Top Blueprints */}
-            <section className='grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6'>
+            {/* 3-ITEM ROW: KPI Cards */}
+            {/* FORCED LAYOUT: Use grid-cols-3 directly to ensure 3 columns on all devices. */}
+            <section className='grid grid-cols-3 gap-4 md:gap-6'>
               <div className='card shadow-2xl bg-white border-b-4 border-indigo-600 transition-all hover:scale-[1.01] duration-300 rounded-xl p-4'>
-                <h3 className='text-sm font-medium text-gray-500 uppercase tracking-wider'>
+                <h3 className='text-xs md:text-sm font-medium text-gray-500 uppercase tracking-wider truncate'>
                   Total Downloads
                 </h3>
-                <p className='mt-1 text-3xl md:text-4xl font-extrabold text-indigo-800'>
+                <p className='mt-1 text-2xl md:text-4xl font-extrabold text-indigo-800 truncate'>
                   {formatBigNumber(totalDownloads)}
                 </p>
               </div>
 
               <div className='card shadow-2xl bg-white border-b-4 border-teal-600 transition-all hover:scale-[1.01] duration-300 rounded-xl p-4'>
-                <h3 className='text-sm font-medium text-gray-500 uppercase tracking-wider'>
+                <h3 className='text-xs md:text-sm font-medium text-gray-500 uppercase tracking-wider truncate'>
                   Unique Categories
                 </h3>
-                <p className='mt-1 text-3xl md:text-4xl font-extrabold text-teal-800'>
+                <p className='mt-1 text-2xl md:text-4xl font-extrabold text-teal-800 truncate'>
                   {formatBigNumber(byCategory.length)}
                 </p>
               </div>
 
-              <div className='card shadow-2xl bg-white border-b-4 border-purple-600 transition-all hover:scale-[1.01] duration-300 rounded-xl p-4 col-span-2 md:col-span-1'>
-                <h3 className='text-sm font-medium text-gray-500 uppercase tracking-wider'>
+              <div className='card shadow-2xl bg-white border-b-4 border-purple-600 transition-all hover:scale-[1.01] duration-300 rounded-xl p-4'>
+                <h3 className='text-xs md:text-sm font-medium text-gray-500 uppercase tracking-wider truncate'>
                   Tracked Blueprints
                 </h3>
-                <p className='mt-1 text-3xl md:text-4xl font-extrabold text-purple-800'>
+                <p className='mt-1 text-2xl md:text-4xl font-extrabold text-purple-800 truncate'>
                   {formatBigNumber(topBlueprints.length)}
                 </p>
               </div>
             </section>
 
-            {/* Row 2: Daily Area Chart and Category Pie Chart */}
-            <section className='grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8'>
+            {/* 2-ITEM ROW: Daily Area Chart and Category Pie Chart */}
+            {/* FORCED LAYOUT: Use grid-cols-2 directly to ensure 2 columns on all devices. */}
+            <section className='grid grid-cols-2 gap-6 md:gap-8'>
               {/* Daily Downloads Area Chart */}
               <div className='w-full shadow-2xl bg-white p-4 rounded-xl border border-gray-100'>
-                <h3 className='font-bold text-xl mb-4 text-gray-800 border-b pb-2'>
+                <h3 className='font-bold text-base md:text-xl mb-4 text-gray-800 border-b pb-2 truncate'>
                   Daily Downloads (Last 30 Days)
                 </h3>
                 <div style={{ height: 350 }}>
                   {daily.length === 0 ? (
-                    <div className='flex justify-center items-center h-full text-gray-500 text-base'>
+                    <div className='flex justify-center items-center h-full text-gray-500 text-sm md:text-base'>
                       No recent download data available.
                     </div>
                   ) : (
@@ -382,14 +465,16 @@ const DownloadMetricsPage: React.FC = () => {
                         />
                         <XAxis
                           dataKey='label'
-                          stroke='#9ca3af'
-                          tick={{ fontSize: 10 }}
+                          // Use the consistent CHART_TEXT_COLOR
+                          stroke={CHART_TEXT_COLOR}
+                          tick={{ fontSize: 8, fill: CHART_TEXT_COLOR }}
                           padding={{ left: 10, right: 10 }}
                         />
                         <YAxis
                           allowDecimals={false}
-                          stroke='#9ca3af'
-                          tick={{ fontSize: 10 }}
+                          // Use the consistent CHART_TEXT_COLOR
+                          stroke={CHART_TEXT_COLOR}
+                          tick={{ fontSize: 8, fill: CHART_TEXT_COLOR }}
                           tickFormatter={formatBigNumber}
                         />
                         <Tooltip content={<CustomTooltip />} />
@@ -415,12 +500,12 @@ const DownloadMetricsPage: React.FC = () => {
 
               {/* Category Proportion Pie Chart */}
               <div className='w-full shadow-2xl bg-white p-4 rounded-xl border border-gray-100'>
-                <h3 className='font-bold text-xl mb-4 text-gray-800 border-b pb-2'>
+                <h3 className='font-bold text-base md:text-xl mb-4 text-gray-800 border-b pb-2 truncate'>
                   Download Distribution by Category
                 </h3>
                 <div style={{ height: 350 }}>
                   {categoryData.length === 0 ? (
-                    <div className='flex justify-center items-center h-full text-gray-500 text-base'>
+                    <div className='flex justify-center items-center h-full text-gray-500 text-sm md:text-base'>
                       No category data available.
                     </div>
                   ) : (
@@ -437,9 +522,12 @@ const DownloadMetricsPage: React.FC = () => {
                           paddingAngle={3}
                           fill='#8884d8'
                           labelLine={false}
-                          label={({ name, percent }) =>
-                            `${name}: ${(percent * 100).toFixed(1)}%`
-                          }
+                          // Adjust label color for contrast
+                          label={({ name, percent }) => ({
+                            value: `${(percent * 100).toFixed(1)}%`, // Show percentage on slice
+                            fill: CHART_TEXT_COLOR,
+                            fontSize: 10,
+                          })}
                         >
                           {categoryData.map((entry, index) => (
                             <Cell
@@ -456,7 +544,10 @@ const DownloadMetricsPage: React.FC = () => {
                           verticalAlign='middle'
                           align='right'
                           iconType='circle'
-                          wrapperStyle={{ fontSize: '12px' }}
+                          wrapperStyle={{
+                            fontSize: '10px',
+                            color: CHART_TEXT_COLOR,
+                          }} // Ensure legend text is visible
                         />
                       </PieChart>
                     </ResponsiveContainer>
@@ -465,7 +556,7 @@ const DownloadMetricsPage: React.FC = () => {
               </div>
             </section>
 
-            {/* Row 3: Top 10 Blueprints (Horizontal Bar Chart) */}
+            {/* 1-ITEM ROW: Top 10 Blueprints (Horizontal Bar Chart) */}
             <section className='w-full shadow-2xl bg-white p-4 rounded-xl border border-gray-100'>
               <h3 className='font-bold text-xl mb-4 text-gray-800 border-b pb-2'>
                 Top 10 Blueprint Downloads (Ranking)
@@ -485,8 +576,9 @@ const DownloadMetricsPage: React.FC = () => {
                       <CartesianGrid strokeDasharray='3 3' vertical={false} />
                       <XAxis
                         type='number'
-                        stroke='#9ca3af'
-                        tick={{ fontSize: 10 }}
+                        // Use the consistent CHART_TEXT_COLOR
+                        stroke={CHART_TEXT_COLOR}
+                        tick={{ fontSize: 10, fill: CHART_TEXT_COLOR }}
                         tickFormatter={formatBigNumber}
                       />
                       <YAxis
@@ -495,7 +587,8 @@ const DownloadMetricsPage: React.FC = () => {
                         width={100} // Increased Y-Axis width for long labels
                         tickLine={false}
                         axisLine={false}
-                        tick={<CustomYAxisTick />} // Use custom tick for truncation/title hover
+                        // Tick uses custom component, which already uses CHART_TEXT_COLOR
+                        tick={<CustomYAxisTick />}
                       />
                       <Tooltip content={<CustomTooltip />} />
                       <Bar
