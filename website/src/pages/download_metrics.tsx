@@ -615,15 +615,8 @@ const DownloadMetricsPage: React.FC = () => {
   // NEW COMPONENT: Data Table
   const DataTable: React.FC<{ data: TopBlueprintMetric[] }> = ({ data }) => {
     return (
-      // Wrapper for centering the table content
-      <div
-        style={{
-          padding: '0 16px 16px 16px',
-          overflowX: 'auto',
-          maxWidth: '1200px', // Set a max width for centering
-          margin: '24px auto 0 auto', // Center the wrapper and add top margin
-        }}
-      >
+      // Outer wrapper: For card padding
+      <div style={{ padding: '0 16px 16px 16px' }}>
         <h3
           style={{
             fontSize: '1.25rem',
@@ -635,99 +628,109 @@ const DownloadMetricsPage: React.FC = () => {
         >
           Raw Data View ({data.length} Results)
         </h3>
-        <table
+
+        {/* Inner Wrapper: Set max-width and margin auto for centering, and handle overflowX for responsiveness */}
+        <div
           style={{
-            width: '100%',
-            minWidth: '700px', // Ensure table minimum width for wide columns on smaller viewports
-            borderCollapse: 'collapse',
-            fontSize: '14px',
+            maxWidth: '1200px',
+            margin: '0 auto',
+            overflowX: 'auto',
           }}
         >
-          <thead>
-            <tr style={{ backgroundColor: isDark ? '#333' : '#f3f4f6' }}>
-              <th
-                onClick={() => requestSort('id')}
-                style={{
-                  padding: '12px 8px',
-                  textAlign: 'left',
-                  cursor: 'pointer',
-                  color: THEME.textPrimary,
-                  borderBottom: `2px solid ${THEME.accentColor}`,
-                }}
-              >
-                Blueprint ID <SortIcon sortKey='id' />
-              </th>
-              <th
-                onClick={() => requestSort('category')}
-                style={{
-                  padding: '12px 8px',
-                  textAlign: 'left',
-                  cursor: 'pointer',
-                  color: THEME.textPrimary,
-                  borderBottom: `2px solid ${THEME.accentColor}`,
-                }}
-              >
-                Category <SortIcon sortKey='category' />
-              </th>
-              <th
-                onClick={() => requestSort('total')}
-                style={{
-                  padding: '12px 8px',
-                  textAlign: 'right',
-                  cursor: 'pointer',
-                  color: THEME.textPrimary,
-                  borderBottom: `2px solid ${THEME.accentColor}`,
-                }}
-              >
-                Downloads <SortIcon sortKey='total' />
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {data.map((item, index) => (
-              <tr
-                key={item.blueprint_id}
-                style={{
-                  borderBottom: `1px solid ${THEME.gridLine}`,
-                  backgroundColor:
-                    index % 2 === 0
-                      ? THEME.cardBg
-                      : isDark
-                        ? '#2d2d2f'
-                        : '#fcfcfc',
-                }}
-              >
-                <td
+          <table
+            style={{
+              width: '100%',
+              minWidth: '700px', // Min width to prevent collapse on small phones
+              borderCollapse: 'collapse',
+              fontSize: '14px',
+            }}
+          >
+            <thead>
+              <tr style={{ backgroundColor: isDark ? '#333' : '#f3f4f6' }}>
+                <th
+                  onClick={() => requestSort('id')}
                   style={{
-                    padding: '10px 8px',
-                    wordBreak: 'break-word',
+                    padding: '12px 8px',
+                    textAlign: 'left',
+                    cursor: 'pointer',
                     color: THEME.textPrimary,
+                    borderBottom: `2px solid ${THEME.accentColor}`,
                   }}
                 >
-                  {item.blueprint_id}
-                </td>
-                <td
+                  Blueprint ID <SortIcon sortKey='id' />
+                </th>
+                <th
+                  onClick={() => requestSort('category')}
                   style={{
-                    padding: '10px 8px',
-                    color: d3ColorScale(item.blueprint_category),
+                    padding: '12px 8px',
+                    textAlign: 'left',
+                    cursor: 'pointer',
+                    color: THEME.textPrimary,
+                    borderBottom: `2px solid ${THEME.accentColor}`,
                   }}
                 >
-                  {item.blueprint_category}
-                </td>
-                <td
+                  Category <SortIcon sortKey='category' />
+                </th>
+                <th
+                  onClick={() => requestSort('total')}
                   style={{
-                    padding: '10px 8px',
+                    padding: '12px 8px',
                     textAlign: 'right',
-                    fontWeight: 'bold',
+                    cursor: 'pointer',
                     color: THEME.textPrimary,
+                    borderBottom: `2px solid ${THEME.accentColor}`,
                   }}
                 >
-                  {formatBigNumber(Number(item.total))}
-                </td>
+                  Downloads <SortIcon sortKey='total' />
+                </th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {data.map((item, index) => (
+                <tr
+                  key={item.blueprint_id}
+                  style={{
+                    borderBottom: `1px solid ${THEME.gridLine}`,
+                    backgroundColor:
+                      index % 2 === 0
+                        ? THEME.cardBg
+                        : isDark
+                          ? '#2d2d2f'
+                          : '#fcfcfc',
+                  }}
+                >
+                  <td
+                    style={{
+                      padding: '10px 8px',
+                      wordBreak: 'break-word',
+                      color: THEME.textPrimary,
+                    }}
+                  >
+                    {item.blueprint_id}
+                  </td>
+                  <td
+                    style={{
+                      padding: '10px 8px',
+                      color: d3ColorScale(item.blueprint_category),
+                    }}
+                  >
+                    {item.blueprint_category}
+                  </td>
+                  <td
+                    style={{
+                      padding: '10px 8px',
+                      textAlign: 'right',
+                      fontWeight: 'bold',
+                      color: THEME.textPrimary,
+                    }}
+                  >
+                    {formatBigNumber(Number(item.total))}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
         {data.length === 0 && (
           <p
             style={{
