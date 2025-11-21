@@ -11,17 +11,14 @@ import {
   PieChart,
   Pie,
   Cell,
-  BarChart, // Added BarChart
-  Bar, // Added Bar
+  BarChart,
+  Bar,
   Legend,
 } from 'recharts'
 
 // --- D3 Imports for Professional Coloring ---
 import { scaleOrdinal } from 'd3-scale'
 import { schemeCategory10 } from 'd3-scale-chromatic'
-
-// Initialize D3 color scale (provides 10 distinct, good colors)
-const colors = scaleOrdinal(schemeCategory10).range()
 
 // --- Type Definitions based on SQL RPC Functions ---
 type TotalMetric = { total: string }
@@ -66,7 +63,7 @@ const DownloadMetricsPage: React.FC = () => {
   const { loading, error, totalDownloads, byCategory, topBlueprints, daily } =
     metrics
 
-  // Use the global color scale
+  // Initialize D3 color scale and use it directly (d3ColorScale)
   const d3ColorScale = scaleOrdinal(schemeCategory10)
 
   // Empty dependency array ([]) is crucial here for Docusaurus SSR
