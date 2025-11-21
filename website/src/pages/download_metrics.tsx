@@ -164,7 +164,6 @@ const CardBody = ({ children }: { children: React.ReactNode }) => (
 
 const DownloadMetricsPage = (): JSX.Element => {
   const { colorMode } = useColorMode()
-  const _themeIsDark = colorMode === 'dark' // Not unused: used implicitly by CSS vars
 
   const [metrics, setMetrics] = useState<MetricsState>({
     loading: true,
