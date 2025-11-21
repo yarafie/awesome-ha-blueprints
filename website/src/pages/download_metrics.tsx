@@ -616,7 +616,7 @@ const DownloadMetricsPage: React.FC = () => {
   const DataTable: React.FC<{ data: TopBlueprintMetric[] }> = ({ data }) => {
     return (
       // Outer wrapper: For card padding
-      <div style={{ padding: '0 16px 16px 16px' }}>
+      <div style={{ padding: '24px 16px 16px 16px' }}>
         <h3
           style={{
             fontSize: '1.25rem',
@@ -633,8 +633,8 @@ const DownloadMetricsPage: React.FC = () => {
         <div
           style={{
             maxWidth: '1200px',
-            margin: '0 auto',
-            overflowX: 'auto',
+            margin: '0 auto', // CRITICAL: Centers the block content
+            overflowX: 'auto', // Handles wide content on small screens
           }}
         >
           <table
@@ -788,7 +788,7 @@ const DownloadMetricsPage: React.FC = () => {
 
         {/* Full Dashboard Content (Renders after static data is loaded) */}
         {!isInitialLoading && (
-          <div style={{ width: '100%', overflowX: 'auto' }}>
+          <div style={{ width: '100%' }}>
             {/* 1. TOP ROW: 2 KPI CARDS */}
             <section style={gridStyleKPIs}>
               <div style={cardStyle}>
@@ -986,8 +986,14 @@ const DownloadMetricsPage: React.FC = () => {
               </div>
             </section>
 
-            {/* 3. BOTTOM SECTION: BAR CHART & DATA TABLE */}
-            <section style={{ ...cardStyle, paddingBottom: '20px' }}>
+            {/* 3. BAR CHART SECTION (Full-width card for visualization) */}
+            <section
+              style={{
+                ...cardStyle,
+                paddingBottom: '20px',
+                marginBottom: '32px',
+              }}
+            >
               {/* Bar Chart Header and Filter Button */}
               <div
                 style={{
@@ -1085,8 +1091,10 @@ const DownloadMetricsPage: React.FC = () => {
                   </p>
                 )}
               </div>
+            </section>
 
-              {/* NEW: Data Table */}
+            {/* 4. DATA TABLE SECTION (New full-width card for raw data) */}
+            <section style={{ ...cardStyle, overflow: 'visible' }}>
               <DataTable data={sortedBlueprints} />
             </section>
           </div>
