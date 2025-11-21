@@ -107,6 +107,43 @@ const DownloadMetricsPage: React.FC = () => {
     const supabaseUrl = (window as any)?.env?.SUPABASE_URL
     const supabaseAnonKey = (window as any)?.env?.SUPABASE_ANON_KEY
 
+    // Helper function to format a Date object into a short label (e.g., "Nov 18")
+    const formatDateLabel = (date: Date): string =>
+      date.toLocaleDateString(undefined, {
+        month: 'short',
+        day: 'numeric',
+      })
+
+    // Helper function to format Date object into YYYY-MM-DD string for API lookup
+    const formatApiDate = (date: Date): string =>
+      date.toISOString().split('T')[0]
+
+    // Function to create a full 15-day range and fill missing days with 0 downloads
+    const fillMissingDailyData = (
+      dailyData: DailyMetric[],
+      days: number = 15,
+    ): ChartPoint[] => {
+      const dailyMap = new Map(
+        dailyData.map((item) => [item.day, Number(item.total)]),
+      )
+      const fullDailyData: ChartPoint[] = []
+      const today = new Date()
+
+      for (let i = days - 1; i >= 0; i--) {
+        const d = new Date(today)
+        d.setDate(today.getDate() - i) // Go back i days
+
+        const apiDate = formatApiDate(d)
+        const total = dailyMap.get(apiDate) || 0 // Default to 0 if key is missing
+
+        fullDailyData.push({
+          label: formatDateLabel(d),
+          total: total,
+        })
+      }
+      return fullDailyData
+    }
+
     if (!supabaseUrl || !supabaseAnonKey) {
       // Use mock data for immediate feedback if env vars are missing
       const mockTotalDownloads = 1234567
@@ -133,51 +170,19 @@ const DownloadMetricsPage: React.FC = () => {
         },
       ]
       const mockDaily: DailyMetric[] = [
+        // Using only a subset of days to test the filler logic
         {
-          day: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000)
-            .toISOString()
-            .split('T')[0],
+          day: formatApiDate(new Date(Date.now() - 10 * 24 * 60 * 60 * 1000)),
           total: '10',
         },
         {
-          day: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000)
-            .toISOString()
-            .split('T')[0],
-          total: '12',
-        },
-        {
-          day: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000)
-            .toISOString()
-            .split('T')[0],
-          total: '15',
-        },
-        {
-          day: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000)
-            .toISOString()
-            .split('T')[0],
+          day: formatApiDate(new Date(Date.now() - 5 * 24 * 60 * 60 * 1000)),
           total: '20',
         },
-        {
-          day: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000)
-            .toISOString()
-            .split('T')[0],
-          total: '18',
-        },
-        { day: new Date().toISOString().split('T')[0], total: '22' },
+        { day: formatApiDate(new Date()), total: '22' },
       ]
 
-      const dailyParsed: ChartPoint[] = mockDaily
-        .map((row: DailyMetric) => {
-          const d = new Date(row.day)
-          const label = d.toLocaleDateString(undefined, {
-            month: 'short',
-            day: 'numeric',
-          })
-          return { label, total: Number(row.total) }
-        })
-        .sort(
-          (a, b) => new Date(a.label).getTime() - new Date(b.label).getTime(),
-        )
+      const dailyParsed: ChartPoint[] = fillMissingDailyData(mockDaily, 15)
 
       setMetrics((prev) => ({
         ...prev,
@@ -215,7 +220,10 @@ const DownloadMetricsPage: React.FC = () => {
           } else {
             const text = await response.text()
             throw new Error(
-              `HTTP error! Status: ${response.status}. Response: ${text.substring(0, 100)}...`,
+              `HTTP error! Status: ${response.status}. Response: ${text.substring(
+                0,
+                100,
+              )}...`,
             )
           }
         } catch (error: any) {
@@ -248,7 +256,7 @@ const DownloadMetricsPage: React.FC = () => {
           fetchWithRetry(`${supabaseUrl}/rest/v1/rpc/get_daily_downloads`, {
             method: 'POST',
             headers,
-            body: JSON.stringify({ p_days: 30 }), // last 30 days
+            body: JSON.stringify({ p_days: 15 }), // <-- UPDATED to 15 days
           }),
         ])
 
@@ -271,25 +279,11 @@ const DownloadMetricsPage: React.FC = () => {
           ? topJson
           : []
 
-        const dailyParsed: ChartPoint[] = Array.isArray(dailyJson)
-          ? dailyJson
-              .map((row: DailyMetric) => {
-                const d = new Date(row.day)
-                const label = d.toLocaleDateString(undefined, {
-                  month: 'short',
-                  day: 'numeric',
-                })
-                return {
-                  label,
-                  total: Number(row.total),
-                }
-              })
-              .sort((a: ChartPoint, b: ChartPoint) => {
-                const dateA = new Date(a.label)
-                const dateB = new Date(b.label)
-                return dateA.getTime() - dateB.getTime()
-              })
-          : []
+        // Use the new function to fill in missing days with 0
+        const dailyParsed: ChartPoint[] = fillMissingDailyData(
+          Array.isArray(dailyJson) ? dailyJson : [],
+          15,
+        )
 
         setMetrics({
           loading: false,
@@ -304,7 +298,9 @@ const DownloadMetricsPage: React.FC = () => {
         setMetrics((prev) => ({
           ...prev,
           loading: false,
-          error: `Failed to load metrics from Supabase. Error: ${err.message || 'Unknown error.'}`,
+          error: `Failed to load metrics from Supabase. Error: ${
+            err.message || 'Unknown error.'
+          }`,
         }))
       }
     }
@@ -326,17 +322,16 @@ const DownloadMetricsPage: React.FC = () => {
     label: item.blueprint_category,
   }))
 
-  const top10BarData = topBlueprints
-    .slice(0, 10)
-    .map((bp) => ({
-      id: bp.blueprint_id,
-      name:
-        bp.blueprint_id.length > 40
-          ? bp.blueprint_id.substring(0, 37) + '...'
-          : bp.blueprint_id,
-      value: Number(bp.total),
-    }))
-    .reverse()
+  // Top 10 data is now left in descending order (highest to lowest)
+  const top10BarData = topBlueprints.slice(0, 10).map((bp) => ({
+    id: bp.blueprint_id,
+    name:
+      bp.blueprint_id.length > 40
+        ? bp.blueprint_id.substring(0, 37) + '...'
+        : bp.blueprint_id,
+    value: Number(bp.total),
+  }))
+  // REMOVED .reverse() to show highest count first in the array, satisfying the descending order request.
 
   // --- Dynamic Theme Colors ---
   // Define color sets for Light vs Dark mode
@@ -541,7 +536,7 @@ const DownloadMetricsPage: React.FC = () => {
             <section style={gridStyle2Col}>
               {/* Daily Downloads */}
               <div style={cardStyle}>
-                <h3 style={chartHeaderStyle}>Daily Downloads</h3>
+                <h3 style={chartHeaderStyle}>Daily Downloads (Last 15 Days)</h3>
                 <div style={{ height: '350px', padding: '10px' }}>
                   <ResponsiveContainer width='100%' height='100%'>
                     <AreaChart
@@ -649,10 +644,12 @@ const DownloadMetricsPage: React.FC = () => {
                   borderBottom: 'none',
                 }}
               >
-                Top 10 Blueprints
+                Top 10 Blueprints (Highest to Lowest)
               </h3>
               <div style={{ height: Math.max(400, top10BarData.length * 40) }}>
                 <ResponsiveContainer width='100%' height='100%'>
+                  {/* Note: In a Recharts vertical BarChart, the first item in the data array is plotted at the bottom of the Y-axis. */}
+                  {/* Since top10BarData is now descending (highest download count first), the highest count will be at the bottom of the chart. */}
                   <BarChart
                     data={top10BarData}
                     layout='vertical'
