@@ -51,6 +51,7 @@ interface MetricsState {
 }
 
 const DownloadMetricsPage: React.FC = () => {
+  // --- STATE MANAGEMENT ---
   const [metrics, setMetrics] = useState<MetricsState>({
     loading: true,
     error: undefined,
@@ -60,20 +61,54 @@ const DownloadMetricsPage: React.FC = () => {
     daily: [],
   })
 
+  // State to track current theme (dark/light)
+  const [isDark, setIsDark] = useState(false)
+
   const { loading, error, totalDownloads, byCategory, topBlueprints, daily } =
     metrics
 
   // Initialize D3 color scale
   const d3ColorScale = scaleOrdinal(schemeCategory10)
 
-  // Empty dependency array ([]) is crucial here for Docusaurus SSR
+  // --- THEME DETECTION LOGIC ---
   useEffect(() => {
-    // Access global environment variables
+    // Function to check if Docusaurus is in dark mode
+    const checkDarkMode = () => {
+      const theme = document.documentElement.getAttribute('data-theme')
+      setIsDark(theme === 'dark')
+    }
+
+    // Check immediately on mount
+    checkDarkMode()
+
+    // Set up an observer to watch for theme changes (e.g. user clicks toggle)
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (
+          mutation.type === 'attributes' &&
+          mutation.attributeName === 'data-theme'
+        ) {
+          checkDarkMode()
+        }
+      })
+    })
+
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['data-theme'],
+    })
+
+    // Cleanup observer on unmount
+    return () => observer.disconnect()
+  }, [])
+
+  // --- DATA FETCHING LOGIC ---
+  useEffect(() => {
     const supabaseUrl = (window as any)?.env?.SUPABASE_URL
     const supabaseAnonKey = (window as any)?.env?.SUPABASE_ANON_KEY
 
     if (!supabaseUrl || !supabaseAnonKey) {
-      // Use mock data if env vars are missing (for visualization testing)
+      // Use mock data for immediate feedback if env vars are missing
       const mockTotalDownloads = 1234567
       const mockByCategory: CategoryMetric[] = [
         { blueprint_category: 'controllers', total: '900000' },
@@ -162,7 +197,6 @@ const DownloadMetricsPage: React.FC = () => {
       Authorization: `Bearer ${supabaseAnonKey}`,
     }
 
-    // Exponential backoff retry logic
     const fetchWithRetry = async (
       url: string,
       options: RequestInit,
@@ -191,7 +225,6 @@ const DownloadMetricsPage: React.FC = () => {
 
     async function fetchMetrics() {
       try {
-        // Fetch all required data points concurrently
         const [totalRes, catRes, topRes, dailyRes] = await Promise.all([
           fetchWithRetry(`${supabaseUrl}/rest/v1/rpc/get_total_downloads`, {
             method: 'POST',
@@ -223,7 +256,6 @@ const DownloadMetricsPage: React.FC = () => {
         const topJson: TopBlueprintMetric[] = await topRes.json()
         const dailyJson: DailyMetric[] = await dailyRes.json()
 
-        // --- Data Transformation and Parsing ---
         let totalDownloads = 0
         if (Array.isArray(totalJson) && totalJson.length > 0) {
           totalDownloads = Number(totalJson[0].total)
@@ -238,7 +270,6 @@ const DownloadMetricsPage: React.FC = () => {
           ? topJson
           : []
 
-        // Format daily data for Area Chart
         const dailyParsed: ChartPoint[] = Array.isArray(dailyJson)
           ? dailyJson
               .map((row: DailyMetric) => {
@@ -253,7 +284,6 @@ const DownloadMetricsPage: React.FC = () => {
                 }
               })
               .sort((a: ChartPoint, b: ChartPoint) => {
-                // Sort by date to ensure correct line progression
                 const dateA = new Date(a.label)
                 const dateB = new Date(b.label)
                 return dateA.getTime() - dateB.getTime()
@@ -286,7 +316,7 @@ const DownloadMetricsPage: React.FC = () => {
     return num.toLocaleString()
   }
 
-  // Prepare data for Pie Chart
+  // Prepare Chart Data
   const categoryData: ChartData[] = byCategory.map((item) => ({
     name: item.blueprint_category,
     category: item.blueprint_category,
@@ -295,8 +325,6 @@ const DownloadMetricsPage: React.FC = () => {
     label: item.blueprint_category,
   }))
 
-  // Prepare data for Horizontal Bar Chart (Top 10)
-  // Reversed for the bar chart so the #1 entry appears at the top
   const top10BarData = topBlueprints
     .slice(0, 10)
     .map((bp) => ({
@@ -309,6 +337,21 @@ const DownloadMetricsPage: React.FC = () => {
     }))
     .reverse()
 
+  const maxRadialValue = Math.max(...top10BarData.map((bp) => bp.value), 1)
+
+  // --- Dynamic Theme Colors ---
+  // Define color sets for Light vs Dark mode
+  const THEME = {
+    bg: isDark ? '#1b1b1d' : '#f9fafb', // Main container BG
+    cardBg: isDark ? '#242526' : '#ffffff', // Card BG
+    textPrimary: isDark ? '#e5e7eb' : '#1f2937', // Main headings
+    textSecondary: isDark ? '#9ca3af' : '#6b7280', // Axis labels
+    gridLine: isDark ? '#444' : '#e5e7eb', // Chart grid lines
+    tooltipBg: isDark ? '#242526' : '#ffffff', // Tooltip BG
+    tooltipBorder: isDark ? '#444' : '#ccc', // Tooltip Border
+    tooltipText: isDark ? '#e5e7eb' : '#333', // Tooltip Text
+  }
+
   // --- Custom Recharts Components ---
 
   const CustomTooltip = ({ active, payload, label }: any) => {
@@ -318,10 +361,10 @@ const DownloadMetricsPage: React.FC = () => {
         <div
           style={{
             padding: '10px',
-            backgroundColor: 'white',
-            border: '1px solid #ccc',
+            backgroundColor: THEME.tooltipBg,
+            border: `1px solid ${THEME.tooltipBorder}`,
             borderRadius: '5px',
-            color: '#333',
+            color: THEME.tooltipText,
           }}
         >
           <p style={{ fontWeight: 'bold', marginBottom: '5px' }}>
@@ -334,7 +377,6 @@ const DownloadMetricsPage: React.FC = () => {
     return null
   }
 
-  // Custom Tick formatter for the long Blueprint IDs on the Bar Chart
   const CustomYAxisTick = (props: any) => {
     const { x, y, payload } = props
     return (
@@ -344,7 +386,7 @@ const DownloadMetricsPage: React.FC = () => {
           y={0}
           dy={5}
           textAnchor='end'
-          fill='#666'
+          fill={THEME.textSecondary}
           fontSize={10}
           title={payload.value}
         >
@@ -354,9 +396,8 @@ const DownloadMetricsPage: React.FC = () => {
     )
   }
 
-  // --- Main Render Component ---
+  // --- STYLES (Inline for guaranteed layout) ---
 
-  // Styles for forcing the grid layout (Inline Styles for 100% reliability)
   const gridStyle3Col: React.CSSProperties = {
     display: 'grid',
     gridTemplateColumns: '1fr 1fr 1fr', // Force 3 columns
@@ -374,12 +415,13 @@ const DownloadMetricsPage: React.FC = () => {
   }
 
   const cardStyle: React.CSSProperties = {
-    backgroundColor: 'white',
+    backgroundColor: THEME.cardBg,
     borderRadius: '8px',
     boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
     overflow: 'hidden',
-    color: '#333', // Force text color for visibility
-    minWidth: '0', // Prevents grid blowout
+    color: THEME.textPrimary,
+    minWidth: '0',
+    border: isDark ? '1px solid #333' : 'none', // Subtle border in dark mode
   }
 
   const cardHeaderStyle = (bgColor: string): React.CSSProperties => ({
@@ -397,25 +439,45 @@ const DownloadMetricsPage: React.FC = () => {
     textAlign: 'center',
   }
 
+  const chartHeaderStyle: React.CSSProperties = {
+    padding: '16px',
+    borderBottom: `1px solid ${THEME.gridLine}`,
+    margin: 0,
+    fontSize: '1.25rem',
+    color: THEME.textPrimary,
+    fontWeight: 'bold',
+  }
+
   return (
     <Layout
       title='Blueprint Download Metrics'
       description='Enhanced Metrics Dashboard'
     >
-      <main className='container margin-vert--lg'>
+      <main
+        className='container margin-vert--lg'
+        style={{
+          backgroundColor: THEME.bg,
+          transition: 'background-color 0.3s ease',
+          minHeight: '100vh',
+          padding: '2rem',
+        }}
+      >
         <h1
           style={{
             textAlign: 'center',
             marginBottom: '32px',
             fontSize: '2rem',
             fontWeight: 'bold',
+            color: THEME.textPrimary,
           }}
         >
           Blueprint Metrics Dashboard
         </h1>
 
         {loading && (
-          <div style={{ textAlign: 'center' }}>Loading metrics...</div>
+          <div style={{ textAlign: 'center', color: THEME.textPrimary }}>
+            Loading metrics...
+          </div>
         )}
 
         {!loading && error && (
@@ -427,7 +489,7 @@ const DownloadMetricsPage: React.FC = () => {
 
         {!loading && !error && (
           <div style={{ width: '100%', overflowX: 'auto' }}>
-            {/* 1. TOP ROW: 3 KPI CARDS (Forced 3 Columns) */}
+            {/* 1. TOP ROW: 3 KPI CARDS */}
             <section style={gridStyle3Col}>
               <div style={cardStyle}>
                 <div style={cardHeaderStyle('#4f46e5')}>Total Downloads</div>
@@ -476,16 +538,11 @@ const DownloadMetricsPage: React.FC = () => {
               </div>
             </section>
 
-            {/* 2. MIDDLE ROW: 2 CHARTS (Forced 2 Columns) */}
+            {/* 2. MIDDLE ROW: 2 CHARTS */}
             <section style={gridStyle2Col}>
+              {/* Daily Downloads */}
               <div style={cardStyle}>
-                <div
-                  style={{ padding: '16px', borderBottom: '1px solid #eee' }}
-                >
-                  <h3 style={{ margin: 0, fontSize: '1.25rem', color: '#333' }}>
-                    Daily Downloads
-                  </h3>
-                </div>
+                <h3 style={chartHeaderStyle}>Daily Downloads</h3>
                 <div style={{ height: '350px', padding: '10px' }}>
                   <ResponsiveContainer width='100%' height='100%'>
                     <AreaChart
@@ -514,18 +571,18 @@ const DownloadMetricsPage: React.FC = () => {
                       </defs>
                       <CartesianGrid
                         strokeDasharray='3 3'
-                        stroke='#eee'
+                        stroke={THEME.gridLine}
                         vertical={false}
                       />
                       <XAxis
                         dataKey='label'
-                        stroke='#666'
-                        tick={{ fontSize: 10 }}
+                        stroke={THEME.textSecondary}
+                        tick={{ fontSize: 10, fill: THEME.textSecondary }}
                       />
                       <YAxis
                         allowDecimals={false}
-                        stroke='#666'
-                        tick={{ fontSize: 10 }}
+                        stroke={THEME.textSecondary}
+                        tick={{ fontSize: 10, fill: THEME.textSecondary }}
                         tickFormatter={formatBigNumber}
                       />
                       <Tooltip content={<CustomTooltip />} />
@@ -541,14 +598,9 @@ const DownloadMetricsPage: React.FC = () => {
                 </div>
               </div>
 
+              {/* Pie Chart */}
               <div style={cardStyle}>
-                <div
-                  style={{ padding: '16px', borderBottom: '1px solid #eee' }}
-                >
-                  <h3 style={{ margin: 0, fontSize: '1.25rem', color: '#333' }}>
-                    Category Distribution
-                  </h3>
-                </div>
+                <h3 style={chartHeaderStyle}>Category Distribution</h3>
                 <div style={{ height: '350px', padding: '10px' }}>
                   <ResponsiveContainer width='100%' height='100%'>
                     <PieChart>
@@ -563,7 +615,6 @@ const DownloadMetricsPage: React.FC = () => {
                         paddingAngle={3}
                         fill='#8884d8'
                         labelLine={false}
-                        // FIX: Return string for label to avoid [object Object] error
                         label={({ percent }) =>
                           `${(percent * 100).toFixed(0)}%`
                         }
@@ -572,14 +623,17 @@ const DownloadMetricsPage: React.FC = () => {
                           <Cell
                             key={`cell-${index}`}
                             fill={d3ColorScale(entry.category)}
-                            stroke='#fff'
+                            stroke={isDark ? '#242526' : '#fff'}
                           />
                         ))}
                       </Pie>
                       <Tooltip content={<CustomTooltip />} />
                       <Legend
                         iconType='circle'
-                        wrapperStyle={{ fontSize: '12px' }}
+                        wrapperStyle={{
+                          fontSize: '12px',
+                          color: THEME.textPrimary,
+                        }}
                       />
                     </PieChart>
                   </ResponsiveContainer>
@@ -587,13 +641,13 @@ const DownloadMetricsPage: React.FC = () => {
               </div>
             </section>
 
-            {/* 3. BOTTOM ROW: 1 CHART (Full Width) */}
-            <section style={{ ...cardStyle, padding: '20px' }}>
+            {/* 3. BOTTOM ROW: 1 CHART */}
+            <section style={{ ...cardStyle, paddingBottom: '20px' }}>
               <h3
                 style={{
-                  margin: '0 0 20px 0',
-                  fontSize: '1.25rem',
-                  color: '#333',
+                  ...chartHeaderStyle,
+                  marginBottom: '20px',
+                  borderBottom: 'none',
                 }}
               >
                 Top 10 Blueprints
@@ -608,12 +662,12 @@ const DownloadMetricsPage: React.FC = () => {
                     <CartesianGrid
                       strokeDasharray='3 3'
                       horizontal={false}
-                      stroke='#eee'
+                      stroke={THEME.gridLine}
                     />
                     <XAxis
                       type='number'
-                      stroke='#666'
-                      tick={{ fontSize: 10 }}
+                      stroke={THEME.textSecondary}
+                      tick={{ fontSize: 10, fill: THEME.textSecondary }}
                       tickFormatter={formatBigNumber}
                     />
                     <YAxis
