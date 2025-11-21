@@ -194,7 +194,8 @@ const DownloadMetricsPage: React.FC = () => {
     const headers = {
       'Content-Type': 'application/json',
       apikey: supabaseAnonKey,
-      Authorization: `Bearer ${supabaseAnonKey}`,
+      // Fixed: Use string concatenation to bypass potential Prettier/linter issue with template literals in object properties
+      Authorization: 'Bearer ' + supabaseAnonKey,
     }
 
     const fetchWithRetry = async (
@@ -336,8 +337,6 @@ const DownloadMetricsPage: React.FC = () => {
       value: Number(bp.total),
     }))
     .reverse()
-
-  const maxRadialValue = Math.max(...top10BarData.map((bp) => bp.value), 1)
 
   // --- Dynamic Theme Colors ---
   // Define color sets for Light vs Dark mode
