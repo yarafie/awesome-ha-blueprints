@@ -629,20 +629,26 @@ const DownloadMetricsPage: React.FC = () => {
           Raw Data View ({data.length} Results)
         </h3>
 
-        {/* Inner Wrapper: Set max-width and margin auto for centering, and handle overflowX for responsiveness */}
-        {/* The 'margin: 0 auto' on the constrained max-width container is the centering mechanism. */}
+        {/* Inner Wrapper: 
+          1. Sets max-width and margin auto for centering the wrapper itself.
+          2. Uses display: flex and justifyContent: center to center the <table> element 
+             inside, which no longer has width: 100%.
+        */}
         <div
           style={{
             maxWidth: '1200px',
             margin: '0 auto',
             overflowX: 'auto',
+            display: 'flex',
+            justifyContent: 'center',
+            padding: '0 5px',
           }}
         >
           <table
             style={{
-              width: '100%', // Take 100% of the centered container (max 1200px)
-              minWidth: '700px', // Min width for mobile/narrow views (enforces scrolling if necessary)
-              tableLayout: 'auto', // Use auto layout to allow column widths to be flexible
+              // REMOVED width: '100%' so the table shrinks to content size and can be centered by flex
+              minWidth: '600px', // Ensures table is readable on small screens (scrolls if needed)
+              tableLayout: 'auto', // Use auto layout to allow column widths to be flexible based on colgroup
               borderCollapse: 'collapse',
               fontSize: '14px',
             }}
@@ -1079,6 +1085,13 @@ const DownloadMetricsPage: React.FC = () => {
                         tick={<CustomYAxisTick />}
                       />
                       <Tooltip content={<CustomTooltip />} />
+                      <Legend
+                        iconType='circle'
+                        wrapperStyle={{
+                          fontSize: '12px',
+                          color: THEME.textPrimary,
+                        }}
+                      />
                       <Bar
                         dataKey='value'
                         fill={
