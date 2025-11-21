@@ -523,7 +523,7 @@ const DownloadMetricsPage: React.FC = () => {
                           fill='#8884d8'
                           labelLine={false}
                           // Adjust label color for contrast
-                          label={({ name, percent }) => ({
+                          label={({ percent }) => ({
                             value: `${(percent * 100).toFixed(1)}%`, // Show percentage on slice
                             fill: CHART_TEXT_COLOR,
                             fontSize: 10,
