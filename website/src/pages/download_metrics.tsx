@@ -297,6 +297,7 @@ const DownloadMetricsPage: React.FC = () => {
         }))
         setError(undefined)
       } catch (err: any) {
+        // eslint-disable-next-line no-console
         console.error('Error fetching static metrics', err)
         setError(
           `Failed to load static metrics: ${err.message || 'Unknown error.'}`,
@@ -365,6 +366,7 @@ const DownloadMetricsPage: React.FC = () => {
 
           setMetricsData((prev) => ({ ...prev, daily: dailyParsed }))
         } catch (err: any) {
+          // eslint-disable-next-line no-console
           console.error('Error fetching daily metrics', err)
           setError(
             `Failed to load daily metrics: ${err.message || 'Unknown error.'}`,
@@ -584,7 +586,7 @@ const DownloadMetricsPage: React.FC = () => {
     )
   }
 
-  // NEW: Sort Icon component for the table headers
+  // Sort Icon component for the table headers
   const SortIcon: React.FC<{ sortKey: SortKey }> = ({ sortKey }) => {
     if (sortConfig.key !== sortKey) {
       return (
@@ -630,10 +632,7 @@ const DownloadMetricsPage: React.FC = () => {
           style={{
             maxWidth: '1200px',
             margin: '0 auto',
-            // Added display: flex and justify-content: center here to center the table wrapper
-            // inside the max-width container when the container is wider than the table.
-            display: 'flex',
-            justifyContent: 'center',
+            // Removed display: flex and justify-content: center from here (it was conflicting)
           }}
         >
           {/* 2. Overflow/Scroll Container: Handles horizontal scrolling if the table gets too wide. */}
@@ -645,8 +644,8 @@ const DownloadMetricsPage: React.FC = () => {
           >
             <table
               style={{
-                // Removed explicit centering properties from the table itself.
-                // The parent flex container now handles centering.
+                // *** THE FIX: Explicitly set margin: 0 auto on the table ***
+                margin: '0 auto', // Centers the table horizontally if it's narrower than its container
                 minWidth: '600px', // Ensures table is readable on small screens (scrolls if needed)
                 tableLayout: 'auto', // Use auto layout to allow column widths to be flexible based on colgroup
                 borderCollapse: 'collapse',
