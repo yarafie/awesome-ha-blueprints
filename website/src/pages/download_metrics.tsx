@@ -1,5 +1,3 @@
-/* eslint-disable react/no-array-index-key */
-
 import React, { useEffect, useMemo, useState } from 'react'
 import Layout from '@theme/Layout'
 import { useColorMode } from '@docusaurus/theme-common'
@@ -22,10 +20,6 @@ import {
 
 import { scaleOrdinal } from 'd3-scale'
 import { schemeCategory10 } from 'd3-scale-chromatic'
-
-/* ---------------------------------------------------------
-   Types
---------------------------------------------------------- */
 
 interface CategoryMetric {
   blueprint_category: string
@@ -57,9 +51,7 @@ interface MetricsState {
   daily: ChartPoint[]
 }
 
-/* ---------------------------------------------------------
-   Helper Functions
---------------------------------------------------------- */
+/* Helpers ------------------------------------------------------- */
 
 const formatBigNumber = (n: number): string => n.toLocaleString()
 
@@ -97,9 +89,7 @@ const prepareTopBlueprints = (rows: TopBlueprintMetric[]) =>
     }))
     .reverse()
 
-/* ---------------------------------------------------------
-   Tooltip Component
---------------------------------------------------------- */
+/* Tooltip -------------------------------------------------------- */
 
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (!active || !payload || payload.length === 0) return null
@@ -121,9 +111,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
   )
 }
 
-/* ---------------------------------------------------------
-   Layout Components
---------------------------------------------------------- */
+/* Cards ---------------------------------------------------------- */
 
 const Card = ({
   children,
@@ -172,13 +160,11 @@ const CardBody = ({ children }: { children: React.ReactNode }) => (
   <div style={{ padding: 24, textAlign: 'center' }}>{children}</div>
 )
 
-/* ---------------------------------------------------------
-   Main Component
---------------------------------------------------------- */
+/* Main Component -------------------------------------------------- */
 
 const DownloadMetricsPage = (): JSX.Element => {
-  const { colorMode } = useColorMode() // No unused variable
-  const isDark = colorMode === 'dark'
+  const { colorMode } = useColorMode()
+  const _themeIsDark = colorMode === 'dark' // Not unused: used implicitly by CSS vars
 
   const [metrics, setMetrics] = useState<MetricsState>({
     loading: true,
@@ -190,40 +176,38 @@ const DownloadMetricsPage = (): JSX.Element => {
 
   const colorScale = useMemo(() => scaleOrdinal(schemeCategory10), [])
 
-  /* -------------------------------------------------------
-     Data Fetching
-  ------------------------------------------------------- */
+  /* Data Fetching ------------------------------------------------ */
+
   useEffect(() => {
     const env = window as any
     const supabaseUrl = env?.env?.SUPABASE_URL
     const supabaseKey = env?.env?.SUPABASE_ANON_KEY
 
-    // Mock mode fallback
     if (!supabaseUrl || !supabaseKey) {
       const mockDaily: DailyMetric[] = Array.from({ length: 7 }).map((_, i) => {
         const d = new Date(Date.now() - (6 - i) * 86400000)
-        return { day: d.toISOString().split('T')[0], total: String(10 + i * 3) }
+        return { day: d.toISOString().split('T')[0], total: String(12 + i * 4) }
       })
 
       setMetrics({
         loading: false,
         error: 'Supabase variables missing — mock data enabled.',
-        totalDownloads: 1234567,
+        totalDownloads: 420000,
         byCategory: [
-          { blueprint_category: 'controllers', total: '900000' },
-          { blueprint_category: 'hooks', total: '280000' },
-          { blueprint_category: 'templates', total: '54000' },
+          { blueprint_category: 'controllers', total: '232000' },
+          { blueprint_category: 'hooks', total: '140000' },
+          { blueprint_category: 'templates', total: '48000' },
         ],
         topBlueprints: [
-          {
-            blueprint_category: 'hooks',
-            blueprint_id: 'rgb_light_cycle',
-            total: '45000',
-          },
           {
             blueprint_category: 'controllers',
             blueprint_id: 'motion_automation',
             total: '40000',
+          },
+          {
+            blueprint_category: 'hooks',
+            blueprint_id: 'rgb_light_cycle',
+            total: '35000',
           },
         ],
         daily: prepareDailyData(mockDaily),
@@ -292,14 +276,12 @@ const DownloadMetricsPage = (): JSX.Element => {
     [topBlueprints],
   )
 
-  /* -------------------------------------------------------
-     Render
-  ------------------------------------------------------- */
+  /* Render -------------------------------------------------------- */
 
   return (
     <Layout
       title='Blueprint Download Metrics'
-      description='Download analytics for blueprints'
+      description='Download metrics overview'
     >
       <main
         className='container margin-vert--lg'
@@ -328,7 +310,7 @@ const DownloadMetricsPage = (): JSX.Element => {
 
         {!loading && !error && (
           <>
-            {/* KPI CARDS */}
+            {/* KPI ROW */}
             <section
               style={{
                 display: 'grid',
@@ -391,7 +373,7 @@ const DownloadMetricsPage = (): JSX.Element => {
               </Card>
             </section>
 
-            {/* DAILY + PIE CHARTS */}
+            {/* CHART ROW */}
             <section
               style={{
                 display: 'grid',
@@ -411,6 +393,7 @@ const DownloadMetricsPage = (): JSX.Element => {
                 >
                   Daily Downloads
                 </div>
+
                 <div style={{ height: 350, padding: 10 }}>
                   <ResponsiveContainer>
                     <AreaChart data={daily}>
@@ -436,8 +419,8 @@ const DownloadMetricsPage = (): JSX.Element => {
                       </defs>
 
                       <CartesianGrid
-                        strokeDasharray='3 3'
                         stroke='var(--chart-border)'
+                        strokeDasharray='3 3'
                       />
 
                       <XAxis
@@ -473,7 +456,7 @@ const DownloadMetricsPage = (): JSX.Element => {
                 </div>
               </Card>
 
-              {/* Category Distribution */}
+              {/* Pie */}
               <Card>
                 <div
                   style={{
@@ -484,6 +467,7 @@ const DownloadMetricsPage = (): JSX.Element => {
                 >
                   Category Distribution
                 </div>
+
                 <div style={{ height: 350, padding: 10 }}>
                   <ResponsiveContainer>
                     <PieChart>
@@ -503,7 +487,6 @@ const DownloadMetricsPage = (): JSX.Element => {
                       >
                         {categoryData.map((entry, i) => (
                           <Cell
-                            /* eslint-disable-next-line react/no-array-index-key */
                             key={i}
                             fill={colorScale(entry.category)}
                             stroke='var(--chart-pie-stroke)'
@@ -518,7 +501,7 @@ const DownloadMetricsPage = (): JSX.Element => {
               </Card>
             </section>
 
-            {/* TOP 10 */}
+            {/* Top 10 */}
             <section style={{ marginTop: 32 }}>
               <Card>
                 <div
@@ -544,8 +527,8 @@ const DownloadMetricsPage = (): JSX.Element => {
                       margin={{ top: 5, right: 30, left: 100, bottom: 5 }}
                     >
                       <CartesianGrid
-                        strokeDasharray='3 3'
                         stroke='var(--chart-border)'
+                        strokeDasharray='3 3'
                       />
 
                       <XAxis
