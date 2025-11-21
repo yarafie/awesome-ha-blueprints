@@ -133,7 +133,7 @@ const CardBody = ({ children }: { children: React.ReactNode }) => (
 
 /* Main Component -------------------------------------------------- */
 
-const DownloadMetricsPageOptionB: React.FC = () => {
+const DownloadMetricsPageOptionC: React.FC = () => {
   const { colorMode } = useColorMode()
   const isDark = colorMode === 'dark'
 
@@ -145,7 +145,7 @@ const DownloadMetricsPageOptionB: React.FC = () => {
     daily: [],
   })
 
-  const colorScale = useMemo(() => scaleOrdinal(schemeCategory10), [])
+  const colorScaleBase = useMemo(() => scaleOrdinal(schemeCategory10), [])
 
   const THEME = useMemo(
     () => ({
@@ -161,11 +161,22 @@ const DownloadMetricsPageOptionB: React.FC = () => {
       boxShadow: isDark
         ? '0 4px 6px rgba(0,0,0,0.4)'
         : '0 4px 6px rgba(0,0,0,0.1)',
+      // Chart accent colors: different in dark to reduce glare
+      accentArea: isDark ? '#818cf8' : '#4f46e5',
+      accentBar: isDark ? '#818cf8' : '#4f46e5',
     }),
     [isDark],
   )
 
-  /* Tooltip with theme-aware colors ------------------------------ */
+  const colorScale = useMemo(
+    () =>
+      (value: string): string => {
+        // reuse D3 scale; you could add theme-dependent tweaks here if you want
+        return colorScaleBase(value) as string
+      },
+    [colorScaleBase],
+  )
+
   const ThemedTooltip = (
     props: TooltipProps<number, string>,
   ): JSX.Element | null => {
@@ -455,7 +466,7 @@ const DownloadMetricsPageOptionB: React.FC = () => {
                     <AreaChart data={daily}>
                       <defs>
                         <linearGradient
-                          id='areaGradient'
+                          id='areaGradientC'
                           x1='0'
                           y1='0'
                           x2='0'
@@ -463,12 +474,12 @@ const DownloadMetricsPageOptionB: React.FC = () => {
                         >
                           <stop
                             offset='5%'
-                            stopColor='#4f46e5'
+                            stopColor={THEME.accentArea}
                             stopOpacity={0.8}
                           />
                           <stop
                             offset='95%'
-                            stopColor='#4f46e5'
+                            stopColor={THEME.accentArea}
                             stopOpacity={0}
                           />
                         </linearGradient>
@@ -496,9 +507,9 @@ const DownloadMetricsPageOptionB: React.FC = () => {
                       <Area
                         type='monotone'
                         dataKey='total'
-                        stroke='#4f46e5'
+                        stroke={THEME.accentArea}
                         strokeWidth={3}
-                        fill='url(#areaGradient)'
+                        fill='url(#areaGradientC)'
                         isAnimationActive={false}
                       />
                     </AreaChart>
@@ -624,7 +635,7 @@ const DownloadMetricsPageOptionB: React.FC = () => {
 
                       <Bar
                         dataKey='value'
-                        fill={colorScale('top10')}
+                        fill={THEME.accentBar}
                         barSize={20}
                         radius={[0, 4, 4, 0]}
                         isAnimationActive={false}
@@ -641,4 +652,4 @@ const DownloadMetricsPageOptionB: React.FC = () => {
   )
 }
 
-export default DownloadMetricsPageOptionB
+export default DownloadMetricsPageOptionC
