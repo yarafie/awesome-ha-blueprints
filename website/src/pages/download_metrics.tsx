@@ -612,7 +612,7 @@ const DownloadMetricsPage: React.FC = () => {
     )
   }
 
-  // NEW COMPONENT: Data Table
+  // UPDATED COMPONENT: Data Table
   const DataTable: React.FC<{ data: TopBlueprintMetric[] }> = ({ data }) => {
     return (
       // Outer wrapper: For card padding
@@ -630,21 +630,33 @@ const DownloadMetricsPage: React.FC = () => {
         </h3>
 
         {/* Inner Wrapper: Set max-width and margin auto for centering, and handle overflowX for responsiveness */}
+        {/* The 'margin: 0 auto' on the constrained max-width container is the centering mechanism. */}
         <div
           style={{
             maxWidth: '1200px',
-            margin: '0 auto', // CRITICAL: Centers the block content
-            overflowX: 'auto', // Handles wide content on small screens
+            margin: '0 auto',
+            overflowX: 'auto',
           }}
         >
           <table
             style={{
-              width: '100%',
-              minWidth: '700px', // Min width to prevent collapse on small phones
+              width: '100%', // Take 100% of the centered container (max 1200px)
+              minWidth: '700px', // Min width for mobile/narrow views (enforces scrolling if necessary)
+              tableLayout: 'auto', // Use auto layout to allow column widths to be flexible
               borderCollapse: 'collapse',
               fontSize: '14px',
             }}
           >
+            {/* COLUMN WIDTH DEFINITIONS */}
+            <colgroup>
+              {/* Blueprint ID: Takes the majority of space, allowing content-based wrapping/growth */}
+              <col style={{ width: 'auto' }} />
+              {/* Category: Fixed for consistency, based on typical category string length */}
+              <col style={{ width: '150px' }} />
+              {/* Downloads: Fixed width for numbers, aligns right */}
+              <col style={{ width: '120px' }} />
+            </colgroup>
+
             <thead>
               <tr style={{ backgroundColor: isDark ? '#333' : '#f3f4f6' }}>
                 <th
