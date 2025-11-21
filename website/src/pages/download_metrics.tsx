@@ -504,9 +504,6 @@ const DownloadMetricsPage: React.FC = () => {
     width: '100%',
   }
 
-  // Note: Responsive styles for gridStyle2Col are handled via Docusaurus/Tailwind
-  // context or media queries in a CSS file if needed. Inline styles cannot directly
-  // use @media queries, so we define the 2-column layout simply.
   const gridStyle2Col: React.CSSProperties = {
     display: 'grid',
     gridTemplateColumns: '1fr 1fr',
@@ -625,6 +622,7 @@ const DownloadMetricsPage: React.FC = () => {
             color: THEME.textPrimary,
             fontWeight: 'bold',
             marginBottom: '15px',
+            textAlign: 'center', // CENTERED TITLE
           }}
         >
           Raw Data View ({data.length} Results)
