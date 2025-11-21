@@ -615,7 +615,15 @@ const DownloadMetricsPage: React.FC = () => {
   // NEW COMPONENT: Data Table
   const DataTable: React.FC<{ data: TopBlueprintMetric[] }> = ({ data }) => {
     return (
-      <div style={{ padding: '0 16px 16px 16px', overflowX: 'auto' }}>
+      // Wrapper for centering the table content
+      <div
+        style={{
+          padding: '0 16px 16px 16px',
+          overflowX: 'auto',
+          maxWidth: '1200px', // Set a max width for centering
+          margin: '24px auto 0 auto', // Center the wrapper and add top margin
+        }}
+      >
         <h3
           style={{
             fontSize: '1.25rem',
@@ -630,6 +638,7 @@ const DownloadMetricsPage: React.FC = () => {
         <table
           style={{
             width: '100%',
+            minWidth: '700px', // Ensure table minimum width for wide columns on smaller viewports
             borderCollapse: 'collapse',
             fontSize: '14px',
           }}
