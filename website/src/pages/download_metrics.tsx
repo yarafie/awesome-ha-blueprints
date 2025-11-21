@@ -163,8 +163,6 @@ const CardBody = ({ children }: { children: React.ReactNode }) => (
 /* Main Component -------------------------------------------------- */
 
 const DownloadMetricsPage = (): JSX.Element => {
-  const { colorMode } = useColorMode()
-
   const [metrics, setMetrics] = useState<MetricsState>({
     loading: true,
     totalDownloads: 0,
