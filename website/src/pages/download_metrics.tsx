@@ -722,6 +722,9 @@ const DownloadMetricsPage: React.FC = () => {
                       stroke={THEME.textSecondary}
                       tick={{ fontSize: 10, fill: THEME.textSecondary }}
                       tickFormatter={formatBigNumber}
+                      // --- ADJUSTMENT FOR WHOLE NUMBERS STARTING AT ZERO ---
+                      domain={[0, 'auto']}
+                      allowDecimals={false}
                     />
                     <YAxis
                       dataKey='name'
