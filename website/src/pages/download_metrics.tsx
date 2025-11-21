@@ -636,14 +636,13 @@ const DownloadMetricsPage: React.FC = () => {
           <div
             style={{
               overflowX: 'auto',
-              padding: '0 5px',
+              // Removed horizontal padding here to prevent alignment issues
               display: 'flex', // Crucial for centering
               justifyContent: 'center', // Centers the content (the table)
             }}
           >
             <table
               style={{
-                // The table should not have an explicit width: 100% or margin: auto here when its parent is a flex container with justify-content: center.
                 minWidth: '600px', // Ensures table is readable on small screens (scrolls if needed)
                 tableLayout: 'auto',
                 borderCollapse: 'collapse',
