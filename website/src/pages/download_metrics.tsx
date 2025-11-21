@@ -1,22 +1,22 @@
 import React, { useEffect, useState, useCallback, useMemo } from 'react'
 import Layout from '@theme/Layout'
 import {
-  AreaChart,
   Area,
+  AreaChart,
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  Legend,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
   XAxis,
   YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
-  BarChart,
-  Bar,
-  Legend,
 } from 'recharts'
 
-// --- D3 Imports for Professional Coloring ---
+// D3 Imports for Professional Coloring
 import { scaleOrdinal } from 'd3-scale'
 import { schemeCategory10 } from 'd3-scale-chromatic'
 
@@ -39,7 +39,11 @@ type ChartPoint = {
 }
 
 // Define the shape of data for charts
-type ChartData = ChartPoint & { name: string; value: number; category?: string }
+type ChartData = ChartPoint & {
+  name: string
+  value: number
+  category?: string
+}
 
 interface MetricsData {
   totalDownloads: number
@@ -70,7 +74,7 @@ const DownloadMetricsPage: React.FC = () => {
   // Tracks the currently selected category filter from the Pie Chart
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
 
-  // NEW STATE: Tracks the current sorting for the data table
+  // Tracks the current sorting for the data table
   const [sortConfig, setSortConfig] = useState<{
     key: SortKey
     direction: SortDirection
@@ -109,7 +113,7 @@ const DownloadMetricsPage: React.FC = () => {
   // --- HELPER FUNCTIONS ---
 
   const formatApiDate = (date: Date): string => date.toISOString().split('T')[0]
-  const formatBigNumber = (num: number) => num.toLocaleString()
+  const formatBigNumber = (num: number): string => num.toLocaleString()
 
   // Function to create a full N-day range and fill missing days with 0 downloads
   const fillMissingDailyData = (
@@ -150,6 +154,8 @@ const DownloadMetricsPage: React.FC = () => {
             return response
           } else if (response.status === 429 && i < retries - 1) {
             const delay = Math.pow(2, i) * 1000 + Math.random() * 1000
+            // eslint-disable-next-line no-console
+            // console.debug(`Rate limit exceeded. Retrying in ${delay.toFixed(0)}ms...`);
             await new Promise((resolve) => setTimeout(resolve, delay))
             continue
           } else {
@@ -293,6 +299,7 @@ const DownloadMetricsPage: React.FC = () => {
         }))
         setError(undefined)
       } catch (err: any) {
+        // eslint-disable-next-line no-console
         console.error('Error fetching static metrics', err)
         setError(
           `Failed to load static metrics: ${err.message || 'Unknown error.'}`,
@@ -361,6 +368,7 @@ const DownloadMetricsPage: React.FC = () => {
 
           setMetricsData((prev) => ({ ...prev, daily: dailyParsed }))
         } catch (err: any) {
+          // eslint-disable-next-line no-console
           console.error('Error fetching daily metrics', err)
           setError(
             `Failed to load daily metrics: ${err.message || 'Unknown error.'}`,
@@ -375,7 +383,7 @@ const DownloadMetricsPage: React.FC = () => {
   }, [selectedDays, isInitialLoading, fetchWithRetry])
 
   // --- MEMOIZED DATA PROCESSING & SORTING ---
-  const { filteredBlueprints, sortedBlueprints } = useMemo(() => {
+  const sortedBlueprints = useMemo(() => {
     // 1. Filter the blueprints based on the category selection
     const filtered = selectedCategory
       ? topBlueprints.filter((bp) => bp.blueprint_category === selectedCategory)
@@ -410,7 +418,7 @@ const DownloadMetricsPage: React.FC = () => {
       total: item.total,
     })) as TopBlueprintMetric[]
 
-    return { filteredBlueprints: filtered, sortedBlueprints: sorted }
+    return sorted
   }, [topBlueprints, selectedCategory, sortConfig])
 
   // Prepare Chart Data
@@ -496,17 +504,16 @@ const DownloadMetricsPage: React.FC = () => {
     width: '100%',
   }
 
+  // Note: Responsive styles for gridStyle2Col are handled via Docusaurus/Tailwind
+  // context or media queries in a CSS file if needed. Inline styles cannot directly
+  // use @media queries, so we define the 2-column layout simply.
   const gridStyle2Col: React.CSSProperties = {
     display: 'grid',
     gridTemplateColumns: '1fr 1fr',
     gap: '24px',
     marginBottom: '32px',
     width: '100%',
-    // Responsive adjustments
-    '@media (max-width: 768px)': {
-      gridTemplateColumns: '1fr',
-    },
-  } as React.CSSProperties // Assert type for browser compatibility
+  }
 
   const cardStyle: React.CSSProperties = {
     backgroundColor: THEME.cardBg,
@@ -552,7 +559,9 @@ const DownloadMetricsPage: React.FC = () => {
       fontWeight: 'bold',
       backgroundColor: current === days ? THEME.accentColor : THEME.cardBg,
       color: current === days ? 'white' : THEME.textPrimary,
-      border: `1px solid ${current === days ? THEME.accentColor : THEME.gridLine}`,
+      border: `1px solid ${
+        current === days ? THEME.accentColor : THEME.gridLine
+      }`,
       transition: 'all 0.2s',
       boxShadow: current === days ? '0 2px 4px rgba(0,0,0,0.2)' : 'none',
       fontSize: '14px',
@@ -586,9 +595,10 @@ const DownloadMetricsPage: React.FC = () => {
   const SortIcon: React.FC<{ sortKey: SortKey }> = ({ sortKey }) => {
     if (sortConfig.key !== sortKey) {
       return (
-        <span style={{ fontSize: '0.7em', marginLeft: '5px', opacity: 0.4 }}>
-          &#x25B2;&#x25BC;
-        </span>
+        <span
+          style={{ fontSize: '0.7em', marginLeft: '5px', opacity: 0.4 }}
+          dangerouslySetInnerHTML={{ __html: '&#x25B2;&#x25BC;' }}
+        />
       ) // Unsorted indicator
     }
     return (
@@ -598,9 +608,10 @@ const DownloadMetricsPage: React.FC = () => {
           marginLeft: '5px',
           color: THEME.accentColor,
         }}
-      >
-        {sortConfig.direction === 'asc' ? '&#x25B2;' : '&#x25BC;'}
-      </span>
+        dangerouslySetInnerHTML={{
+          __html: sortConfig.direction === 'asc' ? '&#x25B2;' : '&#x25BC;',
+        }}
+      />
     )
   }
 
@@ -805,7 +816,7 @@ const DownloadMetricsPage: React.FC = () => {
             </section>
 
             {/* 2. MIDDLE ROW: 2 CHARTS */}
-            <section style={gridStyle2Col as React.CSSProperties}>
+            <section style={gridStyle2Col}>
               {/* Daily Downloads */}
               <div style={cardStyle}>
                 <h3 style={chartHeaderStyle}>
@@ -937,11 +948,7 @@ const DownloadMetricsPage: React.FC = () => {
                                 ? 1
                                 : 0.4
                             }
-                            // Subtle hover effect
-                            style={{
-                              transition: 'opacity 0.2s',
-                              outline: 'none',
-                            }}
+                            // Subtle hover effect (using inline listeners is required for functional components in this context)
                             onMouseOver={(e) =>
                               (e.currentTarget.style.opacity = '1')
                             }
@@ -1006,7 +1013,7 @@ const DownloadMetricsPage: React.FC = () => {
                       fontWeight: 'bold',
                       transition: 'background-color 0.2s',
                     }}
-                    title='Click to view all blueprints'
+                    title={`Click to view all ${topBlueprints.length} blueprints`}
                   >
                     Clear Filter (View {topBlueprints.length} total)
                   </button>
@@ -1064,8 +1071,7 @@ const DownloadMetricsPage: React.FC = () => {
                       color: THEME.textSecondary,
                     }}
                   >
-                    No blueprints found for the selected category:{' '}
-                    {selectedCategory}
+                    No top blueprints found for the current selection.
                   </p>
                 )}
               </div>
