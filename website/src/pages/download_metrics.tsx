@@ -297,8 +297,7 @@ const DownloadMetricsPage: React.FC = () => {
         }))
         setError(undefined)
       } catch (err: any) {
-        // eslint-disable-next-line no-console
-        console.error('Error fetching static metrics', err)
+        // Removed console.error to fix ESLint warnings
         setError(
           `Failed to load static metrics: ${err.message || 'Unknown error.'}`,
         )
@@ -366,8 +365,7 @@ const DownloadMetricsPage: React.FC = () => {
 
           setMetricsData((prev) => ({ ...prev, daily: dailyParsed }))
         } catch (err: any) {
-          // eslint-disable-next-line no-console
-          console.error('Error fetching daily metrics', err)
+          // Removed console.error to fix ESLint warnings
           setError(
             `Failed to load daily metrics: ${err.message || 'Unknown error.'}`,
           )
@@ -632,22 +630,22 @@ const DownloadMetricsPage: React.FC = () => {
           style={{
             maxWidth: '1200px',
             margin: '0 auto',
-            // Removed display: flex and justify-content: center from here (it was conflicting)
           }}
         >
-          {/* 2. Overflow/Scroll Container: Handles horizontal scrolling if the table gets too wide. */}
+          {/* 2. Overflow/Scroll Container: Handles horizontal scrolling AND centers the table if it is narrower than the container. */}
           <div
             style={{
               overflowX: 'auto',
               padding: '0 5px',
+              display: 'flex', // Crucial for centering
+              justifyContent: 'center', // Centers the content (the table)
             }}
           >
             <table
               style={{
-                // *** THE FIX: Explicitly set margin: 0 auto on the table ***
-                margin: '0 auto', // Centers the table horizontally if it's narrower than its container
+                // The table should not have an explicit width: 100% or margin: auto here when its parent is a flex container with justify-content: center.
                 minWidth: '600px', // Ensures table is readable on small screens (scrolls if needed)
-                tableLayout: 'auto', // Use auto layout to allow column widths to be flexible based on colgroup
+                tableLayout: 'auto',
                 borderCollapse: 'collapse',
                 fontSize: '14px',
               }}
