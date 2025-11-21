@@ -11,12 +11,17 @@ import {
   PieChart,
   Pie,
   Cell,
-  RadialBarChart,
-  RadialBar,
+  BarChart, // Added BarChart
+  Bar, // Added Bar
   Legend,
 } from 'recharts'
+
+// --- D3 Imports for Professional Coloring ---
 import { scaleOrdinal } from 'd3-scale'
 import { schemeCategory10 } from 'd3-scale-chromatic'
+
+// Initialize D3 color scale (provides 10 distinct, good colors)
+const colors = scaleOrdinal(schemeCategory10).range()
 
 // --- Type Definitions based on SQL RPC Functions ---
 type TotalMetric = { total: string }
@@ -37,11 +42,7 @@ type ChartPoint = {
 }
 
 // Define the shape of data for charts
-type CategoryChartData = ChartPoint & {
-  name: string
-  value: number
-  category: string
-}
+type ChartData = ChartPoint & { name: string; value: number; category?: string }
 
 interface MetricsState {
   loading: boolean
@@ -51,9 +52,6 @@ interface MetricsState {
   topBlueprints: TopBlueprintMetric[]
   daily: ChartPoint[]
 }
-
-// Define a stable color palette for the Pie Chart
-const colors = scaleOrdinal(schemeCategory10).range()
 
 const DownloadMetricsPage: React.FC = () => {
   const [metrics, setMetrics] = useState<MetricsState>({
@@ -68,8 +66,10 @@ const DownloadMetricsPage: React.FC = () => {
   const { loading, error, totalDownloads, byCategory, topBlueprints, daily } =
     metrics
 
-  // Empty dependency array ([]) is crucial here. It makes sure the fetch logic
-  // runs only once on the client side, fixing the ReferenceError during Docusaurus SSR.
+  // Use the global color scale
+  const d3ColorScale = scaleOrdinal(schemeCategory10)
+
+  // Empty dependency array ([]) is crucial here for Docusaurus SSR
   useEffect(() => {
     // Access global environment variables
     const supabaseUrl = (window as any)?.env?.SUPABASE_URL
@@ -120,6 +120,7 @@ const DownloadMetricsPage: React.FC = () => {
 
     async function fetchMetrics() {
       try {
+        // Fetch all required data points concurrently
         const [totalRes, catRes, topRes, dailyRes] = await Promise.all([
           fetchWithRetry(`${supabaseUrl}/rest/v1/rpc/get_total_downloads`, {
             method: 'POST',
@@ -166,6 +167,7 @@ const DownloadMetricsPage: React.FC = () => {
           ? topJson
           : []
 
+        // Format daily data for Area Chart
         const dailyParsed: ChartPoint[] = Array.isArray(dailyJson)
           ? dailyJson
               .map((row: DailyMetric) => {
@@ -180,6 +182,7 @@ const DownloadMetricsPage: React.FC = () => {
                 }
               })
               .sort((a: ChartPoint, b: ChartPoint) => {
+                // Sort by date to ensure correct line progression
                 const dateA = new Date(a.label)
                 const dateB = new Date(b.label)
                 return dateA.getTime() - dateB.getTime()
@@ -207,13 +210,13 @@ const DownloadMetricsPage: React.FC = () => {
     fetchMetrics()
   }, [])
 
-  // --- Render Helpers ---
+  // --- Data Formatting Helpers ---
   const formatBigNumber = (num: number) => {
     return num.toLocaleString()
   }
 
-  // Transform category data for Pie Chart
-  const categoryData: CategoryChartData[] = byCategory.map((item) => ({
+  // Prepare data for Pie Chart
+  const categoryData: ChartData[] = byCategory.map((item) => ({
     name: item.blueprint_category,
     category: item.blueprint_category,
     value: Number(item.total),
@@ -221,24 +224,30 @@ const DownloadMetricsPage: React.FC = () => {
     label: item.blueprint_category,
   }))
 
-  // Transform top blueprints data for Radial Bar Chart (Top 10)
-  const top10Blueprints = topBlueprints
+  // Prepare data for Horizontal Bar Chart (Top 10)
+  // Reversed for the bar chart so the #1 entry appears at the top
+  const top10BarData = topBlueprints
     .slice(0, 10)
-    .map((bp, index) => ({
-      name: bp.blueprint_id,
+    .map((bp) => ({
+      id: bp.blueprint_id,
+      name:
+        bp.blueprint_id.length > 40
+          ? bp.blueprint_id.substring(0, 37) + '...'
+          : bp.blueprint_id,
       value: Number(bp.total),
-      fill: colors[index % colors.length], // Assign a color from the palette
     }))
-    .reverse() // Reverse for better stacking visualization
+    .reverse()
 
-  const maxRadialValue = Math.max(...top10Blueprints.map((bp) => bp.value), 1)
+  // --- Custom Recharts Components ---
 
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload
       return (
         <div className='p-3 bg-white border border-gray-300 shadow-xl rounded-lg text-sm text-gray-700'>
-          <p className='font-bold text-indigo-600 mb-1'>{data.name || label}</p>
+          <p className='font-bold text-indigo-600 mb-1'>
+            {data.name || data.id || label}
+          </p>
           <p>
             <span className='font-semibold'>Downloads:</span>{' '}
             {formatBigNumber(data.value || payload[0].value)}
@@ -249,25 +258,44 @@ const DownloadMetricsPage: React.FC = () => {
     return null
   }
 
-  // --- Render Components ---
+  // Custom Tick formatter for the long Blueprint IDs on the Bar Chart
+  const CustomYAxisTick = (props: any) => {
+    const { x, y, payload } = props
+    return (
+      <g transform={`translate(${x},${y})`}>
+        <text
+          x={0}
+          y={0}
+          dy={5}
+          textAnchor='end'
+          fill='#6b7280'
+          fontSize={10}
+          title={payload.value}
+        >
+          {payload.value}
+        </text>
+      </g>
+    )
+  }
+
+  // --- Main Render Component ---
 
   return (
     <Layout
       title='Blueprint Download Metrics'
-      description='Download metrics for Awesome HA Blueprints'
+      description='Enhanced Metrics Dashboard'
     >
       <main className='container mx-auto p-4 md:p-8'>
-        <h1 className='text-center mb-8 text-3xl font-bold text-gray-800'>
-          Blueprint Download Metrics
+        <h1 className='text-center mb-8 text-3xl font-extrabold text-gray-900'>
+          Blueprint Metrics Dashboard
         </h1>
         {loading && (
-          <div className='text-center my-6 p-6 bg-indigo-50 border-2 border-indigo-200 rounded-xl shadow-lg'>
+          <div className='text-center my-6 p-6 bg-indigo-50 border-2 border-indigo-300 rounded-xl shadow-lg animate-pulse'>
             <div className='mb-2 text-xl font-semibold text-indigo-700'>
-              Loading metrics from Supabase...
+              Loading Data...
             </div>
             <small className='text-indigo-500'>
-              Fetching data from RPCs. Please ensure your Supabase config is
-              correct.
+              Fetching all metrics. Please wait.
             </small>
           </div>
         )}
@@ -282,246 +310,206 @@ const DownloadMetricsPage: React.FC = () => {
         )}
         {!loading && !error && (
           <div className='space-y-8 md:space-y-12'>
-            {/* Top metric cards - Always 2 columns on mobile, 3 on larger screens */}
-            <section className='grid grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6'>
-              {/* Card 1 */}
-              <div className='w-full'>
-                <div className='card shadow-2xl hover:shadow-3xl transition-shadow duration-500 rounded-xl overflow-hidden'>
-                  <div className='bg-indigo-600 text-white p-3 md:p-4'>
-                    <h3 className='font-extrabold text-lg md:text-xl'>
-                      Total Downloads
-                    </h3>
-                  </div>
-                  <div className='p-4 md:p-6'>
-                    <p className='text-4xl md:text-6xl font-black text-indigo-700 m-0'>
-                      {formatBigNumber(totalDownloads)}
-                    </p>
-                  </div>
-                </div>
+            {/* KPI Cards: Total Downloads, Categories, Top Blueprints */}
+            <section className='grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6'>
+              <div className='card shadow-2xl bg-white border-b-4 border-indigo-600 transition-all hover:scale-[1.01] duration-300 rounded-xl p-4'>
+                <h3 className='text-sm font-medium text-gray-500 uppercase tracking-wider'>
+                  Total Downloads
+                </h3>
+                <p className='mt-1 text-3xl md:text-4xl font-extrabold text-indigo-800'>
+                  {formatBigNumber(totalDownloads)}
+                </p>
               </div>
 
-              {/* Card 2 */}
-              <div className='w-full'>
-                <div className='card shadow-2xl hover:shadow-3xl transition-shadow duration-500 rounded-xl overflow-hidden'>
-                  <div className='bg-teal-600 text-white p-3 md:p-4'>
-                    <h3 className='font-extrabold text-lg md:text-xl'>
-                      Unique Categories
-                    </h3>
-                  </div>
-                  <div className='p-4 md:p-6'>
-                    <p className='text-4xl md:text-6xl font-black text-teal-700 m-0'>
-                      {formatBigNumber(byCategory.length)}
-                    </p>
-                  </div>
-                </div>
+              <div className='card shadow-2xl bg-white border-b-4 border-teal-600 transition-all hover:scale-[1.01] duration-300 rounded-xl p-4'>
+                <h3 className='text-sm font-medium text-gray-500 uppercase tracking-wider'>
+                  Unique Categories
+                </h3>
+                <p className='mt-1 text-3xl md:text-4xl font-extrabold text-teal-800'>
+                  {formatBigNumber(byCategory.length)}
+                </p>
               </div>
 
-              {/* Card 3 - Spans 2 columns on small screens, 1 on large, ensuring 2-column minimum */}
-              <div className='col-span-2 lg:col-span-1 w-full'>
-                <div className='card shadow-2xl hover:shadow-3xl transition-shadow duration-500 rounded-xl overflow-hidden'>
-                  <div className='bg-purple-600 text-white p-3 md:p-4'>
-                    <h3 className='font-extrabold text-lg md:text-xl'>
-                      Top Blueprints Tracked
-                    </h3>
-                  </div>
-                  <div className='p-4 md:p-6'>
-                    <p className='text-4xl md:text-6xl font-black text-purple-700 m-0'>
-                      {formatBigNumber(topBlueprints.length)}
-                    </p>
-                  </div>
-                </div>
+              <div className='card shadow-2xl bg-white border-b-4 border-purple-600 transition-all hover:scale-[1.01] duration-300 rounded-xl p-4 col-span-2 md:col-span-1'>
+                <h3 className='text-sm font-medium text-gray-500 uppercase tracking-wider'>
+                  Tracked Blueprints
+                </h3>
+                <p className='mt-1 text-3xl md:text-4xl font-extrabold text-purple-800'>
+                  {formatBigNumber(topBlueprints.length)}
+                </p>
               </div>
             </section>
 
-            {/* Charts row: Daily line + Category pie - Forced to 2 columns minimum */}
-            <section className='grid grid-cols-2 gap-4 md:gap-6'>
-              <div className='w-full col-span-1'>
-                <div className='card shadow-2xl p-2 md:p-4 rounded-xl'>
-                  <div className='p-1 md:p-2'>
-                    <h3 className='font-bold text-base md:text-xl text-gray-700'>
-                      Daily Downloads (30 Days)
-                    </h3>
-                  </div>
-                  <div className='p-1 md:p-2' style={{ height: 300 }}>
-                    {daily.length === 0 ? (
-                      <div className='flex justify-center items-center h-full text-gray-500 text-sm'>
-                        No recent downloads to chart yet.
-                      </div>
-                    ) : (
-                      <ResponsiveContainer width='100%' height='100%'>
-                        <AreaChart
-                          data={daily}
-                          margin={{ top: 5, right: 0, left: -20, bottom: 0 }}
-                        >
-                          <defs>
-                            <linearGradient
-                              id='colorTotal'
-                              x1='0'
-                              y1='0'
-                              x2='0'
-                              y2='1'
-                            >
-                              <stop
-                                offset='5%'
-                                stopColor='#4f46e5'
-                                stopOpacity={0.8}
-                              />
-                              <stop
-                                offset='95%'
-                                stopColor='#4f46e5'
-                                stopOpacity={0}
-                              />
-                            </linearGradient>
-                          </defs>
-                          <CartesianGrid
-                            strokeDasharray='5 5'
-                            stroke='#e5e7eb'
-                          />
-                          <XAxis
-                            dataKey='label'
-                            stroke='#6b7280'
-                            tick={{ fontSize: 8 }} // Reduced tick font size
-                            padding={{ left: 10, right: 10 }}
-                          />
-                          <YAxis
-                            allowDecimals={false}
-                            stroke='#6b7280'
-                            tick={{ fontSize: 8 }}
-                          />
-                          <Tooltip content={<CustomTooltip />} />
-                          <Area
-                            type='monotone'
-                            dataKey='total'
-                            stroke='#4f46e5'
-                            strokeWidth={2} // Reduced stroke width
-                            fill='url(#colorTotal)'
-                            dot={{ fill: '#4f46e5', r: 3 }} // Reduced dot size
-                            activeDot={{ r: 5, strokeWidth: 1, stroke: '#fff' }}
-                          />
-                        </AreaChart>
-                      </ResponsiveContainer>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              <div className='w-full col-span-1'>
-                <div className='card shadow-2xl p-2 md:p-4 rounded-xl'>
-                  <div className='p-1 md:p-2'>
-                    <h3 className='font-bold text-base md:text-xl text-gray-700'>
-                      Category Proportion
-                    </h3>
-                  </div>
-                  <div className='p-1 md:p-2' style={{ height: 300 }}>
-                    {categoryData.length === 0 ? (
-                      <div className='flex justify-center items-center h-full text-gray-500 text-sm'>
-                        No data yet. Download some blueprints to see metrics
-                        here.
-                      </div>
-                    ) : (
-                      <ResponsiveContainer width='100%' height='100%'>
-                        <PieChart>
-                          <Pie
-                            data={categoryData}
-                            dataKey='value'
-                            nameKey='category'
-                            cx='50%'
-                            cy='50%'
-                            outerRadius={60} // Reduced outer radius
-                            fill='#8884d8'
-                            labelLine={false}
-                            label={({ percent }) =>
-                              `${(percent * 100).toFixed(0)}%`
-                            } // Simplified label, removed unused 'name'
-                          >
-                            {categoryData.map((entry, index) => (
-                              <Cell
-                                key={`cell-${index}`}
-                                fill={colors[index % colors.length]}
-                              />
-                            ))}
-                          </Pie>
-                          <Tooltip content={<CustomTooltip />} />
-                          <Legend
-                            layout='vertical' // Vertical layout works better when space is constrained vertically
-                            verticalAlign='middle'
-                            align='right'
-                            iconType='circle'
-                            wrapperStyle={{ fontSize: '10px' }} // Reduced legend font size
-                          />
-                        </PieChart>
-                      </ResponsiveContainer>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </section>
-
-            {/* Top Blueprints Radial Chart - Remains full width for detailed view */}
-            <section className='w-full'>
-              <div className='card shadow-2xl p-4 rounded-xl'>
-                <div className='p-2'>
-                  <h3 className='font-bold text-xl text-gray-700'>
-                    Top 10 Blueprints Ranking (Radial)
-                  </h3>
-                </div>
-                <div className='p-2' style={{ height: 400 }}>
-                  {top10Blueprints.length === 0 ? (
-                    <p className='text-gray-500'>
-                      No downloads recorded yet for individual blueprints.
-                    </p>
+            {/* Row 2: Daily Area Chart and Category Pie Chart */}
+            <section className='grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8'>
+              {/* Daily Downloads Area Chart */}
+              <div className='w-full shadow-2xl bg-white p-4 rounded-xl border border-gray-100'>
+                <h3 className='font-bold text-xl mb-4 text-gray-800 border-b pb-2'>
+                  Daily Downloads (Last 30 Days)
+                </h3>
+                <div style={{ height: 350 }}>
+                  {daily.length === 0 ? (
+                    <div className='flex justify-center items-center h-full text-gray-500 text-base'>
+                      No recent download data available.
+                    </div>
                   ) : (
                     <ResponsiveContainer width='100%' height='100%'>
-                      <RadialBarChart
-                        innerRadius='10%'
-                        outerRadius='100%'
-                        data={top10Blueprints}
-                        startAngle={90}
-                        endAngle={-270}
-                        barSize={15}
+                      <AreaChart
+                        data={daily}
+                        margin={{ top: 10, right: 0, left: -10, bottom: 0 }}
                       >
-                        <RadialBar
-                          minAngle={15}
-                          label={{
-                            position: 'insideStart',
-                            fill: '#fff',
-                            fontSize: 10,
-                            offset: 5,
-                          }}
-                          background
-                          clockWise
-                          dataKey='value'
+                        <defs>
+                          <linearGradient
+                            id='colorTotal'
+                            x1='0'
+                            y1='0'
+                            x2='0'
+                            y2='1'
+                          >
+                            <stop
+                              offset='5%'
+                              stopColor='#4f46e5'
+                              stopOpacity={0.8}
+                            />
+                            <stop
+                              offset='95%'
+                              stopColor='#4f46e5'
+                              stopOpacity={0}
+                            />
+                          </linearGradient>
+                        </defs>
+                        <CartesianGrid
+                          strokeDasharray='3 3'
+                          stroke='#e5e7eb'
+                          vertical={false}
+                        />
+                        <XAxis
+                          dataKey='label'
+                          stroke='#9ca3af'
+                          tick={{ fontSize: 10 }}
+                          padding={{ left: 10, right: 10 }}
+                        />
+                        <YAxis
+                          allowDecimals={false}
+                          stroke='#9ca3af'
+                          tick={{ fontSize: 10 }}
+                          tickFormatter={formatBigNumber}
                         />
                         <Tooltip content={<CustomTooltip />} />
-                        <Legend
-                          iconSize={10}
-                          layout='vertical'
-                          verticalAlign='middle'
-                          align='left'
-                          wrapperStyle={{ fontSize: '12px' }}
-                          formatter={(_, entry) => (
-                            <span
-                              className='text-xs text-gray-600'
-                              title={entry.payload.name}
-                            >
-                              {`${entry.payload.name} (${formatBigNumber(entry.payload.value)})`}
-                            </span>
-                          )}
+                        <Area
+                          type='monotone'
+                          dataKey='total'
+                          stroke='#4f46e5'
+                          strokeWidth={3}
+                          fill='url(#colorTotal)'
+                          dot={false}
+                          activeDot={{
+                            r: 6,
+                            fill: '#fff',
+                            stroke: '#4f46e5',
+                            strokeWidth: 2,
+                          }}
                         />
-                        <text
-                          x={'50%'}
-                          y={20}
-                          fill='#666'
-                          textAnchor='middle'
-                          dominantBaseline='hanging'
-                        >
-                          Top 10 Blueprint Rankings (Max:{' '}
-                          {formatBigNumber(maxRadialValue)})
-                        </text>
-                      </RadialBarChart>
+                      </AreaChart>
                     </ResponsiveContainer>
                   )}
                 </div>
+              </div>
+
+              {/* Category Proportion Pie Chart */}
+              <div className='w-full shadow-2xl bg-white p-4 rounded-xl border border-gray-100'>
+                <h3 className='font-bold text-xl mb-4 text-gray-800 border-b pb-2'>
+                  Download Distribution by Category
+                </h3>
+                <div style={{ height: 350 }}>
+                  {categoryData.length === 0 ? (
+                    <div className='flex justify-center items-center h-full text-gray-500 text-base'>
+                      No category data available.
+                    </div>
+                  ) : (
+                    <ResponsiveContainer width='100%' height='100%'>
+                      <PieChart>
+                        <Pie
+                          data={categoryData}
+                          dataKey='value'
+                          nameKey='category'
+                          cx='50%'
+                          cy='50%'
+                          innerRadius={60}
+                          outerRadius={90}
+                          paddingAngle={3}
+                          fill='#8884d8'
+                          labelLine={false}
+                          label={({ name, percent }) =>
+                            `${name}: ${(percent * 100).toFixed(1)}%`
+                          }
+                        >
+                          {categoryData.map((entry, index) => (
+                            <Cell
+                              key={`cell-${index}`}
+                              // Use the D3 scale for consistent, high-contrast colors
+                              fill={d3ColorScale(entry.category)}
+                              stroke='#fff'
+                            />
+                          ))}
+                        </Pie>
+                        <Tooltip content={<CustomTooltip />} />
+                        <Legend
+                          layout='vertical'
+                          verticalAlign='middle'
+                          align='right'
+                          iconType='circle'
+                          wrapperStyle={{ fontSize: '12px' }}
+                        />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  )}
+                </div>
+              </div>
+            </section>
+
+            {/* Row 3: Top 10 Blueprints (Horizontal Bar Chart) */}
+            <section className='w-full shadow-2xl bg-white p-4 rounded-xl border border-gray-100'>
+              <h3 className='font-bold text-xl mb-4 text-gray-800 border-b pb-2'>
+                Top 10 Blueprint Downloads (Ranking)
+              </h3>
+              <div style={{ height: Math.max(400, top10BarData.length * 40) }}>
+                {top10BarData.length === 0 ? (
+                  <p className='text-gray-500 text-base p-4'>
+                    No individual blueprint download data recorded yet.
+                  </p>
+                ) : (
+                  <ResponsiveContainer width='100%' height='100%'>
+                    <BarChart
+                      data={top10BarData}
+                      layout='vertical'
+                      margin={{ top: 20, right: 30, left: 100, bottom: 5 }} // Increased left margin for long labels
+                    >
+                      <CartesianGrid strokeDasharray='3 3' vertical={false} />
+                      <XAxis
+                        type='number'
+                        stroke='#9ca3af'
+                        tick={{ fontSize: 10 }}
+                        tickFormatter={formatBigNumber}
+                      />
+                      <YAxis
+                        dataKey='name'
+                        type='category'
+                        width={100} // Increased Y-Axis width for long labels
+                        tickLine={false}
+                        axisLine={false}
+                        tick={<CustomYAxisTick />} // Use custom tick for truncation/title hover
+                      />
+                      <Tooltip content={<CustomTooltip />} />
+                      <Bar
+                        dataKey='value'
+                        fill={d3ColorScale('top10')} // Assign a consistent color for all bars
+                        barSize={20}
+                        radius={[10, 10, 0, 0]} // Rounded bars
+                      />
+                    </BarChart>
+                  </ResponsiveContainer>
+                )}
               </div>
             </section>
           </div>
