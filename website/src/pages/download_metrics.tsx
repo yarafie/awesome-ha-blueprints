@@ -1,45 +1,45 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Layout from '@theme/Layout'
-
 import {
-  Area,
   AreaChart,
-  Bar,
-  BarChart,
-  CartesianGrid,
-  Cell,
-  Legend,
-  Pie,
-  PieChart,
-  ResponsiveContainer,
-  Tooltip,
+  Area,
   XAxis,
   YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+  BarChart,
+  Bar,
+  Legend,
 } from 'recharts'
 
+// --- D3 Imports for Professional Coloring ---
 import { scaleOrdinal } from 'd3-scale'
 import { schemeCategory10 } from 'd3-scale-chromatic'
 
-interface CategoryMetric {
-  blueprint_category: string
-  total: string
-}
-
-interface TopBlueprintMetric {
+// --- Type Definitions based on SQL RPC Functions ---
+type TotalMetric = { total: string }
+type CategoryMetric = { blueprint_category: string; total: string }
+type TopBlueprintMetric = {
   blueprint_category: string
   blueprint_id: string
   total: string
 }
-
-interface DailyMetric {
-  day: string
+type DailyMetric = {
+  day: string // ISO date string from RPC
   total: string
 }
 
-interface ChartPoint {
-  label: string
+type ChartPoint = {
+  label: string // e.g. "Nov 18"
   total: number
 }
+
+// Define the shape of data for charts
+type ChartData = ChartPoint & { name: string; value: number; category?: string }
 
 interface MetricsState {
   loading: boolean
@@ -50,352 +50,488 @@ interface MetricsState {
   daily: ChartPoint[]
 }
 
-/* Helpers ------------------------------------------------------- */
-
-const formatBigNumber = (n: number): string => n.toLocaleString()
-
-const formatDateLabel = (iso: string): string =>
-  new Date(iso).toLocaleDateString(undefined, {
-    month: 'short',
-    day: 'numeric',
-  })
-
-const prepareDailyData = (rows: DailyMetric[]): ChartPoint[] =>
-  rows
-    .map((row) => ({
-      label: formatDateLabel(row.day),
-      total: Number(row.total),
-      ts: new Date(row.day).getTime(),
-    }))
-    .sort((a, b) => a.ts - b.ts)
-
-const prepareCategoryData = (rows: CategoryMetric[]) =>
-  rows.map((r) => ({
-    name: r.blueprint_category,
-    category: r.blueprint_category,
-    value: Number(r.total),
-  }))
-
-const prepareTopBlueprints = (rows: TopBlueprintMetric[]) =>
-  rows
-    .slice(0, 10)
-    .map((bp) => ({
-      name:
-        bp.blueprint_id.length > 40
-          ? `${bp.blueprint_id.slice(0, 37)}…`
-          : bp.blueprint_id,
-      value: Number(bp.total),
-    }))
-    .reverse()
-
-/* Tooltip -------------------------------------------------------- */
-
-const CustomTooltip = ({ active, payload, label }: any) => {
-  if (!active || !payload || payload.length === 0) return null
-  const entry = payload[0].payload
-
-  return (
-    <div
-      style={{
-        padding: 10,
-        backgroundColor: 'var(--chart-tooltip-bg)',
-        border: '1px solid var(--chart-tooltip-border)',
-        borderRadius: 6,
-        color: 'var(--chart-tooltip-text)',
-      }}
-    >
-      <strong>{entry.name || label}</strong>
-      <p style={{ margin: 0 }}>Downloads: {formatBigNumber(entry.value)}</p>
-    </div>
-  )
-}
-
-/* Cards ---------------------------------------------------------- */
-
-const Card = ({
-  children,
-  style,
-}: {
-  children: React.ReactNode
-  style?: React.CSSProperties
-}): JSX.Element => (
-  <div
-    style={{
-      borderRadius: 8,
-      overflow: 'hidden',
-      border: '1px solid var(--chart-border)',
-      backgroundColor: 'var(--chart-card-bg)',
-      transition: 'var(--chart-transition)',
-      ...style,
-    }}
-  >
-    {children}
-  </div>
-)
-
-const CardHeader = ({
-  color,
-  children,
-}: {
-  color: string
-  children: React.ReactNode
-}) => (
-  <div
-    style={{
-      backgroundColor: color,
-      color: '#ffffff',
-      padding: '12px 16px',
-      textTransform: 'uppercase',
-      fontWeight: 'bold',
-      fontSize: 14,
-      letterSpacing: '0.05em',
-    }}
-  >
-    {children}
-  </div>
-)
-
-const CardBody = ({ children }: { children: React.ReactNode }) => (
-  <div style={{ padding: 24, textAlign: 'center' }}>{children}</div>
-)
-
-/* Main Component -------------------------------------------------- */
-
-const DownloadMetricsPage = (): JSX.Element => {
+const DownloadMetricsPage: React.FC = () => {
+  // --- STATE MANAGEMENT ---
   const [metrics, setMetrics] = useState<MetricsState>({
     loading: true,
+    error: undefined,
     totalDownloads: 0,
     byCategory: [],
     topBlueprints: [],
     daily: [],
   })
 
-  const colorScale = useMemo(() => scaleOrdinal(schemeCategory10), [])
+  // State to track current theme (dark/light)
+  const [isDark, setIsDark] = useState(false)
 
-  /* Data Fetching ------------------------------------------------ */
+  const { loading, error, totalDownloads, byCategory, topBlueprints, daily } =
+    metrics
 
+  // Initialize D3 color scale
+  const d3ColorScale = scaleOrdinal(schemeCategory10)
+
+  // --- THEME DETECTION LOGIC ---
   useEffect(() => {
-    const env = window as any
-    const supabaseUrl = env?.env?.SUPABASE_URL
-    const supabaseKey = env?.env?.SUPABASE_ANON_KEY
+    // Function to check if Docusaurus is in dark mode
+    const checkDarkMode = () => {
+      const theme = document.documentElement.getAttribute('data-theme')
+      setIsDark(theme === 'dark')
+    }
 
-    if (!supabaseUrl || !supabaseKey) {
-      const mockDaily: DailyMetric[] = Array.from({ length: 7 }).map((_, i) => {
-        const d = new Date(Date.now() - (6 - i) * 86400000)
-        return { day: d.toISOString().split('T')[0], total: String(12 + i * 4) }
+    // Check immediately on mount
+    checkDarkMode()
+
+    // Set up an observer to watch for theme changes (e.g. user clicks toggle)
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (
+          mutation.type === 'attributes' &&
+          mutation.attributeName === 'data-theme'
+        ) {
+          checkDarkMode()
+        }
+      })
+    })
+
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['data-theme'],
+    })
+
+    // Cleanup observer on unmount
+    return () => observer.disconnect()
+  }, [])
+
+  // --- DATA FETCHING LOGIC ---
+  useEffect(() => {
+    const supabaseUrl = (window as any)?.env?.SUPABASE_URL
+    const supabaseAnonKey = (window as any)?.env?.SUPABASE_ANON_KEY
+
+    // Helper function to format a Date object into a short label (e.g., "Nov 18")
+    const formatDateLabel = (date: Date): string =>
+      date.toLocaleDateString(undefined, {
+        month: 'short',
+        day: 'numeric',
       })
 
-      setMetrics({
+    // Helper function to format Date object into YYYY-MM-DD string for API lookup
+    const formatApiDate = (date: Date): string =>
+      date.toISOString().split('T')[0]
+
+    // Function to create a full 15-day range and fill missing days with 0 downloads
+    const fillMissingDailyData = (
+      dailyData: DailyMetric[],
+      days: number = 15,
+    ): ChartPoint[] => {
+      const dailyMap = new Map(
+        dailyData.map((item) => [item.day, Number(item.total)]),
+      )
+      const fullDailyData: ChartPoint[] = []
+      const today = new Date()
+
+      for (let i = days - 1; i >= 0; i--) {
+        const d = new Date(today)
+        d.setDate(today.getDate() - i) // Go back i days
+
+        const apiDate = formatApiDate(d)
+        const total = dailyMap.get(apiDate) || 0 // Default to 0 if key is missing
+
+        fullDailyData.push({
+          label: formatDateLabel(d),
+          total: total,
+        })
+      }
+      return fullDailyData
+    }
+
+    if (!supabaseUrl || !supabaseAnonKey) {
+      // Use mock data for immediate feedback if env vars are missing
+      const mockTotalDownloads = 1234567
+      const mockByCategory: CategoryMetric[] = [
+        { blueprint_category: 'controllers', total: '900000' },
+        { blueprint_category: 'hooks', total: '280000' },
+        { blueprint_category: 'templates', total: '54000' },
+      ]
+      const mockTopBlueprints: TopBlueprintMetric[] = [
+        {
+          blueprint_category: 'hooks',
+          blueprint_id: 'thertetsat_controlv2_30_days_ago',
+          total: '50000',
+        },
+        {
+          blueprint_category: 'hooks',
+          blueprint_id: 'rgb_light_cycle',
+          total: '45000',
+        },
+        {
+          blueprint_category: 'controllers',
+          blueprint_id: 'motion_automation',
+          total: '40000',
+        },
+      ]
+      const mockDaily: DailyMetric[] = [
+        // Using only a subset of days to test the filler logic
+        {
+          day: formatApiDate(new Date(Date.now() - 10 * 24 * 60 * 60 * 1000)),
+          total: '10',
+        },
+        {
+          day: formatApiDate(new Date(Date.now() - 5 * 24 * 60 * 60 * 1000)),
+          total: '20',
+        },
+        { day: formatApiDate(new Date()), total: '22' },
+      ]
+
+      const dailyParsed: ChartPoint[] = fillMissingDailyData(mockDaily, 15)
+
+      setMetrics((prev) => ({
+        ...prev,
         loading: false,
-        error: 'Supabase variables missing — mock data enabled.',
-        totalDownloads: 420000,
-        byCategory: [
-          { blueprint_category: 'controllers', total: '232000' },
-          { blueprint_category: 'hooks', total: '140000' },
-          { blueprint_category: 'templates', total: '48000' },
-        ],
-        topBlueprints: [
-          {
-            blueprint_category: 'controllers',
-            blueprint_id: 'motion_automation',
-            total: '40000',
-          },
-          {
-            blueprint_category: 'hooks',
-            blueprint_id: 'rgb_light_cycle',
-            total: '35000',
-          },
-        ],
-        daily: prepareDailyData(mockDaily),
-      })
+        error: 'Supabase variables missing. Showing mock data.',
+        totalDownloads: mockTotalDownloads,
+        byCategory: mockByCategory,
+        topBlueprints: mockTopBlueprints,
+        daily: dailyParsed,
+      }))
       return
     }
 
     const headers = {
       'Content-Type': 'application/json',
-      apikey: supabaseKey,
-      Authorization: `Bearer ${supabaseKey}`,
+      apikey: supabaseAnonKey,
+      Authorization: 'Bearer ' + supabaseAnonKey,
     }
 
-    const rpc = async (fn: string, body = {}) => {
-      const res = await fetch(`${supabaseUrl}/rest/v1/rpc/${fn}`, {
-        method: 'POST',
-        headers,
-        body: JSON.stringify(body),
-      })
-      if (!res.ok) throw new Error(await res.text())
-      return res.json()
+    const fetchWithRetry = async (
+      url: string,
+      options: RequestInit,
+      retries = 3,
+    ) => {
+      for (let i = 0; i < retries; i++) {
+        try {
+          const response = await fetch(url, options)
+          if (response.ok) {
+            return response
+          } else if (response.status === 429 && i < retries - 1) {
+            const delay = Math.pow(2, i) * 1000 + Math.random() * 1000
+            await new Promise((resolve) => setTimeout(resolve, delay))
+            continue
+          } else {
+            const text = await response.text()
+            throw new Error(
+              `HTTP error! Status: ${response.status}. Response: ${text.substring(
+                0,
+                100,
+              )}...`,
+            )
+          }
+        } catch (error: any) {
+          if (i === retries - 1) throw error
+        }
+      }
     }
 
-    const load = async () => {
+    async function fetchMetrics() {
       try {
-        const [total, categories, top, daily] = await Promise.all([
-          rpc('get_total_downloads'),
-          rpc('get_downloads_by_category'),
-          rpc('get_top_blueprints'),
-          rpc('get_daily_downloads', { p_days: 30 }),
+        const [totalRes, catRes, topRes, dailyRes] = await Promise.all([
+          fetchWithRetry(`${supabaseUrl}/rest/v1/rpc/get_total_downloads`, {
+            method: 'POST',
+            headers,
+            body: JSON.stringify({}),
+          }),
+          fetchWithRetry(
+            `${supabaseUrl}/rest/v1/rpc/get_downloads_by_category`,
+            {
+              method: 'POST',
+              headers,
+              body: JSON.stringify({}),
+            },
+          ),
+          fetchWithRetry(`${supabaseUrl}/rest/v1/rpc/get_top_blueprints`, {
+            method: 'POST',
+            headers,
+            body: JSON.stringify({}),
+          }),
+          fetchWithRetry(`${supabaseUrl}/rest/v1/rpc/get_daily_downloads`, {
+            method: 'POST',
+            headers,
+            body: JSON.stringify({ p_days: 15 }), // 15 days of daily data
+          }),
         ])
 
-        const totalDownloads =
-          Array.isArray(total) && total.length > 0
-            ? Number(total[0].total)
-            : Number(total)
+        const totalJson: TotalMetric[] | number = await totalRes.json()
+        const catJson: CategoryMetric[] = await catRes.json()
+        const topJson: TopBlueprintMetric[] = await topRes.json()
+        const dailyJson: DailyMetric[] = await dailyRes.json()
+
+        let totalDownloads = 0
+        if (Array.isArray(totalJson) && totalJson.length > 0) {
+          totalDownloads = Number(totalJson[0].total)
+        } else if (typeof totalJson === 'number') {
+          totalDownloads = totalJson
+        }
+
+        const byCategoryParsed: CategoryMetric[] = Array.isArray(catJson)
+          ? catJson
+          : []
+        const topBlueprintsParsed: TopBlueprintMetric[] = Array.isArray(topJson)
+          ? topJson
+          : []
+
+        // Fill in missing days with 0
+        const dailyParsed: ChartPoint[] = fillMissingDailyData(
+          Array.isArray(dailyJson) ? dailyJson : [],
+          15,
+        )
 
         setMetrics({
           loading: false,
+          error: undefined,
           totalDownloads,
-          byCategory: categories,
-          topBlueprints: top,
-          daily: prepareDailyData(daily),
+          byCategory: byCategoryParsed, // Kept for Pie Chart
+          topBlueprints: topBlueprintsParsed, // Kept in descending order
+          daily: dailyParsed,
         })
       } catch (err: any) {
+        console.error('Error fetching download metrics', err)
         setMetrics((prev) => ({
           ...prev,
           loading: false,
-          error: err.message || 'Error loading metrics.',
+          error: `Failed to load metrics from Supabase. Error: ${
+            err.message || 'Unknown error.'
+          }`,
         }))
       }
     }
 
-    load()
+    fetchMetrics()
   }, [])
 
-  const { loading, error, totalDownloads, byCategory, topBlueprints, daily } =
-    metrics
+  // --- Data Formatting Helpers ---
+  const formatBigNumber = (num: number) => {
+    return num.toLocaleString()
+  }
 
-  const categoryData = useMemo(
-    () => prepareCategoryData(byCategory),
-    [byCategory],
-  )
-  const barData = useMemo(
-    () => prepareTopBlueprints(topBlueprints),
-    [topBlueprints],
-  )
+  // Prepare Chart Data
+  const categoryData: ChartData[] = byCategory.map((item) => ({
+    name: item.blueprint_category,
+    category: item.blueprint_category,
+    value: Number(item.total),
+    total: Number(item.total),
+    label: item.blueprint_category,
+  }))
 
-  /* Render -------------------------------------------------------- */
+  // Top 10 data is in descending order (highest to lowest)
+  const top10BarData = topBlueprints.slice(0, 10).map((bp) => ({
+    id: bp.blueprint_id,
+    name:
+      bp.blueprint_id.length > 40
+        ? bp.blueprint_id.substring(0, 37) + '...'
+        : bp.blueprint_id,
+    value: Number(bp.total),
+  }))
+
+  // --- Dynamic Theme Colors ---
+  // Define color sets for Light vs Dark mode
+  const THEME = {
+    bg: isDark ? '#1b1b1d' : '#f9fafb', // Main container BG
+    cardBg: isDark ? '#242526' : '#ffffff', // Card BG
+    textPrimary: isDark ? '#e5e7eb' : '#1f2937', // Main headings
+    textSecondary: isDark ? '#9ca3af' : '#6b7280', // Axis labels
+    gridLine: isDark ? '#444' : '#e5e7eb', // Chart grid lines
+    tooltipBg: isDark ? '#242526' : '#ffffff', // Tooltip BG
+    tooltipBorder: isDark ? '#444' : '#ccc', // Tooltip Border
+    tooltipText: isDark ? '#e5e7eb' : '#333', // Tooltip Text
+  }
+
+  // --- Custom Recharts Components ---
+
+  const CustomTooltip = ({ active, payload, label }: any) => {
+    if (active && payload && payload.length) {
+      const data = payload[0].payload
+      return (
+        <div
+          style={{
+            padding: '10px',
+            backgroundColor: THEME.tooltipBg,
+            border: `1px solid ${THEME.tooltipBorder}`,
+            borderRadius: '5px',
+            color: THEME.tooltipText,
+          }}
+        >
+          <p style={{ fontWeight: 'bold', marginBottom: '5px' }}>
+            {data.name || data.id || label}
+          </p>
+          <p>Downloads: {formatBigNumber(data.value || payload[0].value)}</p>
+        </div>
+      )
+    }
+    return null
+  }
+
+  const CustomYAxisTick = (props: any) => {
+    const { x, y, payload } = props
+    return (
+      <g transform={`translate(${x},${y})`}>
+        <text
+          x={0}
+          y={0}
+          dy={5}
+          textAnchor='end'
+          fill={THEME.textSecondary}
+          fontSize={10}
+          title={payload.value}
+        >
+          {payload.value}
+        </text>
+      </g>
+    )
+  }
+
+  // --- STYLES (Inline for guaranteed layout) ---
+
+  // New style for the two KPI cards
+  const gridStyleKPIs: React.CSSProperties = {
+    display: 'grid',
+    gridTemplateColumns: '1fr 1fr', // Force 2 columns for KPIs
+    gap: '16px',
+    marginBottom: '32px',
+    width: '100%',
+  }
+
+  // Style for the chart row
+  const gridStyle2Col: React.CSSProperties = {
+    display: 'grid',
+    gridTemplateColumns: '1fr 1fr', // Force 2 columns for charts
+    gap: '24px',
+    marginBottom: '32px',
+    width: '100%',
+  }
+
+  const cardStyle: React.CSSProperties = {
+    backgroundColor: THEME.cardBg,
+    borderRadius: '8px',
+    boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+    overflow: 'hidden',
+    color: THEME.textPrimary,
+    minWidth: '0',
+    border: isDark ? '1px solid #333' : 'none', // Subtle border in dark mode
+  }
+
+  const cardHeaderStyle = (bgColor: string): React.CSSProperties => ({
+    backgroundColor: bgColor,
+    color: 'white',
+    padding: '12px',
+    fontWeight: 'bold',
+    fontSize: '14px',
+    textTransform: 'uppercase',
+    letterSpacing: '0.05em',
+  })
+
+  const cardBodyStyle: React.CSSProperties = {
+    padding: '24px',
+    textAlign: 'center',
+  }
+
+  const chartHeaderStyle: React.CSSProperties = {
+    padding: '16px',
+    borderBottom: `1px solid ${THEME.gridLine}`,
+    margin: 0,
+    fontSize: '1.25rem',
+    color: THEME.textPrimary,
+    fontWeight: 'bold',
+  }
 
   return (
     <Layout
       title='Blueprint Download Metrics'
-      description='Download metrics overview'
+      description='Enhanced Metrics Dashboard'
     >
       <main
         className='container margin-vert--lg'
         style={{
-          backgroundColor: 'var(--chart-bg)',
-          padding: '2rem',
+          backgroundColor: THEME.bg,
+          transition: 'background-color 0.3s ease',
           minHeight: '100vh',
-          color: 'var(--chart-text-primary)',
-          transition: 'var(--chart-transition)',
+          padding: '2rem',
         }}
       >
         <h1
-          style={{ textAlign: 'center', marginBottom: 32, fontWeight: 'bold' }}
+          style={{
+            textAlign: 'center',
+            marginBottom: '32px',
+            fontSize: '2rem',
+            fontWeight: 'bold',
+            color: THEME.textPrimary,
+          }}
         >
           Blueprint Metrics Dashboard
         </h1>
 
-        {loading && <p style={{ textAlign: 'center' }}>Loading metrics...</p>}
+        {loading && (
+          <div style={{ textAlign: 'center', color: THEME.textPrimary }}>
+            Loading metrics...
+          </div>
+        )}
 
         {!loading && error && (
-          <div className='alert alert--danger'>
-            <strong>Error loading metrics: </strong>
-            {error}
+          <div className='alert alert--danger' role='alert'>
+            <h4 className='alert__heading'>Error loading metrics</h4>
+            <p>{error}</p>
           </div>
         )}
 
         {!loading && !error && (
-          <>
-            {/* KPI ROW */}
-            <section
-              style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(3, 1fr)',
-                gap: 16,
-              }}
-            >
-              <Card>
-                <CardHeader color='var(--chart-accent-1)'>
-                  Total Downloads
-                </CardHeader>
-                <CardBody>
+          <div style={{ width: '100%', overflowX: 'auto' }}>
+            {/* 1. TOP ROW: 2 KPI CARDS (using gridStyleKPIs) */}
+            <section style={gridStyleKPIs}>
+              <div style={cardStyle}>
+                <div style={cardHeaderStyle('#4f46e5')}>Total Downloads</div>
+                <div style={cardBodyStyle}>
                   <p
                     style={{
                       fontSize: '2.5rem',
-                      fontWeight: 900,
-                      color: 'var(--chart-accent-1)',
+                      fontWeight: '900',
+                      color: '#4f46e5',
                       margin: 0,
                     }}
                   >
                     {formatBigNumber(totalDownloads)}
                   </p>
-                </CardBody>
-              </Card>
-
-              <Card>
-                <CardHeader color='var(--chart-accent-2)'>
-                  Unique Categories
-                </CardHeader>
-                <CardBody>
+                </div>
+              </div>
+              {/* REMOVED: Unique Categories Card */}
+              <div style={cardStyle}>
+                <div style={cardHeaderStyle('#9333ea')}>Tracked Blueprints</div>
+                <div style={cardBodyStyle}>
                   <p
                     style={{
                       fontSize: '2.5rem',
-                      fontWeight: 900,
-                      color: 'var(--chart-accent-2)',
-                      margin: 0,
-                    }}
-                  >
-                    {formatBigNumber(byCategory.length)}
-                  </p>
-                </CardBody>
-              </Card>
-
-              <Card>
-                <CardHeader color='var(--chart-accent-3)'>
-                  Tracked Blueprints
-                </CardHeader>
-                <CardBody>
-                  <p
-                    style={{
-                      fontSize: '2.5rem',
-                      fontWeight: 900,
-                      color: 'var(--chart-accent-3)',
+                      fontWeight: '900',
+                      color: '#9333ea',
                       margin: 0,
                     }}
                   >
                     {formatBigNumber(topBlueprints.length)}
                   </p>
-                </CardBody>
-              </Card>
+                </div>
+              </div>
             </section>
 
-            {/* CHART ROW */}
-            <section
-              style={{
-                display: 'grid',
-                gridTemplateColumns: '1fr 1fr',
-                gap: 24,
-                marginTop: 32,
-              }}
-            >
+            {/* 2. MIDDLE ROW: 2 CHARTS (using gridStyle2Col) */}
+            <section style={gridStyle2Col}>
               {/* Daily Downloads */}
-              <Card>
-                <div
-                  style={{
-                    padding: '16px 16px',
-                    borderBottom: '1px solid var(--chart-border)',
-                    fontWeight: 'bold',
-                  }}
-                >
-                  Daily Downloads
-                </div>
-
-                <div style={{ height: 350, padding: 10 }}>
-                  <ResponsiveContainer>
-                    <AreaChart data={daily}>
+              <div style={cardStyle}>
+                <h3 style={chartHeaderStyle}>Daily Downloads (Last 15 Days)</h3>
+                <div style={{ height: '350px', padding: '10px' }}>
+                  <ResponsiveContainer width='100%' height='100%'>
+                    <AreaChart
+                      data={daily}
+                      margin={{ top: 10, right: 10, left: -10, bottom: 0 }}
+                    >
                       <defs>
                         <linearGradient
-                          id='areaGradient'
+                          id='colorTotal'
                           x1='0'
                           y1='0'
                           x2='0'
@@ -403,171 +539,140 @@ const DownloadMetricsPage = (): JSX.Element => {
                         >
                           <stop
                             offset='5%'
-                            stopColor='var(--chart-accent-1)'
+                            stopColor='#4f46e5'
                             stopOpacity={0.8}
                           />
                           <stop
                             offset='95%'
-                            stopColor='var(--chart-accent-1)'
+                            stopColor='#4f46e5'
                             stopOpacity={0}
                           />
                         </linearGradient>
                       </defs>
-
                       <CartesianGrid
-                        stroke='var(--chart-border)'
                         strokeDasharray='3 3'
+                        stroke={THEME.gridLine}
+                        vertical={false}
                       />
-
                       <XAxis
                         dataKey='label'
-                        stroke='var(--chart-text-secondary)'
-                        tick={{
-                          fill: 'var(--chart-text-secondary)',
-                          fontSize: 10,
-                        }}
+                        stroke={THEME.textSecondary}
+                        tick={{ fontSize: 10, fill: THEME.textSecondary }}
                       />
-
                       <YAxis
-                        stroke='var(--chart-text-secondary)'
-                        tick={{
-                          fill: 'var(--chart-text-secondary)',
-                          fontSize: 10,
-                        }}
+                        allowDecimals={false}
+                        stroke={THEME.textSecondary}
+                        tick={{ fontSize: 10, fill: THEME.textSecondary }}
                         tickFormatter={formatBigNumber}
                       />
-
                       <Tooltip content={<CustomTooltip />} />
-
                       <Area
                         type='monotone'
                         dataKey='total'
-                        stroke='var(--chart-accent-1)'
+                        stroke='#4f46e5'
                         strokeWidth={3}
-                        fill='url(#areaGradient)'
-                        isAnimationActive={false}
+                        fill='url(#colorTotal)'
                       />
                     </AreaChart>
                   </ResponsiveContainer>
                 </div>
-              </Card>
+              </div>
 
-              {/* Pie */}
-              <Card>
-                <div
-                  style={{
-                    padding: '16px 16px',
-                    borderBottom: '1px solid var(--chart-border)',
-                    fontWeight: 'bold',
-                  }}
-                >
-                  Category Distribution
-                </div>
-
-                <div style={{ height: 350, padding: 10 }}>
-                  <ResponsiveContainer>
+              {/* Pie Chart (Category Distribution) */}
+              <div style={cardStyle}>
+                <h3 style={chartHeaderStyle}>Category Distribution</h3>
+                <div style={{ height: '350px', padding: '10px' }}>
+                  <ResponsiveContainer width='100%' height='100%'>
                     <PieChart>
                       <Pie
                         data={categoryData}
                         dataKey='value'
-                        nameKey='name'
+                        nameKey='category'
                         cx='50%'
                         cy='50%'
                         innerRadius={60}
                         outerRadius={90}
+                        paddingAngle={3}
+                        fill='#8884d8'
+                        labelLine={false}
                         label={({ percent }) =>
                           `${(percent * 100).toFixed(0)}%`
                         }
-                        labelLine={false}
-                        isAnimationActive={false}
                       >
-                        {categoryData.map((entry, i) => (
+                        {categoryData.map((entry, index) => (
                           <Cell
-                            key={i}
-                            fill={colorScale(entry.category)}
-                            stroke='var(--chart-pie-stroke)'
+                            key={`cell-${index}`}
+                            fill={d3ColorScale(entry.category)}
+                            stroke={isDark ? '#242526' : '#fff'}
                           />
                         ))}
                       </Pie>
                       <Tooltip content={<CustomTooltip />} />
-                      <Legend wrapperStyle={{ fontSize: 12 }} />
+                      <Legend
+                        iconType='circle'
+                        wrapperStyle={{
+                          fontSize: '12px',
+                          color: THEME.textPrimary,
+                        }}
+                      />
                     </PieChart>
                   </ResponsiveContainer>
                 </div>
-              </Card>
+              </div>
             </section>
 
-            {/* Top 10 */}
-            <section style={{ marginTop: 32 }}>
-              <Card>
-                <div
-                  style={{
-                    padding: '16px 16px',
-                    borderBottom: '1px solid var(--chart-border)',
-                    fontWeight: 'bold',
-                  }}
-                >
-                  Top 10 Blueprints
-                </div>
-
-                <div
-                  style={{
-                    height: Math.max(barData.length * 40, 400),
-                    padding: 10,
-                  }}
-                >
-                  <ResponsiveContainer>
-                    <BarChart
-                      data={barData}
-                      layout='vertical'
-                      margin={{ top: 5, right: 30, left: 100, bottom: 5 }}
-                    >
-                      <CartesianGrid
-                        stroke='var(--chart-border)'
-                        strokeDasharray='3 3'
-                      />
-
-                      <XAxis
-                        type='number'
-                        tickFormatter={formatBigNumber}
-                        stroke='var(--chart-text-secondary)'
-                        tick={{
-                          fill: 'var(--chart-text-secondary)',
-                          fontSize: 10,
-                        }}
-                      />
-
-                      <YAxis
-                        dataKey='name'
-                        type='category'
-                        width={100}
-                        tick={{
-                          fill: 'var(--chart-text-secondary)',
-                          fontSize: 12,
-                        }}
-                        axisLine={false}
-                        tickLine={false}
-                      />
-
-                      <Tooltip content={<CustomTooltip />} />
-
-                      <Bar
-                        dataKey='value'
-                        fill='var(--chart-accent-1)'
-                        barSize={20}
-                        radius={[0, 4, 4, 0]}
-                        isAnimationActive={false}
-                      />
-                    </BarChart>
-                  </ResponsiveContainer>
-                </div>
-              </Card>
+            {/* 3. BOTTOM ROW: 1 CHART */}
+            <section style={{ ...cardStyle, paddingBottom: '20px' }}>
+              <h3
+                style={{
+                  ...chartHeaderStyle,
+                  marginBottom: '20px',
+                  borderBottom: 'none',
+                }}
+              >
+                Top 10 Blueprints (Highest to Lowest)
+              </h3>
+              <div style={{ height: Math.max(400, top10BarData.length * 40) }}>
+                <ResponsiveContainer width='100%' height='100%'>
+                  <BarChart
+                    data={top10BarData}
+                    layout='vertical'
+                    margin={{ top: 5, right: 30, left: 100, bottom: 5 }}
+                  >
+                    <CartesianGrid
+                      strokeDasharray='3 3'
+                      horizontal={false}
+                      stroke={THEME.gridLine}
+                    />
+                    <XAxis
+                      type='number'
+                      stroke={THEME.textSecondary}
+                      tick={{ fontSize: 10, fill: THEME.textSecondary }}
+                      tickFormatter={formatBigNumber}
+                    />
+                    <YAxis
+                      dataKey='name'
+                      type='category'
+                      width={100}
+                      tickLine={false}
+                      axisLine={false}
+                      tick={<CustomYAxisTick />}
+                    />
+                    <Tooltip content={<CustomTooltip />} />
+                    <Bar
+                      dataKey='value'
+                      fill={d3ColorScale('top10')}
+                      barSize={20}
+                      radius={[0, 4, 4, 0]}
+                    />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
             </section>
-          </>
+          </div>
         )}
       </main>
     </Layout>
   )
 }
-
 export default DownloadMetricsPage
