@@ -154,7 +154,6 @@ const DownloadMetricsPage: React.FC = () => {
             return response
           } else if (response.status === 429 && i < retries - 1) {
             const delay = Math.pow(2, i) * 1000 + Math.random() * 1000
-            // console.debug(`Rate limit exceeded. Retrying in ${delay.toFixed(0)}ms...`);
             await new Promise((resolve) => setTimeout(resolve, delay))
             continue
           } else {
@@ -298,7 +297,6 @@ const DownloadMetricsPage: React.FC = () => {
         }))
         setError(undefined)
       } catch (err: any) {
-        // eslint-disable-next-line no-console
         console.error('Error fetching static metrics', err)
         setError(
           `Failed to load static metrics: ${err.message || 'Unknown error.'}`,
@@ -367,7 +365,6 @@ const DownloadMetricsPage: React.FC = () => {
 
           setMetricsData((prev) => ({ ...prev, daily: dailyParsed }))
         } catch (err: any) {
-          // eslint-disable-next-line no-console
           console.error('Error fetching daily metrics', err)
           setError(
             `Failed to load daily metrics: ${err.message || 'Unknown error.'}`,
@@ -633,20 +630,23 @@ const DownloadMetricsPage: React.FC = () => {
           style={{
             maxWidth: '1200px',
             margin: '0 auto',
+            // Added display: flex and justify-content: center here to center the table wrapper
+            // inside the max-width container when the container is wider than the table.
+            display: 'flex',
+            justifyContent: 'center',
           }}
         >
-          {/* 2. Overflow/Flex Container: Handles horizontal scrolling and centers the table element. */}
+          {/* 2. Overflow/Scroll Container: Handles horizontal scrolling if the table gets too wide. */}
           <div
             style={{
               overflowX: 'auto',
-              display: 'flex',
-              justifyContent: 'center',
               padding: '0 5px',
             }}
           >
             <table
               style={{
-                // Removed width: '100%' so the table shrinks to content size and can be centered by flex
+                // Removed explicit centering properties from the table itself.
+                // The parent flex container now handles centering.
                 minWidth: '600px', // Ensures table is readable on small screens (scrolls if needed)
                 tableLayout: 'auto', // Use auto layout to allow column widths to be flexible based on colgroup
                 borderCollapse: 'collapse',
