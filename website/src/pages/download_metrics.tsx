@@ -1,19 +1,19 @@
 import React, { useEffect, useState, useCallback, useMemo } from 'react'
 import Layout from '@theme/Layout'
 import {
-  Area,
   AreaChart,
-  Bar,
-  BarChart,
-  CartesianGrid,
-  Cell,
-  Legend,
-  Pie,
-  PieChart,
-  ResponsiveContainer,
-  Tooltip,
+  Area,
   XAxis,
   YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+  BarChart,
+  Bar,
+  Legend,
 } from 'recharts'
 
 // D3 Imports for Professional Coloring
@@ -223,11 +223,6 @@ const DownloadMetricsPage: React.FC = () => {
   useEffect(() => {
     const supabaseUrl = (window as any)?.env?.SUPABASE_URL
     const supabaseAnonKey = (window as any)?.env?.SUPABASE_ANON_KEY
-    const headers = {
-      'Content-Type': 'application/json',
-      apikey: supabaseAnonKey,
-      Authorization: 'Bearer ' + supabaseAnonKey,
-    }
 
     if (!supabaseUrl || !supabaseAnonKey) {
       // Mock data path for static metrics
@@ -283,6 +278,12 @@ const DownloadMetricsPage: React.FC = () => {
       setError('Supabase variables missing. Showing mock data.')
       setIsInitialLoading(false)
       return
+    }
+
+    const headers = {
+      'Content-Type': 'application/json',
+      apikey: supabaseAnonKey,
+      Authorization: 'Bearer ' + supabaseAnonKey,
     }
 
     async function fetchStaticMetrics() {
@@ -420,6 +421,7 @@ const DownloadMetricsPage: React.FC = () => {
       totalNum: Number(item.total),
     }))
 
+    // Sort in place (we cloned it above)
     sortableItems.sort((a, b) => {
       // Map 'total' sort key to 'totalNum' property for numeric sorting
       const key = sortConfig.key === 'total' ? 'totalNum' : sortConfig.key
@@ -475,6 +477,7 @@ const DownloadMetricsPage: React.FC = () => {
 
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
+      // Find the value based on the BarChart's dataKey ('Downloads') or AreaChart's dataKey ('total')
       const valueEntry = payload.find(
         (p: any) => p.dataKey === 'Downloads' || p.dataKey === 'total',
       )
@@ -574,6 +577,11 @@ const DownloadMetricsPage: React.FC = () => {
     letterSpacing: '0.05em',
   })
 
+  const cardBodyStyle: React.CSSProperties = {
+    padding: '24px',
+    textAlign: 'center',
+  }
+
   const chartHeaderStyle: React.CSSProperties = {
     padding: '16px',
     borderBottom: `1px solid ${THEME.gridLine}`,
@@ -671,7 +679,7 @@ const DownloadMetricsPage: React.FC = () => {
           Raw Data View ({data.length} Results)
         </h3>
 
-        {/* 1. Centering Container: Sets max-width and centers itself on the page. */}
+        {/* 1. Full Width Container: Sets max-width and centers itself on the page. */}
         <div
           style={{
             maxWidth: '1200px',
@@ -679,35 +687,32 @@ const DownloadMetricsPage: React.FC = () => {
             width: '100%',
           }}
         >
-          {/* 2. Overflow/Scroll Container: Handles horizontal scrolling AND centers the table if it is narrower than the container. */}
+          {/* 2. Overflow/Scroll Container: Handles horizontal scrolling. */}
           <div
             style={{
               overflowX: 'auto',
-              padding: '0 5px',
-              display: 'flex', // Crucial for centering
-              justifyContent: 'center', // Centers the content (the table)
+              // Removed centering flex properties to allow full horizontal stretch
             }}
           >
             <table
               style={{
-                // Removed width: '100%' so the table shrinks to content size and can be centered by flex
-                minWidth: '600px', // Ensures table is readable on small screens (scrolls if needed)
-                width: '100%', // Ensure table fills container
-                tableLayout: 'auto', // Use auto layout to allow column widths to be flexible based on colgroup
+                minWidth: '600px',
+                width: '100%', // MANDATORY FIX: Table now fills the card width
+                tableLayout: 'fixed', // MANDATORY FIX: Enforces strict column widths
                 borderCollapse: 'collapse',
                 fontSize: '14px',
-                margin: '0 auto', // Centering the table itself within the flex container
+                margin: '0',
               }}
             >
               {/* COLUMN WIDTH DEFINITIONS */}
               <colgroup>
-                {/* Blueprint ID: Takes the majority of space, allowing content-based wrapping/growth */}
+                {/* Blueprint ID (1st): Auto/flexible width to take remaining space */}
                 <col style={{ width: 'auto' }} />
-                {/* Category: Fixed for consistency, based on typical category string length */}
+                {/* Category (2nd): Fixed width */}
                 <col style={{ width: '150px' }} />
-                {/* Downloads: Fixed width for numbers, aligns right */}
+                {/* Downloads (3rd): Fixed width */}
                 <col style={{ width: '120px' }} />
-                {/* Last Downloaded: Fixed width */}
+                {/* Last Downloaded (4th): Fixed width */}
                 <col style={{ width: '180px' }} />
               </colgroup>
 
@@ -741,7 +746,7 @@ const DownloadMetricsPage: React.FC = () => {
                     onClick={() => requestSort('total')}
                     style={{
                       padding: '12px 8px',
-                      textAlign: 'center',
+                      textAlign: 'center', // CENTERED HEADER
                       cursor: 'pointer',
                       color: THEME.textPrimary,
                       borderBottom: `2px solid ${THEME.accentColor}`,
@@ -753,7 +758,7 @@ const DownloadMetricsPage: React.FC = () => {
                     onClick={() => requestSort('lastDownloaded')}
                     style={{
                       padding: '12px 8px',
-                      textAlign: 'right',
+                      textAlign: 'right', // RIGHT ALIGNED HEADER (PINNED RIGHT)
                       cursor: 'pointer',
                       color: THEME.textPrimary,
                       borderBottom: `2px solid ${THEME.accentColor}`,
@@ -777,6 +782,7 @@ const DownloadMetricsPage: React.FC = () => {
                             : '#fcfcfc',
                     }}
                   >
+                    {/* Blueprint ID (Fills remaining space) */}
                     <td
                       style={{
                         padding: '10px 8px',
@@ -787,6 +793,7 @@ const DownloadMetricsPage: React.FC = () => {
                     >
                       {item.blueprint_id}
                     </td>
+                    {/* Category */}
                     <td
                       style={{
                         padding: '10px 8px',
@@ -796,20 +803,22 @@ const DownloadMetricsPage: React.FC = () => {
                     >
                       {item.blueprint_category}
                     </td>
+                    {/* Downloads (Centered) */}
                     <td
                       style={{
                         padding: '10px 8px',
-                        textAlign: 'center',
+                        textAlign: 'center', // CENTERED DATA
                         fontWeight: 'bold',
                         color: THEME.textPrimary,
                       }}
                     >
                       {formatBigNumber(Number(item.total))}
                     </td>
+                    {/* Last Downloaded (Right aligned / Pinned) */}
                     <td
                       style={{
                         padding: '10px 8px',
-                        textAlign: 'right',
+                        textAlign: 'right', // RIGHT ALIGNED DATA
                         color: THEME.textPrimary,
                       }}
                     >
