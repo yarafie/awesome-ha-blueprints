@@ -677,7 +677,6 @@ const DownloadMetricsPage: React.FC = () => {
         <div
           style={{
             overflowX: 'auto',
-            // Removed centering flex properties to allow full horizontal stretch
           }}
         >
           <table
@@ -743,7 +742,7 @@ const DownloadMetricsPage: React.FC = () => {
                   onClick={() => requestSort('lastDownloaded')}
                   style={{
                     padding: '12px 8px',
-                    textAlign: 'right', // Header Aligned Right (Pinned)
+                    textAlign: 'left', // Header Aligned Left (Pinned)
                     cursor: 'pointer',
                     color: THEME.textPrimary,
                     borderBottom: `2px solid ${THEME.accentColor}`,
