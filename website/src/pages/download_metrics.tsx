@@ -682,7 +682,6 @@ const DownloadMetricsPage: React.FC = () => {
         >
           <table
             style={{
-              minWidth: '600px', // Ensures table is readable on small screens (scrolls if needed)
               width: '100%', // MANDATORY: Ensures table fills its container
               tableLayout: 'fixed', // MANDATORY: Enforces strict column widths
               borderCollapse: 'collapse',
