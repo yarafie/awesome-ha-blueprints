@@ -136,7 +136,8 @@ const DownloadMetricsPage: React.FC = () => {
         month: 'short',
         day: 'numeric',
       })
-    } catch (e) {
+    } catch {
+      // FIX: Removed unused variable 'e'
       return 'Invalid Date'
     }
   }
@@ -243,7 +244,7 @@ const DownloadMetricsPage: React.FC = () => {
           { blueprint_category: 'utilities', total: '50000' },
           { blueprint_category: 'layouts', total: '5000' },
         ],
-        // UPDATED MOCK DATA: Added last_downloaded field for the new column
+        // UPDATED MOCK DATA: Demonstrates the required 'last_downloaded' field
         topBlueprints: [
           {
             blueprint_category: 'hooks',
@@ -326,7 +327,9 @@ const DownloadMetricsPage: React.FC = () => {
           ...prev,
           totalDownloads: totalDownloads,
           byCategory: Array.isArray(catJson) ? catJson : [],
-          // NOTE: If the API doesn't return last_downloaded, it will be undefined, which is handled in the table.
+          // NOTE: The 'get_top_blueprints' RPC function in Supabase must be updated
+          // to include the 'last_downloaded' field in its SELECT statement
+          // for this data to be live. The frontend is prepared to receive it.
           topBlueprints: Array.isArray(topJson) ? topJson : [],
         }))
         setError(undefined)
