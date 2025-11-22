@@ -52,6 +52,13 @@ interface MetricsData {
   daily: ChartPoint[]
 }
 
+// Define data structure for the Bar Chart to explicitly use a display name
+type TopBlueprintBarData = {
+  id: string
+  name: string
+  Downloads: number // Use 'Downloads' as the data key for the Bar
+}
+
 // --- NEW TYPE FOR TABLE SORTING ---
 type SortKey = 'id' | 'category' | 'total'
 type SortDirection = 'asc' | 'desc'
@@ -427,20 +434,28 @@ const DownloadMetricsPage: React.FC = () => {
   }))
 
   // Use the *sorted* data for the bar chart (top 10 items)
-  const top10BarData = sortedBlueprints.slice(0, 10).map((bp) => ({
-    id: bp.blueprint_id,
-    name:
-      bp.blueprint_id.length > 40
-        ? bp.blueprint_id.substring(0, 37) + '...'
-        : bp.blueprint_id,
-    value: Number(bp.total),
-  }))
+  const top10BarData: TopBlueprintBarData[] = sortedBlueprints
+    .slice(0, 10)
+    .map((bp) => ({
+      id: bp.blueprint_id,
+      name:
+        bp.blueprint_id.length > 40
+          ? bp.blueprint_id.substring(0, 37) + '...'
+          : bp.blueprint_id,
+      Downloads: Number(bp.total), // Use 'Downloads' key here
+    }))
 
   // --- UI Components and Styles ---
 
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
-      const data = payload[0].payload
+      // Find the value based on the BarChart's dataKey ('Downloads') or AreaChart's dataKey ('total')
+      const valueEntry = payload.find(
+        (p: any) => p.dataKey === 'Downloads' || p.dataKey === 'total',
+      )
+      const value = valueEntry?.value || payload[0]?.value
+      const name = payload[0].payload.name || payload[0].payload.id || label
+
       return (
         <div
           style={{
@@ -451,10 +466,8 @@ const DownloadMetricsPage: React.FC = () => {
             color: THEME.tooltipText,
           }}
         >
-          <p style={{ fontWeight: 'bold', marginBottom: '5px' }}>
-            {data.name || data.id || label}
-          </p>
-          <p>Downloads: {formatBigNumber(data.value || payload[0].value)}</p>
+          <p style={{ fontWeight: 'bold', marginBottom: '5px' }}>{name}</p>
+          <p>Downloads: {formatBigNumber(value)}</p>
         </div>
       )
     }
@@ -498,14 +511,28 @@ const DownloadMetricsPage: React.FC = () => {
     gap: '16px',
     marginBottom: '32px',
     width: '100%',
+    // Mobile optimization: stack columns
+    '@media (max-width: 768px)': {
+      gridTemplateColumns: '1fr',
+    },
   }
 
+  // Use Tailwind-like responsive classes for grid (inline styles don't support media queries directly in React,
+  // so we'll use a dynamic style object for a simple mobile breakpoint)
   const gridStyle2Col: React.CSSProperties = {
     display: 'grid',
     gridTemplateColumns: '1fr 1fr',
     gap: '24px',
     marginBottom: '32px',
     width: '100%',
+  }
+  // Check if we are on a smaller screen to adjust grid layout
+  const mediaQueryMatch =
+    typeof window !== 'undefined' &&
+    window.matchMedia('(max-width: 768px)').matches
+  if (mediaQueryMatch) {
+    ;(gridStyleKPIs as any).gridTemplateColumns = '1fr'
+    ;(gridStyle2Col as any).gridTemplateColumns = '1fr'
   }
 
   const cardStyle: React.CSSProperties = {
@@ -636,17 +663,20 @@ const DownloadMetricsPage: React.FC = () => {
           <div
             style={{
               overflowX: 'auto',
-              // Removed horizontal padding here to prevent alignment issues
               display: 'flex', // Crucial for centering
               justifyContent: 'center', // Centers the content (the table)
+              // Use margin: auto on the inner table to pull it to center if it is smaller than the wrapper
             }}
           >
             <table
               style={{
                 minWidth: '600px', // Ensures table is readable on small screens (scrolls if needed)
+                width: '100%', // Allow it to take up the full 1200px width if needed
+                maxWidth: '100%', // Respect the parent's width
                 tableLayout: 'auto',
                 borderCollapse: 'collapse',
                 fontSize: '14px',
+                margin: '0 auto', // FINAL FIX: Centering the table itself within the flex container
               }}
             >
               {/* COLUMN WIDTH DEFINITIONS */}
@@ -1090,7 +1120,8 @@ const DownloadMetricsPage: React.FC = () => {
                         }}
                       />
                       <Bar
-                        dataKey='value'
+                        dataKey='Downloads' // Updated dataKey to 'Downloads'
+                        name='# of Downloads' // Set a descriptive name for the legend
                         fill={
                           selectedCategory
                             ? d3ColorScale(selectedCategory)
