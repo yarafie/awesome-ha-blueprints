@@ -452,7 +452,7 @@ DataTable.propTypes = {
 const DownloadMetricsPage = () => {
   // State to hold the main data
   const [blueprintData] = useState(initialBlueprintData)
-  const [isLoading] = useState(false)
+  // const [isLoading] = useState(false); // Removed unused variable
   // const [userId, setUserId] = useState(null);
   // const [isAuthReady, setIsAuthReady] = useState(false);
 
