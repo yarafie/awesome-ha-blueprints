@@ -23,15 +23,12 @@ import { schemeCategory10 } from 'd3-scale-chromatic'
 // --- Type Definitions based on SQL RPC Functions ---
 type TotalMetric = { total: string }
 type CategoryMetric = { blueprint_category: string; total: string }
-
-// UPDATED TYPE: Added 'last_downloaded' field
 type TopBlueprintMetric = {
   blueprint_category: string
   blueprint_id: string
   total: string
-  last_downloaded?: string // Date of the most recent download (mocked for now)
+  last_downloaded?: string // Date of the most recent download
 }
-
 type DailyMetric = {
   day: string // ISO date string from RPC
   total: string
@@ -137,7 +134,6 @@ const DownloadMetricsPage: React.FC = () => {
         day: 'numeric',
       })
     } catch {
-      // FIX: Removed unused variable 'e'
       return 'Invalid Date'
     }
   }
@@ -327,14 +323,11 @@ const DownloadMetricsPage: React.FC = () => {
           ...prev,
           totalDownloads: totalDownloads,
           byCategory: Array.isArray(catJson) ? catJson : [],
-          // NOTE: The 'get_top_blueprints' RPC function in Supabase must be updated
-          // to include the 'last_downloaded' field in its SELECT statement
-          // for this data to be live. The frontend is prepared to receive it.
+          // NOTE: Ensure 'get_top_blueprints' RPC returns 'last_downloaded'
           topBlueprints: Array.isArray(topJson) ? topJson : [],
         }))
         setError(undefined)
       } catch (err: any) {
-        // Removed console.error to fix ESLint warnings
         setError(
           `Failed to load static metrics: ${err.message || 'Unknown error.'}`,
         )
@@ -348,20 +341,14 @@ const DownloadMetricsPage: React.FC = () => {
 
   // --- EFFECT 2: FETCH DYNAMIC DAILY METRICS (Runs on selectedDays change) ---
   useEffect(() => {
-    // Only proceed if the initial load is done OR if we are handling mock data.
     if (!isInitialLoading) {
       setIsDailyLoading(true)
 
       const supabaseUrl = (window as any)?.env?.SUPABASE_URL
       const supabaseAnonKey = (window as any)?.env?.SUPABASE_ANON_KEY
-      const headers = {
-        'Content-Type': 'application/json',
-        apikey: supabaseAnonKey,
-        Authorization: 'Bearer ' + supabaseAnonKey,
-      }
 
       if (!supabaseUrl || !supabaseAnonKey) {
-        // Mock data path for daily metrics
+        // Mock data path
         const mockDaily: DailyMetric[] = [
           {
             day: formatApiDate(new Date(Date.now() - 10 * 24 * 60 * 60 * 1000)),
@@ -402,7 +389,6 @@ const DownloadMetricsPage: React.FC = () => {
 
           setMetricsData((prev) => ({ ...prev, daily: dailyParsed }))
         } catch (err: any) {
-          // Removed console.error to fix ESLint warnings
           setError(
             `Failed to load daily metrics: ${err.message || 'Unknown error.'}`,
           )
@@ -417,20 +403,17 @@ const DownloadMetricsPage: React.FC = () => {
 
   // --- MEMOIZED DATA PROCESSING & SORTING ---
   const sortedBlueprints = useMemo(() => {
-    // 1. Filter the blueprints based on the category selection
     const filtered = selectedCategory
       ? topBlueprints.filter((bp) => bp.blueprint_category === selectedCategory)
       : topBlueprints
 
-    // 2. Sort the filtered blueprints
     const sortableItems = [...filtered].map((item) => ({
       ...item,
       totalNum: Number(item.total),
     }))
 
-    // Sort in place (we cloned it above)
     sortableItems.sort((a, b) => {
-      // NOTE: Using a custom key 'totalNum' for numeric comparison
+      // Map 'total' sort key to 'totalNum' property for numeric sorting
       const key = sortConfig.key === 'total' ? 'totalNum' : sortConfig.key
       let comparison = 0
 
@@ -441,7 +424,6 @@ const DownloadMetricsPage: React.FC = () => {
       } else if (key === 'category') {
         comparison = a.blueprint_category.localeCompare(b.blueprint_category)
       } else if (key === 'lastDownloaded') {
-        // Compare dates. Use 0 if date is missing (pushes 'N/A' items to the start/end)
         const dateA = new Date(a.last_downloaded || 0).getTime()
         const dateB = new Date(b.last_downloaded || 0).getTime()
         comparison = dateA - dateB
@@ -450,7 +432,6 @@ const DownloadMetricsPage: React.FC = () => {
       return sortConfig.direction === 'asc' ? comparison : -comparison
     })
 
-    // Remap back to original structure for the chart/table, maintaining sort order
     const sorted = sortableItems.map((item) => ({
       blueprint_category: item.blueprint_category,
       blueprint_id: item.blueprint_id,
@@ -479,14 +460,13 @@ const DownloadMetricsPage: React.FC = () => {
         bp.blueprint_id.length > 40
           ? bp.blueprint_id.substring(0, 37) + '...'
           : bp.blueprint_id,
-      Downloads: Number(bp.total), // Use 'Downloads' key here
+      Downloads: Number(bp.total),
     }))
 
   // --- UI Components and Styles ---
 
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
-      // Find the value based on the BarChart's dataKey ('Downloads') or AreaChart's dataKey ('total')
       const valueEntry = payload.find(
         (p: any) => p.dataKey === 'Downloads' || p.dataKey === 'total',
       )
@@ -558,7 +538,6 @@ const DownloadMetricsPage: React.FC = () => {
     width: '100%',
   }
 
-  // Check if we are on a smaller screen to adjust grid layout
   const mediaQueryMatch =
     typeof window !== 'undefined' &&
     window.matchMedia('(max-width: 768px)').matches
@@ -586,6 +565,11 @@ const DownloadMetricsPage: React.FC = () => {
     textTransform: 'uppercase',
     letterSpacing: '0.05em',
   })
+
+  const cardBodyStyle: React.CSSProperties = {
+    padding: '24px',
+    textAlign: 'center',
+  }
 
   const chartHeaderStyle: React.CSSProperties = {
     padding: '16px',
@@ -617,7 +601,7 @@ const DownloadMetricsPage: React.FC = () => {
       transition: 'all 0.2s',
       boxShadow: current === days ? '0 2px 4px rgba(0,0,0,0.2)' : 'none',
       fontSize: '14px',
-      opacity: isDailyLoading && current !== days ? 0.6 : 1, // Dim non-active buttons while loading
+      opacity: isDailyLoading && current !== days ? 0.6 : 1,
     })
 
     return (
@@ -643,7 +627,6 @@ const DownloadMetricsPage: React.FC = () => {
     )
   }
 
-  // Sort Icon component for the table headers
   const SortIcon: React.FC<{ sortKey: SortKey }> = ({ sortKey }) => {
     if (sortConfig.key !== sortKey) {
       return (
@@ -651,7 +634,7 @@ const DownloadMetricsPage: React.FC = () => {
           style={{ fontSize: '0.7em', marginLeft: '5px', opacity: 0.4 }}
           dangerouslySetInnerHTML={{ __html: '&#x25B2;&#x25BC;' }}
         />
-      ) // Unsorted indicator
+      )
     }
     return (
       <span
@@ -670,7 +653,6 @@ const DownloadMetricsPage: React.FC = () => {
   // UPDATED COMPONENT: Data Table
   const DataTable: React.FC<{ data: TopBlueprintMetric[] }> = ({ data }) => {
     return (
-      // Outer wrapper: For card padding
       <div style={{ padding: '24px 16px 16px 16px' }}>
         <h3
           style={{
@@ -684,156 +666,144 @@ const DownloadMetricsPage: React.FC = () => {
           Raw Data View ({data.length} Results)
         </h3>
 
-        {/* 1. Full Width Container: Sets max-width and centers itself on the page. */}
+        {/* Full Width Container with horizontal scroll */}
         <div
           style={{
-            maxWidth: '1200px', // Matches the outer container width limit
+            maxWidth: '1200px',
             margin: '0 auto',
-            width: '100%', // Ensures it takes available width
+            width: '100%',
+            overflowX: 'auto', // Scroll on small screens
           }}
         >
-          {/* 2. Overflow/Scroll Container: Handles horizontal scrolling. */}
-          <div
+          <table
             style={{
-              overflowX: 'auto',
-              // Removed centering flex properties to allow full horizontal stretch
+              width: '100%', // MANDATORY: Fill container width
+              minWidth: '800px', // Force horizontal scroll if narrower than this
+              tableLayout: 'fixed', // Critical for strict column width control
+              borderCollapse: 'collapse',
+              fontSize: '14px',
             }}
           >
-            <table
-              style={{
-                minWidth: '600px', // Ensures table is readable on small screens (scrolls if needed)
-                width: '100%', // MANDATORY: Ensures table fills its container
-                tableLayout: 'auto', // Auto-layout for flexible Blueprint ID column
-                borderCollapse: 'collapse',
-                fontSize: '14px',
-                margin: '0', // Removed auto margin for alignment
-              }}
-            >
-              {/* COLUMN WIDTH DEFINITIONS (Based on user request) */}
-              <colgroup>
-                {/* Blueprint ID (1st): Expands to fill remaining space */}
-                <col style={{ width: 'auto' }} />
-                {/* Category (2nd): Fixed to fit label, allowing expansion if content is larger */}
-                <col style={{ minWidth: '120px', width: '120px' }} />
-                {/* Downloads (3rd): Fixed to fit label, with centered content */}
-                <col style={{ minWidth: '100px', width: '100px' }} />
-                {/* Last Downloaded (4th): Fixed width for dates */}
-                <col style={{ minWidth: '150px', width: '150px' }} />
-              </colgroup>
+            {/* COLUMN WIDTH DEFINITIONS */}
+            <colgroup>
+              {/* 1. Blueprint ID: Auto/flexible width to take remaining space */}
+              <col style={{ width: 'auto' }} />
+              {/* 2. Category: Fixed width */}
+              <col style={{ width: '150px' }} />
+              {/* 3. Downloads: Fixed width */}
+              <col style={{ width: '120px' }} />
+              {/* 4. Last Downloaded: Fixed width */}
+              <col style={{ width: '180px' }} />
+            </colgroup>
 
-              <thead>
-                <tr style={{ backgroundColor: isDark ? '#333' : '#f3f4f6' }}>
-                  <th
-                    onClick={() => requestSort('id')}
+            <thead>
+              <tr style={{ backgroundColor: isDark ? '#333' : '#f3f4f6' }}>
+                <th
+                  onClick={() => requestSort('id')}
+                  style={{
+                    padding: '12px 8px',
+                    textAlign: 'left',
+                    cursor: 'pointer',
+                    color: THEME.textPrimary,
+                    borderBottom: `2px solid ${THEME.accentColor}`,
+                  }}
+                >
+                  Blueprint ID <SortIcon sortKey='id' />
+                </th>
+                <th
+                  onClick={() => requestSort('category')}
+                  style={{
+                    padding: '12px 8px',
+                    textAlign: 'left',
+                    cursor: 'pointer',
+                    color: THEME.textPrimary,
+                    borderBottom: `2px solid ${THEME.accentColor}`,
+                  }}
+                >
+                  Category <SortIcon sortKey='category' />
+                </th>
+                <th
+                  onClick={() => requestSort('total')}
+                  style={{
+                    padding: '12px 8px',
+                    textAlign: 'center', // Header Centered
+                    cursor: 'pointer',
+                    color: THEME.textPrimary,
+                    borderBottom: `2px solid ${THEME.accentColor}`,
+                  }}
+                >
+                  Downloads <SortIcon sortKey='total' />
+                </th>
+                <th
+                  onClick={() => requestSort('lastDownloaded')}
+                  style={{
+                    padding: '12px 8px',
+                    textAlign: 'right', // Header Aligned Right for Dates
+                    cursor: 'pointer',
+                    color: THEME.textPrimary,
+                    borderBottom: `2px solid ${THEME.accentColor}`,
+                  }}
+                >
+                  Last Downloaded <SortIcon sortKey='lastDownloaded' />
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {data.map((item, index) => (
+                <tr
+                  key={item.blueprint_id}
+                  style={{
+                    borderBottom: `1px solid ${THEME.gridLine}`,
+                    backgroundColor:
+                      index % 2 === 0
+                        ? THEME.cardBg
+                        : isDark
+                          ? '#2d2d2f'
+                          : '#fcfcfc',
+                  }}
+                >
+                  <td
                     style={{
-                      padding: '12px 8px',
+                      padding: '10px 8px',
+                      wordBreak: 'break-word',
+                      color: THEME.textPrimary,
                       textAlign: 'left',
-                      cursor: 'pointer',
-                      color: THEME.textPrimary,
-                      borderBottom: `2px solid ${THEME.accentColor}`,
                     }}
                   >
-                    Blueprint ID <SortIcon sortKey='id' />
-                  </th>
-                  <th
-                    onClick={() => requestSort('category')}
+                    {item.blueprint_id}
+                  </td>
+                  <td
                     style={{
-                      padding: '12px 8px',
+                      padding: '10px 8px',
+                      color: d3ColorScale(item.blueprint_category),
                       textAlign: 'left',
-                      cursor: 'pointer',
-                      color: THEME.textPrimary,
-                      borderBottom: `2px solid ${THEME.accentColor}`,
                     }}
                   >
-                    Category <SortIcon sortKey='category' />
-                  </th>
-                  <th
-                    onClick={() => requestSort('total')}
+                    {item.blueprint_category}
+                  </td>
+                  <td
                     style={{
-                      padding: '12px 8px',
-                      textAlign: 'center', // Downloads header centered
-                      cursor: 'pointer',
+                      padding: '10px 8px',
+                      textAlign: 'center', // Data Centered
+                      fontWeight: 'bold',
                       color: THEME.textPrimary,
-                      borderBottom: `2px solid ${THEME.accentColor}`,
                     }}
                   >
-                    Downloads <SortIcon sortKey='total' />
-                  </th>
-                  <th
-                    onClick={() => requestSort('lastDownloaded')}
+                    {formatBigNumber(Number(item.total))}
+                  </td>
+                  <td
                     style={{
-                      padding: '12px 8px',
-                      textAlign: 'left',
-                      cursor: 'pointer',
+                      padding: '10px 8px',
+                      textAlign: 'right', // Data Aligned Right for Dates
                       color: THEME.textPrimary,
-                      borderBottom: `2px solid ${THEME.accentColor}`,
                     }}
                   >
-                    Last Downloaded <SortIcon sortKey='lastDownloaded' />
-                  </th>
+                    {formatDate(item.last_downloaded)}
+                  </td>
                 </tr>
-              </thead>
-              <tbody>
-                {data.map((item, index) => (
-                  <tr
-                    key={item.blueprint_id}
-                    style={{
-                      borderBottom: `1px solid ${THEME.gridLine}`,
-                      backgroundColor:
-                        index % 2 === 0
-                          ? THEME.cardBg
-                          : isDark
-                            ? '#2d2d2f'
-                            : '#fcfcfc',
-                    }}
-                  >
-                    {/* Blueprint ID */}
-                    <td
-                      style={{
-                        padding: '10px 8px',
-                        wordBreak: 'break-word',
-                        color: THEME.textPrimary,
-                        textAlign: 'left',
-                      }}
-                    >
-                      {item.blueprint_id}
-                    </td>
-                    {/* Category */}
-                    <td
-                      style={{
-                        padding: '10px 8px',
-                        color: d3ColorScale(item.blueprint_category),
-                        textAlign: 'left',
-                      }}
-                    >
-                      {item.blueprint_category}
-                    </td>
-                    {/* Downloads */}
-                    <td
-                      style={{
-                        padding: '10px 8px',
-                        textAlign: 'center', // Downloads cell content centered
-                        fontWeight: 'bold',
-                        color: THEME.textPrimary,
-                      }}
-                    >
-                      {formatBigNumber(Number(item.total))}
-                    </td>
-                    {/* Last Downloaded */}
-                    <td
-                      style={{
-                        padding: '10px 8px',
-                        textAlign: 'left',
-                        color: THEME.textPrimary,
-                      }}
-                    >
-                      {formatDate(item.last_downloaded)}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+              ))}
+            </tbody>
+          </table>
         </div>
         {data.length === 0 && (
           <p
@@ -876,7 +846,6 @@ const DownloadMetricsPage: React.FC = () => {
           Blueprint Metrics Dashboard
         </h1>
 
-        {/* Global Loading or Error Indicator */}
         {isInitialLoading && (
           <div style={{ textAlign: 'center', color: THEME.textPrimary }}>
             Loading core metrics...
@@ -890,7 +859,6 @@ const DownloadMetricsPage: React.FC = () => {
           </div>
         )}
 
-        {/* Full Dashboard Content (Renders after static data is loaded) */}
         {!isInitialLoading && (
           <div style={{ width: '100%' }}>
             {/* 1. TOP ROW: 2 KPI CARDS */}
@@ -931,7 +899,6 @@ const DownloadMetricsPage: React.FC = () => {
 
             {/* 2. MIDDLE ROW: 2 CHARTS */}
             <section style={gridStyle2Col}>
-              {/* Daily Downloads */}
               <div style={cardStyle}>
                 <h3 style={chartHeaderStyle}>
                   Daily Downloads (Last {selectedDays} Days)
@@ -1026,7 +993,6 @@ const DownloadMetricsPage: React.FC = () => {
                 </div>
               </div>
 
-              {/* Pie Chart (Category Distribution) - INTERACTIVE */}
               <div style={cardStyle}>
                 <h3 style={chartHeaderStyle}>
                   Category Distribution (Click to filter)
@@ -1062,7 +1028,6 @@ const DownloadMetricsPage: React.FC = () => {
                                 ? 1
                                 : 0.4
                             }
-                            // Subtle hover effect (using inline listeners is required for functional components in this context)
                             onMouseOver={(e) =>
                               (e.currentTarget.style.opacity = '1')
                             }
@@ -1090,7 +1055,7 @@ const DownloadMetricsPage: React.FC = () => {
               </div>
             </section>
 
-            {/* 3. BAR CHART SECTION (Full-width card for visualization) */}
+            {/* 3. BAR CHART SECTION */}
             <section
               style={{
                 ...cardStyle,
@@ -1098,7 +1063,6 @@ const DownloadMetricsPage: React.FC = () => {
                 marginBottom: '32px',
               }}
             >
-              {/* Bar Chart Header and Filter Button */}
               <div
                 style={{
                   display: 'flex',
@@ -1140,7 +1104,6 @@ const DownloadMetricsPage: React.FC = () => {
                 )}
               </div>
 
-              {/* Bar Chart Visualization */}
               <div style={{ height: Math.max(400, top10BarData.length * 40) }}>
                 {top10BarData.length > 0 ? (
                   <ResponsiveContainer width='100%' height='100%'>
@@ -1205,7 +1168,7 @@ const DownloadMetricsPage: React.FC = () => {
               </div>
             </section>
 
-            {/* 4. DATA TABLE SECTION (New full-width card for raw data) */}
+            {/* 4. DATA TABLE SECTION */}
             <section style={{ ...cardStyle, overflow: 'visible' }}>
               <DataTable data={sortedBlueprints} />
             </section>
