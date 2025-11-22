@@ -673,150 +673,143 @@ const DownloadMetricsPage: React.FC = () => {
           Table Data View ({data.length} Results)
         </h3>
 
-        {/* 1. Full Width Container: Sets max-width and centers itself on the page. */}
+        {/* 2. Overflow/Scroll Container: Handles horizontal scrolling. */}
         <div
           style={{
-            width: '100%',
+            overflowX: 'auto',
+            // Removed centering flex properties to allow full horizontal stretch
           }}
         >
-          {/* 2. Overflow/Scroll Container: Handles horizontal scrolling. */}
-          <div
+          <table
             style={{
-              overflowX: 'auto',
-              // Removed centering flex properties to allow full horizontal stretch
+              minWidth: '600px', // Ensures table is readable on small screens (scrolls if needed)
+              width: '100%', // MANDATORY: Ensures table fills its container
+              tableLayout: 'fixed', // MANDATORY: Enforces strict column widths
+              borderCollapse: 'collapse',
+              fontSize: '14px',
+              margin: '0',
             }}
           >
-            <table
-              style={{
-                minWidth: '600px', // Ensures table is readable on small screens (scrolls if needed)
-                width: '100%', // MANDATORY: Ensures table fills its container
-                tableLayout: 'fixed', // MANDATORY: Enforces strict column widths
-                borderCollapse: 'collapse',
-                fontSize: '14px',
-                margin: '0',
-              }}
-            >
-              {/* COLUMN WIDTH DEFINITIONS */}
-              <colgroup>
-                {/* 1. Blueprint ID: Auto/flexible width to take remaining space */}
-                <col style={{ width: 'auto' }} />
-                {/* 2. Category: Fixed width */}
-                <col style={{ width: '150px' }} />
-                {/* 3. Downloads: Fixed width */}
-                <col style={{ width: '120px' }} />
-                {/* 4. Last Downloaded: Fixed width */}
-                <col style={{ width: '180px' }} />
-              </colgroup>
+            {/* COLUMN WIDTH DEFINITIONS */}
+            <colgroup>
+              {/* 1. Blueprint ID: Auto/flexible width to take remaining space */}
+              <col style={{ width: 'auto' }} />
+              {/* 2. Category: Fixed width */}
+              <col style={{ width: '150px' }} />
+              {/* 3. Downloads: Fixed width */}
+              <col style={{ width: '120px' }} />
+              {/* 4. Last Downloaded: Fixed width */}
+              <col style={{ width: '180px' }} />
+            </colgroup>
 
-              <thead>
-                <tr style={{ backgroundColor: isDark ? '#333' : '#f3f4f6' }}>
-                  <th
-                    onClick={() => requestSort('id')}
+            <thead>
+              <tr style={{ backgroundColor: isDark ? '#333' : '#f3f4f6' }}>
+                <th
+                  onClick={() => requestSort('id')}
+                  style={{
+                    padding: '12px 8px',
+                    textAlign: 'left',
+                    cursor: 'pointer',
+                    color: THEME.textPrimary,
+                    borderBottom: `2px solid ${THEME.accentColor}`,
+                  }}
+                >
+                  Blueprint ID <SortIcon sortKey='id' />
+                </th>
+                <th
+                  onClick={() => requestSort('category')}
+                  style={{
+                    padding: '12px 8px',
+                    textAlign: 'left',
+                    cursor: 'pointer',
+                    color: THEME.textPrimary,
+                    borderBottom: `2px solid ${THEME.accentColor}`,
+                  }}
+                >
+                  Category <SortIcon sortKey='category' />
+                </th>
+                <th
+                  onClick={() => requestSort('total')}
+                  style={{
+                    padding: '12px 8px',
+                    textAlign: 'center', // Header Centered
+                    cursor: 'pointer',
+                    color: THEME.textPrimary,
+                    borderBottom: `2px solid ${THEME.accentColor}`,
+                  }}
+                >
+                  Downloads <SortIcon sortKey='total' />
+                </th>
+                <th
+                  onClick={() => requestSort('lastDownloaded')}
+                  style={{
+                    padding: '12px 8px',
+                    textAlign: 'right', // Header Aligned Right (Pinned)
+                    cursor: 'pointer',
+                    color: THEME.textPrimary,
+                    borderBottom: `2px solid ${THEME.accentColor}`,
+                  }}
+                >
+                  Last Downloaded <SortIcon sortKey='lastDownloaded' />
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {data.map((item, index) => (
+                <tr
+                  key={item.blueprint_id}
+                  style={{
+                    borderBottom: `1px solid ${THEME.gridLine}`,
+                    backgroundColor:
+                      index % 2 === 0
+                        ? THEME.cardBg
+                        : isDark
+                          ? '#2d2d2f'
+                          : '#fcfcfc',
+                  }}
+                >
+                  <td
                     style={{
-                      padding: '12px 8px',
+                      padding: '10px 8px',
+                      wordBreak: 'break-word',
+                      color: THEME.textPrimary,
                       textAlign: 'left',
-                      cursor: 'pointer',
-                      color: THEME.textPrimary,
-                      borderBottom: `2px solid ${THEME.accentColor}`,
                     }}
                   >
-                    Blueprint ID <SortIcon sortKey='id' />
-                  </th>
-                  <th
-                    onClick={() => requestSort('category')}
+                    {item.blueprint_id}
+                  </td>
+                  <td
                     style={{
-                      padding: '12px 8px',
+                      padding: '10px 8px',
+                      color: d3ColorScale(item.blueprint_category),
                       textAlign: 'left',
-                      cursor: 'pointer',
-                      color: THEME.textPrimary,
-                      borderBottom: `2px solid ${THEME.accentColor}`,
                     }}
                   >
-                    Category <SortIcon sortKey='category' />
-                  </th>
-                  <th
-                    onClick={() => requestSort('total')}
+                    {item.blueprint_category}
+                  </td>
+                  <td
                     style={{
-                      padding: '12px 8px',
-                      textAlign: 'center', // Header Centered
-                      cursor: 'pointer',
+                      padding: '10px 8px',
+                      textAlign: 'center', // Data Centered
+                      fontWeight: 'bold',
                       color: THEME.textPrimary,
-                      borderBottom: `2px solid ${THEME.accentColor}`,
                     }}
                   >
-                    Downloads <SortIcon sortKey='total' />
-                  </th>
-                  <th
-                    onClick={() => requestSort('lastDownloaded')}
+                    {formatBigNumber(Number(item.total))}
+                  </td>
+                  <td
                     style={{
-                      padding: '12px 8px',
-                      textAlign: 'right', // Header Aligned Right (Pinned)
-                      cursor: 'pointer',
+                      padding: '10px 8px',
+                      textAlign: 'right', // Data Aligned Right
                       color: THEME.textPrimary,
-                      borderBottom: `2px solid ${THEME.accentColor}`,
                     }}
                   >
-                    Last Downloaded <SortIcon sortKey='lastDownloaded' />
-                  </th>
+                    {formatDate(item.last_downloaded)}
+                  </td>
                 </tr>
-              </thead>
-              <tbody>
-                {data.map((item, index) => (
-                  <tr
-                    key={item.blueprint_id}
-                    style={{
-                      borderBottom: `1px solid ${THEME.gridLine}`,
-                      backgroundColor:
-                        index % 2 === 0
-                          ? THEME.cardBg
-                          : isDark
-                            ? '#2d2d2f'
-                            : '#fcfcfc',
-                    }}
-                  >
-                    <td
-                      style={{
-                        padding: '10px 8px',
-                        wordBreak: 'break-word',
-                        color: THEME.textPrimary,
-                        textAlign: 'left',
-                      }}
-                    >
-                      {item.blueprint_id}
-                    </td>
-                    <td
-                      style={{
-                        padding: '10px 8px',
-                        color: d3ColorScale(item.blueprint_category),
-                        textAlign: 'left',
-                      }}
-                    >
-                      {item.blueprint_category}
-                    </td>
-                    <td
-                      style={{
-                        padding: '10px 8px',
-                        textAlign: 'center', // Data Centered
-                        fontWeight: 'bold',
-                        color: THEME.textPrimary,
-                      }}
-                    >
-                      {formatBigNumber(Number(item.total))}
-                    </td>
-                    <td
-                      style={{
-                        padding: '10px 8px',
-                        textAlign: 'right', // Data Aligned Right
-                        color: THEME.textPrimary,
-                      }}
-                    >
-                      {formatDate(item.last_downloaded)}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+              ))}
+            </tbody>
+          </table>
         </div>
         {data.length === 0 && (
           <p
