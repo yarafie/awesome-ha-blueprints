@@ -27,7 +27,6 @@ import { schemeCategory10 } from 'd3-scale-chromatic' // <-- CORRECTED IMPORT
 // import { createClient } from '@supabase/supabase-js'
 
 // --- Type Definitions based on SQL RPC Functions ---
-type TotalMetric = { total: string }
 type CategoryMetric = { blueprint_category: string; total: string }
 type TopBlueprintMetric = {
   blueprint_category: string
