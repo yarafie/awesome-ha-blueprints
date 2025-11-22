@@ -27,6 +27,7 @@ type TopBlueprintMetric = {
   blueprint_category: string
   blueprint_id: string
   total: string
+  last_downloaded?: string // Date of the most recent download (mocked for now)
 }
 type DailyMetric = {
   day: string // ISO date string from RPC
@@ -60,7 +61,7 @@ type TopBlueprintBarData = {
 }
 
 // --- NEW TYPE FOR TABLE SORTING ---
-type SortKey = 'id' | 'category' | 'total'
+type SortKey = 'id' | 'category' | 'total' | 'lastDownloaded' // Added new sort key
 type SortDirection = 'asc' | 'desc'
 
 const DownloadMetricsPage: React.FC = () => {
@@ -121,6 +122,21 @@ const DownloadMetricsPage: React.FC = () => {
 
   const formatApiDate = (date: Date): string => date.toISOString().split('T')[0]
   const formatBigNumber = (num: number): string => num.toLocaleString()
+
+  // New Date Formatter for the table
+  const formatDate = (isoString: string | undefined): string => {
+    if (!isoString) return 'N/A'
+    try {
+      // Format as "Nov 21, 2025" or similar readable format
+      return new Date(isoString).toLocaleDateString(undefined, {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+      })
+    } catch {
+      return 'Invalid Date'
+    }
+  }
 
   // Function to create a full N-day range and fill missing days with 0 downloads
   const fillMissingDailyData = (
@@ -224,36 +240,43 @@ const DownloadMetricsPage: React.FC = () => {
           { blueprint_category: 'utilities', total: '50000' },
           { blueprint_category: 'layouts', total: '5000' },
         ],
+        // UPDATED MOCK DATA: Demonstrates the required 'last_downloaded' field
         topBlueprints: [
           {
             blueprint_category: 'hooks',
             blueprint_id: 'use_auth_token_v3',
             total: '50000',
+            last_downloaded: '2025-11-21T10:30:00Z',
           },
           {
             blueprint_category: 'hooks',
             blueprint_id: 'use_global_state_mgmt',
             total: '40000',
+            last_downloaded: '2025-11-15T10:30:00Z',
           },
           {
             blueprint_category: 'controllers',
             blueprint_id: 'http_request_worker',
             total: '10000',
+            last_downloaded: '2025-11-19T10:30:00Z',
           },
           {
             blueprint_category: 'controllers',
             blueprint_id: 'websocket_manager',
             total: '5000',
+            last_downloaded: '2025-10-25T10:30:00Z',
           },
           {
             blueprint_category: 'utilities',
             blueprint_id: 'date_formatter_v1',
             total: '25000',
+            last_downloaded: '2025-11-22T10:30:00Z',
           },
           {
             blueprint_category: 'utilities',
             blueprint_id: 'crypto_hash_gen',
             total: '15000',
+            last_downloaded: '2025-11-18T10:30:00Z',
           },
         ],
       }))
@@ -300,11 +323,11 @@ const DownloadMetricsPage: React.FC = () => {
           ...prev,
           totalDownloads: totalDownloads,
           byCategory: Array.isArray(catJson) ? catJson : [],
+          // NOTE: Ensure 'get_top_blueprints' RPC returns 'last_downloaded'
           topBlueprints: Array.isArray(topJson) ? topJson : [],
         }))
         setError(undefined)
       } catch (err: any) {
-        // Removed console.error to fix ESLint warnings
         setError(
           `Failed to load static metrics: ${err.message || 'Unknown error.'}`,
         )
@@ -372,7 +395,6 @@ const DownloadMetricsPage: React.FC = () => {
 
           setMetricsData((prev) => ({ ...prev, daily: dailyParsed }))
         } catch (err: any) {
-          // Removed console.error to fix ESLint warnings
           setError(
             `Failed to load daily metrics: ${err.message || 'Unknown error.'}`,
           )
@@ -400,25 +422,30 @@ const DownloadMetricsPage: React.FC = () => {
 
     // Sort in place (we cloned it above)
     sortableItems.sort((a, b) => {
-      const key = sortConfig.key as 'id' | 'category' | 'totalNum'
+      // Map 'total' sort key to 'totalNum' property for numeric sorting
+      const key = sortConfig.key === 'total' ? 'totalNum' : sortConfig.key
       let comparison = 0
 
-      if (key === 'total') {
+      if (key === 'totalNum') {
         comparison = a.totalNum - b.totalNum
       } else if (key === 'id') {
         comparison = a.blueprint_id.localeCompare(b.blueprint_id)
       } else if (key === 'category') {
         comparison = a.blueprint_category.localeCompare(b.blueprint_category)
+      } else if (key === 'lastDownloaded') {
+        const dateA = new Date(a.last_downloaded || 0).getTime()
+        const dateB = new Date(b.last_downloaded || 0).getTime()
+        comparison = dateA - dateB
       }
 
       return sortConfig.direction === 'asc' ? comparison : -comparison
     })
 
-    // Remap back to original structure for the chart/table, maintaining sort order
     const sorted = sortableItems.map((item) => ({
       blueprint_category: item.blueprint_category,
       blueprint_id: item.blueprint_id,
       total: item.total,
+      last_downloaded: item.last_downloaded,
     })) as TopBlueprintMetric[]
 
     return sorted
@@ -442,7 +469,7 @@ const DownloadMetricsPage: React.FC = () => {
         bp.blueprint_id.length > 40
           ? bp.blueprint_id.substring(0, 37) + '...'
           : bp.blueprint_id,
-      Downloads: Number(bp.total), // Use 'Downloads' key here
+      Downloads: Number(bp.total),
     }))
 
   // --- UI Components and Styles ---
@@ -511,14 +538,8 @@ const DownloadMetricsPage: React.FC = () => {
     gap: '16px',
     marginBottom: '32px',
     width: '100%',
-    // Mobile optimization: stack columns
-    '@media (max-width: 768px)': {
-      gridTemplateColumns: '1fr',
-    },
   }
 
-  // Use Tailwind-like responsive classes for grid (inline styles don't support media queries directly in React,
-  // so we'll use a dynamic style object for a simple mobile breakpoint)
   const gridStyle2Col: React.CSSProperties = {
     display: 'grid',
     gridTemplateColumns: '1fr 1fr',
@@ -526,7 +547,7 @@ const DownloadMetricsPage: React.FC = () => {
     marginBottom: '32px',
     width: '100%',
   }
-  // Check if we are on a smaller screen to adjust grid layout
+
   const mediaQueryMatch =
     typeof window !== 'undefined' &&
     window.matchMedia('(max-width: 768px)').matches
@@ -585,7 +606,7 @@ const DownloadMetricsPage: React.FC = () => {
       transition: 'all 0.2s',
       boxShadow: current === days ? '0 2px 4px rgba(0,0,0,0.2)' : 'none',
       fontSize: '14px',
-      opacity: isDailyLoading && current !== days ? 0.6 : 1, // Dim non-active buttons while loading
+      opacity: isDailyLoading && current !== days ? 0.6 : 1,
     })
 
     return (
@@ -619,7 +640,7 @@ const DownloadMetricsPage: React.FC = () => {
           style={{ fontSize: '0.7em', marginLeft: '5px', opacity: 0.4 }}
           dangerouslySetInnerHTML={{ __html: '&#x25B2;&#x25BC;' }}
         />
-      ) // Unsorted indicator
+      )
     }
     return (
       <span
@@ -646,47 +667,47 @@ const DownloadMetricsPage: React.FC = () => {
             color: THEME.textPrimary,
             fontWeight: 'bold',
             marginBottom: '15px',
-            textAlign: 'center', // CENTERED TITLE
+            textAlign: 'center',
           }}
         >
           Raw Data View ({data.length} Results)
         </h3>
 
-        {/* 1. Centering Container: Sets max-width and centers itself on the page. */}
+        {/* 1. Full Width Container: Sets max-width and centers itself on the page. */}
         <div
           style={{
             maxWidth: '1200px',
             margin: '0 auto',
+            width: '100%',
           }}
         >
-          {/* 2. Overflow/Scroll Container: Handles horizontal scrolling AND centers the table if it is narrower than the container. */}
+          {/* 2. Overflow/Scroll Container: Handles horizontal scrolling. */}
           <div
             style={{
               overflowX: 'auto',
-              display: 'flex', // Crucial for centering
-              justifyContent: 'center', // Centers the content (the table)
-              // Use margin: auto on the inner table to pull it to center if it is smaller than the wrapper
+              // Removed centering flex properties to allow full horizontal stretch
             }}
           >
             <table
               style={{
                 minWidth: '600px', // Ensures table is readable on small screens (scrolls if needed)
-                width: '100%', // Allow it to take up the full 1200px width if needed
-                maxWidth: '100%', // Respect the parent's width
-                tableLayout: 'auto',
+                width: '100%', // MANDATORY: Ensures table fills its container
+                tableLayout: 'fixed', // MANDATORY: Enforces strict column widths
                 borderCollapse: 'collapse',
                 fontSize: '14px',
-                margin: '0 auto', // FINAL FIX: Centering the table itself within the flex container
+                margin: '0',
               }}
             >
               {/* COLUMN WIDTH DEFINITIONS */}
               <colgroup>
-                {/* Blueprint ID: Takes the majority of space, allowing content-based wrapping/growth */}
+                {/* 1. Blueprint ID: Auto/flexible width to take remaining space */}
                 <col style={{ width: 'auto' }} />
-                {/* Category: Fixed for consistency, based on typical category string length */}
+                {/* 2. Category: Fixed width */}
                 <col style={{ width: '150px' }} />
-                {/* Downloads: Fixed width for numbers, aligns right */}
+                {/* 3. Downloads: Fixed width */}
                 <col style={{ width: '120px' }} />
+                {/* 4. Last Downloaded: Fixed width */}
+                <col style={{ width: '180px' }} />
               </colgroup>
 
               <thead>
@@ -719,13 +740,25 @@ const DownloadMetricsPage: React.FC = () => {
                     onClick={() => requestSort('total')}
                     style={{
                       padding: '12px 8px',
-                      textAlign: 'right',
+                      textAlign: 'center', // Header Centered
                       cursor: 'pointer',
                       color: THEME.textPrimary,
                       borderBottom: `2px solid ${THEME.accentColor}`,
                     }}
                   >
                     Downloads <SortIcon sortKey='total' />
+                  </th>
+                  <th
+                    onClick={() => requestSort('lastDownloaded')}
+                    style={{
+                      padding: '12px 8px',
+                      textAlign: 'right', // Header Aligned Right (Pinned)
+                      cursor: 'pointer',
+                      color: THEME.textPrimary,
+                      borderBottom: `2px solid ${THEME.accentColor}`,
+                    }}
+                  >
+                    Last Downloaded <SortIcon sortKey='lastDownloaded' />
                   </th>
                 </tr>
               </thead>
@@ -748,6 +781,7 @@ const DownloadMetricsPage: React.FC = () => {
                         padding: '10px 8px',
                         wordBreak: 'break-word',
                         color: THEME.textPrimary,
+                        textAlign: 'left',
                       }}
                     >
                       {item.blueprint_id}
@@ -756,6 +790,7 @@ const DownloadMetricsPage: React.FC = () => {
                       style={{
                         padding: '10px 8px',
                         color: d3ColorScale(item.blueprint_category),
+                        textAlign: 'left',
                       }}
                     >
                       {item.blueprint_category}
@@ -763,12 +798,21 @@ const DownloadMetricsPage: React.FC = () => {
                     <td
                       style={{
                         padding: '10px 8px',
-                        textAlign: 'right',
+                        textAlign: 'center', // Data Centered
                         fontWeight: 'bold',
                         color: THEME.textPrimary,
                       }}
                     >
                       {formatBigNumber(Number(item.total))}
+                    </td>
+                    <td
+                      style={{
+                        padding: '10px 8px',
+                        textAlign: 'right', // Data Aligned Right
+                        color: THEME.textPrimary,
+                      }}
+                    >
+                      {formatDate(item.last_downloaded)}
                     </td>
                   </tr>
                 ))}
@@ -1120,8 +1164,8 @@ const DownloadMetricsPage: React.FC = () => {
                         }}
                       />
                       <Bar
-                        dataKey='Downloads' // Updated dataKey to 'Downloads'
-                        name='# of Downloads' // Set a descriptive name for the legend
+                        dataKey='Downloads'
+                        name='# of Downloads'
                         fill={
                           selectedCategory
                             ? d3ColorScale(selectedCategory)
