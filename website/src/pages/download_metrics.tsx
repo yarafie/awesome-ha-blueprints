@@ -656,10 +656,8 @@ const DownloadMetricsPage: React.FC = () => {
     )
   }
 
-  // UPDATED COMPONENT: Data Table
   const DataTable: React.FC<{ data: TopBlueprintMetric[] }> = ({ data }) => {
     return (
-      // Outer wrapper: For card padding
       <div style={{ padding: '24px 16px 16px 16px' }}>
         <h3
           style={{
@@ -670,25 +668,29 @@ const DownloadMetricsPage: React.FC = () => {
             textAlign: 'center',
           }}
         >
-          Table Data View ({data.length} Results) {/* 1. Title Change */}
+          Table Data View ({data.length} Results)
         </h3>
 
-        {/* 2. Overflow/Scroll Container (Replaced the max-width wrapper) */}
-        <div
-          style={{
-            overflowX: 'auto',
-          }}
-        >
+        <div style={{ overflowX: 'auto' }}>
           <table
             style={{
-              // Removed minWidth: '600px' and tableLayout: 'fixed' (3. Layout Fix)
-              width: '100%', // Ensures table fills container
+              width: '100%',
               borderCollapse: 'collapse',
+              tableLayout: 'fixed', // REQUIRED for correct colgroup behavior
               fontSize: '14px',
               margin: '0',
             }}
           >
-            {/* Removed <colgroup> block (3. Layout Fix) */}
+            {/* 🔥 FIX: Column sizing */}
+            <colgroup>
+              <col style={{ width: 'auto' }} /> {/* Column 1 – expands */}
+              <col style={{ width: '1%', whiteSpace: 'nowrap' }} />{' '}
+              {/* Column 2 – fixed */}
+              <col style={{ width: '1%', whiteSpace: 'nowrap' }} />{' '}
+              {/* Column 3 – fixed */}
+              <col style={{ width: '1%', whiteSpace: 'nowrap' }} />{' '}
+              {/* Column 4 – fixed */}
+            </colgroup>
 
             <thead>
               <tr style={{ backgroundColor: isDark ? '#333' : '#f3f4f6' }}>
@@ -712,7 +714,7 @@ const DownloadMetricsPage: React.FC = () => {
                     cursor: 'pointer',
                     color: THEME.textPrimary,
                     borderBottom: `2px solid ${THEME.accentColor}`,
-                    whiteSpace: 'nowrap', // 4. Prevents wrapping on header
+                    whiteSpace: 'nowrap',
                   }}
                 >
                   Category <SortIcon sortKey='category' />
@@ -725,7 +727,7 @@ const DownloadMetricsPage: React.FC = () => {
                     cursor: 'pointer',
                     color: THEME.textPrimary,
                     borderBottom: `2px solid ${THEME.accentColor}`,
-                    whiteSpace: 'nowrap', // 4. Prevents wrapping on header
+                    whiteSpace: 'nowrap',
                   }}
                 >
                   Downloads <SortIcon sortKey='total' />
@@ -738,13 +740,14 @@ const DownloadMetricsPage: React.FC = () => {
                     cursor: 'pointer',
                     color: THEME.textPrimary,
                     borderBottom: `2px solid ${THEME.accentColor}`,
-                    whiteSpace: 'nowrap', // 4. Prevents wrapping on header
+                    whiteSpace: 'nowrap',
                   }}
                 >
                   Last Downloaded <SortIcon sortKey='lastDownloaded' />
                 </th>
               </tr>
             </thead>
+
             <tbody>
               {data.map((item, index) => (
                 <tr
@@ -759,43 +762,50 @@ const DownloadMetricsPage: React.FC = () => {
                           : '#fcfcfc',
                   }}
                 >
+                  {/* Column 1 – flexible */}
                   <td
                     style={{
                       padding: '10px 8px',
-                      wordBreak: 'break-word', // Allows long IDs to wrap if column space runs out
+                      wordBreak: 'break-word',
                       color: THEME.textPrimary,
                       textAlign: 'left',
                     }}
                   >
                     {item.blueprint_id}
                   </td>
+
+                  {/* Column 2 */}
                   <td
                     style={{
                       padding: '10px 8px',
                       color: d3ColorScale(item.blueprint_category),
                       textAlign: 'left',
-                      whiteSpace: 'nowrap', // 4. Ensures content in Column 2 doesn't wrap
+                      whiteSpace: 'nowrap',
                     }}
                   >
                     {item.blueprint_category}
                   </td>
+
+                  {/* Column 3 */}
                   <td
                     style={{
                       padding: '10px 8px',
                       textAlign: 'center',
                       fontWeight: 'bold',
                       color: THEME.textPrimary,
-                      whiteSpace: 'nowrap', // 4. Ensures content in Column 3 doesn't wrap
+                      whiteSpace: 'nowrap',
                     }}
                   >
                     {formatBigNumber(Number(item.total))}
                   </td>
+
+                  {/* Column 4 */}
                   <td
                     style={{
                       padding: '10px 8px',
                       textAlign: 'right',
                       color: THEME.textPrimary,
-                      whiteSpace: 'nowrap', // 4. Ensures content in Column 4 doesn't wrap
+                      whiteSpace: 'nowrap',
                     }}
                   >
                     {formatDate(item.last_downloaded)}
@@ -805,6 +815,7 @@ const DownloadMetricsPage: React.FC = () => {
             </tbody>
           </table>
         </div>
+
         {data.length === 0 && (
           <p
             style={{
