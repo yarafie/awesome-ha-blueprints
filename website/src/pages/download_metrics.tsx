@@ -687,18 +687,6 @@ const DownloadMetricsPage: React.FC = () => {
               margin: '0',
             }}
           >
-            {/* COLUMN WIDTH DEFINITIONS */}
-            <colgroup>
-              {/* 1. Blueprint ID: Auto/flexible width to take remaining space */}
-              <col style={{ width: '100%' }} />
-              {/* 2. Category: Auto width */}
-              <col style={{ width: '10%' }} />
-              {/* 3. Downloads: Auto width */}
-              <col style={{ width: '10%' }} />
-              {/* 4. Last Downloaded: Auto width */}
-              <col style={{ width: '20%' }} />
-            </colgroup>
-
             <thead>
               <tr style={{ backgroundColor: isDark ? '#333' : '#f3f4f6' }}>
                 <th
