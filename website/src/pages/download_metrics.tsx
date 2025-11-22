@@ -692,11 +692,11 @@ const DownloadMetricsPage: React.FC = () => {
             <colgroup>
               {/* 1. Blueprint ID: Auto/flexible width to take remaining space */}
               <col style={{ width: '100%' }} />
-              {/* 2. Category: Fixed width */}
+              {/* 2. Category: Auto width */}
               <col style={{ width: 'auto' }} />
-              {/* 3. Downloads: Fixed width */}
+              {/* 3. Downloads: Auto width */}
               <col style={{ width: 'auto' }} />
-              {/* 4. Last Downloaded: Fixed width */}
+              {/* 4. Last Downloaded: Auto width */}
               <col style={{ width: 'auto' }} />
             </colgroup>
 
