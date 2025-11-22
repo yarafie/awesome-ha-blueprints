@@ -692,7 +692,7 @@ const DownloadMetricsPage: React.FC = () => {
             {/* COLUMN WIDTH DEFINITIONS */}
             <colgroup>
               {/* 1. Blueprint ID: Auto/flexible width to take remaining space */}
-              <col style={{ width: 'auto' }} />
+              <col style={{ width: '100%' }} />
               {/* 2. Category: Fixed width */}
               <col style={{ width: '150px' }} />
               {/* 3. Downloads: Fixed width */}
@@ -770,7 +770,7 @@ const DownloadMetricsPage: React.FC = () => {
                   <td
                     style={{
                       padding: '10px 8px',
-                      wordBreak: 'break-word',
+                      overflowWrap: 'break-word',
                       color: THEME.textPrimary,
                       textAlign: 'left',
                     }}
