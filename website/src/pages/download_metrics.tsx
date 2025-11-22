@@ -225,7 +225,9 @@ const BarChartPlaceholder = ({ data }) => {
             <div className='flex-grow h-6 ml-4 overflow-hidden rounded-full bg-gray-700'>
               <div
                 className='flex items-center justify-end h-full pr-2 transition-all duration-700 ease-out bg-green-500'
-                style={{ width: `${(item.downloads / maxDownloads) * 100}%` }}
+                style={{
+                  width: `${(item.downloads / maxDownloads) * 100}%`,
+                }}
               >
                 <span className='text-xs font-bold leading-none text-white'>
                   {item.downloads}
@@ -389,7 +391,7 @@ const DataTable = ({ data }) => {
 }
 
 // Main App Component
-const App = () => {
+const DownloadMetricsPage = () => {
   // State to hold the main data
   const [blueprintData] = useState(initialBlueprintData)
   const [isLoading] = useState(false)
@@ -428,7 +430,7 @@ const App = () => {
       </style>
       <Header />
 
-      <main className='flex-grow p-4 mx-auto md:p-8 container'>
+      <main className='container flex-grow p-4 mx-auto md:p-8'>
         <h1 className='mb-6 text-3xl font-extrabold text-white'>
           Blueprint Metrics Dashboard
         </h1>
@@ -479,21 +481,21 @@ const App = () => {
       <footer className='p-4 mt-8 text-xs text-center text-gray-500 border-t border-gray-800'>
         <p>
           Awesome HA Blueprints is maintained by{' '}
-          <a href='#' className='hover:text-indigo-300 text-indigo-400'>
+          <a href='#' className='text-indigo-400 hover:text-indigo-300'>
             Matteo Agnoletto
           </a>
           .
         </p>
         <p>
           This Fork is maintained by{' '}
-          <a href='#' className='hover:text-indigo-300 text-indigo-400'>
+          <a href='#' className='text-indigo-400 hover:text-indigo-300'>
             yarafie
           </a>
           .
         </p>
         <p>
           Licensed under the{' '}
-          <a href='#' className='hover:text-indigo-300 text-indigo-400'>
+          <a href='#' className='text-indigo-400 hover:text-indigo-300'>
             GPL-3.0 License
           </a>
           .
@@ -503,4 +505,4 @@ const App = () => {
   )
 }
 
-export default App
+export default DownloadMetricsPage
