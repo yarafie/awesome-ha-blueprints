@@ -670,7 +670,7 @@ const DownloadMetricsPage: React.FC = () => {
             textAlign: 'center',
           }}
         >
-          Raw Data View ({data.length} Results)
+          Table Data View ({data.length} Results)
         </h3>
 
         {/* 1. Full Width Container: Sets max-width and centers itself on the page. */}
