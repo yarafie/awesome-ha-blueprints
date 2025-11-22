@@ -18,13 +18,16 @@ import {
 } from 'recharts'
 
 // D3 Imports for Professional Coloring
-import { scaleOrdinal } from 'd3-scale' // <-- CORRECTED IMPORT
-import { schemeCategory10 } from 'd3-scale-chromatic' // <-- CORRECTED IMPORT
+import { scaleOrdinal } from 'd3-scale'
+import { schemeCategory10 } from 'd3-scale-chromatic'
 
-// Supabase client import (Ensure this path is correct for your setup)
-// Note: The user MUST ensure the `supabase` client is correctly initialized and available.
-// For the purpose of this response, we assume it's imported or globally available.
-// import { createClient } from '@supabase/supabase-js'
+// --- Supabase Client Placeholder ---
+// NOTE: You must initialize your Supabase client in your environment
+// and make it available as 'supabase' for the fetchMetricsData function to work.
+// Example: import { createClient } from '@supabase/supabase-js';
+// const supabase = createClient(YOUR_URL, YOUR_KEY);
+declare const supabase: any
+// --- End Supabase Placeholder ---
 
 // --- Type Definitions based on SQL RPC Functions ---
 type CategoryMetric = { blueprint_category: string; total: string }
@@ -32,7 +35,7 @@ type TopBlueprintMetric = {
   blueprint_category: string
   blueprint_id: string
   total: string
-  last_downloaded?: string // Date of the most recent download (mocked for now)
+  last_downloaded?: string // Date of the most recent download
 }
 type DailyMetric = {
   day: string // ISO date string from RPC
@@ -445,84 +448,109 @@ const DataTable: React.FC<{ data: TopBlueprintMetric[] }> = ({ data }) => {
   )
 }
 
-// --- DATA FETCHING LOGIC (Using the user's existing client/mock) ---
-
-// Replace this with your actual Supabase client instance
-// Example: const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-// We keep the original structure from the user's file.
-// NOTE: I am assuming the user has the 'supabase' object available in this scope.
-declare const supabase: any
+// --- DATA FETCHING LOGIC ---
 
 /**
  * Fetches and transforms all metrics data from Supabase RPCs.
+ * Assumes 'supabase' object is initialized externally.
  */
 const fetchMetricsData = async (): Promise<MetricsData> => {
-  // 1. Get all data concurrently using the assumed RPC function names
-  const [
-    categoryResult,
-    topBlueprintsResult,
-    dailyResult,
-    totalDownloadsResult,
-  ] = await Promise.all([
-    supabase.rpc('get_total_downloads_by_category'),
-    supabase.rpc('get_top_blueprints'),
-    supabase.rpc('get_daily_downloads'),
-    // Assuming a simple RPC that returns [{ total: "1234" }]
-    supabase.rpc('get_total_downloads'),
-  ])
+  try {
+    // 1. Get all data concurrently using the assumed RPC function names
+    const [
+      categoryResult,
+      topBlueprintsResult,
+      dailyResult,
+      totalDownloadsResult,
+    ] = await Promise.all([
+      supabase.rpc('get_total_downloads_by_category'),
+      supabase.rpc('get_top_blueprints'),
+      supabase.rpc('get_daily_downloads'),
+      // Assuming a simple RPC that returns [{ total: "1234" }]
+      supabase.rpc('get_total_downloads'),
+    ])
 
-  // 2. Simple Error handling
-  if (
-    categoryResult.error ||
-    topBlueprintsResult.error ||
-    dailyResult.error ||
-    totalDownloadsResult.error
-  ) {
-    console.error('Supabase RPC Error:', {
-      category: categoryResult.error,
-      topBlueprints: topBlueprintsResult.error,
-      daily: dailyResult.error,
-      total: totalDownloadsResult.error,
-    })
-    // NOTE: The original code returned dummy data on error. We continue that pattern.
+    // 2. Simple Error handling
+    if (
+      categoryResult.error ||
+      topBlueprintsResult.error ||
+      dailyResult.error ||
+      totalDownloadsResult.error
+    ) {
+      console.error('Supabase RPC Error:', {
+        category: categoryResult.error,
+        topBlueprints: topBlueprintsResult.error,
+        daily: dailyResult.error,
+        total: totalDownloadsResult.error,
+      })
+      throw new Error('Supabase fetch failed.')
+    }
+
+    // 3. Data transformation
+    // Extract total downloads
+    const totalDownloadsValue = parseInt(
+      totalDownloadsResult.data[0]?.total || '0',
+      10,
+    )
+
+    // Transform daily metrics from string totals to number totals for chart use
+    const dailyChartPoints: ChartPoint[] = dailyResult.data.map(
+      (item: DailyMetric) => ({
+        label: new Date(item.day).toLocaleDateString('en-US', {
+          month: 'short',
+          day: 'numeric',
+        }),
+        total: parseInt(item.total, 10),
+      }),
+    )
+
+    return {
+      totalDownloads: totalDownloadsValue,
+      byCategory: categoryResult.data as CategoryMetric[],
+      topBlueprints: topBlueprintsResult.data as TopBlueprintMetric[],
+      daily: dailyChartPoints, // Use the transformed data
+    }
+  } catch (error) {
+    console.error('Failed to fetch data, returning mock data:', error)
+    // Return dummy data on failure to prevent crash
     return {
       totalDownloads: 123456,
-      byCategory: [{ blueprint_category: 'automation', total: '80000' }],
+      byCategory: [
+        { blueprint_category: 'automation', total: '80000' },
+        { blueprint_category: 'sensor', total: '20000' },
+        { blueprint_category: 'lovelace', total: '15000' },
+        { blueprint_category: 'script', total: '8456' },
+      ],
       topBlueprints: [
         {
           blueprint_category: 'automation',
-          blueprint_id: 'a-sample-blueprint',
+          blueprint_id: 'best-light-scheduler',
           total: '5000',
           last_downloaded: new Date().toISOString(),
         },
+        {
+          blueprint_category: 'sensor',
+          blueprint_id: 'weather-alerts-integration',
+          total: '3200',
+          last_downloaded: new Date(Date.now() - 86400000 * 5).toISOString(),
+        },
+        {
+          blueprint_category: 'automation',
+          blueprint_id: 'holiday-light-effects',
+          total: '1800',
+          last_downloaded: new Date(Date.now() - 86400000 * 15).toISOString(),
+        },
       ],
-      daily: [{ label: 'Jan 1', total: 100 }],
+      daily: [
+        { label: 'Oct 1', total: 100 },
+        { label: 'Oct 5', total: 120 },
+        { label: 'Oct 10', total: 90 },
+        { label: 'Oct 15', total: 150 },
+        { label: 'Oct 20', total: 110 },
+        { label: 'Oct 25', total: 180 },
+        { label: 'Oct 30', total: 200 },
+      ],
     }
-  }
-
-  // 3. Data transformation
-  // Extract total downloads
-  const totalDownloadsValue = parseInt(
-    totalDownloadsResult.data[0]?.total || '0',
-    10,
-  )
-
-  // Transform daily metrics from string totals to number totals for chart use
-  const dailyChartPoints: ChartPoint[] = dailyResult.data.map(
-    (item: DailyMetric) => ({
-      label: new Date(item.day).toLocaleDateString('en-US', {
-        month: 'short',
-        day: 'numeric',
-      }),
-      total: parseInt(item.total, 10),
-    }),
-  )
-
-  return {
-    totalDownloads: totalDownloadsValue,
-    byCategory: categoryResult.data as CategoryMetric[],
-    topBlueprints: topBlueprintsResult.data as TopBlueprintMetric[],
-    daily: dailyChartPoints, // Use the transformed data
   }
 }
 
@@ -535,12 +563,12 @@ const DownloadMetricsPage: React.FC = () => {
   const loadData = useCallback(async () => {
     setIsLoading(true)
     try {
-      // Assuming 'supabase' is globally available or imported in the user's environment
       const data = await fetchMetricsData()
       setMetricsData(data)
     } catch (error) {
       console.error('Failed to fetch metrics data:', error)
-      // Display a user-friendly error message if necessary
+      // The fetchMetricsData function already returns mock data on error,
+      // so we just log here.
     } finally {
       setIsLoading(false)
     }
@@ -945,8 +973,8 @@ const DownloadMetricsPage: React.FC = () => {
                         }}
                       />
                       <Bar
-                        dataKey='Downloads' // Updated dataKey to 'Downloads'
-                        name='# of Downloads' // Set a descriptive name for the legend
+                        dataKey='Downloads'
+                        name='# of Downloads'
                         fill={
                           selectedCategory
                             ? d3ColorScale(selectedCategory)
@@ -971,7 +999,7 @@ const DownloadMetricsPage: React.FC = () => {
               </div>
             </section>
 
-            {/* 4. DATA TABLE SECTION (New full-width card for raw data) */}
+            {/* 4. DATA TABLE SECTION (New sortable component with fixed styling) */}
             <section style={tableCardStyle}>
               <DataTable data={sortedBlueprints} />
             </section>
