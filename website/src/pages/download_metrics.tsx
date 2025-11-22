@@ -670,10 +670,10 @@ const DownloadMetricsPage: React.FC = () => {
             textAlign: 'center',
           }}
         >
-          Table Data View ({data.length} Results)
+          Table Data View ({data.length} Results) {/* 1. Title Change */}
         </h3>
 
-        {/* 2. Overflow/Scroll Container: Handles horizontal scrolling. */}
+        {/* 2. Overflow/Scroll Container (Replaced the max-width wrapper) */}
         <div
           style={{
             overflowX: 'auto',
@@ -681,12 +681,15 @@ const DownloadMetricsPage: React.FC = () => {
         >
           <table
             style={{
-              width: '100%', // MANDATORY: Ensures table fills its container
+              // Removed minWidth: '600px' and tableLayout: 'fixed' (3. Layout Fix)
+              width: '100%', // Ensures table fills container
               borderCollapse: 'collapse',
               fontSize: '14px',
               margin: '0',
             }}
           >
+            {/* Removed <colgroup> block (3. Layout Fix) */}
+
             <thead>
               <tr style={{ backgroundColor: isDark ? '#333' : '#f3f4f6' }}>
                 <th
@@ -709,7 +712,7 @@ const DownloadMetricsPage: React.FC = () => {
                     cursor: 'pointer',
                     color: THEME.textPrimary,
                     borderBottom: `2px solid ${THEME.accentColor}`,
-                    whiteSpace: 'nowrap',
+                    whiteSpace: 'nowrap', // 4. Prevents wrapping on header
                   }}
                 >
                   Category <SortIcon sortKey='category' />
@@ -718,11 +721,11 @@ const DownloadMetricsPage: React.FC = () => {
                   onClick={() => requestSort('total')}
                   style={{
                     padding: '12px 8px',
-                    textAlign: 'center', // Header Centered
+                    textAlign: 'center',
                     cursor: 'pointer',
                     color: THEME.textPrimary,
                     borderBottom: `2px solid ${THEME.accentColor}`,
-                    whiteSpace: 'nowrap',
+                    whiteSpace: 'nowrap', // 4. Prevents wrapping on header
                   }}
                 >
                   Downloads <SortIcon sortKey='total' />
@@ -731,11 +734,11 @@ const DownloadMetricsPage: React.FC = () => {
                   onClick={() => requestSort('lastDownloaded')}
                   style={{
                     padding: '12px 8px',
-                    textAlign: 'left', // Header Aligned Left (Pinned)
+                    textAlign: 'right',
                     cursor: 'pointer',
                     color: THEME.textPrimary,
                     borderBottom: `2px solid ${THEME.accentColor}`,
-                    whiteSpace: 'nowrap',
+                    whiteSpace: 'nowrap', // 4. Prevents wrapping on header
                   }}
                 >
                   Last Downloaded <SortIcon sortKey='lastDownloaded' />
@@ -759,7 +762,7 @@ const DownloadMetricsPage: React.FC = () => {
                   <td
                     style={{
                       padding: '10px 8px',
-                      overflowWrap: 'break-word',
+                      wordBreak: 'break-word', // Allows long IDs to wrap if column space runs out
                       color: THEME.textPrimary,
                       textAlign: 'left',
                     }}
@@ -771,6 +774,7 @@ const DownloadMetricsPage: React.FC = () => {
                       padding: '10px 8px',
                       color: d3ColorScale(item.blueprint_category),
                       textAlign: 'left',
+                      whiteSpace: 'nowrap', // 4. Ensures content in Column 2 doesn't wrap
                     }}
                   >
                     {item.blueprint_category}
@@ -778,9 +782,10 @@ const DownloadMetricsPage: React.FC = () => {
                   <td
                     style={{
                       padding: '10px 8px',
-                      textAlign: 'center', // Data Centered
+                      textAlign: 'center',
                       fontWeight: 'bold',
                       color: THEME.textPrimary,
+                      whiteSpace: 'nowrap', // 4. Ensures content in Column 3 doesn't wrap
                     }}
                   >
                     {formatBigNumber(Number(item.total))}
@@ -788,8 +793,9 @@ const DownloadMetricsPage: React.FC = () => {
                   <td
                     style={{
                       padding: '10px 8px',
-                      textAlign: 'left', // Data Aligned Left
+                      textAlign: 'right',
                       color: THEME.textPrimary,
+                      whiteSpace: 'nowrap', // 4. Ensures content in Column 4 doesn't wrap
                     }}
                   >
                     {formatDate(item.last_downloaded)}
