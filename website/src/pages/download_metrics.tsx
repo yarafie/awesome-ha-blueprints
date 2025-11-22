@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import PropTypes from 'prop-types'
 
 // --- Placeholder Data & Utility Functions (Replace with actual Firebase logic) ---
 
@@ -115,12 +116,24 @@ const Card = ({ title, children, className = '' }) => (
   </div>
 )
 
+Card.propTypes = {
+  title: PropTypes.string.isRequired,
+  children: PropTypes.node.isRequired,
+  className: PropTypes.string,
+}
+
 const MetricBox = ({ title, value, colorClass }) => (
   <div className={`rounded-xl p-6 text-white shadow-xl ${colorClass}`}>
     <p className='text-sm font-medium opacity-80'>{title}</p>
     <p className='mt-1 text-3xl font-bold'>{value}</p>
   </div>
 )
+
+MetricBox.propTypes = {
+  title: PropTypes.string.isRequired,
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+  colorClass: PropTypes.string.isRequired,
+}
 
 const ChartPlaceholder = ({ title, data }) => (
   <div className='flex flex-col items-center justify-center h-56'>
@@ -144,6 +157,16 @@ const ChartPlaceholder = ({ title, data }) => (
     </p>
   </div>
 )
+
+ChartPlaceholder.propTypes = {
+  title: PropTypes.string.isRequired,
+  data: PropTypes.arrayOf(
+    PropTypes.shape({
+      date: PropTypes.string.isRequired,
+      downloads: PropTypes.number.isRequired,
+    }),
+  ).isRequired,
+}
 
 const DonutChartPlaceholder = ({ data }) => {
   const total = data.reduce((sum, item) => sum + item.value, 0)
@@ -206,6 +229,15 @@ const DonutChartPlaceholder = ({ data }) => {
   )
 }
 
+DonutChartPlaceholder.propTypes = {
+  data: PropTypes.arrayOf(
+    PropTypes.shape({
+      name: PropTypes.string.isRequired,
+      value: PropTypes.number.isRequired,
+    }),
+  ).isRequired,
+}
+
 const BarChartPlaceholder = ({ data }) => {
   // Sort by downloads descending
   const sortedData = [...data]
@@ -239,6 +271,17 @@ const BarChartPlaceholder = ({ data }) => {
       </div>
     </div>
   )
+}
+
+BarChartPlaceholder.propTypes = {
+  data: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string.isRequired,
+      category: PropTypes.string.isRequired,
+      downloads: PropTypes.number.isRequired,
+      lastDownloaded: PropTypes.string.isRequired,
+    }),
+  ).isRequired,
 }
 
 const DataTable = ({ data }) => {
@@ -305,6 +348,10 @@ const DataTable = ({ data }) => {
         />
       </svg>
     )
+  }
+
+  SortIcon.propTypes = {
+    columnKey: PropTypes.string.isRequired,
   }
 
   return (
@@ -388,6 +435,17 @@ const DataTable = ({ data }) => {
       </div>
     </Card>
   )
+}
+
+DataTable.propTypes = {
+  data: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string.isRequired,
+      category: PropTypes.string.isRequired,
+      downloads: PropTypes.number.isRequired,
+      lastDownloaded: PropTypes.string.isRequired,
+    }),
+  ).isRequired,
 }
 
 // Main App Component
