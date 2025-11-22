@@ -576,11 +576,6 @@ const DownloadMetricsPage: React.FC = () => {
     letterSpacing: '0.05em',
   })
 
-  const cardBodyStyle: React.CSSProperties = {
-    padding: '24px',
-    textAlign: 'center',
-  }
-
   const chartHeaderStyle: React.CSSProperties = {
     padding: '16px',
     borderBottom: `1px solid ${THEME.gridLine}`,
