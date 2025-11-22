@@ -14,6 +14,7 @@ import {
   Tooltip,
   XAxis,
   YAxis,
+  TooltipProps,
 } from 'recharts'
 
 // D3 Imports for Professional Coloring
@@ -34,18 +35,19 @@ type ChartPoint = {
 }
 
 // Define the shape of data for charts
-type ChartData = ChartPoint & {
+interface ChartData {
   name: string
   value: number
+  percent: number
+  fill?: string
   category?: string
-  percent?: number
 }
 
 interface MetricsData {
   totalDownloads: number
   byCategory: CategoryMetric[]
   topBlueprints: TopBlueprintMetric[]
-  daily: ChartPoint[]
+  daily: { day: string; total: string }[]
 }
 
 // Define data structure for the Bar Chart to explicitly use a display name
@@ -55,8 +57,48 @@ type TopBlueprintBarData = {
   Downloads: number // Use 'Downloads' as the data key for the Bar
 }
 
-// --- NEW THEME DEFINITION FOR INLINE STYLES ---
-// Using a simple dark theme structure since this is JSX and not CSS/Tailwind file.
+// --- Custom Component Prop Types ---
+
+// Type for Recharts' Tooltip payload item when using PieChart (with custom data)
+type PieTooltipPayload = {
+  payload: ChartData
+  name: string
+  value: number
+  dataKey: string
+  fill: string
+  color: string
+  stroke: string
+}
+
+// Type for Recharts' Tooltip payload item when using BarChart (with custom data)
+type BarTooltipPayload = {
+  payload: TopBlueprintBarData
+  name: string
+  value: number
+  dataKey: string
+  fill: string
+  color: string
+  stroke: string
+}
+
+interface CustomTooltipProps extends TooltipProps<number, string> {
+  payload?: PieTooltipPayload[] | BarTooltipPayload[]
+}
+
+interface SortConfig {
+  key: keyof TopBlueprintMetric | 'total'
+  direction: 'ascending' | 'descending'
+}
+
+interface TableHeaderProps {
+  columnKey: keyof TopBlueprintMetric | 'total'
+  title: string
+  currentSort: SortConfig
+  onSort: (key: keyof TopBlueprintMetric | 'total') => void
+  style: React.CSSProperties
+}
+
+// --- THEME DEFINITION FOR INLINE STYLES ---
 const THEME = {
   primary: '#4f46e5', // Indigo-600
   secondary: '#10b981', // Emerald-500
@@ -76,9 +118,14 @@ const formatNumber = (num: number): string => {
 }
 
 // Custom Tooltip for Recharts PieChart (showing category and percentage)
-const CustomPieTooltip = ({ active, payload }) => {
+const CustomPieTooltip: React.FC<CustomTooltipProps> = ({
+  active,
+  payload,
+}) => {
   if (active && payload && payload.length) {
-    const data = payload[0].payload
+    // We assert the payload type to be for the Pie Chart based on usage
+    const data = (payload[0] as PieTooltipPayload).payload
+
     return (
       <div
         style={{
@@ -101,9 +148,14 @@ const CustomPieTooltip = ({ active, payload }) => {
 }
 
 // Custom Tooltip for Recharts BarChart (showing downloads)
-const CustomBarTooltip = ({ active, payload }) => {
+const CustomBarTooltip: React.FC<CustomTooltipProps> = ({
+  active,
+  payload,
+}) => {
   if (active && payload && payload.length) {
-    const data = payload[0].payload
+    // We assert the payload type to be for the Bar Chart based on usage
+    const data = (payload[0] as BarTooltipPayload).payload
+
     return (
       <div
         style={{
@@ -124,7 +176,13 @@ const CustomBarTooltip = ({ active, payload }) => {
 }
 
 // Custom TableHeader component to handle sorting
-const TableHeader = ({ columnKey, title, currentSort, onSort, style }) => {
+const TableHeader: React.FC<TableHeaderProps> = ({
+  columnKey,
+  title,
+  currentSort,
+  onSort,
+  style,
+}) => {
   const isSorted = currentSort.key === columnKey
   const isAscending = currentSort.direction === 'ascending'
 
@@ -183,17 +241,14 @@ const TableHeader = ({ columnKey, title, currentSort, onSort, style }) => {
   )
 }
 
-// --- NEW DATA TABLE COMPONENT ---
-const DataTable = ({ data }: { data: TopBlueprintMetric[] }) => {
-  const [sortConfig, setSortConfig] = useState<{
-    key: keyof TopBlueprintMetric | 'total'
-    direction: 'ascending' | 'descending'
-  }>({
+// --- DATA TABLE COMPONENT ---
+const DataTable: React.FC<{ data: TopBlueprintMetric[] }> = ({ data }) => {
+  const [sortConfig, setSortConfig] = useState<SortConfig>({
     key: 'total',
     direction: 'descending',
   })
 
-  const sortedData = useMemo(() => {
+  const sortedData: TopBlueprintMetric[] = useMemo(() => {
     const sortableData = [...data]
     if (sortConfig.key) {
       sortableData.sort((a, b) => {
@@ -219,7 +274,7 @@ const DataTable = ({ data }: { data: TopBlueprintMetric[] }) => {
     return sortableData
   }, [data, sortConfig])
 
-  const handleSort = (key: keyof TopBlueprintMetric) => {
+  const handleSort = (key: keyof TopBlueprintMetric | 'total') => {
     let direction: 'ascending' | 'descending' = 'descending'
     if (sortConfig.key === key && sortConfig.direction === 'descending') {
       direction = 'ascending'
@@ -278,7 +333,6 @@ const DataTable = ({ data }: { data: TopBlueprintMetric[] }) => {
                   borderBottom: `1px solid ${THEME.border}`,
                   fontSize: '14px',
                   color: THEME.link,
-                  // FIX APPLIED HERE: Ensure long IDs wrap and break
                   wordBreak: 'break-all',
                   overflowWrap: 'break-word',
                 }}
@@ -335,62 +389,61 @@ const DataTable = ({ data }: { data: TopBlueprintMetric[] }) => {
   )
 }
 
-// The rest of the component remains exactly as you provided it.
-const DownloadMetricsPage = () => {
-  // Mock data setup
-  const mockData: MetricsData = {
-    totalDownloads: 1247,
-    byCategory: [
-      { blueprint_category: 'controllers', total: '850' },
-      { blueprint_category: 'automations', total: '210' },
-      { blueprint_category: 'notifications', total: '187' },
-    ],
-    topBlueprints: [
-      {
-        blueprint_category: 'controllers',
-        blueprint_id: 'ikea_e2001_c2002',
-        total: '150',
-      },
-      {
-        blueprint_category: 'controllers',
-        blueprint_id: 'tuya_ZG-101Z-D',
-        total: '120',
-      },
-      {
-        blueprint_category: 'automations',
-        blueprint_id: 'presence_simulator',
-        total: '90',
-      },
-      {
-        blueprint_category: 'notifications',
-        blueprint_id: 'low_battery_alert',
-        total: '80',
-      },
-      {
-        blueprint_category: 'controllers',
-        blueprint_id: 'aqara_dj11lm',
-        total: '75',
-      },
-      {
-        blueprint_category: 'controllers',
-        blueprint_id:
-          'long_id_test_zha_or_z2m_device_controller_with_multiple_entities',
-        total: '70',
-      },
-    ],
-    daily: [
-      { day: '2078-11-18', total: '50' },
-      { day: '2078-11-19', total: '65' },
-      { day: '2078-11-20', total: '80' },
-      { day: '2078-11-21', total: '100' },
-      { day: '2078-11-22', total: '110' },
-      { day: '2078-11-23', total: '105' },
-      { day: '2078-11-24', total: '120' },
-    ],
-  }
+// Mock data setup (using a constant to prevent Rule of Hooks violation)
+const MOCK_DATA: MetricsData = {
+  totalDownloads: 1247,
+  byCategory: [
+    { blueprint_category: 'controllers', total: '850' },
+    { blueprint_category: 'automations', total: '210' },
+    { blueprint_category: 'notifications', total: '187' },
+  ],
+  topBlueprints: [
+    {
+      blueprint_category: 'controllers',
+      blueprint_id: 'ikea_e2001_c2002',
+      total: '150',
+    },
+    {
+      blueprint_category: 'controllers',
+      blueprint_id: 'tuya_ZG-101Z-D',
+      total: '120',
+    },
+    {
+      blueprint_category: 'automations',
+      blueprint_id: 'presence_simulator',
+      total: '90',
+    },
+    {
+      blueprint_category: 'notifications',
+      blueprint_id: 'low_battery_alert',
+      total: '80',
+    },
+    {
+      blueprint_category: 'controllers',
+      blueprint_id: 'aqara_dj11lm',
+      total: '75',
+    },
+    {
+      blueprint_category: 'controllers',
+      blueprint_id:
+        'long_id_test_zha_or_z2m_device_controller_with_multiple_entities',
+      total: '70',
+    },
+  ],
+  daily: [
+    { day: '2078-11-18', total: '50' },
+    { day: '2078-11-19', total: '65' },
+    { day: '2078-11-20', total: '80' },
+    { day: '2078-11-21', total: '100' },
+    { day: '2078-11-22', total: '110' },
+    { day: '2078-11-23', total: '105' },
+    { day: '2078-11-24', total: '120' },
+  ],
+}
 
-  // State to hold the fetched and processed data
-  const [metricsData] = useState<MetricsData>(mockData)
+const DownloadMetricsPage: React.FC = () => {
+  // Use MOCK_DATA directly as the state initializer.
+  const [metricsData] = useState<MetricsData>(MOCK_DATA)
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
 
   // Memoized data processing for charts
@@ -402,7 +455,6 @@ const DownloadMetricsPage = () => {
         name: item.blueprint_category,
         value: value,
         percent: (value / total) * 100,
-        fill: THEME.primary, // Placeholder, colors assigned later
       }
     })
   }, [metricsData.byCategory, metricsData.totalDownloads])
@@ -440,16 +492,22 @@ const DownloadMetricsPage = () => {
   }, [metricsData.topBlueprints])
 
   // D3 Color Scale for Pie Chart and Bar Chart consistency
-  const d3ColorScale = scaleOrdinal<string, string>(schemeCategory10)
+  const d3ColorScale = useMemo(
+    () => scaleOrdinal<string, string>(schemeCategory10),
+    [],
+  )
 
   // Card style for consistency
-  const cardStyle = {
-    backgroundColor: THEME.cardBackground,
-    borderRadius: '12px',
-    padding: '24px',
-    boxShadow: '0 4px 10px rgba(0, 0, 0, 0.3)',
-    marginBottom: '24px',
-  }
+  const cardStyle: React.CSSProperties = useMemo(
+    () => ({
+      backgroundColor: THEME.cardBackground,
+      borderRadius: '12px',
+      padding: '24px',
+      boxShadow: '0 4px 10px rgba(0, 0, 0, 0.3)',
+      marginBottom: '24px',
+    }),
+    [],
+  ) // Empty dependency array as THEME is constant
 
   return (
     <Layout
@@ -476,7 +534,6 @@ const DownloadMetricsPage = () => {
           Blueprint Download Metrics
         </h1>
 
-        {/* Placeholder for loading state, removed original RPC call */}
         {metricsData.totalDownloads === 0 ? (
           <p
             style={{
@@ -588,7 +645,7 @@ const DownloadMetricsPage = () => {
                         fontSize={12}
                         tickLine={false}
                         axisLine={false}
-                        tickFormatter={(value) => formatNumber(value)}
+                        tickFormatter={(value: number) => formatNumber(value)}
                       />
                       <Tooltip
                         contentStyle={{
@@ -596,7 +653,7 @@ const DownloadMetricsPage = () => {
                           border: `1px solid ${THEME.border}`,
                         }}
                         labelStyle={{ color: THEME.textPrimary }}
-                        formatter={(value) => [
+                        formatter={(value: number) => [
                           formatNumber(value),
                           'Downloads',
                         ]}
@@ -738,7 +795,7 @@ const DownloadMetricsPage = () => {
                         fontSize={12}
                         tickLine={false}
                         axisLine={false}
-                        tickFormatter={(value) => formatNumber(value)}
+                        tickFormatter={(value: number) => formatNumber(value)}
                       />
                       <YAxis
                         dataKey='name'
@@ -757,8 +814,8 @@ const DownloadMetricsPage = () => {
                         }}
                       />
                       <Bar
-                        dataKey='Downloads' // Updated dataKey to 'Downloads'
-                        name='# of Downloads' // Set a descriptive name for the legend
+                        dataKey='Downloads'
+                        name='# of Downloads'
                         fill={
                           selectedCategory
                             ? d3ColorScale(selectedCategory)
