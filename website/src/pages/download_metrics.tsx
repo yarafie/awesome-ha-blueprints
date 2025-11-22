@@ -709,6 +709,7 @@ const DownloadMetricsPage: React.FC = () => {
                     cursor: 'pointer',
                     color: THEME.textPrimary,
                     borderBottom: `2px solid ${THEME.accentColor}`,
+                    whiteSpace: 'nowrap',
                   }}
                 >
                   Category <SortIcon sortKey='category' />
@@ -721,6 +722,7 @@ const DownloadMetricsPage: React.FC = () => {
                     cursor: 'pointer',
                     color: THEME.textPrimary,
                     borderBottom: `2px solid ${THEME.accentColor}`,
+                    whiteSpace: 'nowrap',
                   }}
                 >
                   Downloads <SortIcon sortKey='total' />
@@ -733,6 +735,7 @@ const DownloadMetricsPage: React.FC = () => {
                     cursor: 'pointer',
                     color: THEME.textPrimary,
                     borderBottom: `2px solid ${THEME.accentColor}`,
+                    whiteSpace: 'nowrap',
                   }}
                 >
                   Last Downloaded <SortIcon sortKey='lastDownloaded' />
