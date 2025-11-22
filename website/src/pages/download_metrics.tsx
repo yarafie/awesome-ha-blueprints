@@ -799,7 +799,7 @@ const DownloadMetricsPage: React.FC = () => {
                   <td
                     style={{
                       padding: '10px 8px',
-                      textAlign: 'right', // Data Aligned Right
+                      textAlign: 'left', // Data Aligned Left
                       color: THEME.textPrimary,
                     }}
                   >
