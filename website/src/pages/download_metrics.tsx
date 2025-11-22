@@ -682,7 +682,6 @@ const DownloadMetricsPage: React.FC = () => {
           <table
             style={{
               width: '100%', // MANDATORY: Ensures table fills its container
-              tableLayout: 'fixed', // MANDATORY: Enforces strict column widths
               borderCollapse: 'collapse',
               fontSize: '14px',
               margin: '0',
