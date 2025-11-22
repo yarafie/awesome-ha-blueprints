@@ -18,8 +18,8 @@ import {
 } from 'recharts'
 
 // D3 Imports for Professional Coloring
-import { scaleOrdinal } from 'd3-scale'
-import { schemeCategory10 } from 'd3-scale-chromatic'
+import { scaleOrdinal } from 'd3-scale' // <-- CORRECTED
+import { schemeCategory10 } from 'd3-scale-chromatic' // <-- CORRECTED
 
 // --- Type Definitions based on SQL RPC Functions ---
 type CategoryMetric = { blueprint_category: string; total: string }
@@ -29,6 +29,8 @@ type TopBlueprintMetric = {
   total: string
   last_downloaded?: string // ISO Date string for the new column
 }
+
+type DailyMetric = { day: string; total: string } // Actual RPC return type
 
 type ChartPoint = {
   label: string // e.g. "Nov 18"
@@ -48,7 +50,7 @@ interface MetricsData {
   totalDownloads: number
   byCategory: CategoryMetric[]
   topBlueprints: TopBlueprintMetric[]
-  daily: { day: string; total: string }[]
+  daily: DailyMetric[]
 }
 
 // Define data structure for the Bar Chart to explicitly use a display name
@@ -298,7 +300,7 @@ const DataTable: React.FC<{ data: TopBlueprintMetric[] }> = ({ data }) => {
   }
 
   return (
-    // Removed duplicate card styling here.
+    // Card styling removed from here in the previous step
     <div style={{ overflowX: 'auto', borderRadius: '12px' }}>
       <table
         style={{
@@ -316,7 +318,7 @@ const DataTable: React.FC<{ data: TopBlueprintMetric[] }> = ({ data }) => {
               title='Blueprint ID'
               currentSort={sortConfig}
               onSort={handleSort}
-              style={{ width: '50%', paddingLeft: '24px' }} // Increased padding to match card
+              style={{ width: '50%', paddingLeft: '24px' }}
             />
             <TableHeader
               columnKey='blueprint_category'
@@ -337,7 +339,7 @@ const DataTable: React.FC<{ data: TopBlueprintMetric[] }> = ({ data }) => {
               title='Last Downloaded'
               currentSort={sortConfig}
               onSort={handleSort}
-              style={{ width: '15%', textAlign: 'right', paddingRight: '24px' }} // Increased padding to match card
+              style={{ width: '15%', textAlign: 'right', paddingRight: '24px' }}
             />
           </tr>
         </thead>
@@ -354,7 +356,7 @@ const DataTable: React.FC<{ data: TopBlueprintMetric[] }> = ({ data }) => {
               <td
                 style={{
                   padding: '12px 16px',
-                  paddingLeft: '24px', // Adjusted padding
+                  paddingLeft: '24px',
                   borderBottom: `1px solid ${THEME.border}`,
                   fontSize: '14px',
                   color: THEME.link,
@@ -410,7 +412,7 @@ const DataTable: React.FC<{ data: TopBlueprintMetric[] }> = ({ data }) => {
               <td
                 style={{
                   padding: '12px 16px',
-                  paddingRight: '24px', // Adjusted padding
+                  paddingRight: '24px',
                   borderBottom: `1px solid ${THEME.border}`,
                   fontSize: '14px',
                   color: THEME.textPrimary,
@@ -429,79 +431,74 @@ const DataTable: React.FC<{ data: TopBlueprintMetric[] }> = ({ data }) => {
   )
 }
 
-// --- MOCK DATA (Used temporarily for demonstration) ---
-const MOCK_DATA: MetricsData = {
-  totalDownloads: 1247,
-  byCategory: [
-    { blueprint_category: 'controllers', total: '850' },
-    { blueprint_category: 'automations', total: '210' },
-    { blueprint_category: 'notifications', total: '187' },
-  ],
-  topBlueprints: [
-    {
-      blueprint_category: 'controllers',
-      blueprint_id: 'ikea_e2001_c2002',
-      total: '150',
-      last_downloaded: '2025-11-20',
-    },
-    {
-      blueprint_category: 'controllers',
-      blueprint_id: 'tuya_ZG-101Z-D',
-      total: '120',
-      last_downloaded: '2025-11-22',
-    },
-    {
-      blueprint_category: 'automations',
-      blueprint_id: 'presence_simulator',
-      total: '90',
-      last_downloaded: '2025-11-18',
-    },
-    {
-      blueprint_category: 'notifications',
-      blueprint_id: 'low_battery_alert',
-      total: '80',
-      last_downloaded: '2025-11-19',
-    },
-    {
-      blueprint_category: 'controllers',
-      blueprint_id: 'aqara_dj11lm',
-      total: '75',
-      last_downloaded: '2025-11-21',
-    },
-    {
-      blueprint_category: 'controllers',
-      blueprint_id:
-        'long_id_test_zha_or_z2m_device_controller_with_multiple_entities',
-      total: '70',
-      last_downloaded: '2025-11-15',
-    },
-  ],
-  daily: [
-    { day: '2078-11-18', total: '50' },
-    { day: '2078-11-19', total: '65' },
-    { day: '2078-11-20', total: '80' },
-    { day: '2078-11-21', total: '100' },
-    { day: '2078-11-22', total: '110' },
-    { day: '2078-11-23', total: '105' },
-    { day: '2078-11-24', total: '120' },
-  ],
+// --- DATA FETCHING LOGIC (Live Supabase Implementation) ---
+
+// *** USER ACTION REQUIRED: You MUST replace this placeholder with your actual Supabase client instance. ***
+// E.g., const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// If you are using Docusaurus or another framework, ensure the client is correctly imported/injected.
+const supabase: any = {
+  rpc: async (functionName: string) => {
+    // Placeholder function to prevent immediate errors if the user hasn't injected the client yet.
+    console.error(
+      `Supabase client is a placeholder. Please replace 'supabase: any = {...}' with your actual Supabase client instance in the code.`,
+    )
+    // Returning dummy data structure to avoid breaking the app during initial setup.
+    return {
+      data: [],
+      error: {
+        message: `RPC call to ${functionName} failed (placeholder client).`,
+      },
+    }
+  },
 }
 
-// --- DATA FETCHING LOGIC (Simulated) ---
-
 /**
- * Simulates fetching metrics data from a backend service (e.g., Supabase RPC).
- * In a real app, this would be replaced with your actual client call.
+ * Fetches and transforms all metrics data from Supabase RPCs.
  */
 const fetchMetricsData = async (): Promise<MetricsData> => {
-  // --- REPLACE THIS BLOCK WITH YOUR ACTUAL SUPABASE CALLS ---
-  return new Promise((resolve) => {
-    // Simulate network delay
-    setTimeout(() => {
-      resolve(MOCK_DATA)
-    }, 1000)
-  })
-  // --- END REPLACEMENT BLOCK ---
+  // 1. Get all data concurrently using the assumed RPC function names
+  const [
+    categoryResult,
+    topBlueprintsResult,
+    dailyResult,
+    totalDownloadsResult,
+  ] = await Promise.all([
+    supabase.rpc('get_total_downloads_by_category'),
+    supabase.rpc('get_top_blueprints'), // <-- Uses the corrected RPC name
+    supabase.rpc('get_daily_downloads'),
+    // Assuming a simple RPC that returns [{ total: "1234" }]
+    supabase.rpc('get_total_downloads'),
+  ])
+
+  // 2. Simple Error handling
+  if (
+    categoryResult.error ||
+    topBlueprintsResult.error ||
+    dailyResult.error ||
+    totalDownloadsResult.error
+  ) {
+    console.error('Supabase RPC Error:', {
+      category: categoryResult.error,
+      topBlueprints: topBlueprintsResult.error,
+      daily: dailyResult.error,
+      total: totalDownloadsResult.error,
+    })
+    throw new Error('Failed to fetch metrics from Supabase.')
+  }
+
+  // 3. Data transformation
+  // Extract total downloads (assuming the total RPC returns an array like [{ total: "1234" }])
+  const totalDownloadsValue = parseInt(
+    totalDownloadsResult.data[0]?.total || '0',
+    10,
+  )
+
+  return {
+    totalDownloads: totalDownloadsValue,
+    byCategory: categoryResult.data as CategoryMetric[],
+    topBlueprints: topBlueprintsResult.data as TopBlueprintMetric[],
+    daily: dailyResult.data as DailyMetric[], // Keep as DailyMetric[] for processing in useMemo
+  }
 }
 
 // --- MAIN COMPONENT ---
@@ -517,7 +514,7 @@ const DownloadMetricsPage: React.FC = () => {
       setMetricsData(data)
     } catch (error) {
       console.error('Failed to fetch metrics data:', error)
-      // Optionally set an error state here
+      // You might want to display a user-friendly error message here
     } finally {
       setIsLoading(false)
     }
@@ -599,7 +596,7 @@ const DownloadMetricsPage: React.FC = () => {
   const tableCardStyle: React.CSSProperties = useMemo(
     () => ({
       ...cardStyle,
-      padding: '0', // Important change: Remove padding here
+      padding: '0', // Important: Remove padding here so the table fills edge-to-edge
       overflow: 'hidden', // Ensure table corners are rounded
     }),
     [cardStyle],
