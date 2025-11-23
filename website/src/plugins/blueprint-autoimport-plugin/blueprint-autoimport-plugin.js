@@ -8,7 +8,9 @@ const path = require('path')
 
 // Docusaurus plugin: auto-import blueprint packages from blueprints-lib/
 function loadBlueprintPackages() {
-  const rootDir = path.resolve(__dirname, '../../blueprints-lib')
+  // MUST go 3 directories up, not 2
+  const rootDir = path.resolve(__dirname, '../../../blueprints-lib')
+
   const categories = fs.readdirSync(rootDir).filter((f) => {
     const full = path.join(rootDir, f)
     return fs.statSync(full).isDirectory()
