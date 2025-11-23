@@ -120,15 +120,18 @@ const DownloadMetricsPage: React.FC = () => {
 
   // --- HELPER FUNCTIONS ---
 
-  const formatApiDate = (date: Date): string => date.toISOString().split('T')[0]
+  // UTC-safe date formatter
+  const formatApiDateUTC = (date: Date): string =>
+    date.toISOString().substring(0, 10)
   const formatBigNumber = (num: number): string => num.toLocaleString()
 
   // New Date Formatter for the table
+  // UTC-safe date formatter for table display
   const formatDate = (isoString: string | undefined): string => {
     if (!isoString) return 'N/A'
     try {
-      // Format as "Nov 21, 2025" or similar readable format
       return new Date(isoString).toLocaleDateString(undefined, {
+        timeZone: 'UTC',
         year: 'numeric',
         month: 'short',
         day: 'numeric',
@@ -146,25 +149,33 @@ const DownloadMetricsPage: React.FC = () => {
     const dailyMap = new Map(
       dailyData.map((item) => [item.day, Number(item.total)]),
     )
-    const fullDailyData: ChartPoint[] = []
-    const today = new Date()
+
+    const result: ChartPoint[] = []
+
+    // Today's UTC midnight
+    const now = new Date()
+    const todayUTC = new Date(
+      Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()),
+    )
 
     for (let i = days - 1; i >= 0; i--) {
-      const d = new Date(today)
-      d.setDate(today.getDate() - i)
+      const d = new Date(todayUTC)
+      d.setUTCDate(todayUTC.getUTCDate() - i)
 
-      const apiDate = formatApiDate(d)
+      const apiDate = formatApiDateUTC(d)
       const total = dailyMap.get(apiDate) || 0
 
-      fullDailyData.push({
+      result.push({
         label: d.toLocaleDateString(undefined, {
           month: 'short',
           day: 'numeric',
+          timeZone: 'UTC',
         }),
-        total: total,
+        total,
       })
     }
-    return fullDailyData
+
+    return result
   }
 
   // Memoized fetch helper
@@ -356,14 +367,18 @@ const DownloadMetricsPage: React.FC = () => {
         // Mock data path for daily metrics
         const mockDaily: DailyMetric[] = [
           {
-            day: formatApiDate(new Date(Date.now() - 10 * 24 * 60 * 60 * 1000)),
+            day: formatApiDateUTC(
+              new Date(Date.now() - 10 * 24 * 60 * 60 * 1000),
+            ),
             total: '10',
           },
           {
-            day: formatApiDate(new Date(Date.now() - 5 * 24 * 60 * 60 * 1000)),
+            day: formatApiDateUTC(
+              new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
+            ),
             total: '20',
           },
-          { day: formatApiDate(new Date()), total: '22' },
+          { day: formatApiDateUTC(new Date()), total: '22' },
         ]
         const dailyParsed: ChartPoint[] = fillMissingDailyData(
           mockDaily,
