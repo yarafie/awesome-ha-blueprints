@@ -4,6 +4,7 @@ dotenv.config({ path: path.resolve(__dirname, '.env') })
 import { themes as prismThemes } from 'prism-react-renderer'
 import path from 'path'
 import blueprintDownloaderPlugin from './src/plugins/blueprint-downloader-plugin/blueprint-downloader-plugin.js'
+import blueprintAutoImportPlugin from './src/plugins/blueprint-autoimport-plugin/blueprint-autoimport-plugin.js'
 
 // Create a custom plugin for webpack configuration
 // the purpose of this plugin is to allow the use of the @blueprints alias
@@ -134,6 +135,7 @@ const config: Config = {
   plugins: [
     webpackConfigPlugin,
     blueprintDownloaderPlugin,
+    blueprintAutoImportPlugin,
     // Make environment variables available to the client
     function () {
       return {

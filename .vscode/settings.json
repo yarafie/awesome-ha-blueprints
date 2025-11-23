@@ -1,0 +1,12 @@
+{
+  "json.schemas": [
+    {
+      "fileMatch": ["blueprints-lib/*/*/metadata.json"],
+      "url": "./website/src/schemas/metadata.schema.json"
+    },
+    {
+      "fileMatch": ["blueprints-lib/*/*/changelog.json"],
+      "url": "./website/src/schemas/changelog.schema.json"
+    }
+  ]
+}
