@@ -77,8 +77,8 @@ const DownloadMetricsPage: React.FC = () => {
   const [isDailyLoading, setIsDailyLoading] = useState(true)
   const [error, setError] = useState<string | undefined>(undefined)
   const [selectedDays, setSelectedDays] = useState(15)
+  const [topLimit, setTopLimit] = useState<number>(10)
   const [isDark, setIsDark] = useState(false)
-  const [topLimit, setTopLimit] = useState<number>(10) // default = 10
 
   // Tracks the currently selected category filter from the Pie Chart
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
@@ -121,18 +121,15 @@ const DownloadMetricsPage: React.FC = () => {
 
   // --- HELPER FUNCTIONS ---
 
-  // UTC-safe date formatter
-  const formatApiDateUTC = (date: Date): string =>
-    date.toISOString().substring(0, 10)
+  const formatApiDate = (date: Date): string => date.toISOString().split('T')[0]
   const formatBigNumber = (num: number): string => num.toLocaleString()
 
   // New Date Formatter for the table
-  // UTC-safe date formatter for table display
   const formatDate = (isoString: string | undefined): string => {
     if (!isoString) return 'N/A'
     try {
+      // Format as "Nov 21, 2025" or similar readable format
       return new Date(isoString).toLocaleDateString(undefined, {
-        timeZone: 'UTC',
         year: 'numeric',
         month: 'short',
         day: 'numeric',
@@ -150,33 +147,25 @@ const DownloadMetricsPage: React.FC = () => {
     const dailyMap = new Map(
       dailyData.map((item) => [item.day, Number(item.total)]),
     )
-
-    const result: ChartPoint[] = []
-
-    // Today's UTC midnight
-    const now = new Date()
-    const todayUTC = new Date(
-      Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()),
-    )
+    const fullDailyData: ChartPoint[] = []
+    const today = new Date()
 
     for (let i = days - 1; i >= 0; i--) {
-      const d = new Date(todayUTC)
-      d.setUTCDate(todayUTC.getUTCDate() - i)
+      const d = new Date(today)
+      d.setDate(today.getDate() - i)
 
-      const apiDate = formatApiDateUTC(d)
+      const apiDate = formatApiDate(d)
       const total = dailyMap.get(apiDate) || 0
 
-      result.push({
+      fullDailyData.push({
         label: d.toLocaleDateString(undefined, {
           month: 'short',
           day: 'numeric',
-          timeZone: 'UTC',
         }),
-        total,
+        total: total,
       })
     }
-
-    return result
+    return fullDailyData
   }
 
   // Memoized fetch helper
@@ -368,18 +357,14 @@ const DownloadMetricsPage: React.FC = () => {
         // Mock data path for daily metrics
         const mockDaily: DailyMetric[] = [
           {
-            day: formatApiDateUTC(
-              new Date(Date.now() - 10 * 24 * 60 * 60 * 1000),
-            ),
+            day: formatApiDate(new Date(Date.now() - 10 * 24 * 60 * 60 * 1000)),
             total: '10',
           },
           {
-            day: formatApiDateUTC(
-              new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
-            ),
+            day: formatApiDate(new Date(Date.now() - 5 * 24 * 60 * 60 * 1000)),
             total: '20',
           },
-          { day: formatApiDateUTC(new Date()), total: '22' },
+          { day: formatApiDate(new Date()), total: '22' },
         ]
         const dailyParsed: ChartPoint[] = fillMissingDailyData(
           mockDaily,
@@ -477,7 +462,7 @@ const DownloadMetricsPage: React.FC = () => {
 
   // Use the *sorted* data for the bar chart (top 10 items)
   const top10BarData: TopBlueprintBarData[] = sortedBlueprints
-    .slice(0, 10)
+    .slice(0, topLimit)
     .map((bp) => ({
       id: bp.blueprint_id,
       name:
@@ -683,7 +668,7 @@ const DownloadMetricsPage: React.FC = () => {
             textAlign: 'center',
           }}
         >
-          Table Data View ({data.length} Results)
+          Table Data View (Top Results, limited by selection)
         </h3>
 
         <div style={{ overflowX: 'auto' }}>
@@ -1107,17 +1092,64 @@ const DownloadMetricsPage: React.FC = () => {
                   borderBottom: `1px solid ${THEME.gridLine}`,
                 }}
               >
-                <h3
+                <div
                   style={{
-                    ...chartHeaderStyle,
-                    borderBottom: 'none',
-                    paddingLeft: '0',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    marginBottom: '4px',
                   }}
                 >
-                  {selectedCategory
-                    ? `Top 10 Blueprints in '${selectedCategory}' Category`
-                    : 'Top 10 Blueprints (Overall, Sorted by Downloads)'}
-                </h3>
+                  <h3
+                    style={{
+                      ...chartHeaderStyle,
+                      borderBottom: 'none',
+                      paddingLeft: '0',
+                      margin: 0,
+                    }}
+                  >
+                    {selectedCategory
+                      ? `Top ${topLimit} Blueprints in '${selectedCategory}' Category`
+                      : `Top ${topLimit} Blueprints (Overall, Sorted by Downloads)`}
+                  </h3>
+                  <div style={{ position: 'relative' }}>
+                    <select
+                      value={topLimit}
+                      onChange={(e) => setTopLimit(Number(e.target.value))}
+                      style={{
+                        appearance: 'none',
+                        padding: '6px 32px 6px 10px',
+                        fontSize: '14px',
+                        cursor: 'pointer',
+                        backgroundColor: 'var(--ifm-navbar-background-color)',
+                        color: 'var(--ifm-font-color-base)',
+                        border: '1px solid var(--ifm-color-emphasis-300)',
+                        borderRadius: '6px',
+                      }}
+                    >
+                      {[5, 10, 15, 20, 25, 30, 40, 50, 75, 100].map((n) => (
+                        <option key={n} value={n}>
+                          Top {n}
+                        </option>
+                      ))}
+                    </select>
+                    <svg
+                      style={{
+                        position: 'absolute',
+                        right: '10px',
+                        top: '50%',
+                        width: '14px',
+                        height: '14px',
+                        transform: 'translateY(-50%)',
+                        opacity: 0.7,
+                        pointerEvents: 'none',
+                      }}
+                      viewBox='0 0 24 24'
+                    >
+                      <path fill='currentColor' d='M7 10l5 5 5-5z' />
+                    </svg>
+                  </div>
+                </div>
                 {selectedCategory && (
                   <button
                     onClick={handleClearFilter}
