@@ -1,10 +1,15 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Layout from '@theme/Layout'
 import Link from '@docusaurus/Link'
 
 export default function BlueprintIndexPage({ modules: { blueprints } }) {
-  // Ensure compatibility with both CJS + ESM JSON loading
-  const entries = require(blueprints).default ?? require(blueprints)
+  const [entries, setEntries] = useState([])
+
+  useEffect(() => {
+    import(blueprints).then((mod) => {
+      setEntries(mod.default || mod)
+    })
+  }, [blueprints])
 
   return (
     <Layout title='Blueprint Library'>
@@ -23,11 +28,18 @@ export default function BlueprintIndexPage({ modules: { blueprints } }) {
             <Link to={`/blueprints/${bp.category}/${bp.slug}`}>
               <h3 style={{ marginBottom: '4px' }}>{bp.metadata.title}</h3>
             </Link>
-
             <p style={{ marginTop: 0 }}>{bp.metadata.description}</p>
           </div>
         ))}
       </div>
     </Layout>
   )
+}
+
+import PropTypes from 'prop-types'
+
+BlueprintIndexPage.propTypes = {
+  modules: PropTypes.shape({
+    blueprints: PropTypes.string.isRequired,
+  }).isRequired,
 }
