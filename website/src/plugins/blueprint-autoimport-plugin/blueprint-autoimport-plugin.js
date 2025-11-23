@@ -1,7 +1,12 @@
-// Docusaurus plugin: auto-import blueprint packages from blueprints-lib/
+/* eslint-env node */
+/* eslint-disable @typescript-eslint/no-require-imports */
+/* eslint-disable no-undef */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 const fs = require('fs')
 const path = require('path')
 
+// Docusaurus plugin: auto-import blueprint packages from blueprints-lib/
 function loadBlueprintPackages() {
   const rootDir = path.join(process.cwd(), 'blueprints-lib')
   const categories = fs.readdirSync(rootDir).filter((f) => {
