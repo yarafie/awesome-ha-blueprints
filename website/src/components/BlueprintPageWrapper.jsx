@@ -1,26 +1,43 @@
 import React, { useEffect, useState } from 'react'
 import Layout from '@theme/Layout'
 import MDXContent from '@theme/MDXContent'
+import PropTypes from 'prop-types'
 
-export default function BlueprintPageWrapper({ modules: { metadata, mdx } }) {
-  const [data, setData] = useState(null)
+export default function BlueprintPageWrapper({ modules }) {
+  const [metadata, setMetadata] = useState(null)
   const [MDX, setMDX] = useState(null)
 
   useEffect(() => {
-    import(metadata).then((mod) => {
-      setData(mod.default || mod)
-    })
-    import(mdx).then((mod) => {
-      setMDX(() => mod.default)
-    })
-  }, [metadata, mdx])
+    async function load() {
+      if (!modules) return
 
-  if (!data || !MDX) return null
+      if (modules.metadata) {
+        const meta = await import(/* @vite-ignore */ modules.metadata)
+        setMetadata(meta.default ?? meta)
+      }
+
+      if (modules.mdx) {
+        const mdxModule = await import(/* @vite-ignore */ modules.mdx)
+        setMDX(mdxModule.default)
+      }
+    }
+    load()
+  }, [modules])
+
+  if (!metadata || !MDX) {
+    return (
+      <Layout title='Loading…'>
+        <div className='container margin-vert--lg'>
+          <p>Loading blueprint…</p>
+        </div>
+      </Layout>
+    )
+  }
 
   return (
-    <Layout title={data.title} description={data.description}>
+    <Layout title={metadata.title} description={metadata.description}>
       <div className='container margin-vert--lg'>
-        <h1>{data.title}</h1>
+        <h1>{metadata.title}</h1>
         <MDXContent>
           <MDX />
         </MDXContent>
@@ -29,11 +46,9 @@ export default function BlueprintPageWrapper({ modules: { metadata, mdx } }) {
   )
 }
 
-import PropTypes from 'prop-types'
-
 BlueprintPageWrapper.propTypes = {
   modules: PropTypes.shape({
-    metadata: PropTypes.string.isRequired,
-    mdx: PropTypes.string.isRequired,
-  }).isRequired,
+    metadata: PropTypes.string,
+    mdx: PropTypes.string,
+  }),
 }
