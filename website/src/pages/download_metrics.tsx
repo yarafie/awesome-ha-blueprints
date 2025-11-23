@@ -237,45 +237,44 @@ const DownloadMetricsPage: React.FC = () => {
         byCategory: [
           { blueprint_category: 'controllers', total: '900000' },
           { blueprint_category: 'hooks', total: '280000' },
-          { blueprint_category: 'utilities', total: '50000' },
-          { blueprint_category: 'layouts', total: '5000' },
+          { blueprint_category: 'automation', total: '50000' },
         ],
-        // UPDATED MOCK DATA: Demonstrates the required 'last_downloaded' field
+        // MOCK DATA: Demonstrates the required 'last_downloaded' field
         topBlueprints: [
           {
             blueprint_category: 'hooks',
-            blueprint_id: 'use_auth_token_v3',
-            total: '50000',
+            blueprint_id: 'light',
+            total: '5000',
             last_downloaded: '2025-11-21T10:30:00Z',
           },
           {
             blueprint_category: 'hooks',
-            blueprint_id: 'use_global_state_mgmt',
-            total: '40000',
+            blueprint_id: 'cover',
+            total: '500',
             last_downloaded: '2025-11-15T10:30:00Z',
           },
           {
             blueprint_category: 'controllers',
-            blueprint_id: 'http_request_worker',
+            blueprint_id: 'ikea_e1743',
             total: '10000',
             last_downloaded: '2025-11-19T10:30:00Z',
           },
           {
             blueprint_category: 'controllers',
-            blueprint_id: 'websocket_manager',
+            blueprint_id: 'philips_929002398602',
             total: '5000',
             last_downloaded: '2025-10-25T10:30:00Z',
           },
           {
-            blueprint_category: 'utilities',
-            blueprint_id: 'date_formatter_v1',
-            total: '25000',
+            blueprint_category: 'automation',
+            blueprint_id: 'addon_update_notification',
+            total: '250',
             last_downloaded: '2025-11-22T10:30:00Z',
           },
           {
-            blueprint_category: 'utilities',
-            blueprint_id: 'crypto_hash_gen',
-            total: '15000',
+            blueprint_category: 'automation',
+            blueprint_id: 'persistent_notification_to_mobile',
+            total: '150',
             last_downloaded: '2025-11-18T10:30:00Z',
           },
         ],
@@ -473,7 +472,6 @@ const DownloadMetricsPage: React.FC = () => {
     }))
 
   // --- UI Components and Styles ---
-
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       // Find the value based on the BarChart's dataKey ('Downloads') or AreaChart's dataKey ('total')
@@ -591,7 +589,7 @@ const DownloadMetricsPage: React.FC = () => {
     onSelect: (days: number) => void
     isDailyLoading: boolean
   }> = ({ current, onSelect, isDailyLoading }) => {
-    const ranges = [7, 15, 30, 90]
+    const ranges = [1, 7, 15, 30, 90]
     const activeStyle = (days: number): React.CSSProperties => ({
       padding: '6px 12px',
       margin: '0 4px',
@@ -656,6 +654,7 @@ const DownloadMetricsPage: React.FC = () => {
     )
   }
 
+  // Create the Table Data View
   const DataTable: React.FC<{ data: TopBlueprintMetric[] }> = ({ data }) => {
     return (
       <div style={{ padding: '24px 16px 16px 16px' }}>
@@ -681,7 +680,7 @@ const DownloadMetricsPage: React.FC = () => {
               margin: '0',
             }}
           >
-            {/* 🔥 FIX: Column sizing */}
+            {/* Column sizing */}
             <colgroup>
               <col style={{ width: 'auto' }} /> {/* Column 1 – expands */}
               <col style={{ width: '1%', whiteSpace: 'nowrap' }} />{' '}
@@ -831,6 +830,7 @@ const DownloadMetricsPage: React.FC = () => {
     )
   }
 
+  // The Main Dashboard Creation
   return (
     <Layout
       title='Blueprint Download Metrics'
@@ -876,6 +876,7 @@ const DownloadMetricsPage: React.FC = () => {
           <div style={{ width: '100%' }}>
             {/* 1. TOP ROW: 2 KPI CARDS */}
             <section style={gridStyleKPIs}>
+              {/* 1a. Total Downloads */}
               <div style={cardStyle}>
                 <div style={cardHeaderStyle(THEME.accentColor)}>
                   Total Downloads
@@ -893,6 +894,7 @@ const DownloadMetricsPage: React.FC = () => {
                   </p>
                 </div>
               </div>
+              {/* 1b. Tracked Blueprints */}
               <div style={cardStyle}>
                 <div style={cardHeaderStyle('#9333ea')}>Tracked Blueprints</div>
                 <div style={{ padding: '24px', textAlign: 'center' }}>
@@ -912,7 +914,7 @@ const DownloadMetricsPage: React.FC = () => {
 
             {/* 2. MIDDLE ROW: 2 CHARTS */}
             <section style={gridStyle2Col}>
-              {/* Daily Downloads */}
+              {/* 2a. Daily Downloads */}
               <div style={cardStyle}>
                 <h3 style={chartHeaderStyle}>
                   Daily Downloads (Last {selectedDays} Days)
@@ -1007,7 +1009,7 @@ const DownloadMetricsPage: React.FC = () => {
                 </div>
               </div>
 
-              {/* Pie Chart (Category Distribution) - INTERACTIVE */}
+              {/* 2b. Pie Chart (Category Distribution) - INTERACTIVE */}
               <div style={cardStyle}>
                 <h3 style={chartHeaderStyle}>
                   Category Distribution (Click to filter)
@@ -1121,7 +1123,7 @@ const DownloadMetricsPage: React.FC = () => {
                 )}
               </div>
 
-              {/* Bar Chart Visualization */}
+              {/* TOP X BLUEPRINTS Bar Chart Visualization */}
               <div style={{ height: Math.max(400, top10BarData.length * 40) }}>
                 {top10BarData.length > 0 ? (
                   <ResponsiveContainer width='100%' height='100%'>
@@ -1186,7 +1188,7 @@ const DownloadMetricsPage: React.FC = () => {
               </div>
             </section>
 
-            {/* 4. DATA TABLE SECTION (New full-width card for raw data) */}
+            {/* 4. TABLE DATA VIEW SECTION */}
             <section style={{ ...cardStyle, overflow: 'visible' }}>
               <DataTable data={sortedBlueprints} />
             </section>
