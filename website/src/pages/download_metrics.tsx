@@ -78,6 +78,7 @@ const DownloadMetricsPage: React.FC = () => {
   const [error, setError] = useState<string | undefined>(undefined)
   const [selectedDays, setSelectedDays] = useState(15)
   const [isDark, setIsDark] = useState(false)
+  const [topLimit, setTopLimit] = useState<number>(10) // default = 10
 
   // Tracks the currently selected category filter from the Pie Chart
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
