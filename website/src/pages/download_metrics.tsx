@@ -460,8 +460,8 @@ const DownloadMetricsPage: React.FC = () => {
     label: item.blueprint_category,
   }))
 
-  // Use the *sorted* data for the bar chart (top 10 items)
-  const top10BarData: TopBlueprintBarData[] = sortedBlueprints
+  // Use the *sorted* data for the bar chart (top X items)
+  const topNBarData: TopBlueprintBarData[] = sortedBlueprints
     .slice(0, topLimit)
     .map((bp) => ({
       id: bp.blueprint_id,
@@ -1171,12 +1171,12 @@ const DownloadMetricsPage: React.FC = () => {
                 )}
               </div>
 
-              {/* TOP X BLUEPRINTS Bar Chart Visualization */}
-              <div style={{ height: Math.max(400, top10BarData.length * 40) }}>
-                {top10BarData.length > 0 ? (
+              {/* TOP N BLUEPRINTS Bar Chart Visualization */}
+              <div style={{ height: Math.max(400, topNBarData.length * 40) }}>
+                {topNBarData.length > 0 ? (
                   <ResponsiveContainer width='100%' height='100%'>
                     <BarChart
-                      data={top10BarData}
+                      data={topNBarData}
                       layout='vertical'
                       margin={{ top: 5, right: 30, left: 100, bottom: 5 }}
                     >
