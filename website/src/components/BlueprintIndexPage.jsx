@@ -1,18 +1,16 @@
+/* eslint-disable react/prop-types */
+
 import React from 'react'
 import Layout from '@theme/Layout'
 import Link from '@docusaurus/Link'
 
-// SSG-compatible Blueprint Index Page
 export default function BlueprintIndexPage({ modules }) {
-  // Completely eliminate dynamic require()
-  // Docusaurus will inject the JSON directly
   const entries = modules.blueprints
 
   return (
     <Layout title='Blueprint Library'>
       <div className='container'>
         <h1>Blueprint Library</h1>
-
         {entries.map((bp) => (
           <div
             key={`${bp.category}-${bp.slug}`}
