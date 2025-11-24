@@ -2,27 +2,46 @@ import React from 'react'
 import Layout from '@theme/Layout'
 import MDXContent from '@theme/MDXContent'
 
-// Types for routes created by the plugin
-interface BlueprintPageProps {
-  modules: {
-    metadata: any // the generated metadata JSON
-    mdx: any // path to the MDX component
-  }
+type BlueprintMetadata = {
+  title?: string
+  name?: string
+  description?: string
+  [key: string]: any
 }
 
-export default function BlueprintPageWrapper({ modules }: BlueprintPageProps) {
-  // Handle CJS / ESM JSON behavior
-  const data = modules.metadata.default ?? modules.metadata
+type BlueprintPageWrapperProps = {
+  metadata: BlueprintMetadata
+  // Docusaurus will pass the compiled MDX module as this prop
+  mdx: any
+}
 
-  const MDX = modules.mdx.default ?? modules.mdx
+export default function BlueprintPageWrapper({
+  metadata,
+  mdx,
+}: BlueprintPageWrapperProps) {
+  const title = metadata?.title || metadata?.name || 'Blueprint'
+  const description = metadata?.description || ''
+
+  // Docusaurus gives us a module; use default export if present
+  const MDXComponent = (mdx && (mdx.default || mdx)) as React.ComponentType
+
+  if (!MDXComponent) {
+    return (
+      <Layout title={title} description={description}>
+        <div className='container margin-vert--lg'>
+          <h1>{title}</h1>
+          <p>Unable to load blueprint documentation (MDX component missing).</p>
+        </div>
+      </Layout>
+    )
+  }
 
   return (
-    <Layout title={data.title} description={data.description}>
+    <Layout title={title} description={description}>
       <div className='container margin-vert--lg'>
-        <h1>{data.title}</h1>
-
+        <h1>{title}</h1>
         <MDXContent>
-          <MDX />
+          <MDXComponent />
         </MDXContent>
       </div>
     </Layout>
