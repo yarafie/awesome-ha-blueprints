@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import Layout from '@theme/Layout'
-import yaml from 'js-yaml'
 
 export default function DownloadBlueprintPage(props: any) {
   const { yamlPath, category, id, source } = props
