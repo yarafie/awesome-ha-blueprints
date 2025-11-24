@@ -31,13 +31,7 @@ export default function libraryAutoImportPlugin(context) {
 
           try {
             const metadata = JSON.parse(fs.readFileSync(metadataPath, 'utf8'))
-            blueprints.push({
-              category,
-              slug,
-              pkgDir,
-              metadata,
-              mdxPath,
-            })
+            blueprints.push({ category, slug, pkgDir, metadata, mdxPath })
           } catch (err) {
             console.error(
               `Invalid metadata.json inside ${pkgDir}:`,
@@ -58,16 +52,16 @@ export default function libraryAutoImportPlugin(context) {
         JSON.stringify(content, null, 2),
       )
 
+      // INDEX PAGE
       addRoute({
         path: '/library',
         exact: true,
         component:
-          '../src/plugins/library-autoimport-plugin/BlueprintIndexPage.tsx',
-        modules: {
-          blueprints: jsonPath,
-        },
+          '@site/src/plugins/library-autoimport-plugin/BlueprintIndexPage.tsx',
+        modules: { blueprints: jsonPath },
       })
 
+      // EACH BLUEPRINT PAGE
       for (const bp of content) {
         const metadataJson = await createData(
           `${bp.slug}-metadata.json`,
@@ -78,7 +72,7 @@ export default function libraryAutoImportPlugin(context) {
           path: `/library/${bp.category}/${bp.slug}`,
           exact: true,
           component:
-            '../src/plugins/library-autoimport-plugin/BlueprintPage.tsx',
+            '@site/src/plugins/library-autoimport-plugin/BlueprintPage.tsx',
           modules: {
             metadata: metadataJson,
             mdx: bp.mdxPath,
@@ -87,23 +81,6 @@ export default function libraryAutoImportPlugin(context) {
       }
 
       console.log('Autoimport blueprint routes created')
-    },
-
-    async postBuild({ outDir }) {
-      const src = path.resolve(context.siteDir, '../library')
-      const dest = path.join(outDir, 'library')
-
-      if (!fs.existsSync(src)) {
-        console.warn('⚠️ library/ directory not found — skipping copy.')
-        return
-      }
-
-      try {
-        fs.cpSync(src, dest, { recursive: true })
-        console.log('📦 Copied library/ → build/library')
-      } catch (err) {
-        console.error('❌ Failed copying library/:', err)
-      }
     },
   }
 }
