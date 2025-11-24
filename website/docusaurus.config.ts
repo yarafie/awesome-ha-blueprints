@@ -85,12 +85,12 @@ const config: Config = {
           label: 'Blueprints',
           position: 'left',
         },
-        //        {
-        //          to: 'library',
-        //          activeBaseRegex: '^/library',
-        //          label: 'Library',
-        //          position: 'left',
-        //        },
+        {
+          to: 'library',
+          activeBaseRegex: '^library',
+          label: 'Library',
+          position: 'left',
+        },
         {
           href: '/help',
           label: 'Help',
