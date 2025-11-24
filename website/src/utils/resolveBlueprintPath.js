@@ -1,6 +1,3 @@
-import fs from 'fs'
-import path from 'path'
-
 // This utility is now PURE. No __dirname, no filesystem.
 // It only returns the correct URL path for blueprints.
 
