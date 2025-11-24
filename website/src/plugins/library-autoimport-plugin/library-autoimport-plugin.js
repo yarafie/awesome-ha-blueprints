@@ -1,6 +1,37 @@
 import fs from 'fs'
 import path from 'path'
 
+/**
+ * Copies MDX + metadata.json files from library/ into the Docusaurus build folder
+ * so they can be imported via routes.
+ */
+function copyLibraryAssets(context, content) {
+  const { siteDir, outDir } = context
+
+  const targetRoot = path.join(outDir, 'library')
+  if (!fs.existsSync(targetRoot)) {
+    fs.mkdirSync(targetRoot, { recursive: true })
+  }
+
+  for (const bp of content) {
+    const targetDir = path.join(targetRoot, bp.category, bp.slug)
+    fs.mkdirSync(targetDir, { recursive: true })
+
+    // Copy metadata.json
+    const metaTarget = path.join(targetDir, 'metadata.json')
+    fs.copyFileSync(path.join(bp.pkgDir, 'metadata.json'), metaTarget)
+
+    // Copy MDX
+    const mdxTarget = path.join(targetDir, 'blueprint.mdx')
+    fs.copyFileSync(path.join(bp.pkgDir, 'blueprint.mdx'), mdxTarget)
+  }
+
+  console.log(`Copied ${content.length} blueprint packages into build output`)
+}
+
+/**
+ * Auto-import blueprints from /library
+ */
 export default function libraryAutoImportPlugin(context) {
   return {
     name: 'library-autoimport-plugin',
@@ -8,6 +39,11 @@ export default function libraryAutoImportPlugin(context) {
     async loadContent() {
       const { siteDir } = context
       const rootDir = path.resolve(siteDir, '../library')
+
+      if (!fs.existsSync(rootDir)) {
+        console.warn(`[library] No library/ folder found at ${rootDir}`)
+        return []
+      }
 
       const categories = fs
         .readdirSync(rootDir)
@@ -31,7 +67,14 @@ export default function libraryAutoImportPlugin(context) {
 
           try {
             const metadata = JSON.parse(fs.readFileSync(metadataPath, 'utf8'))
-            blueprints.push({ category, slug, pkgDir, metadata, mdxPath })
+
+            blueprints.push({
+              category,
+              slug,
+              pkgDir,
+              metadata,
+              mdxPath,
+            })
           } catch (err) {
             console.error(
               `Invalid metadata.json inside ${pkgDir}:`,
@@ -47,21 +90,27 @@ export default function libraryAutoImportPlugin(context) {
     async contentLoaded({ content, actions }) {
       const { addRoute, createData } = actions
 
+      // Copy static files into build
+      copyLibraryAssets(context, content)
+
+      // Generate library.json used by BlueprintIndexPage
       const jsonPath = await createData(
         'library.json',
         JSON.stringify(content, null, 2),
       )
 
-      // INDEX PAGE
+      // Index route
       addRoute({
         path: '/library',
         exact: true,
         component:
-          '@site/src/plugins/library-autoimport-plugin/BlueprintIndexPage.tsx',
-        modules: { blueprints: jsonPath },
+          '../src/plugins/library-autoimport-plugin/BlueprintIndexPage.tsx',
+        modules: {
+          blueprints: jsonPath,
+        },
       })
 
-      // EACH BLUEPRINT PAGE
+      // Individual blueprint routes
       for (const bp of content) {
         const metadataJson = await createData(
           `${bp.slug}-metadata.json`,
@@ -72,7 +121,7 @@ export default function libraryAutoImportPlugin(context) {
           path: `/library/${bp.category}/${bp.slug}`,
           exact: true,
           component:
-            '@site/src/plugins/library-autoimport-plugin/BlueprintPage.tsx',
+            '../src/plugins/library-autoimport-plugin/BlueprintPage.tsx',
           modules: {
             metadata: metadataJson,
             mdx: bp.mdxPath,

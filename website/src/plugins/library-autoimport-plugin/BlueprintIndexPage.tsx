@@ -16,13 +16,10 @@ export default function BlueprintIndexPage(props: any) {
         }}
       >
         <h1>Blueprint Library</h1>
-        <p>
-          These blueprints are loaded from the new <code>library/</code>{' '}
-          architecture.
-        </p>
+        <p>These blueprints are loaded from the new library/ architecture.</p>
 
         {blueprints.length === 0 ? (
-          <p>No blueprints found in the library.</p>
+          <p>No blueprints found in the library/ folder.</p>
         ) : (
           <ul style={{ marginTop: '2rem' }}>
             {blueprints.map((bp) => (

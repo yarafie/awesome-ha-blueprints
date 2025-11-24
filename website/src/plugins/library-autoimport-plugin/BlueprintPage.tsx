@@ -30,7 +30,7 @@ export default function BlueprintPage(props: any) {
 
         {!MdxComponent ? (
           <p style={{ color: 'red' }}>
-            ❌ MDX failed to load — verify <code>blueprint.mdx</code> and plugin
+            ❌ MDX component failed to load — check blueprint.mdx and plugin
             paths.
           </p>
         ) : (
