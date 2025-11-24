@@ -16,7 +16,7 @@ const path = require('path')
  *         blueprint.mdx
  */
 function loadBlueprintPackages() {
-  const rootDir = path.resolve(__dirname, '../../../blueprints-lib')
+  const rootDir = path.resolve(__dirname, '../../../../blueprints-lib')
 
   // If the folder does not exist, return an empty list instead of crashing
   if (!fs.existsSync(rootDir)) {
