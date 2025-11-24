@@ -1,23 +1,64 @@
 import fs from 'fs'
 import path from 'path'
-import fsExtra from 'fs-extra'
 
+/**
+ * Recursively copies all assets from /library into /website/build/library
+ */
+function copyLibraryAssets(siteDir) {
+  const librarySrc = path.resolve(siteDir, '../library')
+  const outDir = path.join(siteDir, 'build', 'library')
+
+  if (!fs.existsSync(librarySrc)) {
+    console.warn('⚠️  Library folder not found:', librarySrc)
+    return
+  }
+
+  const copyRecursive = (src, dest) => {
+    if (!fs.existsSync(dest)) fs.mkdirSync(dest, { recursive: true })
+
+    for (const entry of fs.readdirSync(src)) {
+      const srcPath = path.join(src, entry)
+      const destPath = path.join(dest, entry)
+      const stat = fs.statSync(srcPath)
+
+      if (stat.isDirectory()) {
+        copyRecursive(srcPath, destPath)
+      } else {
+        fs.copyFileSync(srcPath, destPath)
+      }
+    }
+  }
+
+  copyRecursive(librarySrc, outDir)
+}
+
+/**
+ * Auto-imports blueprint packages from /library
+ * Generates:
+ *   /library
+ *   /library/<category>/<slug>
+ */
 export default function libraryAutoImportPlugin(context) {
   return {
     name: 'library-autoimport-plugin',
 
     async loadContent() {
-      const { siteDir } = context
-      const rootDir = path.resolve(siteDir, '../library')
-      if (!fs.existsSync(rootDir)) return []
+      const rootDir = path.resolve(context.siteDir, '../library')
+
+      if (!fs.existsSync(rootDir)) {
+        console.warn('⚠️ No library folder found:', rootDir)
+        return []
+      }
 
       const categories = fs
         .readdirSync(rootDir)
         .filter((c) => fs.statSync(path.join(rootDir, c)).isDirectory())
 
       const blueprints = []
+
       for (const category of categories) {
         const categoryDir = path.join(rootDir, category)
+
         const slugs = fs
           .readdirSync(categoryDir)
           .filter((s) => fs.statSync(path.join(categoryDir, s)).isDirectory())
@@ -27,36 +68,59 @@ export default function libraryAutoImportPlugin(context) {
           const metadataPath = path.join(pkgDir, 'metadata.json')
           const mdxPath = path.join(pkgDir, 'blueprint.mdx')
 
-          if (!fs.existsSync(metadataPath)) continue
-          if (!fs.existsSync(mdxPath)) continue
+          if (!fs.existsSync(metadataPath) || !fs.existsSync(mdxPath)) continue
 
           try {
             const metadata = JSON.parse(fs.readFileSync(metadataPath, 'utf8'))
-            blueprints.push({ category, slug, pkgDir, metadata, mdxPath })
-          } catch {
-            continue
+
+            blueprints.push({
+              category,
+              slug,
+              pkgDir,
+              metadata,
+              mdxPath,
+            })
+          } catch (err) {
+            console.error(`❌ Invalid metadata.json in: ${pkgDir}`, err.message)
           }
         }
       }
+
       return blueprints
     },
 
     async contentLoaded({ content, actions }) {
-      const { addRoute, createData } = actions
+      const { addRoute, createData, siteDir } = actions
 
+      // ------------------------------------------------------------------
+      // COPY LIBRARY ASSETS INTO THE FINAL BUILD
+      // ------------------------------------------------------------------
+      copyLibraryAssets(siteDir)
+
+      // ------------------------------------------------------------------
+      // CREATE DATA FILE: library.json → imported by BlueprintIndexPage
+      // ------------------------------------------------------------------
       const jsonPath = await createData(
         'library.json',
         JSON.stringify(content, null, 2),
       )
 
+      // ------------------------------------------------------------------
+      // /library (index page)
+      // ------------------------------------------------------------------
       addRoute({
-        path: '/awesome-ha-blueprints/library',
+        path: '/library',
         exact: true,
         component:
           '../src/plugins/library-autoimport-plugin/BlueprintIndexPage.tsx',
-        modules: { blueprints: jsonPath },
+        modules: {
+          blueprints: jsonPath, // auto loads content
+        },
       })
 
+      // ------------------------------------------------------------------
+      // /library/<category>/<slug>
+      // ------------------------------------------------------------------
       for (const bp of content) {
         const metadataJson = await createData(
           `${bp.slug}-metadata.json`,
@@ -64,7 +128,7 @@ export default function libraryAutoImportPlugin(context) {
         )
 
         addRoute({
-          path: `/awesome-ha-blueprints/library/${bp.category}/${bp.slug}`,
+          path: `/library/${bp.category}/${bp.slug}`,
           exact: true,
           component:
             '../src/plugins/library-autoimport-plugin/BlueprintPage.tsx',
@@ -74,17 +138,8 @@ export default function libraryAutoImportPlugin(context) {
           },
         })
       }
-    },
 
-    async postBuild({ outDir }) {
-      const { siteDir } = context
-      const src = path.resolve(siteDir, '../library')
-      const dest = path.join(outDir, 'library')
-
-      if (fs.existsSync(src)) {
-        await fsExtra.copy(src, dest)
-        console.log(`[library] Copied library → ${dest}`)
-      }
+      console.log(`✅ Autoimport blueprint routes created (${content.length})`)
     },
   }
 }

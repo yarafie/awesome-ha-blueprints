@@ -1,9 +1,11 @@
 import React from 'react'
 import Layout from '@theme/Layout'
+import Link from '@docusaurus/Link'
 
 export default function BlueprintIndexPage(props: any) {
   const modules = props?.route?.modules || {}
   const rawBlueprints = modules.blueprints
+
   const blueprints: any[] = rawBlueprints?.default ?? rawBlueprints ?? []
 
   return (
@@ -19,18 +21,14 @@ export default function BlueprintIndexPage(props: any) {
         <p>These blueprints are loaded from the new library/ architecture.</p>
 
         {blueprints.length === 0 ? (
-          <p>
-            No blueprints found in the <code>library/</code> folder.
-          </p>
+          <p>No blueprints found in the library/ folder.</p>
         ) : (
           <ul style={{ marginTop: '2rem' }}>
             {blueprints.map((bp) => (
               <li key={`${bp.category}-${bp.slug}`}>
-                <a
-                  href={`/awesome-ha-blueprints/library/${bp.category}/${bp.slug}`}
-                >
+                <Link to={`/library/${bp.category}/${bp.slug}`}>
                   {bp.metadata?.title ?? `${bp.category} / ${bp.slug}`}
-                </a>
+                </Link>
               </li>
             ))}
           </ul>

@@ -5,12 +5,14 @@ import MDXContent from '@theme/MDXContent'
 export default function BlueprintPage(props: any) {
   const modules = props?.route?.modules || {}
 
+  // Metadata can be a module with .default or a plain object
   const metadataModule = modules.metadata
   const metadata = (metadataModule?.default ?? metadataModule) || {
     title: 'Untitled Blueprint',
     description: '',
   }
 
+  // MDX can be a component or a module with .default
   const mdxModule = modules.mdx
   const MdxComponent = mdxModule?.default ?? mdxModule
 
@@ -25,12 +27,13 @@ export default function BlueprintPage(props: any) {
       >
         <h1>{metadata.title}</h1>
         <p>{metadata.description}</p>
+
         <hr style={{ margin: '2rem 0' }} />
 
         {!MdxComponent ? (
           <p style={{ color: 'red' }}>
-            ❌ MDX failed to load. Check <code>blueprint.mdx</code> and plugin
-            paths.
+            ❌ MDX component failed to load — check blueprint.mdx and paths in
+            library-autoimport-plugin.js
           </p>
         ) : (
           <MDXContent>
