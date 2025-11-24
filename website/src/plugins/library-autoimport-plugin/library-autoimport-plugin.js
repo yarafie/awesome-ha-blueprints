@@ -115,7 +115,7 @@ export default function libraryAutoImportPlugin(context) {
         path: '/library',
         exact: true,
         component:
-          '../src/plugins/library-autoimport-plugin/BlueprintIndexPage.tsx',
+          '@site/src/plugins/library-autoimport-plugin/BlueprintIndexPage.tsx',
         modules: {
           blueprints: jsonPath,
         },
@@ -134,7 +134,7 @@ export default function libraryAutoImportPlugin(context) {
           path: `/library/${bp.category}/${bp.slug}`,
           exact: true,
           component:
-            '../src/plugins/library-autoimport-plugin/BlueprintPage.tsx',
+            '@site/src/plugins/library-autoimport-plugin/BlueprintPage.tsx',
           modules: {
             metadata: metadataJson,
             mdx: bp.mdxPath,
