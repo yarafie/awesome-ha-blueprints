@@ -6,6 +6,8 @@ import path from 'path'
  * so they can be imported via routes.
  */
 function copyLibraryAssets(context, content) {
+  const { outDir } = context
+
   const targetRoot = path.join(outDir, 'library')
   if (!fs.existsSync(targetRoot)) {
     fs.mkdirSync(targetRoot, { recursive: true })
