@@ -91,6 +91,7 @@ export default function libraryAutoImportPlugin(context) {
     async contentLoaded({ content, actions }) {
       const { addRoute, createData } = actions
       const siteDir = context.siteDir // ✅ FIX: use context, not actions
+      const basePath = context.baseUrl.replace(/\/$/, '')
 
       // ------------------------------------------------------------
       // COPY LIBRARY FILES INTO BUILD
@@ -109,7 +110,7 @@ export default function libraryAutoImportPlugin(context) {
       // /library INDEX PAGE
       // ------------------------------------------------------------
       addRoute({
-        path: '/library',
+        path: `${basePath}/library`,
         exact: true,
         component:
           '../src/plugins/library-autoimport-plugin/BlueprintIndexPage.tsx',
@@ -128,7 +129,7 @@ export default function libraryAutoImportPlugin(context) {
         )
 
         addRoute({
-          path: `/library/${bp.category}/${bp.slug}`,
+          path: `${basePath}/library/${bp.category}/${bp.slug}`,
           exact: true,
           component:
             '../src/plugins/library-autoimport-plugin/BlueprintPage.tsx',

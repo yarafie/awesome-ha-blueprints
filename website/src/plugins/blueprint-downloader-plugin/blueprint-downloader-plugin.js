@@ -48,7 +48,7 @@ export default function blueprintRoutesPlugin(context) {
             rawContent,
           })
         } catch (error) {
-          console.error(`Error processing blueprint file ${file}:`, error)
+          console.error(`❌ Error processing blueprint file ${file}:`, error)
         }
       }
 
@@ -72,7 +72,7 @@ export default function blueprintRoutesPlugin(context) {
         })
       }
 
-      console.log('Blueprint download routes created')
+      console.log('✅ Blueprint download routes created')
     },
   }
 }
