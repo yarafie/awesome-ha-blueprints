@@ -58,7 +58,6 @@ export default function libraryAutoImportPlugin(context) {
 
       for (const category of categories) {
         const categoryDir = path.join(rootDir, category)
-
         const slugs = fs
           .readdirSync(categoryDir)
           .filter((s) => fs.statSync(path.join(categoryDir, s)).isDirectory())
@@ -90,37 +89,38 @@ export default function libraryAutoImportPlugin(context) {
     },
 
     async contentLoaded({ content, actions }) {
-      const { addRoute, createData, siteDir } = actions
+      const { addRoute, createData } = actions
+      const siteDir = context.siteDir // ✅ FIX: use context, not actions
 
-      // ------------------------------------------------------------------
-      // COPY LIBRARY ASSETS INTO THE FINAL BUILD
-      // ------------------------------------------------------------------
+      // ------------------------------------------------------------
+      // COPY LIBRARY FILES INTO BUILD
+      // ------------------------------------------------------------
       copyLibraryAssets(siteDir)
 
-      // ------------------------------------------------------------------
-      // CREATE DATA FILE: library.json → imported by BlueprintIndexPage
-      // ------------------------------------------------------------------
+      // ------------------------------------------------------------
+      // CREATE DATA FILE
+      // ------------------------------------------------------------
       const jsonPath = await createData(
         'library.json',
         JSON.stringify(content, null, 2),
       )
 
-      // ------------------------------------------------------------------
-      // /library (index page)
-      // ------------------------------------------------------------------
+      // ------------------------------------------------------------
+      // /library INDEX PAGE
+      // ------------------------------------------------------------
       addRoute({
         path: '/library',
         exact: true,
         component:
           '../src/plugins/library-autoimport-plugin/BlueprintIndexPage.tsx',
         modules: {
-          blueprints: jsonPath, // auto loads content
+          blueprints: jsonPath,
         },
       })
 
-      // ------------------------------------------------------------------
+      // ------------------------------------------------------------
       // /library/<category>/<slug>
-      // ------------------------------------------------------------------
+      // ------------------------------------------------------------
       for (const bp of content) {
         const metadataJson = await createData(
           `${bp.slug}-metadata.json`,
