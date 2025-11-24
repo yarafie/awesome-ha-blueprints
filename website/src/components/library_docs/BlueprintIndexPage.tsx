@@ -1,16 +1,22 @@
-/* eslint-disable react/prop-types */
-
 import React from 'react'
 import Layout from '@theme/Layout'
 import Link from '@docusaurus/Link'
 
-export default function BlueprintIndexPage({ modules }) {
+// Type for the modules supplied by Docusaurus route
+interface BlueprintIndexProps {
+  modules: {
+    blueprints: any[] // Each item comes from blueprints-generated.json
+  }
+}
+
+export default function BlueprintIndexPage({ modules }: BlueprintIndexProps) {
   const entries = modules.blueprints
 
   return (
     <Layout title='Blueprint Library'>
       <div className='container'>
         <h1>Blueprint Library</h1>
+
         {entries.map((bp) => (
           <div
             key={`${bp.category}-${bp.slug}`}

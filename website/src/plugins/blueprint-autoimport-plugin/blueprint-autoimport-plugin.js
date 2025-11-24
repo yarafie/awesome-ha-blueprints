@@ -76,7 +76,7 @@ module.exports = function blueprintAutoImportPlugin(context, options) {
       // Create a single index page that lists all blueprints
       addRoute({
         path: '/blueprints',
-        component: '@site/src/components/BlueprintIndexPage.jsx',
+        component: '@site/src/components/library_docs/BlueprintIndexPage.tsx',
         exact: true,
         modules: {
           blueprints: dataPath,
@@ -87,7 +87,8 @@ module.exports = function blueprintAutoImportPlugin(context, options) {
       for (const bp of content) {
         addRoute({
           path: `/blueprints/${bp.category}/${bp.slug}`,
-          component: '@site/src/components/BlueprintPageWrapper.jsx',
+          component:
+            '@site/src/components/library_docs/BlueprintPageWrapper.tsx',
           exact: true,
           modules: {
             metadata: await createData(
