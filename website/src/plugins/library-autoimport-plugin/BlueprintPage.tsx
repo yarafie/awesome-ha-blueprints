@@ -25,12 +25,11 @@ export default function BlueprintPage(props: any) {
       >
         <h1>{metadata.title}</h1>
         <p>{metadata.description}</p>
-
         <hr style={{ margin: '2rem 0' }} />
 
         {!MdxComponent ? (
           <p style={{ color: 'red' }}>
-            ❌ MDX component failed to load — check blueprint.mdx and plugin
+            ❌ MDX failed to load. Check <code>blueprint.mdx</code> and plugin
             paths.
           </p>
         ) : (
