@@ -18,7 +18,7 @@ const path = require('path')
 function loadBlueprintPackages() {
   // const rootDir = path.resolve(__dirname, '../../../../blueprints-lib')
   // const rootDir = path.resolve(__dirname, 'blueprints-lib')
-  const rootDir = path.join(process.cwd(), 'blueprints-lib')
+  const rootDir = path.join(process.cwd(), '../blueprints-lib')
 
   // If the folder does not exist, return an empty list instead of crashing
   if (!fs.existsSync(rootDir)) {
