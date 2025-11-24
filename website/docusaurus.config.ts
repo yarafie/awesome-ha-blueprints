@@ -5,6 +5,8 @@ dotenv.config({ path: path.resolve(__dirname, '.env') })
 import { themes as prismThemes } from 'prism-react-renderer'
 import blueprintDownloaderPlugin from './src/plugins/blueprint-downloader-plugin/blueprint-downloader-plugin.js'
 import libraryAutoImportPlugin from './src/plugins/library-autoimport-plugin/library-autoimport-plugin.js'
+
+// Webpack config — keeps old @blueprints alias working
 function webpackConfigPlugin() {
   return {
     name: 'webpack-config-plugin',
@@ -32,46 +34,44 @@ function webpackConfigPlugin() {
     },
   }
 }
+
+// Environment variables to client
 const clientEnv = {
   SUPABASE_URL: process.env.SUPABASE_URL || '',
   SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY || '',
 }
+
 const config: Config = {
   title: 'Awesome HA Blueprints',
   tagline: 'A curated list of automation blueprints for Home Assistant.',
   url: 'https://yarafie.github.io',
   baseUrl: '/awesome-ha-blueprints/',
   onBrokenLinks: 'throw',
-  markdown: {
-    hooks: {
-      onBrokenMarkdownLinks: 'warn',
-    },
-  },
+  markdown: { hooks: { onBrokenMarkdownLinks: 'warn' } },
   favicon: 'img/favicon.ico',
   organizationName: 'yarafie',
   projectName: 'awesome-ha-blueprints',
+
   i18n: {
     defaultLocale: 'en',
     locales: ['en'],
   },
-  customFields: {
-    env: clientEnv,
-  },
+
+  customFields: { env: clientEnv },
+
   themeConfig: {
     announcementBar: {
       id: 'support_us',
       content:
-        '🚀 <b>Love this project?</b> <a target="_blank" href="https://github.com/EPMatt/awesome-ha-blueprints">Drop a star on GitHub</a>🌟 or <a target="_blank" href="https://www.buymeacoffee.com/yarafiet">make a small donation</a>☕  to show your support!',
+        '🚀 <b>Love this project?</b> <a target="_blank" href="https://github.com/EPMatt/awesome-ha-blueprints">Drop a star on GitHub</a>🌟 or <a target="_blank" href="https://www.buymeacoffee.com/yarafiet">make a small donation</a>☕ to show your support!',
       backgroundColor: '#fffbd4',
       textColor: '#091E42',
     },
+
     navbar: {
       style: 'primary',
       title: 'Awesome HA Blueprints',
-      logo: {
-        alt: 'Awesome HA Blueprints Logo',
-        src: 'img/logo.svg',
-      },
+      logo: { alt: 'Awesome HA Blueprints Logo', src: 'img/logo.svg' },
       items: [
         {
           to: 'docs/introduction/',
@@ -91,11 +91,7 @@ const config: Config = {
           label: 'Library',
           position: 'left',
         },
-        {
-          href: '/help',
-          label: 'Help',
-          position: 'right',
-        },
+        { href: '/help', label: 'Help', position: 'right' },
         {
           href: 'https://www.buymeacoffee.com/yarafiet',
           label: 'Donate',
@@ -108,6 +104,7 @@ const config: Config = {
         },
       ],
     },
+
     footer: {
       links: [],
       copyright: `
@@ -117,11 +114,13 @@ const config: Config = {
         Licensed under the <a href='https://github.com/yarafie/awesome-ha-blueprints/blob/main/LICENSE'>GPL-3.0 License</a>
       `,
     },
+
     prism: {
       theme: prismThemes.github,
       darkTheme: prismThemes.dracula,
     },
   },
+
   presets: [
     [
       '@docusaurus/preset-classic',
@@ -131,12 +130,11 @@ const config: Config = {
           editUrl:
             'https://github.com/yarafie/awesome-ha-blueprints/edit/main/website/',
         },
-        theme: {
-          customCss: './src/css/custom.css',
-        },
+        theme: { customCss: './src/css/custom.css' },
       },
     ],
   ],
+
   plugins: [
     webpackConfigPlugin,
     blueprintDownloaderPlugin,
@@ -158,4 +156,5 @@ const config: Config = {
     },
   ],
 }
+
 export default config

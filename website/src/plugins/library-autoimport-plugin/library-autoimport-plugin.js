@@ -17,7 +17,6 @@ export default function libraryAutoImportPlugin(context) {
 
       for (const category of categories) {
         const categoryDir = path.join(rootDir, category)
-
         const slugs = fs
           .readdirSync(categoryDir)
           .filter((s) => fs.statSync(path.join(categoryDir, s)).isDirectory())
@@ -32,7 +31,6 @@ export default function libraryAutoImportPlugin(context) {
 
           try {
             const metadata = JSON.parse(fs.readFileSync(metadataPath, 'utf8'))
-
             blueprints.push({
               category,
               slug,
@@ -54,7 +52,6 @@ export default function libraryAutoImportPlugin(context) {
 
     async contentLoaded({ content, actions }) {
       const { addRoute, createData } = actions
-      const base = '/awesome-ha-blueprints'
 
       const jsonPath = await createData(
         'library.json',
@@ -62,7 +59,7 @@ export default function libraryAutoImportPlugin(context) {
       )
 
       addRoute({
-        path: `${base}/library`,
+        path: '/library',
         exact: true,
         component:
           '../src/plugins/library-autoimport-plugin/BlueprintIndexPage.tsx',
@@ -78,7 +75,7 @@ export default function libraryAutoImportPlugin(context) {
         )
 
         addRoute({
-          path: `${base}/library/${bp.category}/${bp.slug}`,
+          path: `/library/${bp.category}/${bp.slug}`,
           exact: true,
           component:
             '../src/plugins/library-autoimport-plugin/BlueprintPage.tsx',
@@ -90,6 +87,23 @@ export default function libraryAutoImportPlugin(context) {
       }
 
       console.log('Autoimport blueprint routes created')
+    },
+
+    async postBuild({ outDir }) {
+      const src = path.resolve(context.siteDir, '../library')
+      const dest = path.join(outDir, 'library')
+
+      if (!fs.existsSync(src)) {
+        console.warn('⚠️ library/ directory not found — skipping copy.')
+        return
+      }
+
+      try {
+        fs.cpSync(src, dest, { recursive: true })
+        console.log('📦 Copied library/ → build/library')
+      } catch (err) {
+        console.error('❌ Failed copying library/:', err)
+      }
     },
   }
 }
