@@ -17,14 +17,9 @@ const BlueprintItem: React.FC<BlueprintItemProps> = ({
   category,
   overrideUrl,
 }) => {
-  // Default new system URL
   const libUrl = `/awesome-ha-blueprints/library/${category}/${id}`
 
-  // Legacy fallback path
-  const legacyUrl = `/awesome-ha-blueprints/docs/blueprints/${category}/${id}`
-
-  // If overrideUrl exists, use it.
-  // Otherwise use new-library URL.
+  // Use overrideUrl only when provided
   const finalUrl = overrideUrl ?? libUrl
 
   const cardStyle = {
