@@ -7,8 +7,6 @@ interface BlueprintItemProps {
   title: string
   description: string
   category: string
-
-  // NEW — allows external components to override routing
   overrideUrl?: string
 }
 
@@ -19,21 +17,31 @@ const BlueprintItem: React.FC<BlueprintItemProps> = ({
   category,
   overrideUrl,
 }) => {
-  // Determine final link:
-  // 1️⃣ If parent passed overrideUrl → use it
-  // 2️⃣ Otherwise → compute fallback-aware URL automatically
-  const finalUrl = resolveBlueprintSource(category, id)
+  // Default new system URL
+  const libUrl = `/awesome-ha-blueprints/library/${category}/${id}`
+
+  // Legacy fallback path
+  const legacyUrl = `/awesome-ha-blueprints/docs/blueprints/${category}/${id}`
+
+  // If overrideUrl exists, use it.
+  // Otherwise use new-library URL.
+  const finalUrl = overrideUrl ?? libUrl
+
+  const cardStyle = {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: '1rem',
+  }
+
+  const footerStyle = {
+    display: 'flex',
+    justifyContent: 'flex-end',
+  }
 
   return (
     <Link to={finalUrl} className='card margin-bottom--md'>
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          padding: '1rem',
-        }}
-      >
+      <div style={cardStyle}>
         <div>
           <h3>{title}</h3>
         </div>
@@ -42,10 +50,7 @@ const BlueprintItem: React.FC<BlueprintItemProps> = ({
           <p>{description}</p>
         </div>
 
-        <div
-          className='card__footer'
-          style={{ display: 'flex', justifyContent: 'flex-end' }}
-        >
+        <div className='card__footer' style={footerStyle}>
           <ChevronRight size={20} />
         </div>
       </div>
