@@ -1,7 +1,6 @@
 import React from 'react'
 import Link from '@docusaurus/Link'
 import { ChevronRight } from 'react-bootstrap-icons'
-import { getBlueprintUrl } from '../../utils'
 
 interface BlueprintItemProps {
   id: string
@@ -23,7 +22,7 @@ const BlueprintItem: React.FC<BlueprintItemProps> = ({
   // Determine final link:
   // 1️⃣ If parent passed overrideUrl → use it
   // 2️⃣ Otherwise → compute fallback-aware URL automatically
-  const finalUrl = overrideUrl ?? getBlueprintUrl(category, id)
+  const finalUrl = resolveBlueprintSource(category, id)
 
   return (
     <Link to={finalUrl} className='card margin-bottom--md'>

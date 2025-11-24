@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from 'react'
-import { docsContext, libraryExists, loadLibraryMetadata } from '../../utils'
+import {
+  docsContext,
+  libraryMetadataContext,
+  loadLibraryMetadata,
+} from '../../utils'
 import ControllerItem from './ControllerItem'
 import { Search } from 'react-bootstrap-icons'
 
@@ -32,7 +36,14 @@ const ControllersList: React.FC = () => {
       if (!id) continue
 
       // If controller exists in the NEW library, skip old loader
-      if (libraryExists('controllers', id)) continue
+      const exists = (() => {
+        try {
+          libraryMetadataContext(`./${category}/${slug}/metadata.json`)
+          return true
+        } catch {
+          return false
+        }
+      })()
 
       try {
         const mod = docsContext(file)
