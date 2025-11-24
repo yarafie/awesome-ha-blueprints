@@ -87,7 +87,7 @@ const config: Config = {
         },
         {
           to: 'library',
-          activeBaseRegex: '^library',
+          activeBaseRegex: '^/library',
           label: 'Library',
           position: 'left',
         },

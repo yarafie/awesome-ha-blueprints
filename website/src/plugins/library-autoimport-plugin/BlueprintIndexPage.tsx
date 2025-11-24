@@ -2,11 +2,8 @@ import React from 'react'
 import Layout from '@theme/Layout'
 
 export default function BlueprintIndexPage(props: any) {
-  // Docusaurus passes module data under route.modules
   const modules = props?.route?.modules || {}
   const rawBlueprints = modules.blueprints
-
-  // Support both “module with .default” and plain array
   const blueprints: any[] = rawBlueprints?.default ?? rawBlueprints ?? []
 
   return (
@@ -19,10 +16,13 @@ export default function BlueprintIndexPage(props: any) {
         }}
       >
         <h1>Blueprint Library</h1>
-        <p>These blueprints are loaded from the new library/ architecture.</p>
+        <p>
+          These blueprints are loaded from the new <code>library/</code>{' '}
+          architecture.
+        </p>
 
         {blueprints.length === 0 ? (
-          <p>No blueprints found in the library/ folder.</p>
+          <p>No blueprints found in the library.</p>
         ) : (
           <ul style={{ marginTop: '2rem' }}>
             {blueprints.map((bp) => (

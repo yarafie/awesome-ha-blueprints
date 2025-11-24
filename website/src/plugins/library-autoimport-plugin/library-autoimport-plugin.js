@@ -1,19 +1,12 @@
 import fs from 'fs'
 import path from 'path'
 
-/**
- * Auto-imports library packages from library/
- * Generates two kinds of routes:
- *  1. /library                   → index of all packages
- *  2. /library/<category>/<id>   → individual blueprint pages
- */
 export default function libraryAutoImportPlugin(context) {
   return {
     name: 'library-autoimport-plugin',
 
     async loadContent() {
       const { siteDir } = context
-      // library lives one level ABOVE website/
       const rootDir = path.resolve(siteDir, '../library')
 
       const categories = fs
@@ -24,6 +17,7 @@ export default function libraryAutoImportPlugin(context) {
 
       for (const category of categories) {
         const categoryDir = path.join(rootDir, category)
+
         const slugs = fs
           .readdirSync(categoryDir)
           .filter((s) => fs.statSync(path.join(categoryDir, s)).isDirectory())
@@ -38,6 +32,7 @@ export default function libraryAutoImportPlugin(context) {
 
           try {
             const metadata = JSON.parse(fs.readFileSync(metadataPath, 'utf8'))
+
             blueprints.push({
               category,
               slug,
@@ -59,16 +54,15 @@ export default function libraryAutoImportPlugin(context) {
 
     async contentLoaded({ content, actions }) {
       const { addRoute, createData } = actions
+      const base = '/awesome-ha-blueprints'
 
-      // Generate a JSON file that TSX pages can import at build-time
       const jsonPath = await createData(
         'library.json',
         JSON.stringify(content, null, 2),
       )
 
-      // 1. Route → master index of all blueprints
       addRoute({
-        path: '/library',
+        path: `${base}/library`,
         exact: true,
         component:
           '../src/plugins/library-autoimport-plugin/BlueprintIndexPage.tsx',
@@ -77,7 +71,6 @@ export default function libraryAutoImportPlugin(context) {
         },
       })
 
-      // 2. Individual blueprint routes
       for (const bp of content) {
         const metadataJson = await createData(
           `${bp.slug}-metadata.json`,
@@ -85,7 +78,7 @@ export default function libraryAutoImportPlugin(context) {
         )
 
         addRoute({
-          path: `/library/${bp.category}/${bp.slug}`,
+          path: `${base}/library/${bp.category}/${bp.slug}`,
           exact: true,
           component:
             '../src/plugins/library-autoimport-plugin/BlueprintPage.tsx',
