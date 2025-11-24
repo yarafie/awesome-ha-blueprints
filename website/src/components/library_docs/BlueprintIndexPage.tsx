@@ -4,40 +4,34 @@ import Link from '@docusaurus/Link'
 
 type BlueprintMetadata = {
   title?: string
-  name?: string
   description?: string
-  [key: string]: any
 }
 
-type BlueprintListItem = {
+type BlueprintEntry = {
   category: string
   slug: string
   metadata: BlueprintMetadata
 }
 
-type BlueprintIndexPageProps = {
-  blueprints: BlueprintListItem[]
+type Props = {
+  /** Injected by Docusaurus via addRoute({ modules: { blueprints: ... } }) */
+  blueprints: BlueprintEntry[]
 }
 
-export default function BlueprintIndexPage({
-  blueprints,
-}: BlueprintIndexPageProps) {
-  const entries = Array.isArray(blueprints) ? blueprints : []
+const BlueprintIndexPage: React.FC<Props> = ({ blueprints }) => {
+  const hasBlueprints = Array.isArray(blueprints) && blueprints.length > 0
 
   return (
     <Layout title='Blueprint Library'>
       <div className='container margin-vert--lg'>
         <h1>Blueprint Library</h1>
 
-        {entries.length === 0 && (
-          <p>No blueprints found in the library (blueprints-lib).</p>
+        {!hasBlueprints && (
+          <p>No blueprints found under the new library architecture yet.</p>
         )}
 
-        {entries.map((bp) => {
-          const title = bp.metadata.title || bp.metadata.name || bp.slug
-          const description = bp.metadata.description || ''
-
-          return (
+        {hasBlueprints &&
+          blueprints.map((bp) => (
             <div
               key={`${bp.category}-${bp.slug}`}
               style={{
@@ -46,14 +40,19 @@ export default function BlueprintIndexPage({
                 marginBottom: '12px',
               }}
             >
-              <Link to={`/blueprints/${bp.category}/${bp.slug}`}>
-                <h3 style={{ marginBottom: '4px' }}>{title}</h3>
+              <Link to={`/library/${bp.category}/${bp.slug}`}>
+                <h3 style={{ marginBottom: '4px' }}>
+                  {bp.metadata?.title ?? bp.slug}
+                </h3>
               </Link>
-              {description && <p style={{ marginTop: 0 }}>{description}</p>}
+              {bp.metadata?.description && (
+                <p style={{ marginTop: 0 }}>{bp.metadata.description}</p>
+              )}
             </div>
-          )
-        })}
+          ))}
       </div>
     </Layout>
   )
 }
+
+export default BlueprintIndexPage

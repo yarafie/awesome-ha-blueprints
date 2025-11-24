@@ -1,29 +1,19 @@
 /* eslint-env node */
 /* eslint-disable @typescript-eslint/no-require-imports */
-/* eslint-disable no-undef */
+/* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 const fs = require('fs')
 const path = require('path')
 
 /**
- * Discover all blueprint packages under blueprints-lib/
- * Layout:
- *   blueprints-lib/
- *     controllers/
- *       ikea_e2001_e2002/
- *         metadata.json
- *         blueprint.mdx
+ * Scan blueprints-lib and collect packages.
+ * rootDir is something like /.../awesome-ha-blueprints/blueprints-lib
  */
-function loadBlueprintPackages() {
-  // const rootDir = path.resolve(__dirname, '../../../../blueprints-lib')
-  // const rootDir = path.resolve(__dirname, 'blueprints-lib')
-  const rootDir = path.join(process.cwd(), '../blueprints-lib')
-
-  // If the folder does not exist, return an empty list instead of crashing
+function loadBlueprintPackages(rootDir) {
   if (!fs.existsSync(rootDir)) {
     console.warn(
-      `[blueprint-autoimport-plugin] Skipping: ${rootDir} does not exist.`,
+      `[blueprint-autoimport-plugin] Skipping: no blueprints-lib dir at ${rootDir}`,
     )
     return []
   }
@@ -32,12 +22,6 @@ function loadBlueprintPackages() {
     .readdirSync(rootDir)
     .filter((f) => fs.statSync(path.join(rootDir, f)).isDirectory())
 
-  /** @type {Array<{
-   *   category: string;
-   *   slug: string;
-   *   metadata: any;
-   *   mdxPath: string;
-   * }>} */
   const blueprints = []
 
   for (const category of categories) {
@@ -51,25 +35,22 @@ function loadBlueprintPackages() {
       const metadataPath = path.join(pkgDir, 'metadata.json')
       const mdxPath = path.join(pkgDir, 'blueprint.mdx')
 
-      if (!fs.existsSync(metadataPath) || !fs.existsSync(mdxPath)) {
-        continue
-      }
+      if (!fs.existsSync(metadataPath)) continue
+      if (!fs.existsSync(mdxPath)) continue
 
       let metadata
       try {
         const raw = fs.readFileSync(metadataPath, 'utf8')
         metadata = JSON.parse(raw)
       } catch (err) {
-        console.error(
-          `\n❌  Invalid metadata.json in ${pkgDir}, skipping this blueprint.\n`,
-          err,
-        )
+        console.error(`\n❌ Invalid metadata.json in ${pkgDir}:\n`, err)
         continue
       }
 
       blueprints.push({
         category,
         slug,
+        path: pkgDir,
         metadata,
         mdxPath,
       })
@@ -80,67 +61,74 @@ function loadBlueprintPackages() {
 }
 
 /**
- * Docusaurus plugin
+ * Docusaurus content plugin for auto-importing blueprint packages.
  */
 module.exports = function blueprintAutoImportPlugin(context, options) {
+  // context.siteDir === <repo-root>/website
+  const rootDir = path.resolve(context.siteDir, '..', 'blueprints-lib')
+
   return {
     name: 'blueprint-autoimport-plugin',
 
     async loadContent() {
-      // Discover all blueprint packages once
-      return loadBlueprintPackages()
+      return loadBlueprintPackages(rootDir)
     },
 
     async contentLoaded({ content, actions }) {
-      const { addRoute } = actions
+      const { createData, addRoute } = actions
+      const blueprints = content || []
 
-      if (!content || content.length === 0) {
-        // Nothing to do, but don't fail the build
-        console.warn(
-          '[blueprint-autoimport-plugin] No blueprints discovered. Library routes will be empty.',
-        )
-        return
-      }
+      // 1. Generate a JSON index for the library page
+      const indexPath = await createData(
+        'blueprints-lib-index.json',
+        JSON.stringify(
+          blueprints.map((bp) => ({
+            category: bp.category,
+            slug: bp.slug,
+            metadata: bp.metadata,
+          })),
+          null,
+          2,
+        ),
+      )
 
-      // 1) Blueprint Library index page: /blueprints
-      //    We pass a plain JS array as the `blueprints` prop.
-      const indexBlueprints = content.map((bp) => ({
-        category: bp.category,
-        slug: bp.slug,
-        metadata: bp.metadata,
-      }))
-
+      // Route: /library (index page)
+      // NOTE: "blueprints" becomes a direct prop on the component
       addRoute({
-        path: '/blueprints',
+        path: '/library',
+        component: '@site/src/components/library_docs/BlueprintIndexPage.tsx',
         exact: true,
-        component: '@site/src/components/library_docs/BlueprintIndexPage',
-        // `modules` become props on the React component (blueprints)
         modules: {
-          blueprints: indexBlueprints,
+          blueprints: indexPath,
         },
       })
 
-      // 2) Detail page for each blueprint: /blueprints/:category/:slug
-      //    We pass metadata directly, and tell Webpack to import the MDX file.
-      for (const bp of content) {
-        addRoute({
-          path: `/blueprints/${bp.category}/${bp.slug}`,
-          exact: true,
-          component: '@site/src/components/library_docs/BlueprintPageWrapper',
-          modules: {
-            metadata: bp.metadata,
-            // MDX file is imported by Webpack. The component will receive
-            // a compiled React component in the `mdx` prop.
-            mdx: {
-              __import: true,
-              path: bp.mdxPath,
-            },
-          },
-        })
-      }
+      // 2. Per-blueprint routes
+      await Promise.all(
+        blueprints.map(async (bp) => {
+          const metadataPath = await createData(
+            `blueprints-lib/${bp.category}-${bp.slug}-metadata.json`,
+            JSON.stringify(bp.metadata, null, 2),
+          )
 
-      console.log(
-        `[blueprint-autoimport-plugin] Registered ${content.length} blueprint routes.`,
+          const mdxSource = fs.readFileSync(bp.mdxPath, 'utf8')
+          const mdxPath = await createData(
+            `blueprints-lib/${bp.category}-${bp.slug}.mdx`,
+            mdxSource,
+          )
+
+          // Each key in "modules" becomes a prop on the React component
+          addRoute({
+            path: `/library/${bp.category}/${bp.slug}`,
+            component:
+              '@site/src/components/library_docs/BlueprintPageWrapper.tsx',
+            exact: true,
+            modules: {
+              metadata: metadataPath, // passed as prop "metadata"
+              Content: mdxPath, // passed as prop "Content"
+            },
+          })
+        }),
       )
     },
   }
