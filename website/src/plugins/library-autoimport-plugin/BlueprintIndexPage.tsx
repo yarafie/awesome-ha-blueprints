@@ -2,37 +2,53 @@ import React from 'react'
 import Layout from '@theme/Layout'
 import Link from '@docusaurus/Link'
 
-export default function BlueprintIndexPage(props: any) {
-  const modules = props?.route?.modules || {}
-  const rawBlueprints = modules.blueprints
+export default function BlueprintIndexPage({ blueprints }) {
+  // Group blueprints by category
+  const categories = {}
 
-  const blueprints: any[] = rawBlueprints?.default ?? rawBlueprints ?? []
+  blueprints.forEach((bp) => {
+    if (!categories[bp.category]) {
+      categories[bp.category] = []
+    }
+    categories[bp.category].push(bp)
+  })
 
   return (
-    <Layout title='Blueprint Library' description='All Blueprint Packages'>
-      <div
-        style={{
-          padding: '2rem',
-          maxWidth: '900px',
-          margin: '0 auto',
-        }}
-      >
+    <Layout
+      title='Blueprint Library'
+      description='Blueprints packaged inside the new Library System'
+    >
+      <div className='container margin-vert--lg'>
         <h1>Blueprint Library</h1>
-        <p>These blueprints are loaded from the new library/ architecture.</p>
+        <p className='margin-bottom--lg'>
+          All blueprints imported from the new <code>/library</code> directory.
+        </p>
 
-        {blueprints.length === 0 ? (
-          <p>No blueprints found in the library/ folder.</p>
-        ) : (
-          <ul style={{ marginTop: '2rem' }}>
-            {blueprints.map((bp) => (
-              <li key={`${bp.category}-${bp.slug}`}>
-                <Link to={`/library/${bp.category}/${bp.slug}`}>
-                  {bp.metadata?.title ?? `${bp.category} / ${bp.slug}`}
-                </Link>
-              </li>
-            ))}
-          </ul>
+        {Object.keys(categories).length === 0 && (
+          <p>No blueprints found in library.</p>
         )}
+
+        {Object.entries(categories).map(([category, items]) => (
+          <div key={category} className='margin-bottom--xl'>
+            <h2 style={{ textTransform: 'capitalize' }}>{category}</h2>
+
+            <div className='row'>
+              {items.map((bp) => (
+                <div key={bp.slug} className='col col--4 margin-bottom--lg'>
+                  <Link
+                    to={`/library/${bp.category}/${bp.slug}`}
+                    className='card'
+                  >
+                    <div className='card__body'>
+                      <h3>{bp.metadata.title || bp.slug}</h3>
+                      <p>{bp.metadata.description || ''}</p>
+                    </div>
+                  </Link>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
       </div>
     </Layout>
   )

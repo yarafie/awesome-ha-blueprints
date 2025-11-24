@@ -1,45 +1,21 @@
 import React from 'react'
 import Layout from '@theme/Layout'
-import MDXContent from '@theme/MDXContent'
+import MDXComponent from '@theme/MDXContent'
 
-export default function BlueprintPage(props: any) {
-  const modules = props?.route?.modules || {}
-
-  // Metadata can be a module with .default or a plain object
-  const metadataModule = modules.metadata
-  const metadata = (metadataModule?.default ?? metadataModule) || {
-    title: 'Untitled Blueprint',
-    description: '',
-  }
-
-  // MDX can be a component or a module with .default
-  const mdxModule = modules.mdx
-  const MdxComponent = mdxModule?.default ?? mdxModule
+export default function BlueprintPage({ metadata, mdx }) {
+  const { title, description } = metadata
 
   return (
-    <Layout title={metadata.title} description={metadata.description}>
-      <div
-        style={{
-          padding: '2rem',
-          maxWidth: '900px',
-          margin: '0 auto',
-        }}
-      >
-        <h1>{metadata.title}</h1>
-        <p>{metadata.description}</p>
+    <Layout title={title} description={description || 'Blueprint details'}>
+      <div className='container margin-vert--lg'>
+        <h1>{title}</h1>
 
-        <hr style={{ margin: '2rem 0' }} />
+        {description && <p className='margin-bottom--lg'>{description}</p>}
 
-        {!MdxComponent ? (
-          <p style={{ color: 'red' }}>
-            ❌ MDX component failed to load — check blueprint.mdx and paths in
-            library-autoimport-plugin.js
-          </p>
-        ) : (
-          <MDXContent>
-            <MdxComponent />
-          </MDXContent>
-        )}
+        {/* MDX content from blueprint.mdx */}
+        <div className='markdown'>
+          <MDXComponent>{mdx}</MDXComponent>
+        </div>
       </div>
     </Layout>
   )

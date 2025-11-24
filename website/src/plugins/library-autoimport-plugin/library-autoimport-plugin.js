@@ -67,7 +67,9 @@ export default function libraryAutoImportPlugin(context) {
           const metadataPath = path.join(pkgDir, 'metadata.json')
           const mdxPath = path.join(pkgDir, 'blueprint.mdx')
 
-          if (!fs.existsSync(metadataPath) || !fs.existsSync(mdxPath)) continue
+          if (!fs.existsSync(metadataPath) || !fs.existsSync(mdxPath)) {
+            continue
+          }
 
           try {
             const metadata = JSON.parse(fs.readFileSync(metadataPath, 'utf8'))
@@ -90,8 +92,7 @@ export default function libraryAutoImportPlugin(context) {
 
     async contentLoaded({ content, actions }) {
       const { addRoute, createData } = actions
-      const siteDir = context.siteDir // ✅ FIX: use context, not actions
-      const basePath = context.baseUrl.replace(/\/$/, '')
+      const siteDir = context.siteDir
 
       // ------------------------------------------------------------
       // COPY LIBRARY FILES INTO BUILD
@@ -108,9 +109,10 @@ export default function libraryAutoImportPlugin(context) {
 
       // ------------------------------------------------------------
       // /library INDEX PAGE
+      // (Docusaurus automatically adds baseUrl: "/awesome-ha-blueprints")
       // ------------------------------------------------------------
       addRoute({
-        path: `${basePath}/library`,
+        path: '/library',
         exact: true,
         component:
           '../src/plugins/library-autoimport-plugin/BlueprintIndexPage.tsx',
@@ -129,7 +131,7 @@ export default function libraryAutoImportPlugin(context) {
         )
 
         addRoute({
-          path: `${basePath}/library/${bp.category}/${bp.slug}`,
+          path: `/library/${bp.category}/${bp.slug}`,
           exact: true,
           component:
             '../src/plugins/library-autoimport-plugin/BlueprintPage.tsx',

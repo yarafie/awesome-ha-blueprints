@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { docsContext } from '../../utils'
+import { docsContext, libraryExists, loadLibraryMetadata } from '../../utils'
 import ControllerItem from './ControllerItem'
 import { Search } from 'react-bootstrap-icons'
 
@@ -9,6 +9,7 @@ interface Controller {
   manufacturer: string | string[]
   integrations: string[]
   model_name: string
+  thumbnail?: string
 }
 
 const ControllersList: React.FC = () => {
@@ -16,271 +17,108 @@ const ControllersList: React.FC = () => {
   const [filteredControllers, setFilteredControllers] = useState<Controller[]>(
     [],
   )
-  const [error, setError] = useState<string | null>(null)
-  const [uniqueManufacturers, setUniqueManufacturers] = useState<string[]>([])
-  const [totalControllers, setTotalControllers] = useState<number>(0)
-  const [searchQuery, setSearchQuery] = useState<string>('')
-  const [selectedManufacturer, setSelectedManufacturer] =
-    useState<string>('All Manufacturers')
+  const [searchTerm, setSearchTerm] = useState('')
 
   useEffect(() => {
-    try {
-      const keys = (docsContext as any).keys()
-      const categoryPath = `./controllers/`
+    const results: Controller[] = []
 
-      const controllerKeys = keys.filter((key: string) => {
-        return (
-          key.startsWith(categoryPath) &&
-          !key.includes('/example.mdx') &&
-          !key.endsWith(`/controllers.mdx`)
-        )
-      })
+    // OLD SYSTEM CONTROLLERS FROM MDX FILES
+    const oldFiles = docsContext
+      .keys()
+      .filter((key) => key.startsWith('./blueprints/controllers/'))
 
-      const controllersData = controllerKeys.map((key: string) => {
-        const id = key.replace(categoryPath, '').replace('.mdx', '')
-        const mdxModule = docsContext(key)
-        const {
-          title,
-          description,
-          model,
-          manufacturer,
-          integrations,
-          model_name,
-        } = mdxModule.frontMatter
+    for (const file of oldFiles) {
+      const id = file.split('/')[3].replace('.mdx', '')
+      if (!id) continue
 
-        return {
-          id,
-          title: title || id,
-          description: description || '',
-          model: Array.isArray(model) ? model.join(', ') : model || '',
-          manufacturer: manufacturer || '',
-          integrations: integrations || [],
-          model_name: Array.isArray(model_name)
-            ? model_name.join(', ')
-            : model_name || '',
-        }
-      })
+      // If controller exists in the NEW library, skip old loader
+      if (libraryExists('controllers', id)) continue
 
-      controllersData.sort((a, b) => a.title.localeCompare(b.title))
+      try {
+        const mod = docsContext(file)
+        if (mod?.frontMatter) {
+          const fm = mod.frontMatter
 
-      const manufacturerSet = new Set<string>()
-
-      controllersData.forEach((controller) => {
-        if (Array.isArray(controller.manufacturer)) {
-          controller.manufacturer.forEach((mfr) => {
-            if (mfr && typeof mfr === 'string' && mfr.trim() !== '') {
-              manufacturerSet.add(mfr.trim())
-            }
+          results.push({
+            id,
+            model: fm.model ?? id,
+            manufacturer: fm.manufacturer ?? 'Unknown',
+            integrations: fm.integrations ?? [],
+            model_name: fm.model_name ?? fm.model ?? id,
+            thumbnail: fm.image ?? undefined,
           })
-        } else if (
-          controller.manufacturer &&
-          typeof controller.manufacturer === 'string'
-        ) {
-          manufacturerSet.add(controller.manufacturer.trim())
         }
-      })
-
-      setControllers(controllersData)
-      setFilteredControllers(controllersData)
-      setTotalControllers(controllersData.length)
-      setUniqueManufacturers(Array.from(manufacturerSet))
-      setError(null)
-    } catch (e) {
-      console.error('Error loading controllers:', e)
-      setControllers([])
-      setError(
-        'Failed to load controllers. Please check the console for more details.',
-      )
+      } catch (e) {
+        console.warn(`⚠️ Failed loading old controller ${id}`, e)
+      }
     }
+
+    // NEW SYSTEM CONTROLLERS FROM LIBRARY
+    const libraryControllers = loadLibraryMetadata('controllers')
+
+    for (const meta of libraryControllers) {
+      results.push({
+        id: meta.slug,
+        model: meta.metadata.model ?? meta.slug,
+        manufacturer: meta.metadata.manufacturer ?? 'Unknown',
+        integrations: meta.metadata.integrations ?? [],
+        model_name:
+          meta.metadata.model_name ?? meta.metadata.model ?? meta.slug,
+        thumbnail: meta.metadata.thumbnail ?? undefined,
+      })
+    }
+
+    // FINAL SORT (alphabetical by model)
+    const sorted = results.sort((a, b) =>
+      a.model.localeCompare(b.model, undefined, { sensitivity: 'base' }),
+    )
+
+    setControllers(sorted)
+    setFilteredControllers(sorted)
   }, [])
 
-  // Filter controllers when search query or manufacturer selection changes
   useEffect(() => {
-    let results = controllers
-
-    // Apply manufacturer filter if not "All Manufacturers"
-    if (selectedManufacturer !== 'All Manufacturers') {
-      results = results.filter((controller) => {
-        if (Array.isArray(controller.manufacturer)) {
-          return controller.manufacturer.some(
-            (mfr) =>
-              typeof mfr === 'string' &&
-              mfr.toLowerCase().includes(selectedManufacturer.toLowerCase()),
-          )
-        }
-        return (
-          typeof controller.manufacturer === 'string' &&
-          controller.manufacturer
-            .toLowerCase()
-            .includes(selectedManufacturer.toLowerCase())
-        )
-      })
+    if (!searchTerm.trim()) {
+      setFilteredControllers(controllers)
+      return
     }
 
-    // Apply search query filter
-    if (searchQuery) {
-      const query = searchQuery.toLowerCase()
-      results = results.filter((controller) => {
-        // Check model_name (safely)
-        const modelNameMatch =
-          typeof controller.model_name === 'string' &&
-          controller.model_name.toLowerCase().includes(query)
+    const term = searchTerm.toLowerCase()
 
-        // Check model (safely)
-        const modelMatch =
-          typeof controller.model === 'string' &&
-          controller.model.toLowerCase().includes(query)
-
-        // Check manufacturer (safely)
-        let manufacturerMatch = false
-        if (Array.isArray(controller.manufacturer)) {
-          manufacturerMatch = controller.manufacturer.some(
-            (mfr) =>
-              typeof mfr === 'string' && mfr.toLowerCase().includes(query),
-          )
-        } else if (typeof controller.manufacturer === 'string') {
-          manufacturerMatch = controller.manufacturer
-            .toLowerCase()
-            .includes(query)
-        }
-
-        // Check integrations (safely)
-        const integrationsMatch =
-          Array.isArray(controller.integrations) &&
-          controller.integrations.some(
-            (integration) =>
-              typeof integration === 'string' &&
-              integration.toLowerCase().includes(query),
-          )
-
-        return (
-          modelNameMatch || modelMatch || manufacturerMatch || integrationsMatch
-        )
-      })
-    }
-
-    setFilteredControllers(results)
-  }, [searchQuery, selectedManufacturer, controllers])
-
-  if (error) {
-    return (
-      <div className='admonition admonition-danger alert alert--danger'>
-        <div className='admonition-heading'>
-          <h5>Error loading controllers</h5>
-        </div>
-        <div className='admonition-content'>
-          <p>{error}</p>
-        </div>
-      </div>
+    setFilteredControllers(
+      controllers.filter((c) =>
+        [
+          c.id,
+          c.model,
+          c.model_name,
+          Array.isArray(c.manufacturer)
+            ? c.manufacturer.join(' ')
+            : c.manufacturer,
+        ]
+          .join(' ')
+          .toLowerCase()
+          .includes(term),
+      ),
     )
-  }
-
-  if (controllers.length === 0) {
-    return <div>No controllers found in this category.</div>
-  }
-
-  const listStyle: React.CSSProperties = {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '16px',
-    margin: '20px 0',
-  }
-
-  const statsStyle: React.CSSProperties = {
-    marginBottom: '20px',
-    padding: '12px 16px',
-    backgroundColor: 'var(--ifm-color-emphasis-100)',
-    borderRadius: '8px',
-    display: 'flex',
-    justifyContent: 'space-between',
-    flexWrap: 'wrap',
-  }
-
-  const searchContainerStyle: React.CSSProperties = {
-    display: 'flex',
-    gap: '16px',
-    marginBottom: '20px',
-    flexWrap: 'wrap',
-  }
-
-  const searchInputContainerStyle: React.CSSProperties = {
-    position: 'relative',
-    flex: '2',
-    minWidth: '200px',
-  }
-
-  const searchIconStyle: React.CSSProperties = {
-    position: 'absolute',
-    left: '12px',
-    top: '50%',
-    transform: 'translateY(-50%)',
-    color: 'var(--ifm-color-emphasis-500)',
-  }
-
-  const searchInputStyle: React.CSSProperties = {
-    width: '100%',
-    padding: '8px 8px 8px 36px',
-    borderRadius: '4px',
-    border: '1px solid var(--ifm-color-emphasis-300)',
-    fontSize: '16px',
-  }
-
-  const selectStyle: React.CSSProperties = {
-    flex: '1',
-    minWidth: '150px',
-    padding: '8px',
-    borderRadius: '4px',
-    border: '1px solid var(--ifm-color-emphasis-300)',
-    fontSize: '16px',
-  }
+  }, [searchTerm, controllers])
 
   return (
     <>
-      <div style={statsStyle}>
-        <div>
-          {filteredControllers.length === controllers.length ? (
-            <>
-              Currently {totalControllers} devices from{' '}
-              {uniqueManufacturers.length} different vendors are supported.
-            </>
-          ) : (
-            <>
-              Showing {filteredControllers.length} of {totalControllers}{' '}
-              devices.
-            </>
-          )}
-        </div>
+      <div className='search-wrapper'>
+        <Search size={18} />
+        <input
+          type='text'
+          placeholder='Search controllers...'
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
       </div>
 
-      <div style={searchContainerStyle}>
-        <div style={searchInputContainerStyle}>
-          <Search style={searchIconStyle} size={16} />
-          <input
-            type='text'
-            placeholder='Search controllers...'
-            style={searchInputStyle}
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-        </div>
-
-        <select
-          style={selectStyle}
-          value={selectedManufacturer}
-          onChange={(e) => setSelectedManufacturer(e.target.value)}
-        >
-          <option>All Manufacturers</option>
-          {uniqueManufacturers.sort().map((manufacturer) => (
-            <option key={manufacturer} value={manufacturer}>
-              {manufacturer}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      <div style={listStyle}>
+      <div className='controller-grid'>
         {filteredControllers.map((controller) => {
-          const imagePath = `/awesome-ha-blueprints/img/controllers/${controller.id}.png`
+          const imagePath =
+            controller.thumbnail ??
+            `https://raw.githubusercontent.com/EPMatt/awesome-ha-blueprints/main/assets/controllers/${controller.id}.png`
 
           return (
             <ControllerItem

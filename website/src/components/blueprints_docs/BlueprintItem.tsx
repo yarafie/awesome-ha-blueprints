@@ -1,12 +1,16 @@
-import React, { useState } from 'react'
+import React from 'react'
 import Link from '@docusaurus/Link'
 import { ChevronRight } from 'react-bootstrap-icons'
+import { getBlueprintUrl } from '../../utils'
 
 interface BlueprintItemProps {
   id: string
   title: string
   description: string
   category: string
+
+  // NEW — allows external components to override routing
+  overrideUrl?: string
 }
 
 const BlueprintItem: React.FC<BlueprintItemProps> = ({
@@ -14,47 +18,35 @@ const BlueprintItem: React.FC<BlueprintItemProps> = ({
   title,
   description,
   category,
+  overrideUrl,
 }) => {
-  const [isHovered, setIsHovered] = useState(false)
-
-  const cardStyle: React.CSSProperties = {
-    width: '100%',
-    minHeight: '200px',
-    boxShadow: isHovered
-      ? '0 4px 8px rgba(0, 0, 0, 0.3)'
-      : '0 2px 4px rgba(0, 0, 0, 0.2)',
-    padding: '16px',
-    color: 'var(--ifm-font-color-base, #000)',
-    cursor: 'pointer',
-    transition: 'box-shadow 0.3s ease',
-  }
-
-  const footerStyle: React.CSSProperties = {
-    display: 'flex',
-    justifyContent: 'flex-end',
-    marginTop: '8px',
-    transition: 'transform 0.3s ease-out',
-    transform: isHovered ? 'translateX(6px)' : 'translateX(0)',
-  }
+  // Determine final link:
+  // 1️⃣ If parent passed overrideUrl → use it
+  // 2️⃣ Otherwise → compute fallback-aware URL automatically
+  const finalUrl = overrideUrl ?? getBlueprintUrl(category, id)
 
   return (
-    <Link
-      to={`/docs/blueprints/${category}/${id}`}
-      style={{ textDecoration: 'none' }}
-    >
+    <Link to={finalUrl} className='card margin-bottom--md'>
       <div
-        className='card'
-        style={cardStyle}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          padding: '1rem',
+        }}
       >
-        <div className='card__header'>
+        <div>
           <h3>{title}</h3>
         </div>
+
         <div className='card__body'>
           <p>{description}</p>
         </div>
-        <div className='card__footer' style={footerStyle}>
+
+        <div
+          className='card__footer'
+          style={{ display: 'flex', justifyContent: 'flex-end' }}
+        >
           <ChevronRight size={20} />
         </div>
       </div>
