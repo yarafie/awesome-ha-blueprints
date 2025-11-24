@@ -1,0 +1,47 @@
+import React from 'react'
+import Layout from '@theme/Layout'
+import MDXContent from '@theme/MDXContent'
+
+export default function BlueprintPage(props: any) {
+  // Docusaurus plugin routes always pass module data here:
+  const modules = props?.route?.modules || {}
+
+  // metadata can be a module with .default or a plain object
+  const metadataModule = modules.metadata
+  const metadata = (metadataModule?.default ?? metadataModule) || {
+    title: 'Untitled Blueprint',
+    description: '',
+  }
+
+  // mdx can be a module with .default or the component itself
+  const mdxModule = modules.mdx
+  const MdxComponent = mdxModule?.default ?? mdxModule
+
+  return (
+    <Layout title={metadata.title} description={metadata.description}>
+      <div
+        style={{
+          padding: '2rem',
+          maxWidth: '900px',
+          margin: '0 auto',
+        }}
+      >
+        <h1>{metadata.title}</h1>
+        <p>{metadata.description}</p>
+
+        <hr style={{ margin: '2rem 0' }} />
+
+        {!MdxComponent ? (
+          <p style={{ color: 'red' }}>
+            ❌ MDX component failed to load — check blueprint.mdx and paths in
+            library-autoimport-plugin.js
+          </p>
+        ) : (
+          <MDXContent>
+            <MdxComponent />
+          </MDXContent>
+        )}
+      </div>
+    </Layout>
+  )
+}

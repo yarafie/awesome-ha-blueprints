@@ -1,10 +1,14 @@
 import { Config } from '@docusaurus/types'
+
+import path from 'path'
+
 import dotenv from 'dotenv'
 dotenv.config({ path: path.resolve(__dirname, '.env') })
+
 import { themes as prismThemes } from 'prism-react-renderer'
-import path from 'path'
+
 import blueprintDownloaderPlugin from './src/plugins/blueprint-downloader-plugin/blueprint-downloader-plugin.js'
-import blueprintAutoImportPlugin from './src/plugins/blueprint-autoimport-plugin/blueprint-autoimport-plugin.js'
+import libraryAutoImportPlugin from './src/plugins/library-autoimport-plugin/library-autoimport-plugin.js'
 
 // Create a custom plugin for webpack configuration
 // the purpose of this plugin is to allow the use of the @blueprints alias
@@ -17,6 +21,7 @@ function webpackConfigPlugin() {
         resolve: {
           alias: {
             '@blueprints': path.resolve(__dirname, '../blueprints'),
+            '@library': path.resolve(__dirname, '../library'),
           },
         },
         module: {
@@ -24,7 +29,10 @@ function webpackConfigPlugin() {
             {
               test: /\.ya?ml$/,
               type: 'asset/source',
-              include: [path.resolve(__dirname, '../blueprints')],
+              include: [
+                path.resolve(__dirname, '../blueprints'),
+                path.resolve(__dirname, '../library'),
+              ],
             },
           ],
         },
@@ -81,14 +89,22 @@ const config: Config = {
       items: [
         {
           to: 'docs/introduction/',
-          activeBasePath: 'docs/introduction',
+          activeBaseRegex: '^/docs/introduction',
           label: 'Getting Started',
           position: 'left',
         },
         {
           to: 'docs/blueprints/',
+          activeBaseRegex: '^/docs/blueprints',
           activeBasePath: 'docs/blueprints',
           label: 'Blueprints',
+          position: 'left',
+        },
+        // NEW LIBRARY SYSTEM
+        {
+          to: 'library',
+          activeBaseRegex: '^/library',
+          label: 'Library',
           position: 'left',
         },
         {
@@ -110,7 +126,12 @@ const config: Config = {
     },
     footer: {
       links: [],
-      copyright: `Awesome HA Blueprints is maintained by <a href='https://github.com/EPMatt'>Matteo Agnoletto</a>.<br/>This Fork is maintained by <a href='https://github.com/yarafie'>yarafie</a>.<br/>Licensed under the <a href='https://github.com/yarafie/awesome-ha-blueprints/blob/main/LICENSE'>GPL-3.0 License</a>`,
+      copyright: `
+        Awesome HA Blueprints is maintained by 
+        <a href='https://github.com/EPMatt'>Matteo Agnoletto</a>.<br/>
+        This Fork is maintained by <a href='https://github.com/yarafie'>yarafie</a>.<br/>
+        Licensed under the <a href='https://github.com/yarafie/awesome-ha-blueprints/blob/main/LICENSE'>GPL-3.0 License</a>
+      `,
     },
     prism: {
       theme: prismThemes.github,
@@ -135,7 +156,7 @@ const config: Config = {
   plugins: [
     webpackConfigPlugin,
     blueprintDownloaderPlugin,
-    blueprintAutoImportPlugin,
+    libraryAutoImportPlugin,
     // Make environment variables available to the client
     function () {
       return {
