@@ -6,7 +6,6 @@ dotenv.config({ path: path.resolve(__dirname, '.env') })
 
 import { themes as prismThemes } from 'prism-react-renderer'
 import blueprintDownloaderPlugin from './src/plugins/blueprint-downloader-plugin/blueprint-downloader-plugin.js'
-import libraryAutoImportPlugin from './src/plugins/library-autoimport-plugin/library-autoimport-plugin.js'
 
 function webpackConfigPlugin() {
   return {
@@ -16,7 +15,6 @@ function webpackConfigPlugin() {
         resolve: {
           alias: {
             '@blueprints': path.resolve(__dirname, '../blueprints'),
-            '@library': path.resolve(__dirname, '../library'),
           },
         },
         module: {
@@ -24,10 +22,7 @@ function webpackConfigPlugin() {
             {
               test: /\.ya?ml$/,
               type: 'asset/source',
-              include: [
-                path.resolve(__dirname, '../blueprints'),
-                path.resolve(__dirname, '../library'),
-              ],
+              include: [path.resolve(__dirname, '../blueprints')],
             },
           ],
         },
@@ -89,12 +84,6 @@ const config: Config = {
           position: 'left',
         },
         {
-          to: 'library',
-          activeBaseRegex: '^/library',
-          label: 'Library',
-          position: 'left',
-        },
-        {
           href: '/help',
           label: 'Help',
           position: 'right',
@@ -137,7 +126,6 @@ const config: Config = {
   plugins: [
     webpackConfigPlugin,
     blueprintDownloaderPlugin,
-    libraryAutoImportPlugin,
 
     function () {
       return {
