@@ -1,6 +1,9 @@
 # Dependencies
 /node_modules
 
+# Local Scripts
+/scripts
+
 # Misc
 .DS_Store
 .env.local

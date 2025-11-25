@@ -1,18 +1,34 @@
-// This utility is now PURE. No __dirname, no filesystem.
-// It only returns the correct URL path for blueprints.
+import fs from 'fs'
+import path from 'path'
 
-export function resolveBlueprintPath(category, id) {
-  // If library version exists, plugin sets window.__LIBRARY_BLUEPRINTS__
-  const key = `${category}/${id}`
-  const libExists =
-    typeof window !== 'undefined' &&
-    window.__LIBRARY_BLUEPRINTS__ &&
-    window.__LIBRARY_BLUEPRINTS__.has(key)
+export function resolveBlueprintPath(category, slug) {
+  const libraryRoot = path.resolve(
+    __dirname,
+    '../../../library',
+    category,
+    slug,
+  )
+  const oldRoot = path.resolve(__dirname, '../../../blueprints', category, slug)
 
-  if (libExists) {
-    return `/awesome-ha-blueprints/library/${category}/${id}`
+  const existsInLibrary = fs.existsSync(libraryRoot)
+
+  if (existsInLibrary) {
+    return {
+      root: `/library/${category}/${slug}`,
+      yaml: `/library/${category}/${slug}/blueprint.yaml`,
+      mdx: `/library/${category}/${slug}`,
+      changelog: `/library/${category}/${slug}/changelog.json`,
+      assets: `/library/${category}/${slug}/assets`,
+      source: 'library',
+    }
   }
 
-  // Fallback to legacy
-  return `/awesome-ha-blueprints/docs/blueprints/${category}/${id}`
+  return {
+    root: `/docs/blueprints/${category}/${slug}`,
+    yaml: `/blueprints/${category}/${slug}/${slug}.yaml`,
+    mdx: `/docs/blueprints/${category}/${slug}`,
+    changelog: `/blueprints/${category}/${slug}/changelog.json`,
+    assets: `/img/blueprints/${category}/${slug}`,
+    source: 'old',
+  }
 }

@@ -22,10 +22,9 @@ function Help() {
               <p>
                 This website groups all the documentation related to the
                 project. You can start from{' '}
-                <Link to='/awesome-ha-blueprints/docs/introduction'>here</Link>.
+                <Link to='/docs/introduction'>here</Link>.
               </p>
             </div>
-
             <div className='col col--4' style={{ maxWidth: 300 }}>
               <h3>Community</h3>
               <p>
@@ -36,7 +35,6 @@ function Help() {
                 .
               </p>
             </div>
-
             <div className='col col--4' style={{ maxWidth: 300 }}>
               <h3>Have an issue or want to contribute?</h3>
               <p>
@@ -51,15 +49,12 @@ function Help() {
                 .{' '}
                 <b>
                   Please read{' '}
-                  <Link to='/awesome-ha-blueprints/docs/contributing'>
-                    Contribution Guidelines
-                  </Link>{' '}
+                  <Link to='/docs/contributing'>Contribution Guidelines</Link>{' '}
                   first.
                 </b>
               </p>
             </div>
           </div>
-
           <div
             className='row row--no-gutters padding-top--lg'
             style={{ justifyContent: 'space-between' }}
@@ -75,7 +70,6 @@ function Help() {
                 leaving a star on GitHub. ⭐
               </p>
             </div>
-
             <div className='col col--4' style={{ maxWidth: 300 }}>
               <h3>Donate!</h3>
               <p>
@@ -87,7 +81,6 @@ function Help() {
                 . ☕
               </p>
             </div>
-
             <div className='col col--4' style={{ maxWidth: 300 }} />
           </div>
         </div>

@@ -1,6 +1,5 @@
 import * as Icons from 'react-bootstrap-icons'
 import Link from '@docusaurus/Link'
-import React from 'react'
 
 interface BlueprintCategoryCardProps {
   icon: string
@@ -10,56 +9,36 @@ interface BlueprintCategoryCardProps {
   id: string
 }
 
-/**
- * Determine if category exists in the new /library system.
- * This global comes from library-autoimport-plugin.
- */
-function resolveCategoryLink(categoryId: string): string {
-  if (typeof window !== 'undefined') {
-    const categories = (window as any).__AHB_LIBRARY_CATEGORIES__ as
-      | string[]
-      | undefined
-
-    if (categories && categories.includes(categoryId)) {
-      return `/awesome-ha-blueprints/library/${categoryId}`
-    }
-  }
-  // fallback → old docs system
-  return `/docs/blueprints/${categoryId}`
-}
-
 const BlueprintCategoryCard: React.FC<BlueprintCategoryCardProps> = ({
   icon,
   color,
   name,
   description,
   id,
-}) => {
-  const IconComponent = (Icons as any)[icon] || Icons.InfoCircle
-  const link = resolveCategoryLink(id)
-
+}: BlueprintCategoryCardProps) => {
+  const Icon = Icons[icon]
   return (
-    <div className='col col--4 margin-bottom--lg'>
-      <div className='card'>
-        <div className='card__header'>
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.75rem',
-            }}
-          >
-            <IconComponent size={28} color={color} />
-            <h3>{name}</h3>
-          </div>
+    <div className='col col--4 padding-bottom--lg'>
+      <div className='card item shadow--md'>
+        <div
+          className='card__header padding-vert--xl'
+          style={{
+            textAlign: 'center',
+            backgroundColor: color,
+            color: 'black',
+          }}
+        >
+          <Icon size={48} />
         </div>
-
-        <div className='card__body'>
+        <div className='card__body' style={{ minHeight: '13rem' }}>
+          <h3>{name}</h3>
           <p>{description}</p>
         </div>
-
         <div className='card__footer'>
-          <Link to={link} className='button button--primary button--block'>
+          <Link
+            to={`/docs/blueprints/${id}`}
+            className='button button--primary button--block'
+          >
             Explore
           </Link>
         </div>

@@ -1,7 +1,6 @@
-import React from 'react'
+import React, { useState } from 'react'
 import Link from '@docusaurus/Link'
 import { ChevronRight } from 'react-bootstrap-icons'
-import { getBlueprintDocsPath } from '../../utils'
 
 interface ControllerItemProps {
   id: string
@@ -12,43 +11,6 @@ interface ControllerItemProps {
   model_name: string
 }
 
-const cardStyle: React.CSSProperties = {
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  padding: '1.25rem',
-  border: '1px solid var(--ifm-color-emphasis-200)',
-  borderRadius: 'var(--ifm-global-radius)',
-  backgroundColor: 'var(--ifm-background-surface-color)',
-  transition: 'box-shadow 0.2s ease, border-color 0.2s ease',
-  textDecoration: 'none',
-}
-
-const cardHoverStyle: React.CSSProperties = {
-  boxShadow: 'var(--ifm-global-shadow-md)',
-  borderColor: 'var(--ifm-color-primary)',
-}
-
-const imageStyle: React.CSSProperties = {
-  width: '84px',
-  height: '84px',
-  objectFit: 'contain',
-  borderRadius: 'var(--ifm-global-radius)',
-  backgroundColor: 'var(--ifm-color-emphasis-100)',
-  padding: '0.5rem',
-}
-
-const contentStyle: React.CSSProperties = {
-  flexGrow: 1,
-  marginLeft: '1rem',
-}
-
-const footerStyle: React.CSSProperties = {
-  display: 'flex',
-  alignItems: 'center',
-  color: 'var(--ifm-color-emphasis-700)',
-}
-
 const ControllerItem: React.FC<ControllerItemProps> = ({
   id,
   model,
@@ -57,30 +19,73 @@ const ControllerItem: React.FC<ControllerItemProps> = ({
   image,
   model_name,
 }) => {
-  const href = getBlueprintDocsPath('controllers', id)
+  const [isHovered, setIsHovered] = useState(false)
+
+  const formattedManufacturer = Array.isArray(manufacturer)
+    ? manufacturer.join(', ')
+    : manufacturer
+
+  const cardStyle: React.CSSProperties = {
+    width: '100%',
+    minHeight: '120px',
+    boxShadow: isHovered
+      ? '0 4px 8px rgba(0, 0, 0, 0.3)'
+      : '0 2px 4px rgba(0, 0, 0, 0.2)',
+    padding: '16px',
+    color: 'var(--ifm-font-color-base, #000)',
+    cursor: 'pointer',
+    display: 'flex',
+    alignItems: 'flex-start',
+    position: 'relative',
+    gap: '16px',
+    transition: 'box-shadow 0.3s ease',
+  }
+
+  const imageStyle: React.CSSProperties = {
+    width: '150px',
+    height: 'auto',
+    borderRadius: '8px',
+    flexShrink: 0,
+  }
+
+  const textContainerStyle: React.CSSProperties = {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'flex-start',
+    flex: 1,
+    overflow: 'wrap',
+    paddingRight: '24px',
+  }
+
+  const footerStyle: React.CSSProperties = {
+    position: 'absolute',
+    right: '16px',
+    top: '50%',
+    transform: `translateY(-50%) ${isHovered ? 'translateX(6px)' : 'translateX(0)'}`,
+    transition: 'transform 0.3s ease-out',
+  }
 
   return (
     <Link
-      to={href}
-      className='controller-item-link'
+      to={`/docs/blueprints/controllers/${id}`}
       style={{ textDecoration: 'none' }}
     >
       <div
-        className='card__container'
+        className='card'
         style={cardStyle}
-        onMouseEnter={(e) =>
-          Object.assign(e.currentTarget.style, cardHoverStyle)
-        }
-        onMouseLeave={(e) => Object.assign(e.currentTarget.style, cardStyle)}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
       >
-        <img src={image} alt={model} style={imageStyle} />
-        <div style={contentStyle}>
-          <h3 style={{ margin: '0 0 0.25rem 0' }}>{model_name}</h3>
-          <p style={{ margin: '0 0 0.25rem 0' }}>
-            <strong>Manufacturer:</strong>{' '}
-            {Array.isArray(manufacturer)
-              ? manufacturer.join(', ')
-              : manufacturer}
+        <div style={textContainerStyle}>
+          <h3 style={{ margin: '0' }}>{model_name}</h3>
+        </div>
+        <img src={image} alt={model_name} style={imageStyle} />
+        <div style={textContainerStyle}>
+          <p style={{ margin: '0' }}>
+            <strong>Model:</strong> {model}
+          </p>
+          <p style={{ margin: '0' }}>
+            <strong>Manufacturer:</strong> {formattedManufacturer}
           </p>
           <p style={{ margin: '0' }}>
             <strong>Integrations:</strong> {integrations.join(', ')}

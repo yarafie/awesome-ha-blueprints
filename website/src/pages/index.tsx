@@ -6,6 +6,7 @@ import useDocusaurusContext from '@docusaurus/useDocusaurusContext'
 import useBaseUrl from '@docusaurus/useBaseUrl'
 import styles from './styles.module.css'
 
+// Add type declaration for the Docusaurus context
 interface DocusaurusContext {
   siteConfig?: {
     title?: string
@@ -13,42 +14,59 @@ interface DocusaurusContext {
   }
 }
 
-function HomeHeader() {
-  const { siteConfig } = useDocusaurusContext() as DocusaurusContext
-  return (
-    <header className={clsx('hero hero--primary', styles.heroBanner)}>
-      <div className='container'>
-        <h1 className='hero__title'>{siteConfig?.title}</h1>
-        <p className='hero__subtitle'>{siteConfig?.tagline}</p>
+export default function Home(): React.ReactElement {
+  const context = useDocusaurusContext() as DocusaurusContext
+  const { siteConfig = {} } = context
 
-        <div className='row margin-top--lg'>
-          <div className='col col--12 text--center'>
-            <Link
-              className={clsx(
-                'button button button--secondary button--lg margin-horiz--sm',
-                styles.getStarted,
-              )}
-              to={useBaseUrl('library')}
-            >
-              Browse Blueprints
-            </Link>
+  return (
+    <Layout title={`${siteConfig.title}`} description={`${siteConfig.tagline}`}>
+      <header
+        className={clsx('hero hero--primary', styles.heroBanner)}
+        style={{ minHeight: '70vh' }}
+      >
+        <div className='container'>
+          <img
+            alt='Awesome HA Blueprints logo'
+            src={useBaseUrl('img/logo.svg')}
+            className='margin-bottom--lg'
+            style={{ width: 80 }}
+          />
+          <h1 className='hero__title' style={{ color: 'white' }}>
+            {siteConfig.title}
+          </h1>
+          <p className='hero__subtitle' style={{ color: 'white' }}>
+            A curated collection of blueprints for Home Assistant.
+            <br />
+            Reliable, customizable, fully tested by the community.
+            <br />
+            Forked and maintained by yarafie.
+          </p>
+          <div className={`row margin-top--xl ${styles.buttons}`}>
+            <div className='col margin-bottom--lg'>
+              <Link
+                className={clsx(
+                  'button button button--secondary button--lg margin-horiz--sm',
+                  styles.getStarted,
+                )}
+                to={useBaseUrl('docs/introduction')}
+              >
+                Get Started
+              </Link>
+            </div>
+            <div className='col margin-bottom--lg'>
+              <Link
+                className={clsx(
+                  'button button button--secondary button--lg margin-horiz--sm',
+                  styles.getStarted,
+                )}
+                to={useBaseUrl('docs/blueprints')}
+              >
+                Browse Blueprints
+              </Link>
+            </div>
           </div>
         </div>
-      </div>
-    </header>
-  )
-}
-
-export default function Home(): JSX.Element {
-  const context = useDocusaurusContext()
-  const { siteConfig } = context as DocusaurusContext
-
-  return (
-    <Layout
-      title={siteConfig?.title}
-      description='A curated list of Home Assistant blueprints'
-    >
-      <HomeHeader />
+      </header>
     </Layout>
   )
 }
