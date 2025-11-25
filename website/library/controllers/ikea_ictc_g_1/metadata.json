@@ -1,0 +1,15 @@
+{
+  "id": "ikea_ictc_g_1",
+  "category": "controllers",
+  "title": "Controller - IKEA ICTC-G-1 TRÅDFRI wireless dimmer",
+  "description": "Controller automation for executing any kind of action triggered by the provided IKEA ICTC-G-1 TRÅDFRI wireless dimmer. Supports Zigbee2MQTT, ZHA, deCONZ.",
+  "manufacturer": "IKEA",
+  "model": "ICTC-G-1",
+  "model_name": "IKEA ICTC-G-1 TRÅDFRI wireless dimmer",
+  "integrations": ["Zigbee2MQTT", "ZHA", "deCONZ"],
+  "name": "Controller - IKEA ICTC-G-1 TRÅDFRI wireless dimmer",
+  "domain": "automation",
+  "ahb_version": "2025.11.04",
+  "version": "2025.04.19",
+  "ahb_maintainers": ["EPMatt"]
+}

@@ -1,0 +1,15 @@
+{
+  "id": "ikea_e2213",
+  "category": "controllers",
+  "title": "Controller - IKEA E2213 SOMRIG shortcut button",
+  "description": "Controller automation for executing any kind of action triggered by the provided IKEA E2213 SOMRIG shortcut button. Supports Zigbee2MQTT, ZHA, deCONZ.",
+  "manufacturer": "IKEA",
+  "model": "E2213",
+  "model_name": "IKEA E2213 SOMRIG shortcut button",
+  "integrations": ["Zigbee2MQTT", "ZHA", "deCONZ"],
+  "name": "Controller - IKEA E2213 SOMRIG shortcut button",
+  "domain": "automation",
+  "ahb_version": "2025.11.04",
+  "version": "2025.03.26",
+  "ahb_maintainers": ["yarafie"]
+}

@@ -1,0 +1,15 @@
+{
+  "id": "shelly_button_1",
+  "category": "controllers",
+  "title": "Controller - Shelly Button 1",
+  "description": "Controller automation for executing any kind of action triggered by the provided Shelly Button 1. Supports Shelly.",
+  "manufacturer": "Shelly",
+  "model": "SHBTN-2",
+  "model_name": "Shelly Button 1",
+  "integrations": ["Shelly"],
+  "name": "Controller - Shelly Button 1",
+  "domain": "automation",
+  "ahb_version": "2025.11.04",
+  "version": "2025.04.12",
+  "ahb_maintainers": ["yarafie"]
+}

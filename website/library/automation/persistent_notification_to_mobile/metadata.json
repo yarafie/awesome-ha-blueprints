@@ -1,0 +1,11 @@
+{
+  "id": "persistent_notification_to_mobile",
+  "category": "automation",
+  "title": "Send Web UI persistent notifications to Mobile Devices",
+  "description": "Send Web UI persistent notifications with the provided ID to the specified Mobile Devices.",
+  "name": "Send Web UI persistent notifications to Mobile Devices",
+  "domain": "automation",
+  "ahb_version": "2025.11.04",
+  "version": "2021.10.26",
+  "ahb_maintainers": ["EPMatt"]
+}

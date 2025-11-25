@@ -1,0 +1,11 @@
+{
+  "id": "cover",
+  "category": "hooks",
+  "title": "Hook - Cover",
+  "description": "This Hook blueprint allows to build a controller-based automation to control a cover. Supports opening, closing and tilting the cover.",
+  "name": "Hook - Cover",
+  "domain": "automation",
+  "ahb_version": "2025.11.04",
+  "version": "2025.10.20",
+  "ahb_maintainers": ["EPMatt"]
+}

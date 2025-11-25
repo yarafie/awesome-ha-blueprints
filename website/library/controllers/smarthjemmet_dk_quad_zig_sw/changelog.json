@@ -1,0 +1,11 @@
+[
+  {
+    "date": "2025.03.03",
+    "changes": [
+      {
+        "description": "Initial release. ([@Nicolai-](https://github.com/Nicolai-)) :tada:",
+        "breaking": false
+      }
+    ]
+  }
+]

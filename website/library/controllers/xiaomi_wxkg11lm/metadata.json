@@ -1,0 +1,19 @@
+{
+  "id": "xiaomi_wxkg11lm",
+  "category": "controllers",
+  "title": "Controller - Aqara WXKG11LM Wireless Mini Switch / Xiaomi WXKG01LM Mi Wireless Switch",
+  "description": "Controller automation for executing any kind of action triggered by the provided Aqara WXKG11LM Wireless Mini Switch / Xiaomi WXKG01LM Mi Wireless Switch. Supports Zigbee2MQTT, ZHA, deCONZ.",
+  "manufacturer": ["Aqara", "Xiaomi"],
+  "model": ["WXKG11LM", "WXKG01LM"],
+  "model_name": "",
+  "[Aqara WXKG11LM Wireless Mini Switch, Xiaomi WXKG01LM Mi Wireless Switch]": [
+    "Aqara WXKG11LM Wireless Mini Switch",
+    "Xiaomi WXKG01LM Mi Wireless Switch"
+  ],
+  "integrations": ["Zigbee2MQTT", "ZHA", "deCONZ"],
+  "name": "Controller - Aqara WXKG11LM Wireless Mini Switch / Xiaomi WXKG01LM Mi Wireless Switch",
+  "domain": "automation",
+  "ahb_version": "2025.11.04",
+  "version": "2025.04.16",
+  "ahb_maintainers": ["EPMatt"]
+}

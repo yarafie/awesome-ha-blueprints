@@ -1,0 +1,15 @@
+{
+  "id": "philips_929002398602",
+  "category": "controllers",
+  "title": "Controller - Philips 929002398602 Hue Dimmer switch v2",
+  "description": "Controller automation for executing any kind of action triggered by the provided Philips 929002398602 Hue Dimmer switch v2. Supports Zigbee2MQTT, ZHA.",
+  "manufacturer": "Philips",
+  "model": "929002398602",
+  "model_name": "Philips 929002398602 Hue Dimmer switch v2",
+  "integrations": ["Zigbee2MQTT", "ZHA"],
+  "name": "Controller - Philips 929002398602 Hue Dimmer switch v2",
+  "domain": "automation",
+  "ahb_version": "2025.11.04",
+  "version": "2025.10.16",
+  "ahb_maintainers": ["EPMatt"]
+}

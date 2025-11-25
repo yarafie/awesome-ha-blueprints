@@ -1,0 +1,15 @@
+{
+  "id": "ikea_e2201",
+  "category": "controllers",
+  "title": "Controller - IKEA E2201 RODRET Dimmer",
+  "description": "Controller automation for executing any kind of action triggered by the provided IKEA E2201 RODRET Dimmer. Supports Zigbee2MQTT, ZHA, deCONZ.",
+  "manufacturer": "IKEA",
+  "model": "E2201",
+  "model_name": "IKEA E2201 RODRET Dimmer",
+  "integrations": ["Zigbee2MQTT", "ZHA", "deCONZ"],
+  "name": "Controller - IKEA E2201 RODRET Dimmer",
+  "domain": "automation",
+  "ahb_version": "2025.11.04",
+  "version": "2025.10.01",
+  "ahb_maintainers": ["yarafie"]
+}

@@ -1,0 +1,10 @@
+{
+  "id": "example",
+  "category": "automation",
+  "title": "Example Automation Blueprint",
+  "description": "A description for the blueprint",
+  "name": "Example Automation Blueprint",
+  "domain": "automation",
+  "ahb_version": "2025.11.04",
+  "ahb_maintainers": ["EPMatt"]
+}

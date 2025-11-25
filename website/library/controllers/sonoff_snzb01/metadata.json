@@ -1,0 +1,15 @@
+{
+  "id": "sonoff_snzb01",
+  "category": "controllers",
+  "title": "Controller - SONOFF SNZB-01 Wireless Switch",
+  "description": "Controller automation for executing any kind of action triggered by the provided SONOFF SNZB-01 Wireless Switch. Supports Zigbee2MQTT, ZHA, deCONZ.",
+  "manufacturer": "SONOFF",
+  "model": "SNZB-01",
+  "model_name": "SONOFF SNZB-01 Wireless Switch",
+  "integrations": ["Zigbee2MQTT", "ZHA", "deCONZ"],
+  "name": "Controller - SONOFF SNZB-01 Wireless Switch",
+  "domain": "automation",
+  "ahb_version": "2025.11.04",
+  "version": "2025.04.19",
+  "ahb_maintainers": ["EPMatt"]
+}
