@@ -12,6 +12,21 @@ export default function DownloadBlueprint(props: {
   const id = props.route.id
   const { consent } = useConsent()
 
+  // Safe redirect validator
+  const safeRedirect = (url: string) => {
+    try {
+      const allowedHost = 'my.home-assistant.io'
+      const parsed = new URL(url)
+      if (parsed.hostname === allowedHost) {
+        window.location.href = url
+      } else {
+        console.error('Unsafe redirect blocked:', url)
+      }
+    } catch {
+      console.error('Invalid redirect URL:', url)
+    }
+  }
+
   // Get the version from URL parameters (defaults to 'latest')
   const getVersion = (): string => {
     if (typeof window !== 'undefined') {
@@ -23,7 +38,8 @@ export default function DownloadBlueprint(props: {
 
   const version = getVersion()
 
-  const githubUrl = `https://raw.githubusercontent.com/yarafie/awesome-ha-blueprints/main/blueprints/${category}/${id}/${id}.yaml`
+  // Blueprint YAML now stored in: website/library/blueprints/<category>/<id>/<id>.yaml
+  const githubUrl = `https://raw.githubusercontent.com/yarafie/awesome-ha-blueprints/main/website/library/blueprints/${category}/${id}/${id}.yaml`
   const myHomeAssistantURL = `https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=${encodeURIComponent(githubUrl)}`
 
   useEffect(() => {
@@ -45,8 +61,9 @@ export default function DownloadBlueprint(props: {
         console.error('Error recording blueprint download:', error)
       })
       .finally(() => {
-        // Redirect to HA to download the blueprint
-        window.location.href = myHomeAssistantURL
+        // Safe redirect (replaced direct assignment)
+        // window.location.href = myHomeAssistantURL
+        safeRedirect(myHomeAssistantURL)
       })
   }, [consent, category, id, version, myHomeAssistantURL])
 

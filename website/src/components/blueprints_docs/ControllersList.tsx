@@ -37,7 +37,9 @@ const ControllersList: React.FC = () => {
       })
 
       const controllersData = controllerKeys.map((key: string) => {
-        const id = key.replace(categoryPath, '').replace('.mdx', '')
+        // const id = key.replace(categoryPath, '').replace('.mdx', '')
+        // Extract ID from folder structure: ./controllers/<id>/<id>.mdx
+        const id = key.split('/')[2]
         const mdxModule = docsContext(key)
         const {
           title,
@@ -280,7 +282,11 @@ const ControllersList: React.FC = () => {
 
       <div style={listStyle}>
         {filteredControllers.map((controller) => {
-          const imagePath = `/awesome-ha-blueprints/img/controllers/${controller.id}.png`
+          // const imagePath = `/awesome-ha-blueprints/img/controllers/${controller.id}.png`
+          // Images now come from library (e.g., @blueprints/controllers/<id>/<id>.png)
+          const imagePath = require(
+            `@blueprints/controllers/${controller.id}/${controller.id}.png`,
+          )
 
           return (
             <ControllerItem

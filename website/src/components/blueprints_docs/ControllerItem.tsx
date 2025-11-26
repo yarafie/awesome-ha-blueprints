@@ -7,7 +7,6 @@ interface ControllerItemProps {
   model: string
   manufacturer: string | string[]
   integrations: string[]
-  image: string
   model_name: string
 }
 
@@ -16,10 +15,13 @@ const ControllerItem: React.FC<ControllerItemProps> = ({
   model,
   manufacturer,
   integrations,
-  image,
   model_name,
 }) => {
   const [isHovered, setIsHovered] = useState(false)
+
+  // Load image directly from new library path
+  // Example: @blueprints/controllers/ikea_e2001_e2002/ikea_e2001_e2002.png
+  const imageSrc = require(`@blueprints/controllers/${id}/${id}.png`)
 
   const formattedManufacturer = Array.isArray(manufacturer)
     ? manufacturer.join(', ')
@@ -61,7 +63,9 @@ const ControllerItem: React.FC<ControllerItemProps> = ({
     position: 'absolute',
     right: '16px',
     top: '50%',
-    transform: `translateY(-50%) ${isHovered ? 'translateX(6px)' : 'translateX(0)'}`,
+    transform: `translateY(-50%) ${
+      isHovered ? 'translateX(6px)' : 'translateX(0)'
+    }`,
     transition: 'transform 0.3s ease-out',
   }
 
@@ -79,7 +83,9 @@ const ControllerItem: React.FC<ControllerItemProps> = ({
         <div style={textContainerStyle}>
           <h3 style={{ margin: '0' }}>{model_name}</h3>
         </div>
-        <img src={image} alt={model_name} style={imageStyle} />
+
+        <img src={imageSrc} alt={model_name} style={imageStyle} />
+
         <div style={textContainerStyle}>
           <p style={{ margin: '0' }}>
             <strong>Model:</strong> {model}
@@ -91,6 +97,7 @@ const ControllerItem: React.FC<ControllerItemProps> = ({
             <strong>Integrations:</strong> {integrations.join(', ')}
           </p>
         </div>
+
         <div className='card__footer' style={footerStyle}>
           <ChevronRight size={20} />
         </div>

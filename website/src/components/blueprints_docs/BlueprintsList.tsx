@@ -34,7 +34,9 @@ const BlueprintsList: React.FC<BlueprintsListProps> = ({ category }) => {
       // Process each blueprint
       const blueprintsData = blueprintKeys.map((key: string) => {
         // Extract ID from the path (remove .mdx extension and category prefix)
-        const id = key.replace(categoryPath, '').replace('.mdx', '')
+        // const id = key.replace(categoryPath, '').replace('.mdx', '')
+        // Extract ID from folder structure: ./category/id/id.mdx
+        const id = key.split('/')[2]
 
         // Get the MDX module and extract frontmatter
         const mdxModule = docsContext(key)

@@ -15,7 +15,7 @@ function webpackConfigPlugin() {
       return {
         resolve: {
           alias: {
-            '@blueprints': path.resolve(__dirname, '../blueprints'),
+            '@blueprints': path.resolve(__dirname, 'library/blueprints'),
           },
         },
         module: {
@@ -23,7 +23,7 @@ function webpackConfigPlugin() {
             {
               test: /\.ya?ml$/,
               type: 'asset/source',
-              include: [path.resolve(__dirname, '../blueprints')],
+              include: [path.resolve(__dirname, 'library/blueprints')],
             },
           ],
         },

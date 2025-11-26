@@ -12,7 +12,7 @@ export default function blueprintRoutesPlugin(context) {
 
     async loadContent() {
       const { siteDir } = context
-      const blueprintsDir = path.resolve(siteDir, '../blueprints')
+      const blueprintsDir = path.resolve(siteDir, 'library/blueprints')
 
       const blueprintFiles = globSync('**/*.yaml', {
         cwd: blueprintsDir,
@@ -32,6 +32,12 @@ export default function blueprintRoutesPlugin(context) {
 
           // The second directory is the blueprint ID
           const id = pathParts[1]
+
+          // Print to log for debugging purposes
+          console.log(`✅   relativePath: ${relativePath}`)
+          console.log(`✅   pathParts   : ${pathParts}`)
+          console.log(`✅   category    : ${category}`)
+          console.log(`✅   id          : ${id}`)
 
           // Skip if not in the expected directory structure
           if (!category || !id) continue
@@ -62,6 +68,8 @@ export default function blueprintRoutesPlugin(context) {
       for (const blueprint of content) {
         // Add download route for this blueprint
         addRoute({
+          // path: `/awesome-ha-blueprints/blueprints/${blueprint.category}/${blueprint.id}`,
+          // path: `/awesome-ha-blueprints/website/library/blueprints/${blueprint.category}/${blueprint.id}`,
           path: `/awesome-ha-blueprints/blueprints/${blueprint.category}/${blueprint.id}`,
           component:
             '../src/plugins/blueprint-downloader-plugin/download-blueprint.tsx',
@@ -72,7 +80,7 @@ export default function blueprintRoutesPlugin(context) {
         })
       }
 
-      console.log('✅ Blueprint download routes created')
+      console.log('✅ Blueprint Download Routes Created')
     },
   }
 }

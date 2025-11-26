@@ -30,7 +30,7 @@ function Help() {
               <p>
                 For questions and feedback, join the discussion in the{' '}
                 <a href='https://community.home-assistant.io/t/awesome-ha-blueprints-a-curated-list-of-blueprints-easily-create-controller-based-automations-remotes-switches-for-controlling-lights-media-players-and-more/256687'>
-                  Home Assitant Community Forum
+                  Home Assistant Community Forum
                 </a>
                 .
               </p>
