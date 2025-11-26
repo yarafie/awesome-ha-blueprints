@@ -9,16 +9,20 @@ interface ControllerItemProps {
   model: string
   manufacturer: string | string[]
   integrations: string[]
-  image: string
   model_name: string
 }
+
+// Load all controller images
+const controllerImages = import.meta.glob(
+  '../../../docs/blueprints/controllers/*/*.png',
+  { eager: true, as: 'url' },
+)
 
 const ControllerItem: React.FC<ControllerItemProps> = ({
   id,
   model,
   manufacturer,
   integrations,
-  image,
   model_name,
 }) => {
   const [isHovered, setIsHovered] = useState(false)
@@ -26,6 +30,11 @@ const ControllerItem: React.FC<ControllerItemProps> = ({
   const formattedManufacturer = Array.isArray(manufacturer)
     ? manufacturer.join(', ')
     : manufacturer
+
+  // Correct asset lookup through Vite/Webpack
+  const image =
+    controllerImages[`../../../docs/blueprints/controllers/${id}/${id}.png`] ||
+    '/img/placeholder.png'
 
   const cardStyle: React.CSSProperties = {
     width: '100%',
@@ -81,7 +90,9 @@ const ControllerItem: React.FC<ControllerItemProps> = ({
         <div style={textContainerStyle}>
           <h3 style={{ margin: '0' }}>{model_name}</h3>
         </div>
+
         <img src={image} alt={model_name} style={imageStyle} />
+
         <div style={textContainerStyle}>
           <p style={{ margin: '0' }}>
             <strong>Model:</strong> {model}
@@ -93,6 +104,7 @@ const ControllerItem: React.FC<ControllerItemProps> = ({
             <strong>Integrations:</strong> {integrations.join(', ')}
           </p>
         </div>
+
         <div className='card__footer' style={footerStyle}>
           <ChevronRight size={20} />
         </div>

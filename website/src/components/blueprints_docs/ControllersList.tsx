@@ -289,8 +289,6 @@ const ControllersList: React.FC = () => {
 
       <div style={listStyle}>
         {filteredControllers.map((controller) => {
-          const imagePath = `docs/blueprints/controllers/${controller.id}/${controller.id}.png`
-
           return (
             <ControllerItem
               key={controller.id}
@@ -299,7 +297,6 @@ const ControllersList: React.FC = () => {
               model_name={controller.model_name}
               manufacturer={controller.manufacturer}
               integrations={controller.integrations}
-              image={imagePath}
             />
           )
         })}

@@ -15,15 +15,30 @@ function webpackConfigPlugin() {
       return {
         resolve: {
           alias: {
-            '@blueprints': path.resolve(__dirname, 'docs/blueprints'),
+            // FIXED: corrected path to actual blueprint library
+            '@blueprints': path.resolve(__dirname, 'library/blueprints'),
           },
         },
         module: {
           rules: [
+            //
+            // 1. YAML loader
+            //
             {
               test: /\.ya?ml$/,
               type: 'asset/source',
-              include: [path.resolve(__dirname, 'docs/blueprints')],
+              include: [path.resolve(__dirname, 'library/blueprints')],
+            },
+            //
+            // 2. PNG loader for blueprint images
+            //
+            {
+              test: /\.(png|jpg|jpeg|gif|svg)$/i,
+              type: 'asset/resource',
+              include: [path.resolve(__dirname, 'library/blueprints')],
+              generator: {
+                filename: 'assets/images/[name]-[hash][ext]',
+              },
             },
           ],
         },
