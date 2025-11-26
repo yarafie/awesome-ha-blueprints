@@ -1,4 +1,3 @@
-import useBaseUrl from '@docusaurus/useBaseUrl'
 import React, { useEffect, useState } from 'react'
 import { docsContext } from '../../utils/contexts'
 import ControllerItem from './ControllerItem'
@@ -290,10 +289,7 @@ const ControllersList: React.FC = () => {
 
       <div style={listStyle}>
         {filteredControllers.map((controller) => {
-          //const imagePath = `/awesome-ha-blueprints/website/docs/blueprints/controllers/${controller.id}/${controller.id}.png`
-          const imagePath = useBaseUrl(
-            `/docs/blueprints/controllers/${controller.id}/${controller.id}.png`,
-          )
+          const imagePath = `docs/blueprints/controllers/${controller.id}/${controller.id}.png`
 
           return (
             <ControllerItem
