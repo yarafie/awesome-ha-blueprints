@@ -15,8 +15,7 @@ function webpackConfigPlugin() {
       return {
         resolve: {
           alias: {
-            // FIXED: corrected path to actual blueprint library
-            '@blueprints': path.resolve(__dirname, 'library/blueprints'),
+            '@blueprints': path.resolve(__dirname, 'docs/blueprints'),
           },
         },
         module: {
@@ -27,7 +26,7 @@ function webpackConfigPlugin() {
             {
               test: /\.ya?ml$/,
               type: 'asset/source',
-              include: [path.resolve(__dirname, 'library/blueprints')],
+              include: [path.resolve(__dirname, 'docs/blueprints')],
             },
             //
             // 2. PNG loader for blueprint images
@@ -35,7 +34,7 @@ function webpackConfigPlugin() {
             {
               test: /\.(png|jpg|jpeg|gif|svg)$/i,
               type: 'asset/resource',
-              include: [path.resolve(__dirname, 'library/blueprints')],
+              include: [path.resolve(__dirname, 'docs/blueprints')],
               generator: {
                 filename: 'assets/images/[name]-[hash][ext]',
               },
