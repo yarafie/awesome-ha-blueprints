@@ -3,7 +3,7 @@ import { docsContext, thumbnailsContext } from '../../utils/contexts'
 import ControllerItem from './ControllerItem'
 import { Search } from 'react-bootstrap-icons'
 
-console.log(`✅  ControllersList - Start`)
+console.log(`✅ ControllersList - Start`)
 
 interface Controller {
   id: string
@@ -289,11 +289,11 @@ const ControllersList: React.FC = () => {
 
       <div style={listStyle}>
         {filteredControllers.map((controller) => {
-          const imagePath = `/awesome-ha-blueprints/website/docs/blueprints/controllers/${controller.id}/${controller.id}.png`
-
-          const testimage = thumbnailsContext(controller.id)
-          console.log(`✅  ControllersList - controller.id: ${controller.id}`)
-          console.log(`✅  ControllersList - testimage    : ${testimage}`)
+          //const imagePath = `/awesome-ha-blueprints/website/docs/blueprints/controllers/${controller.id}/${controller.id}.png`
+          import useBaseUrl from '@docusaurus/useBaseUrl'
+          const imagePath = useBaseUrl(
+            `/docs/blueprints/controllers/${controller.id}/${controller.id}.png`,
+          )
 
           return (
             <ControllerItem
