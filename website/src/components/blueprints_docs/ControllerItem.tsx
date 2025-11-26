@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import Link from '@docusaurus/Link'
 import { ChevronRight } from 'react-bootstrap-icons'
+import ControllerImage from '../ControllerImage'
 
 interface ControllerItemProps {
   id: string
@@ -18,10 +19,6 @@ const ControllerItem: React.FC<ControllerItemProps> = ({
   model_name,
 }) => {
   const [isHovered, setIsHovered] = useState(false)
-
-  // Load image directly from new library path
-  // Example: @blueprints/controllers/ikea_e2001_e2002/ikea_e2001_e2002.png
-  const imageSrc = require(`@blueprints/controllers/${id}/${id}.png`)
 
   const formattedManufacturer = Array.isArray(manufacturer)
     ? manufacturer.join(', ')
@@ -63,15 +60,13 @@ const ControllerItem: React.FC<ControllerItemProps> = ({
     position: 'absolute',
     right: '16px',
     top: '50%',
-    transform: `translateY(-50%) ${
-      isHovered ? 'translateX(6px)' : 'translateX(0)'
-    }`,
+    transform: `translateY(-50%) ${isHovered ? 'translateX(6px)' : 'translateX(0)'}`,
     transition: 'transform 0.3s ease-out',
   }
 
   return (
     <Link
-      to={`/docs/blueprints/controllers/${id}`}
+      to={`/blueprints/controllers/${id}`} // ✔ new valid route
       style={{ textDecoration: 'none' }}
     >
       <div
@@ -84,7 +79,8 @@ const ControllerItem: React.FC<ControllerItemProps> = ({
           <h3 style={{ margin: '0' }}>{model_name}</h3>
         </div>
 
-        <img src={imageSrc} alt={model_name} style={imageStyle} />
+        {/* ✔ Uses your existing image loader (no require, no eslint errors) */}
+        <ControllerImage id={id} alt={model_name} style={imageStyle} />
 
         <div style={textContainerStyle}>
           <p style={{ margin: '0' }}>
