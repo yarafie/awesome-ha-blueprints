@@ -34,10 +34,10 @@ export default function blueprintRoutesPlugin(context) {
           const id = pathParts[1]
 
           // Print to log for debugging purposes
-          console.log(`✅   relativePath: ${relativePath}`)
-          console.log(`✅   pathParts   : ${pathParts}`)
-          console.log(`✅   category    : ${category}`)
-          console.log(`✅   id          : ${id}`)
+          // console.log(`✅   relativePath: ${relativePath}`)
+          // console.log(`✅   pathParts   : ${pathParts}`)
+          // console.log(`✅   category    : ${category}`)
+          // console.log(`✅   id          : ${id}`)
 
           // Skip if not in the expected directory structure
           if (!category || !id) continue
