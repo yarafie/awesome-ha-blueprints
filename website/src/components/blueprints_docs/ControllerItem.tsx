@@ -66,7 +66,7 @@ const ControllerItem: React.FC<ControllerItemProps> = ({
 
   return (
     <Link
-      to={`/blueprints/controllers/${id}`} // ✔ new valid route
+      to={`/library/blueprints/controllers/${id}`} // ✔ Correct new link
       style={{ textDecoration: 'none' }}
     >
       <div
@@ -79,7 +79,7 @@ const ControllerItem: React.FC<ControllerItemProps> = ({
           <h3 style={{ margin: '0' }}>{model_name}</h3>
         </div>
 
-        {/* ✔ Uses your existing image loader (no require, no eslint errors) */}
+        {/* ✔ Loads controller image from new library structure */}
         <ControllerImage id={id} alt={model_name} style={imageStyle} />
 
         <div style={textContainerStyle}>
