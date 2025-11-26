@@ -39,7 +39,7 @@ interface DocusaurusModule {
  * - and more
  */
 export const docsContext = require.context(
-  '@site/library/blueprints',
+  '@site/docs/blueprints',
   true,
   /\.mdx$/,
 ) as unknown as (path: string) => DocusaurusModule

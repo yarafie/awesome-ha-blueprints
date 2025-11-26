@@ -38,8 +38,8 @@ export default function DownloadBlueprint(props: {
 
   const version = getVersion()
 
-  // Blueprint YAML now stored in: website/library/blueprints/<category>/<id>/<id>.yaml
-  const githubUrl = `https://raw.githubusercontent.com/yarafie/awesome-ha-blueprints/main/website/library/blueprints/${category}/${id}/${id}.yaml`
+  // Blueprint YAML now stored in: website/docs/blueprints/<category>/<id>/<id>.yaml
+  const githubUrl = `https://raw.githubusercontent.com/yarafie/awesome-ha-blueprints/main/website/docs/blueprints/${category}/${id}/${id}.yaml`
   const myHomeAssistantURL = `https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=${encodeURIComponent(githubUrl)}`
 
   useEffect(() => {

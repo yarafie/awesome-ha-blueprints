@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { docsContext } from '../../utils/contexts'
+import { docsContext } from '../../utils'
 import ControllerItem from './ControllerItem'
 import { Search } from 'react-bootstrap-icons'
 
@@ -37,9 +37,7 @@ const ControllersList: React.FC = () => {
       })
 
       const controllersData = controllerKeys.map((key: string) => {
-        // Extract ID from ./controllers/<id>/<id>.mdx
-        const id = key.split('/')[2]
-
+        const id = key.replace(categoryPath, '').replace('.mdx', '')
         const mdxModule = docsContext(key)
         const {
           title,
@@ -66,6 +64,7 @@ const ControllersList: React.FC = () => {
       controllersData.sort((a, b) => a.title.localeCompare(b.title))
 
       const manufacturerSet = new Set<string>()
+
       controllersData.forEach((controller) => {
         if (Array.isArray(controller.manufacturer)) {
           controller.manufacturer.forEach((mfr) => {
@@ -95,10 +94,11 @@ const ControllersList: React.FC = () => {
     }
   }, [])
 
-  // Filtering logic unchanged
+  // Filter controllers when search query or manufacturer selection changes
   useEffect(() => {
     let results = controllers
 
+    // Apply manufacturer filter if not "All Manufacturers"
     if (selectedManufacturer !== 'All Manufacturers') {
       results = results.filter((controller) => {
         if (Array.isArray(controller.manufacturer)) {
@@ -117,17 +117,21 @@ const ControllersList: React.FC = () => {
       })
     }
 
+    // Apply search query filter
     if (searchQuery) {
       const query = searchQuery.toLowerCase()
       results = results.filter((controller) => {
+        // Check model_name (safely)
         const modelNameMatch =
           typeof controller.model_name === 'string' &&
           controller.model_name.toLowerCase().includes(query)
 
+        // Check model (safely)
         const modelMatch =
           typeof controller.model === 'string' &&
           controller.model.toLowerCase().includes(query)
 
+        // Check manufacturer (safely)
         let manufacturerMatch = false
         if (Array.isArray(controller.manufacturer)) {
           manufacturerMatch = controller.manufacturer.some(
@@ -140,6 +144,7 @@ const ControllersList: React.FC = () => {
             .includes(query)
         }
 
+        // Check integrations (safely)
         const integrationsMatch =
           Array.isArray(controller.integrations) &&
           controller.integrations.some(
@@ -274,16 +279,21 @@ const ControllersList: React.FC = () => {
       </div>
 
       <div style={listStyle}>
-        {filteredControllers.map((controller) => (
-          <ControllerItem
-            key={controller.id}
-            id={controller.id}
-            model={controller.model}
-            model_name={controller.model_name}
-            manufacturer={controller.manufacturer}
-            integrations={controller.integrations}
-          />
-        ))}
+        {filteredControllers.map((controller) => {
+          const imagePath = `/awesome-ha-blueprints/img/controllers/${controller.id}.png`
+
+          return (
+            <ControllerItem
+              key={controller.id}
+              id={controller.id}
+              model={controller.model}
+              model_name={controller.model_name}
+              manufacturer={controller.manufacturer}
+              integrations={controller.integrations}
+              image={imagePath}
+            />
+          )
+        })}
       </div>
     </>
   )

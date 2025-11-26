@@ -1,13 +1,13 @@
 import React, { useState } from 'react'
 import Link from '@docusaurus/Link'
 import { ChevronRight } from 'react-bootstrap-icons'
-import ControllerImage from '../ControllerImage'
 
 interface ControllerItemProps {
   id: string
   model: string
   manufacturer: string | string[]
   integrations: string[]
+  image: string
   model_name: string
 }
 
@@ -16,6 +16,7 @@ const ControllerItem: React.FC<ControllerItemProps> = ({
   model,
   manufacturer,
   integrations,
+  image,
   model_name,
 }) => {
   const [isHovered, setIsHovered] = useState(false)
@@ -66,7 +67,7 @@ const ControllerItem: React.FC<ControllerItemProps> = ({
 
   return (
     <Link
-      to={`/library/blueprints/controllers/${id}`} // ✔ Correct new link
+      to={`/docs/blueprints/controllers/${id}`}
       style={{ textDecoration: 'none' }}
     >
       <div
@@ -78,10 +79,7 @@ const ControllerItem: React.FC<ControllerItemProps> = ({
         <div style={textContainerStyle}>
           <h3 style={{ margin: '0' }}>{model_name}</h3>
         </div>
-
-        {/* ✔ Loads controller image from new library structure */}
-        <ControllerImage id={id} alt={model_name} style={imageStyle} />
-
+        <img src={image} alt={model_name} style={imageStyle} />
         <div style={textContainerStyle}>
           <p style={{ margin: '0' }}>
             <strong>Model:</strong> {model}
@@ -93,7 +91,6 @@ const ControllerItem: React.FC<ControllerItemProps> = ({
             <strong>Integrations:</strong> {integrations.join(', ')}
           </p>
         </div>
-
         <div className='card__footer' style={footerStyle}>
           <ChevronRight size={20} />
         </div>
