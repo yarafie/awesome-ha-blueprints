@@ -39,8 +39,6 @@ const BlueprintItem: React.FC<BlueprintItemProps> = ({
 
   return (
     <Link
-      // to={`/docs/blueprints/${category}/${id}`}
-      // Updated for new library-based blueprint routing
       to={`/docs/blueprints/${category}/${id}`}
       style={{ textDecoration: 'none' }}
     >

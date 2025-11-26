@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { docsContext } from '../../utils/contexts'
+import { docsContext } from '../../utils'
 import ControllerItem from './ControllerItem'
 import { Search } from 'react-bootstrap-icons'
 
@@ -37,7 +37,10 @@ const ControllersList: React.FC = () => {
       })
 
       const controllersData = controllerKeys.map((key: string) => {
-        const id = key.replace(categoryPath, '').replace('.mdx', '')
+        // Extract ID from the path (remove .mdx extension and category prefix)
+        // const id = key.replace(categoryPath, '').replace('.mdx', '')
+        // Extract ID from folder structure: ./category/id/id.mdx
+        const id = key.split('/')[2]
         const mdxModule = docsContext(key)
         const {
           title,
