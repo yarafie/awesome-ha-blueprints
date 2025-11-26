@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { marked, Renderer } from 'marked'
-import { changelogsContext } from '../../utils'
+import { changelogsContext } from '../../utils/contexts'
 
 // Import the full emoji map
 import { emojiMap } from '../../utils/emojiMap'

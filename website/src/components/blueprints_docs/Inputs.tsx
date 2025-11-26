@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { blueprintsContext } from '../../utils'
+import { blueprintsContext } from '../../utils/contexts'
 import yaml from 'yaml'
 import Input, { BlueprintInput } from './Input'
 import InputSection from './InputSection'

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { docsContext } from '../../utils'
+import { docsContext } from '../../utils/contexts'
 import ControllerItem from './ControllerItem'
 import { Search } from 'react-bootstrap-icons'
 

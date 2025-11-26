@@ -1,7 +1,7 @@
 import Link from '@docusaurus/Link'
 import { useEffect, useState } from 'react'
 import { getBlueprintDownloads } from '../../services/supabase'
-import { changelogsContext, blueprintsContext } from '../../utils'
+import { changelogsContext, blueprintsContext } from '../../utils/contexts'
 import yaml from 'yaml'
 import Select from 'react-select'
 import type { StylesConfig } from 'react-select'

@@ -16,15 +16,7 @@
     },
     "category": {
       "type": "string",
-      "enum": [
-        "controllers",
-        "hooks",
-        "lights",
-        "security",
-        "climate",
-        "system",
-        "misc"
-      ],
+      "enum": ["controllers", "hooks", "automation"],
       "description": "Blueprint category."
     },
     "version": {
