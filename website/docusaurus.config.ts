@@ -1,12 +1,13 @@
 import { Config } from '@docusaurus/types'
-import path from 'path'
 import dotenv from 'dotenv'
-
 dotenv.config({ path: path.resolve(__dirname, '.env') })
-
 import { themes as prismThemes } from 'prism-react-renderer'
+import path from 'path'
 import blueprintDownloaderPlugin from './src/plugins/blueprint-downloader-plugin/blueprint-downloader-plugin.js'
 
+// Create a custom plugin for webpack configuration
+// the purpose of this plugin is to allow the use of the @blueprints alias
+// and to copy blueprint files as static assets
 function webpackConfigPlugin() {
   return {
     name: 'webpack-config-plugin',
@@ -31,6 +32,7 @@ function webpackConfigPlugin() {
   }
 }
 
+// Environment variables that should be available to the client
 const clientEnv = {
   SUPABASE_URL: process.env.SUPABASE_URL || '',
   SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY || '',
@@ -42,32 +44,37 @@ const config: Config = {
   url: 'https://yarafie.github.io',
   baseUrl: '/awesome-ha-blueprints/',
   onBrokenLinks: 'throw',
-
   markdown: {
     hooks: {
       onBrokenMarkdownLinks: 'warn',
     },
   },
-
   favicon: 'img/favicon.ico',
   organizationName: 'yarafie',
   projectName: 'awesome-ha-blueprints',
-
+  // Removed the GTM script as we're now using react-ga4 for a more stable implementation
+  // scripts: ['/awesome-ha-blueprints/js/google-tag-manager.js'],
   i18n: {
     defaultLocale: 'en',
     locales: ['en'],
   },
-
+  // Make environment variables available to client-side code
   customFields: {
     env: clientEnv,
   },
-
   themeConfig: {
+    announcementBar: {
+      id: 'support_us',
+      content:
+        '🚀 <b>Love this project?</b> <a target="_blank" href="https://github.com/yarafie/awesome-ha-blueprints">Drop a star on GitHub</a>🌟 or <a target="_blank" href="https://www.buymeacoffee.com/yarafiet">make a small donation</a>☕ to show your support!',
+      backgroundColor: '#fffbd4',
+      textColor: '#091E42',
+    },
     navbar: {
       style: 'primary',
       title: 'Awesome HA Blueprints',
       logo: {
-        alt: 'Logo',
+        alt: 'Awesome HA Blueprints Logo',
         src: 'img/logo.svg',
       },
       items: [
@@ -100,13 +107,15 @@ const config: Config = {
         },
       ],
     },
-
+    footer: {
+      links: [],
+      copyright: `Awesome HA Blueprints is maintained by <a href='https://github.com/EPMatt'>Matteo Agnoletto</a>.<br/>This fork is  maintained by <a href='https://github.com/yarafie'>yarafie</a>.<br/>Licensed under the <a href='https://github.com/EPMatt/awesome-ha-blueprints/blob/main/LICENSE'>GPL-3.0 License</a>`,
+    },
     prism: {
       theme: prismThemes.github,
       darkTheme: prismThemes.dracula,
     },
   },
-
   presets: [
     [
       '@docusaurus/preset-classic',
@@ -122,11 +131,10 @@ const config: Config = {
       },
     ],
   ],
-
   plugins: [
     webpackConfigPlugin,
     blueprintDownloaderPlugin,
-
+    // Make environment variables available to the client
     function () {
       return {
         name: 'docusaurus-env-plugin',
