@@ -2,6 +2,8 @@ import React, { useState } from 'react'
 import Link from '@docusaurus/Link'
 import { ChevronRight } from 'react-bootstrap-icons'
 
+console.log(`✅ ControllerItem`)
+
 interface ControllerItemProps {
   id: string
   model: string

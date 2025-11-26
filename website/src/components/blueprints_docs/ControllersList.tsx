@@ -3,6 +3,8 @@ import { docsContext } from '../../utils/contexts'
 import ControllerItem from './ControllerItem'
 import { Search } from 'react-bootstrap-icons'
 
+console.log(`✅  ControllersList`)
+
 interface Controller {
   id: string
   model: string
