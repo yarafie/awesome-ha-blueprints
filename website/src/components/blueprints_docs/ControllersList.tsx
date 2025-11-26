@@ -283,7 +283,7 @@ const ControllersList: React.FC = () => {
 
       <div style={listStyle}>
         {filteredControllers.map((controller) => {
-          const imagePath = `/awesome-ha-blueprints/img/controllers/${controller.id}.png`
+          const imagePath = `/awesome-ha-blueprints/website/docs/blueprints/controllers/${controller.id}/${controller.id}.png`
 
           return (
             <ControllerItem

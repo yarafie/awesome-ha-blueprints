@@ -16,6 +16,11 @@ export const changelogsContext = require.context(
   /changelog\.json$/,
 )
 
+/**
+ * Context for accessing blueprint thumbnail png files
+ */
+export const thumbnailsContext = require.context('@blueprints', true, /\.png$/)
+
 interface DocusaurusFrontMatter {
   title: string
   description: string
