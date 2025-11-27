@@ -70,7 +70,7 @@ export default function controllerImagesPlugin(context) {
      * Docusaurus Webpack Configuration Hook
      * Registers the alias @generated/controllerimages to point to the created JSON file.
      */
-    configureWebpack(_, _isServer) {
+    configureWebpack(_config, _isServer, _utils) {
       // Create the alias that maps the client import to the generated file.
       return {
         resolve: {
