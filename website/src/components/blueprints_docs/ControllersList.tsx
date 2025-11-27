@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import { docsContext } from '../../utils/contexts'
 import ControllerItem from './ControllerItem'
 import { Search } from 'react-bootstrap-icons'
-import controllerImages from '../../utils/controllerimages'
 
 interface Controller {
   id: string
@@ -11,6 +10,7 @@ interface Controller {
   integrations: string[]
   model_name: string
 }
+
 const ControllersList: React.FC = () => {
   const [controllers, setControllers] = useState<Controller[]>([])
   const [filteredControllers, setFilteredControllers] = useState<Controller[]>(
@@ -22,10 +22,12 @@ const ControllersList: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState<string>('')
   const [selectedManufacturer, setSelectedManufacturer] =
     useState<string>('All Manufacturers')
+
   useEffect(() => {
     try {
       const keys = (docsContext as any).keys()
       const categoryPath = `./controllers/`
+
       const controllerKeys = keys.filter((key: string) => {
         return (
           key.startsWith(categoryPath) &&
@@ -33,6 +35,7 @@ const ControllersList: React.FC = () => {
           !key.endsWith(`/controllers.mdx`)
         )
       })
+
       const controllersData = controllerKeys.map((key: string) => {
         /* const id = key.replace(categoryPath, '').replace('.mdx', '') */
         // Extract ID from folder structure: ./controllers/<id>/<id>.mdx
@@ -46,6 +49,7 @@ const ControllersList: React.FC = () => {
           integrations,
           model_name,
         } = mdxModule.frontMatter
+
         return {
           id,
           title: title || id,
@@ -58,8 +62,11 @@ const ControllersList: React.FC = () => {
             : model_name || '',
         }
       })
+
       controllersData.sort((a, b) => a.title.localeCompare(b.title))
+
       const manufacturerSet = new Set<string>()
+
       controllersData.forEach((controller) => {
         if (Array.isArray(controller.manufacturer)) {
           controller.manufacturer.forEach((mfr) => {
@@ -74,6 +81,7 @@ const ControllersList: React.FC = () => {
           manufacturerSet.add(controller.manufacturer.trim())
         }
       })
+
       setControllers(controllersData)
       setFilteredControllers(controllersData)
       setTotalControllers(controllersData.length)
@@ -87,9 +95,11 @@ const ControllersList: React.FC = () => {
       )
     }
   }, [])
+
   // Filter controllers when search query or manufacturer selection changes
   useEffect(() => {
     let results = controllers
+
     // Apply manufacturer filter if not "All Manufacturers"
     if (selectedManufacturer !== 'All Manufacturers') {
       results = results.filter((controller) => {
@@ -108,6 +118,7 @@ const ControllersList: React.FC = () => {
         )
       })
     }
+
     // Apply search query filter
     if (searchQuery) {
       const query = searchQuery.toLowerCase()
@@ -116,10 +127,12 @@ const ControllersList: React.FC = () => {
         const modelNameMatch =
           typeof controller.model_name === 'string' &&
           controller.model_name.toLowerCase().includes(query)
+
         // Check model (safely)
         const modelMatch =
           typeof controller.model === 'string' &&
           controller.model.toLowerCase().includes(query)
+
         // Check manufacturer (safely)
         let manufacturerMatch = false
         if (Array.isArray(controller.manufacturer)) {
@@ -132,6 +145,7 @@ const ControllersList: React.FC = () => {
             .toLowerCase()
             .includes(query)
         }
+
         // Check integrations (safely)
         const integrationsMatch =
           Array.isArray(controller.integrations) &&
@@ -140,13 +154,16 @@ const ControllersList: React.FC = () => {
               typeof integration === 'string' &&
               integration.toLowerCase().includes(query),
           )
+
         return (
           modelNameMatch || modelMatch || manufacturerMatch || integrationsMatch
         )
       })
     }
+
     setFilteredControllers(results)
   }, [searchQuery, selectedManufacturer, controllers])
+
   if (error) {
     return (
       <div className='admonition admonition-danger alert alert--danger'>
@@ -159,15 +176,18 @@ const ControllersList: React.FC = () => {
       </div>
     )
   }
+
   if (controllers.length === 0) {
     return <div>No controllers found in this category.</div>
   }
+
   const listStyle: React.CSSProperties = {
     display: 'flex',
     flexDirection: 'column',
     gap: '16px',
     margin: '20px 0',
   }
+
   const statsStyle: React.CSSProperties = {
     marginBottom: '20px',
     padding: '12px 16px',
@@ -177,17 +197,20 @@ const ControllersList: React.FC = () => {
     justifyContent: 'space-between',
     flexWrap: 'wrap',
   }
+
   const searchContainerStyle: React.CSSProperties = {
     display: 'flex',
     gap: '16px',
     marginBottom: '20px',
     flexWrap: 'wrap',
   }
+
   const searchInputContainerStyle: React.CSSProperties = {
     position: 'relative',
     flex: '2',
     minWidth: '200px',
   }
+
   const searchIconStyle: React.CSSProperties = {
     position: 'absolute',
     left: '12px',
@@ -195,6 +218,7 @@ const ControllersList: React.FC = () => {
     transform: 'translateY(-50%)',
     color: 'var(--ifm-color-emphasis-500)',
   }
+
   const searchInputStyle: React.CSSProperties = {
     width: '100%',
     padding: '8px 8px 8px 36px',
@@ -202,6 +226,7 @@ const ControllersList: React.FC = () => {
     border: '1px solid var(--ifm-color-emphasis-300)',
     fontSize: '16px',
   }
+
   const selectStyle: React.CSSProperties = {
     flex: '1',
     minWidth: '150px',
@@ -210,6 +235,7 @@ const ControllersList: React.FC = () => {
     border: '1px solid var(--ifm-color-emphasis-300)',
     fontSize: '16px',
   }
+
   return (
     <>
       <div style={statsStyle}>
@@ -227,6 +253,7 @@ const ControllersList: React.FC = () => {
           )}
         </div>
       </div>
+
       <div style={searchContainerStyle}>
         <div style={searchInputContainerStyle}>
           <Search style={searchIconStyle} size={16} />
@@ -238,6 +265,7 @@ const ControllersList: React.FC = () => {
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
+
         <select
           style={selectStyle}
           value={selectedManufacturer}
@@ -251,15 +279,11 @@ const ControllersList: React.FC = () => {
           ))}
         </select>
       </div>
+
       <div style={listStyle}>
         {filteredControllers.map((controller) => {
-          const imagePath = `/awesome-ha-blueprints/img/blueprints/controllers/${controller.id}.png`
-          // const imagePath = `/awesome-ha-blueprints/img/awesome-ha-blueprints-logo.png`
-          // const imagePath = `/awesome-ha-blueprints/img/controllers/${controller.id}.png`
-          // const imagePath = controllerImages[controller.id] || '/awesome-ha-blueprints/img/awesome-ha-blueprints-logo.png'
-          // const imagePath =
-          //  `/awesome-ha-blueprints/img/controllers/${controller.id}.png` ||
-          //  '/awesome-ha-blueprints/img/awesome-ha-blueprints-logo.png'
+          const imagePath = `/awesome-ha-blueprints/img/controllers/${controller.id}.png`
+
           return (
             <ControllerItem
               key={controller.id}
@@ -276,4 +300,5 @@ const ControllersList: React.FC = () => {
     </>
   )
 }
+
 export default ControllersList
