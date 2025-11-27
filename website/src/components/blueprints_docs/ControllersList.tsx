@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { docsContext } from '../../utils/contexts'
 import ControllerItem from './ControllerItem'
 import { Search } from 'react-bootstrap-icons'
-import controllerImages from '../../utils/controllerimages'
+//import controllerImages from '../../utils/controllerimages'
 
 interface Controller {
   id: string
