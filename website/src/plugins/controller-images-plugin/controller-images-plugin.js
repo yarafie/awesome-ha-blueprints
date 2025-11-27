@@ -116,7 +116,7 @@ export default function controllerImagesPlugin(context) {
         )
 
         mapping[blueprintId] =
-          `/img/blueprints/${category}/${blueprintId}/${blueprintId}.png`
+          `/awesome-ha-blueprints/img/blueprints/${category}/${blueprintId}/${blueprintId}.png`
       }
 
       // This will end up at:
