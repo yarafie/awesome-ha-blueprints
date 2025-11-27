@@ -1,5 +1,6 @@
 // website/src/plugins/controller-images-plugin/controller-images-plugin.js
-import fs from 'fs'
+//const fs = require('fs');
+//import fs from 'fs'
 import path from 'path'
 import { globSync } from 'glob'
 
