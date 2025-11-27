@@ -8,6 +8,11 @@ export const blueprintsContext = require.context(
 )
 
 /**
+ * Context for accessing blueprint PNG files
+ */
+export const thumbnailsContext = require.context('@blueprints', true, /\.png$/)
+
+/**
  * Context for accessing blueprint changelog JSON files
  */
 export const changelogsContext = require.context(
@@ -15,7 +20,6 @@ export const changelogsContext = require.context(
   true,
   /changelog\.json$/,
 )
-export const thumbnailsContext = require.context('@blueprints', true, /\.png$/)
 
 interface DocusaurusFrontMatter {
   title: string
