@@ -1,4 +1,5 @@
 // website/src/plugins/controller-images-plugin/controller-images-plugin.js
+import fs from 'fs'
 import path from 'path'
 import { globSync } from 'glob'
 
@@ -46,6 +47,22 @@ export default function controllerImagesPlugin(context) {
           },
         })
 
+        console.log(
+          `✅ =============================================================================`,
+        )
+        console.log(
+          `✅ controllerImagesPlugin: Processing absPath    : ${absPath}`,
+        )
+        console.log(
+          `✅ controllerImagesPlugin: Processing segments   : ${segments}`,
+        )
+        console.log(
+          `✅ controllerImagesPlugin: Processing blueprintId: ${blueprintId}`,
+        )
+        console.log(
+          `✅ =============================================================================`,
+        )
+
         mapping[blueprintId] = `/assets/images/blueprints/${blueprintId}.png`
       }
 
@@ -57,7 +74,7 @@ export default function controllerImagesPlugin(context) {
       )
 
       console.log(
-        `✅  controllerImagesPlugin: processed ${imageFiles.length} controller images`,
+        `✅ controllerImagesPlugin: processed ${imageFiles.length} controller images`,
       )
     },
   }
