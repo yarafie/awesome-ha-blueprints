@@ -1,4 +1,5 @@
 // website/src/plugins/controller-images-plugin/controller-images-plugin.js
+
 import path from 'path'
 import { globSync } from 'glob'
 
@@ -9,11 +10,10 @@ export default function controllerImagesPlugin(context) {
     async loadContent() {
       const { siteDir } = context
 
-      // All blueprint images live under:
-      // website/docs/blueprints/{category}/{id}/{id}.png
+      // All blueprint images live under: website/docs/blueprints/{category}/{id}/{id}.png
       const blueprintsDir = path.join(siteDir, 'docs', 'blueprints')
 
-      // Capture all PNG files
+      // Find all PNG images
       const imageFiles = globSync('**/*.png', {
         cwd: blueprintsDir,
         absolute: false,
@@ -24,33 +24,44 @@ export default function controllerImagesPlugin(context) {
 
     async contentLoaded({ content, actions }) {
       const { blueprintsDir, imageFiles } = content
-      const { createData } = actions
+      const { createData, addRoute } = actions // FIX 1: remove addStaticAsset (not available in v3)
 
       const mapping = {}
 
       for (const imageRelPath of imageFiles) {
-        // e.g. controllers/ikea_e2001_e2002/ikea_e2001_e2002.png
+        const absPath = path.join(blueprintsDir, imageRelPath)
         const segments = imageRelPath.split('/')
 
-        if (segments.length < 2) continue
+        // Expect structure: category / blueprintId / blueprintId.png
+        if (segments.length < 2) {
+          continue
+        }
 
         const blueprintId = segments[1]
 
-        // Build final URL used in /static
-        // Users must place fallback images into /static/assets/images/blueprints/
-        const finalUrl = `/assets/images/blueprints/${blueprintId}.png`
+        // FIX 2 — Docusaurus v3 does not support addStaticAsset()
+        //
+        // Instead we must expose a route that serves the file.
+        addRoute({
+          path: `/assets/images/blueprints/${blueprintId}.png`,
+          component: '@theme/NotFound', // unused, but required
+          exact: true,
+          modules: {
+            image: absPath,
+          },
+        })
 
-        mapping[blueprintId] = finalUrl
+        mapping[blueprintId] = `/assets/images/blueprints/${blueprintId}.png`
       }
 
-      // Write mapping to .json for controllerimages.ts
       await createData(
         'controllerimages.json',
         JSON.stringify(mapping, null, 2),
       )
 
+      // Optional success log
       console.log(
-        `✔ controller-images-plugin: Processed ${imageFiles.length} images.`,
+        `✅ controller-images-plugin: processed ${imageFiles.length} controller images`,
       )
     },
   }
