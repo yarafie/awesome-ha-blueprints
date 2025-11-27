@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react'
 import { docsContext } from '../../utils/contexts'
 import ControllerItem from './ControllerItem'
 import { Search } from 'react-bootstrap-icons'
-import useBaseUrl from '@docusaurus/useBaseUrl'
 import controllerImages from '../../utils/controllerimages'
+
 interface Controller {
   id: string
   model: string
@@ -253,11 +253,8 @@ const ControllersList: React.FC = () => {
       </div>
       <div style={listStyle}>
         {filteredControllers.map((controller) => {
-          const rawImagePath = controllerImages[controller.id]
-          const imagePath = rawImagePath
-            ? useBaseUrl(rawImagePath)
-            : useBaseUrl('/img/awesome-ha-blueprints-logo.png')
-
+          const imagePath =
+            controllerImages[controller.id] || '/img/awesome-ha-blueprints.png'
           return (
             <ControllerItem
               key={controller.id}
