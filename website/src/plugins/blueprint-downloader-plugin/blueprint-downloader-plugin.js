@@ -80,7 +80,7 @@ export default function blueprintRoutesPlugin(context) {
         })
       }
 
-      console.log('✅ Blueprint Download Routes Created')
+      console.log('✅ blueprintRoutesPlugin: Blueprint Download Routes Created')
     },
   }
 }

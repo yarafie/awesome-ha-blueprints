@@ -1,6 +1,8 @@
 // website/src/utils/controllerimages.ts
 
-import controllerImagesData from '@generated/controllerimages.json'
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore - file is generated at build time
+import controllerImagesData from '@generated/controller-images.json'
 
 export type ControllerImagesMap = Record<string, string>
 

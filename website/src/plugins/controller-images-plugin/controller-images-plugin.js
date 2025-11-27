@@ -55,13 +55,13 @@ export default function controllerImagesPlugin(context) {
       }
 
       await createData(
-        'controllerimages.json',
+        'controller-images.json',
         JSON.stringify(mapping, null, 2),
       )
 
       // Optional success log
       console.log(
-        `✅ controller-images-plugin: processed ${imageFiles.length} controller images`,
+        `✅ controllerImagesPlugin: processed ${imageFiles.length} controller images`,
       )
     },
   }
