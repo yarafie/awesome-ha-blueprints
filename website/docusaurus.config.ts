@@ -1,9 +1,12 @@
+import path from 'path'
 import { Config } from '@docusaurus/types'
 import dotenv from 'dotenv'
 dotenv.config({ path: path.resolve(__dirname, '.env') })
 import { themes as prismThemes } from 'prism-react-renderer'
-import path from 'path'
+
+// Plugins
 import blueprintDownloaderPlugin from './src/plugins/blueprint-downloader-plugin/blueprint-downloader-plugin.js'
+import controllerImagesPlugin from './src/plugins/controller-images-plugin/controller-images-plugin.js'
 
 // Create a custom plugin for webpack configuration
 // the purpose of this plugin is to allow the use of the @blueprints alias
@@ -20,9 +23,6 @@ function webpackConfigPlugin() {
         },
         module: {
           rules: [
-            //
-            // 1. YAML loader
-            //
             {
               test: /\.ya?ml$/,
               type: 'asset/source',
@@ -137,6 +137,7 @@ const config: Config = {
   plugins: [
     webpackConfigPlugin,
     blueprintDownloaderPlugin,
+    controllerImagesPlugin,
     // Make environment variables available to the client
     function () {
       return {

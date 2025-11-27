@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { docsContext } from '../../utils/contexts'
 import ControllerItem from './ControllerItem'
 import { Search } from 'react-bootstrap-icons'
+import { controllerImages } from '../../utils/controllerimages'
 
 interface Controller {
   id: string
@@ -40,6 +41,7 @@ const ControllersList: React.FC = () => {
         /* const id = key.replace(categoryPath, '').replace('.mdx', '') */
         // Extract ID from folder structure: ./controllers/<id>/<id>.mdx
         const id = key.split('/')[2]
+
         const mdxModule = docsContext(key)
         const {
           title,
@@ -122,6 +124,7 @@ const ControllersList: React.FC = () => {
     // Apply search query filter
     if (searchQuery) {
       const query = searchQuery.toLowerCase()
+
       results = results.filter((controller) => {
         // Check model_name (safely)
         const modelNameMatch =
@@ -135,6 +138,7 @@ const ControllersList: React.FC = () => {
 
         // Check manufacturer (safely)
         let manufacturerMatch = false
+
         if (Array.isArray(controller.manufacturer)) {
           manufacturerMatch = controller.manufacturer.some(
             (mfr) =>
@@ -282,7 +286,9 @@ const ControllersList: React.FC = () => {
 
       <div style={listStyle}>
         {filteredControllers.map((controller) => {
-          const imagePath = `/awesome-ha-blueprints/img/controllers/${controller.id}.png`
+          const imagePath =
+            controllerImages[controller.id] ||
+            '/awesome-ha-blueprints/img/awesome-ha-blueprints-logo.png'
 
           return (
             <ControllerItem

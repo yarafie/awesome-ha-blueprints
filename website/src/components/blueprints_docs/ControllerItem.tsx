@@ -79,7 +79,8 @@ const ControllerItem: React.FC<ControllerItemProps> = ({
         <div style={textContainerStyle}>
           <h3 style={{ margin: '0' }}>{model_name}</h3>
         </div>
-        <img src={image} alt={model_name} style={imageStyle} />
+        <img src={image} alt={model_name} style={imageStyle} />{' '}
+        {/* ✔ new mapped image */}
         <div style={textContainerStyle}>
           <p style={{ margin: '0' }}>
             <strong>Model:</strong> {model}
