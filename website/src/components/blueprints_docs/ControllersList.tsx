@@ -256,6 +256,7 @@ const ControllersList: React.FC = () => {
           // const imagePath = `/awesome-ha-blueprints/img/controllers/${controller.id}.png`
           // const imagePath = controllerImages[controller.id] || '/awesome-ha-blueprints/img/awesome-ha-blueprints-logo.png'
           const imagePath =
+            `/awesome-ha-blueprints/img/controllers/${controller.id}.png` ||
             '/awesome-ha-blueprints/img/awesome-ha-blueprints-logo.png'
           return (
             <ControllerItem
