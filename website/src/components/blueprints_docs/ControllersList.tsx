@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import { docsContext } from '../../utils/contexts'
+import { docsContext } from '../../utils/context'
 import ControllerItem from './ControllerItem'
 import { Search } from 'react-bootstrap-icons'
-
-console.log(`✅ ControllersList - Start`)
 
 interface Controller {
   id: string
@@ -39,15 +37,10 @@ const ControllersList: React.FC = () => {
       })
 
       const controllersData = controllerKeys.map((key: string) => {
-        // Extract ID from the path (remove .mdx extension and category prefix)
-        // const id = key.replace(categoryPath, '').replace('.mdx', '')
-        // Extract ID from folder structure: ./category/id/id.mdx
+        /* const id = key.replace(categoryPath, '').replace('.mdx', '') */
+        // Extract ID from folder structure: ./controllers/<id>/<id>.mdx
         const id = key.split('/')[2]
         const mdxModule = docsContext(key)
-
-        console.log(`✅  ControllersList - id       : ${id}`)
-        console.log(`✅  ControllersList - mdxModule: ${mdxModule}`)
-
         const {
           title,
           description,
@@ -289,6 +282,8 @@ const ControllersList: React.FC = () => {
 
       <div style={listStyle}>
         {filteredControllers.map((controller) => {
+          const imagePath = `/awesome-ha-blueprints/img/controllers/${controller.id}.png`
+
           return (
             <ControllerItem
               key={controller.id}
@@ -297,6 +292,7 @@ const ControllersList: React.FC = () => {
               model_name={controller.model_name}
               manufacturer={controller.manufacturer}
               integrations={controller.integrations}
+              image={imagePath}
             />
           )
         })}
