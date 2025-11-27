@@ -28,17 +28,6 @@ function webpackConfigPlugin() {
               type: 'asset/source',
               include: [path.resolve(__dirname, 'docs/blueprints')],
             },
-            //
-            // 2. PNG loader for blueprint images
-            //
-            {
-              test: /\.(png|jpg|jpeg|gif|svg)$/i,
-              type: 'asset/resource',
-              include: [path.resolve(__dirname, 'docs/blueprints')],
-              generator: {
-                filename: 'assets/images/[name]-[hash][ext]',
-              },
-            },
           ],
         },
       }
