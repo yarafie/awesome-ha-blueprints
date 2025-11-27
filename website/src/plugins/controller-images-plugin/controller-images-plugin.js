@@ -61,26 +61,5 @@ export default function controllerImagesPlugin(context) {
         `✅  controllerImagesPlugin: processed ${imageFiles.length} controller images`,
       )
     },
-
-    /**
-     * Docusaurus Webpack Configuration Hook
-     * Fixes: Module not found: Error: Can't resolve '@generated/controllerimages'
-     * Linter fix: Suppresses 'unused variable' errors for the required function arguments.
-     */
-    /* eslint-disable @typescript-eslint/no-unused-vars, no-unused-vars */
-    configureWebpack(_config, _isServer, _utils) {
-      return {
-        resolve: {
-          alias: {
-            // This maps the client import to the generated JSON file.
-            '@generated/controllerimages': path.join(
-              generatedDataDir,
-              'controllerimages.json',
-            ),
-          },
-        },
-      }
-    },
-    /* eslint-enable @typescript-eslint/no-unused-vars, no-unused-vars */
   }
 }
