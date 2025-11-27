@@ -17,7 +17,7 @@ export const changelogsContext = require.context(
 )
 
 /**
- * Context for accessing blueprint thumbnail png files
+ * Context for accessing blueprint thumbnails png files
  */
 export const thumbnailsContext = require.context('@blueprints', true, /\.png$/)
 
