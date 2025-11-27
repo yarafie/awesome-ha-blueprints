@@ -5,6 +5,7 @@ import ImportCard from './BlueprintImportCard'
 import BlueprintsList from './BlueprintsList'
 import ControllersList from './ControllersList'
 import Changelog from './Changelog'
+import VersionBadge from './VersionBadge'
 
 export {
   Input,
@@ -14,4 +15,5 @@ export {
   BlueprintsList,
   ControllersList,
   Changelog,
+  VersionBadge,
 }
