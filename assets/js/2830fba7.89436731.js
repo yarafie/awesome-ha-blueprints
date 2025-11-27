@@ -1,0 +1,1 @@
+"use strict";(globalThis.webpackChunkawesome_ha_blueprints_website=globalThis.webpackChunkawesome_ha_blueprints_website||[]).push([[8368],{4622:(e,s,a)=>{a.r(s),a.d(s,{default:()=>b});const b=a.p+"assets/images/sonoff_snzb01-e237b635de75aef2eb9b9f928433f729.png"}}]);

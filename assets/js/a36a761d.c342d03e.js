@@ -1,0 +1,1 @@
+"use strict";(globalThis.webpackChunkawesome_ha_blueprints_website=globalThis.webpackChunkawesome_ha_blueprints_website||[]).push([[8044],{7906:(e,s,a)=>{a.r(s),a.d(s,{default:()=>b});const b=a.p+"assets/images/xiaomi_wxcjkg12lm-66f2458b73ab33194180fb4eaf3ddbf5.png"}}]);

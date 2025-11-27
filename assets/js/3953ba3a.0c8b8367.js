@@ -1,0 +1,1 @@
+"use strict";(globalThis.webpackChunkawesome_ha_blueprints_website=globalThis.webpackChunkawesome_ha_blueprints_website||[]).push([[8084],{88:(e,s,a)=>{a.r(s),a.d(s,{default:()=>b});const b=a.p+"assets/images/simple_safe_scheduler-a7bb6d02e855c0a5ad473d73a70fc180.png"}}]);

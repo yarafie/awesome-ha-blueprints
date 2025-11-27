@@ -1,0 +1,1 @@
+"use strict";(globalThis.webpackChunkawesome_ha_blueprints_website=globalThis.webpackChunkawesome_ha_blueprints_website||[]).push([[836],{4720:(a,e,s)=>{s.r(e),s.d(e,{default:()=>t});const t=s.p+"assets/images/addon_update_notification-a7bb6d02e855c0a5ad473d73a70fc180.png"}}]);
