@@ -253,9 +253,11 @@ const ControllersList: React.FC = () => {
       </div>
       <div style={listStyle}>
         {filteredControllers.map((controller) => {
-          const imagePath = `/awesome-ha-blueprints/img/awesome-ha-blueprints-logo.png`
+          // const imagePath = `/awesome-ha-blueprints/img/awesome-ha-blueprints-logo.png`
           // const imagePath = `/awesome-ha-blueprints/img/controllers/${controller.id}.png`
-          // const imagePath = controllerImages[controller.id] || '/awesome-ha-blueprints/img/awesome-ha-blueprints-logo.png'
+          const imagePath =
+            controllerImages[controller.id] ||
+            '/awesome-ha-blueprints/img/awesome-ha-blueprints-logo.png'
           // const imagePath =
           //  `/awesome-ha-blueprints/img/controllers/${controller.id}.png` ||
           //  '/awesome-ha-blueprints/img/awesome-ha-blueprints-logo.png'
