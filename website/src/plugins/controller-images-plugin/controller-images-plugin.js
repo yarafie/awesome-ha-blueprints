@@ -55,7 +55,7 @@ export default function controllerImagesPlugin(context) {
       }
 
       await createData(
-        'controller-images.json',
+        'controllerimages.json',
         JSON.stringify(mapping, null, 2),
       )
 
