@@ -6,16 +6,13 @@
  *   • Initial Version (@EPMatt)
  *   - Updated 2026.12.03 (@yarafie):
  *      1. Moved utils.ts to utils/contexts.ts
+ *      2. Added variant and versions for controllers
  * ────────────────────────────────────────────────────────────────
  */
 import Link from '@docusaurus/Link'
 import { useEffect, useState } from 'react'
 import { getBlueprintDownloads } from '../../services/supabase'
-import {
-  changelogsContext,
-  blueprintsContext,
-  docsContext,
-} from '../../utils/contexts' // 1. Moved utils.ts to utils/contexts.ts
+import { changelogsContext, blueprintsContext } from '../../utils/contexts' // 1. Moved utils.ts to utils/contexts.ts
 import yaml from 'yaml'
 import Select from 'react-select'
 import type { StylesConfig } from 'react-select'
