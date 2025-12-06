@@ -1,1 +1,0 @@
-"use strict";(globalThis.webpackChunkawesome_ha_blueprints_website=globalThis.webpackChunkawesome_ha_blueprints_website||[]).push([[9891],{9810:(e,s,a)=>{a.r(s),a.d(s,{default:()=>b});const b=a.p+"assets/images/ikea_e2201-33839509eb2deaacb7ae5b3fd2fb1cd8.png"}}]);
