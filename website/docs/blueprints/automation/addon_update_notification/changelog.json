@@ -3,6 +3,7 @@
     "date": "2021.04.25",
     "changes": [
       {
+        "author": "@EPMatt",
         "description": "First blueprint version 🎉",
         "breaking": false
       }
@@ -12,6 +13,7 @@
     "date": "2021.10.26",
     "changes": [
       {
+        "author": "@EPMatt",
         "description": "Standardize blueprint structure and input naming across the collection. Improve blueprint documentation. No functionality change.",
         "breaking": false
       }

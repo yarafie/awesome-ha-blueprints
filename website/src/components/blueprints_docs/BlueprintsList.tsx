@@ -1,5 +1,17 @@
+/**
+ * Component: BlueprintsList
+ * ────────────────────────────────────────────────────────────────
+ *
+ * Changelog:
+ *   • Initial Version (@EPMatt)
+ *   - Updated 2026.12.03 (@yarafie):
+ *      1. Moved utils.ts to utils/contexts.ts
+ *      2. Extract ID from folder structure: ./category/id/id.mdx
+ * ────────────────────────────────────────────────────────────────
+ */
+
 import React, { useEffect, useState } from 'react'
-import { docsContext } from '../../utils/contexts'
+import { docsContext } from '../../utils/contexts' // 1. Moved utils.ts to utils/contexts.ts
 import BlueprintItem from './BlueprintItem'
 
 interface BlueprintsListProps {
@@ -35,7 +47,7 @@ const BlueprintsList: React.FC<BlueprintsListProps> = ({ category }) => {
       const blueprintsData = blueprintKeys.map((key: string) => {
         // Extract ID from the path (remove .mdx extension and category prefix)
         // const id = key.replace(categoryPath, '').replace('.mdx', '')
-        // Extract ID from folder structure: ./category/id/id.mdx
+        // 2. Extract ID from folder structure: ./category/id/id.mdx
         const id = key.split('/')[2]
 
         // Get the MDX module and extract frontmatter

@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://awesome-ha-blueprints.dev/schemas/variant_metadata.schema.json",
+
+  "title": "Awesome HA Blueprints — Variant Metadata Schema",
+  "description": "Schema for variant-level variant_metadata.json.",
+
+  "type": "object",
+  "additionalProperties": false,
+
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Controller ID (e.g. ikea_e2001_e2002)"
+    },
+    "variant": {
+      "type": "string",
+      "description": "Variant folder name (e.g. EPMatt, yarafie)"
+    },
+    "maintainer": {
+      "type": "string",
+      "description": "Maintainer of this blueprint variant (e.g. EPMatt, yarafie)"
+    },
+    "description": {
+      "type": "string",
+      "description": "Static description for all variants (e.g. Awesome HA Blueprints - A curated collection of blueprints for Home Assistant. Reliable, customizable, fully tested by the community.)"
+    },
+    "integrations": {
+      "type": "array",
+      "description": "Integrations supported by this variant (e.g. Zigbe2MQTT, ZHA, deCONZ, Shelly)",
+      "items": { "type": "string" }
+    },
+    "latest_version": {
+      "type": "string",
+      "description": "Latest version folder (YYYY.MM.DD) should match latest in changelog.json"
+    }
+  },
+
+  "required": [
+    "id",
+    "variant",
+    "maintainer",
+    "description",
+    "integrations",
+    "latest_version"
+  ]
+}

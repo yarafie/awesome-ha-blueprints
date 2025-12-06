@@ -3,6 +3,7 @@
     "date": "2021.03.04",
     "changes": [
       {
+        "author": "@EPMatt",
         "description": "First blueprint version 🎉",
         "breaking": false
       }
@@ -12,6 +13,7 @@
     "date": "2021.03.07",
     "changes": [
       {
+        "author": "@EPMatt",
         "description": "Add support for IKEA E1744 SYMFONISK Rotary Remote.",
         "breaking": false
       }
@@ -21,6 +23,7 @@
     "date": "2021.03.14",
     "changes": [
       {
+        "author": "@EPMatt",
         "description": "Add support for IKEA E1812 Shortcut button and fix IKEA E1743 naming.",
         "breaking": false
       }
@@ -30,6 +33,7 @@
     "date": "2021.03.25",
     "changes": [
       {
+        "author": "@EPMatt",
         "description": "Update action mapping for IKEA E1744. If you're using this Hook with an IKEA E1744, please update the corresponding Controller blueprint as well.",
         "breaking": false
       }
@@ -39,14 +43,17 @@
     "date": "2021.03.26",
     "changes": [
       {
+        "author": "@EPMatt",
         "description": "Set minimum and maximum light brightness.",
         "breaking": false
       },
       {
+        "author": "@EPMatt",
         "description": "Specify the number of steps from minimum to maximum brightness for both short and long actions when controlling the light.",
         "breaking": false
       },
       {
+        "author": "@EPMatt",
         "description": "Allow forcing brightness to a specific value when turning on the light.",
         "breaking": false
       }
@@ -56,6 +63,7 @@
     "date": "2021.03.27",
     "changes": [
       {
+        "author": "@EPMatt",
         "description": "Add support for Philips Hue Dimmer switch.",
         "breaking": false
       }
@@ -65,6 +73,7 @@
     "date": "2021.04.06",
     "changes": [
       {
+        "author": "@EPMatt",
         "description": "Fix light color modes preventing configuration of automations with color temperature control.",
         "breaking": false
       }
@@ -74,14 +83,17 @@
     "date": "2021.04.15",
     "changes": [
       {
+        "author": "@EPMatt",
         "description": "Add smooth power on/off features.",
         "breaking": false
       },
       {
+        "author": "@EPMatt",
         "description": "By default the light now turns off when a brightness down command is received at minimum brightness. Disable the smooth power off feature to keep the previous behaviour.",
         "breaking": true
       },
       {
+        "author": "@EPMatt",
         "description": "Fix optional field names.",
         "breaking": false
       }
@@ -91,6 +103,7 @@
     "date": "2021.04.19",
     "changes": [
       {
+        "author": "@EPMatt",
         "description": "Remove unused variable and fix warnings for undefined variables in Home Assistant Core >=2021.4.0.",
         "breaking": false
       }
@@ -100,6 +113,7 @@
     "date": "2021.05.16",
     "changes": [
       {
+        "author": "@EPMatt",
         "description": "Add support for OSRAM SMART+ Switch Mini.",
         "breaking": false
       }
@@ -109,6 +123,7 @@
     "date": "2021.07.03",
     "changes": [
       {
+        "author": "@EPMatt",
         "description": "Add support for Philips Hue Smart Button.",
         "breaking": false
       }
@@ -118,6 +133,7 @@
     "date": "2021.08.02",
     "changes": [
       {
+        "author": "@EPMatt",
         "description": "Improve inputs documentation and organization.",
         "breaking": false
       }
@@ -127,26 +143,32 @@
     "date": "2021.10.26",
     "changes": [
       {
+        "author": "@EPMatt",
         "description": "Standardize blueprint structure and input naming across the collection.",
         "breaking": false
       },
       {
+        "author": "@EPMatt",
         "description": "Improve blueprint documentation.",
         "breaking": false
       },
       {
+        "author": "@EPMatt",
         "description": "🎉 Add support for alternate mappings.",
         "breaking": false
       },
       {
+        "author": "@EPMatt",
         "description": "Update controller names in the Controller Model input to match full controller names, prevent ambiguities and enable alternate mappings. After updating, reconfigure automations by selecting the correct controller name.",
         "breaking": true
       },
       {
+        "author": "@EPMatt",
         "description": "Fix remembering brightness level when turning on lights if the previous state had brightness unavailable.",
         "breaking": false
       },
       {
+        "author": "@EPMatt",
         "description": "Add secondary mapping for IKEA E1743 TRÅDFRI On/Off Switch & Dimmer.",
         "breaking": false
       }
@@ -156,6 +178,7 @@
     "date": "2021.10.29",
     "changes": [
       {
+        "author": "@EPMatt",
         "description": "Add support for IKEA E1766 TRÅDFRI Open/Close Remote.",
         "breaking": false
       }
@@ -165,14 +188,17 @@
     "date": "2021.11.07",
     "changes": [
       {
+        "author": "@EPMatt",
         "description": "Add support for IKEA E2001/E2002 STYRBAR Remote control.",
         "breaking": false
       },
       {
+        "author": "@EPMatt",
         "description": "Fix color mode automatic detection not working properly with color temperature lights.",
         "breaking": false
       },
       {
+        "author": "@EPMatt",
         "description": "Add \"None\" color mode to disable color control features.",
         "breaking": false
       }
@@ -182,6 +208,7 @@
     "date": "2021.11.21",
     "changes": [
       {
+        "author": "@EPMatt",
         "description": "Add support for Philips 929002398602 Hue Dimmer switch v2.",
         "breaking": false
       }
@@ -191,6 +218,7 @@
     "date": "2021.12.03",
     "changes": [
       {
+        "author": "@EPMatt",
         "description": "Add support for Xiaomi WXCJKG11LM, WXCJKG12LM, and WXCJKG13LM.",
         "breaking": false
       }
@@ -200,6 +228,7 @@
     "date": "2021.12.05",
     "changes": [
       {
+        "author": "@EPMatt",
         "description": "Add secondary mapping for IKEA E2001/E2002.",
         "breaking": false
       }
@@ -209,6 +238,7 @@
     "date": "2022.07.22",
     "changes": [
       {
+        "author": "@EPMatt",
         "description": "Add support for Xiaomi WXKG11LM.",
         "breaking": false
       }
@@ -218,6 +248,7 @@
     "date": "2022.07.30",
     "changes": [
       {
+        "author": "@EPMatt",
         "description": "Add support for SONOFF SNZB-01.",
         "breaking": false
       }
@@ -227,6 +258,7 @@
     "date": "2025.02.13",
     "changes": [
       {
+        "author": "@yarafie",
         "description": "Migrate to Zigbee2MQTT MQTT Device Triggers. The `controller_entity` input is deprecated and `controller_device` is now mandatory. Remove `controller_entity` from your automation and configure `controller_device` with your controller device ID. (Thanks [@yarafie](https://github.com/yarafie))",
         "breaking": true
       }
@@ -236,6 +268,7 @@
     "date": "2025.02.16",
     "changes": [
       {
+        "author": "@EPMatt",
         "description": "Add support for Xiaomi WXKG01LM Mi Wireless Switch and rename Xiaomi WXKG11LM Aqara Wireless Switch Mini to Aqara WXKG11LM Wireless Mini Switch. Update the `controller_model` input accordingly if needed.",
         "breaking": true
       }
@@ -245,6 +278,7 @@
     "date": "2025.03.18",
     "changes": [
       {
+        "author": "@Nicolai-",
         "description": "Use min_brightness and max_brightness as conditions instead of \"while true\" loops. (Thanks [@Nicolai-](https://github.com/Nicolai-))",
         "breaking": false
       }
@@ -254,6 +288,7 @@
     "date": "2025.03.20",
     "changes": [
       {
+        "author": "@yarafie",
         "description": "Add support for IKEA E2201 RODRET Dimmer. (Thanks [@yarafie](https://github.com/yarafie))",
         "breaking": false
       }
@@ -263,6 +298,7 @@
     "date": "2025.03.26",
     "changes": [
       {
+        "author": "@yarafie",
         "description": "Add support for IKEA E2213 SOMRIG shortcut button. (Thanks [@yarafie](https://github.com/yarafie))",
         "breaking": false
       }
@@ -272,6 +308,7 @@
     "date": "2025.03.28",
     "changes": [
       {
+        "author": "@yarafie",
         "description": "Add support for IKEA E2123 SYMFONISK sound remote, gen 2. (Thanks [@yarafie](https://github.com/yarafie))",
         "breaking": false
       }
@@ -281,6 +318,7 @@
     "date": "2025.03.29",
     "changes": [
       {
+        "author": "@yarafie",
         "description": "Add support for Tuya ERS-10TZBVK-AA Smart knob. (Thanks [@yarafie](https://github.com/yarafie))",
         "breaking": false
       }
@@ -290,10 +328,12 @@
     "date": "2025.04.12",
     "changes": [
       {
+        "author": "@yarafie",
         "description": "Added support for Shelly Button 1. ([@yarafie](https://github.com/yarafie))",
         "breaking": false
       },
       {
+        "author": "@yarafie",
         "description": "Added support for Aqara WXKG13LM Wireless Mini Switch T1. ([@yarafie](https://github.com/yarafie))",
         "breaking": false
       }
@@ -303,6 +343,7 @@
     "date": "2025.10.13",
     "changes": [
       {
+        "author": "@yarafie",
         "description": "Added support for Tuya ZG-101Z/D Smart knob. ([@yarafie](https://github.com/yarafie))",
         "breaking": false
       }

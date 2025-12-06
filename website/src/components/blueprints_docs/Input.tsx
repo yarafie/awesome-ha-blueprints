@@ -1,3 +1,13 @@
+/**
+ * Component: Input
+ * ────────────────────────────────────────────────────────────────
+ *
+ * Changelog:
+ *   • Initial Version (@EPMatt)
+ *
+ * ────────────────────────────────────────────────────────────────
+ */
+
 import React from 'react'
 import Badge from '../Badge'
 

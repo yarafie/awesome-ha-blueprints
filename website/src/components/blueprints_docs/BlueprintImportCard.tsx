@@ -1,7 +1,21 @@
+/**
+ * Component: BlueprintImportCard
+ * ────────────────────────────────────────────────────────────────
+ *
+ * Changelog:
+ *   • Initial Version (@EPMatt)
+ *   - Updated 2026.12.03 (@yarafie):
+ *      1. Moved utils.ts to utils/contexts.ts
+ * ────────────────────────────────────────────────────────────────
+ */
 import Link from '@docusaurus/Link'
 import { useEffect, useState } from 'react'
 import { getBlueprintDownloads } from '../../services/supabase'
-import { changelogsContext, blueprintsContext } from '../../utils/contexts'
+import {
+  changelogsContext,
+  blueprintsContext,
+  docsContext,
+} from '../../utils/contexts' // 1. Moved utils.ts to utils/contexts.ts
 import yaml from 'yaml'
 import Select from 'react-select'
 import type { StylesConfig } from 'react-select'
@@ -93,6 +107,7 @@ const styles = {
 interface BlueprintImportCardProps {
   category: string
   id: string
+  variant?: string
 }
 
 /**
@@ -124,13 +139,26 @@ function getGitHubAvatarUrl(username: string): string {
 
 /**
  * Loads and extracts maintainers from blueprint YAML
+ * For controllers: controllers/{id}/{variant}/{version}/{id}.yaml
+ * For others:      {category}/{id}/{id}.yaml
  * @param category - Blueprint category (e.g., 'automation', 'controllers')
  * @param id - Blueprint ID
  * @returns Array of maintainer usernames or empty array if not found
  */
-function loadBlueprintMaintainers(category: string, id: string): string[] {
+function loadBlueprintMaintainers(
+  category: string,
+  id: string,
+  variant?: string,
+  version?: string,
+): string[] {
   try {
-    const path = `./${category}/${id}/${id}.yaml`
+    let path = `./${category}/${id}/${id}.yaml`
+
+    if (category === 'controllers' && variant && version) {
+      // version here is ALWAYS a physical YYYY.MM.DD, never "latest"
+      path = `./controllers/${id}/${variant}/${version}/${id}.yaml`
+    }
+
     const content = blueprintsContext(path)
     const parsed = yaml.parse(content) as {
       variables?: { ahb_maintainers?: string[] }
@@ -151,8 +179,8 @@ function loadBlueprintMaintainers(category: string, id: string): string[] {
 }
 
 /**
- * Loads and extracts versions from changelog.json
- * @param category - Blueprint category (e.g., 'automation', 'controllers')
+ * Loads and extracts versions from changelog.json for non-controllers
+ * @param category - Blueprint category (e.g., 'automation', 'hooks')
  * @param id - Blueprint ID
  * @returns Object containing sorted versions array and latest version, or null if no versions found
  */
@@ -185,7 +213,54 @@ function loadBlueprintVersions(
   }
 }
 
-function BlueprintImportCard({ category, id }: BlueprintImportCardProps) {
+/**
+ * Loads and extracts controller versions by scanning YAML paths:
+ * @param category - Blueprint category (e.g., 'automation', 'controllers')
+ * @param id - Blueprint ID
+ * @returns Array of maintainer usernames or empty array if not found
+ * controllers/{id}/{variant}/{version}/{id}.yaml
+ */
+function loadControllerVersions(
+  id: string,
+  variant?: string,
+): { versions: string[]; latestVersion: string } | null {
+  if (!variant) {
+    return null
+  }
+  try {
+    const yamlPattern = new RegExp(
+      `^\\.\\/controllers\\/${id}\\/${variant}\\/(\\d{4}\\.\\d{2}\\.\\d{2})\\/${id}\\.ya?ml$`,
+    )
+    const versionSet = new Set<string>()
+
+    blueprintsContext.keys().forEach((key: string) => {
+      const match = key.match(yamlPattern)
+      if (match && match[1]) {
+        versionSet.add(match[1])
+      }
+    })
+
+    if (versionSet.size === 0) {
+      return null
+    }
+
+    const versions = Array.from(versionSet).sort((a, b) => b.localeCompare(a))
+    return {
+      versions,
+      latestVersion: versions[0],
+    }
+  } catch {
+    return null
+  }
+}
+
+// Start of Main Function
+function BlueprintImportCard({
+  category,
+  id,
+  variant,
+}: BlueprintImportCardProps) {
+  const isController = category === 'controllers'
   const [downloadCount, setDownloadCount] = useState<number | null>(null)
   const [isLoading, setIsLoading] = useState<boolean>(false)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -200,18 +275,32 @@ function BlueprintImportCard({ category, id }: BlueprintImportCardProps) {
   useEffect(() => {
     let isMounted = true
 
-    const result = loadBlueprintVersions(category, id)
+    if (isController) {
+      const result = loadControllerVersions(id, variant)
 
-    if (!isMounted) return
+      if (!isMounted) return
 
-    if (result) {
-      setVersions(result.versions)
-      // disabled for now. only show latest version
-      // setSelectedVersion(result.latestVersion)
-      setSelectedVersion('latest')
+      if (result) {
+        setVersions(result.versions)
+        // For controllers: selectedVersion is the actual latest version YYYY.MM.DD
+        setSelectedVersion(result.latestVersion)
+      } else {
+        setVersions([])
+        setSelectedVersion('latest')
+      }
     } else {
-      setVersions([])
-      setSelectedVersion('latest')
+      const result = loadBlueprintVersions(category, id)
+
+      if (!isMounted) return
+
+      if (result) {
+        setVersions(result.versions)
+        // For non-controllers we still use the "latest" virtual tag only
+        setSelectedVersion('latest')
+      } else {
+        setVersions([])
+        setSelectedVersion('latest')
+      }
     }
 
     setIsLoadingVersions(false)
@@ -219,13 +308,21 @@ function BlueprintImportCard({ category, id }: BlueprintImportCardProps) {
     return () => {
       isMounted = false
     }
-  }, [category, id])
+  }, [category, id, isController, variant])
 
   // Load maintainers from blueprint YAML
   useEffect(() => {
     let isMounted = true
 
-    const maintainersList = loadBlueprintMaintainers(category, id)
+    const effectiveVersion =
+      isController && versions.length > 0 ? selectedVersion : undefined
+
+    const maintainersList = loadBlueprintMaintainers(
+      category,
+      id,
+      variant,
+      effectiveVersion,
+    )
 
     if (!isMounted) return
 
@@ -235,12 +332,15 @@ function BlueprintImportCard({ category, id }: BlueprintImportCardProps) {
     return () => {
       isMounted = false
     }
-  }, [category, id])
+  }, [category, id, isController, variant, selectedVersion, versions])
 
+  // Load downloads count (variant + version aware)
   useEffect(() => {
     let isCancelled = false
     setIsLoading(true)
-    getBlueprintDownloads(category, id)
+    const versionParam =
+      isController && versions.length > 0 ? selectedVersion : null
+    getBlueprintDownloads(category, id, variant || null, versionParam)
       .then((count) => {
         if (!isCancelled) setDownloadCount(count)
       })
@@ -253,24 +353,25 @@ function BlueprintImportCard({ category, id }: BlueprintImportCardProps) {
     return () => {
       isCancelled = true
     }
-  }, [category, id])
+  }, [category, id, variant, selectedVersion, versions, isController])
 
-  // New custom URL format that will redirect to the GitHub URL
-  const blueprintUrl = `/awesome-ha-blueprints/blueprints/${category}/${id}?version=${selectedVersion}`
+  // Version used in URL:
+  // - Controllers: actual physical version (YYYY.MM.DD) if available
+  // - Others: "latest"
+  const versionParam =
+    isController && versions.length > 0 ? selectedVersion : 'latest'
 
-  // Get the latest version (first in sorted array, which is newest)
-  // const latestVersion = versions.length > 0 ? versions[0] : null
+  const variantParam = variant ? `&variant=${variant}` : ''
+  const blueprintUrl = `/awesome-ha-blueprints/blueprints/${category}/${id}?version=${versionParam}${variantParam}`
 
   // Prepare options for react-select
-  // disabled for now. only show latest version
-  // const versionOptions: VersionOption[] =
-  //   versions.length > 0
-  //     ? versions.map((version) => ({
-  //         value: version,
-  //         label: version === latestVersion ? `${version} (latest)` : version,
-  //       }))
-  //     : [{ value: 'latest', label: 'latest' }]
-  const versionOptions: VersionOption[] = [{ value: 'latest', label: 'latest' }]
+  const versionOptions: VersionOption[] =
+    isController && versions.length > 0
+      ? versions.map((version, index) => ({
+          value: version, // ALWAYS a physical version (YYYY.MM.DD)
+          label: index === 0 ? 'Latest' : version,
+        }))
+      : [{ value: 'latest', label: 'Latest' }]
 
   // Custom styles for react-select
   const selectStyles: StylesConfig<VersionOption, false> = {
@@ -465,7 +566,7 @@ function BlueprintImportCard({ category, id }: BlueprintImportCardProps) {
               <Select
                 inputId='version-select'
                 value={versionOptions.find(
-                  (option) => option.value === selectedVersion,
+                  (option) => option.value === versionParam,
                 )}
                 onChange={(option) => {
                   if (option) {

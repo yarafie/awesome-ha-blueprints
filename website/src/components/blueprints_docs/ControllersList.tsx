@@ -1,5 +1,33 @@
+/**
+ * Component: ControllersList
+ * ────────────────────────────────────────────────────────────────
+ * Purpose:
+ *   Renders the list of supported controller devices with search and
+ *   manufacturer filtering. Supports new variant-based architecture
+ *   without breaking the existing website flow.
+ *
+ * Behavior:
+ *   - Discovers all controller MDX files under ./controllers/
+ *   - Aggregates integrations from all variants for each controller
+ *     (variant-level MDX + device-level MDX).
+ *   - Ensures unique controller listing (one entry per deviceId).
+ *   - DOES NOT break routing:
+ *        ControllersList → DevicePage (unique controller)
+ *        DevicePage → Variant selection
+ *        VariantPage → Full variant details
+ *
+ * Changelog:
+ *   • Initial Version (@EPMatt)
+ *   - Updated 2026.12.03 (@yarafie):
+ *      1. Moved utils.ts to utils/contexts.ts
+ *      2. Added controllersMap logic to aggregate variants while preserving
+ *         original page flow.
+ *      3. Added integrations merging from all variant MDX files.
+ * ────────────────────────────────────────────────────────────────
+ */
+
 import React, { useEffect, useState } from 'react'
-import { docsContext } from '../../utils/contexts'
+import { docsContext } from '../../utils/contexts' // 1. Moved utils.ts to utils/contexts.ts
 import ControllerItem from './ControllerItem'
 import { Search } from 'react-bootstrap-icons'
 
@@ -36,11 +64,29 @@ const ControllersList: React.FC = () => {
         )
       })
 
-      const controllersData = controllerKeys.map((key: string) => {
-        /* const id = key.replace(categoryPath, '').replace('.mdx', '') */
-        // Extract ID from folder structure: ./controllers/<id>/<id>.mdx
-        const id = key.split('/')[2]
+      // 2. Build a map of unique controllers by deviceId and aggregate integrations from all MDX files for that device (including variants).
+      const controllersMap = new Map<
+        string,
+        {
+          id: string
+          title: string
+          description: string
+          model: string
+          manufacturer: string | string[]
+          integrations: string[]
+          model_name: string
+        }
+      >()
+
+      controllerKeys.forEach((key: string) => {
+        // Strip "./controllers/" and split remaining path to find deviceId
+        const relativePath = key.replace(categoryPath, '')
+        const segments = relativePath.split('/')
+
+        // deviceId is always the first segment without ".mdx"
+        const deviceId = segments[0].replace('.mdx', '')
         const mdxModule = docsContext(key)
+
         const {
           title,
           description,
@@ -50,19 +96,43 @@ const ControllersList: React.FC = () => {
           model_name,
         } = mdxModule.frontMatter
 
-        return {
-          id,
-          title: title || id,
-          description: description || '',
-          model: Array.isArray(model) ? model.join(', ') : model || '',
-          manufacturer: manufacturer || '',
-          integrations: integrations || [],
-          model_name: Array.isArray(model_name)
-            ? model_name.join(', ')
-            : model_name || '',
+        // Base-level MDX detection
+        const isDeviceLevelMdx =
+          segments.length === 1 || // ./controllers/<id>.mdx
+          (segments.length === 2 && segments[1] === `${deviceId}.mdx`) // ./controllers/<id>/<id>.mdx
+
+        // 2. Ensure we have a base controller entry for this deviceId,
+        //    preferring the "device-level" MDX (flat file or ./<id>/<id>.mdx)
+        let existing = controllersMap.get(deviceId)
+
+        if (!existing || isDeviceLevelMdx) {
+          existing = {
+            id: deviceId,
+            title: title || deviceId,
+            description: description || '',
+            model: Array.isArray(model) ? model.join(', ') : model || '',
+            manufacturer: manufacturer || '',
+            integrations: existing?.integrations || [],
+            model_name: Array.isArray(model_name)
+              ? model_name.join(', ')
+              : model_name || '',
+          }
+          controllersMap.set(deviceId, existing)
+        }
+
+        // 3. Aggregate integrations from all MDX files for this device (variants + device-level), de-duplicated.
+        if (Array.isArray(integrations)) {
+          const currentIntegrations = new Set<string>(existing.integrations)
+          integrations.forEach((integration: any) => {
+            if (typeof integration === 'string' && integration.trim() !== '') {
+              currentIntegrations.add(integration.trim())
+            }
+          })
+          existing.integrations = Array.from(currentIntegrations)
         }
       })
 
+      const controllersData = Array.from(controllersMap.values())
       controllersData.sort((a, b) => a.title.localeCompare(b.title))
 
       const manufacturerSet = new Set<string>()

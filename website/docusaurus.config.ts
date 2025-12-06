@@ -65,6 +65,7 @@ const config: Config = {
   customFields: {
     env: clientEnv,
   },
+
   themeConfig: {
     announcementBar: {
       id: 'support_us',
@@ -73,6 +74,7 @@ const config: Config = {
       backgroundColor: '#fffbd4',
       textColor: '#091E42',
     },
+
     navbar: {
       style: 'primary',
       title: 'Awesome HA Blueprints',
@@ -110,15 +112,18 @@ const config: Config = {
         },
       ],
     },
+
     footer: {
       links: [],
       copyright: `Awesome HA Blueprints is maintained by <a href='https://github.com/EPMatt'>Matteo Agnoletto</a>.<br/>This fork is  maintained by <a href='https://github.com/yarafie'>yarafie</a>.<br/>Licensed under the <a href='https://github.com/EPMatt/awesome-ha-blueprints/blob/main/LICENSE'>GPL-3.0 License</a>`,
     },
+
     prism: {
       theme: prismThemes.github,
       darkTheme: prismThemes.dracula,
     },
   },
+
   presets: [
     [
       '@docusaurus/preset-classic',
@@ -134,10 +139,12 @@ const config: Config = {
       },
     ],
   ],
+
   plugins: [
     webpackConfigPlugin,
     blueprintDownloaderPlugin,
     controllerImagesPlugin,
+
     // Make environment variables available to the client
     function () {
       return {

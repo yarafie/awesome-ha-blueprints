@@ -1,5 +1,16 @@
+/**
+ * Component: Inputs
+ * ────────────────────────────────────────────────────────────────
+ *
+ * Changelog:
+ *   • Initial Version (@EPMatt)
+ *   - Updated 2026.12.03 (@yarafie):
+ *      1. Moved utils.ts to utils/contexts.ts
+ * ────────────────────────────────────────────────────────────────
+ */
+
 import React, { useEffect, useState } from 'react'
-import { blueprintsContext } from '../../utils/contexts'
+import { blueprintsContext } from '../../utils/contexts' // 1. Moved utils.ts to utils/contexts.ts
 import yaml from 'yaml'
 import Input, { BlueprintInput } from './Input'
 import InputSection from './InputSection'

@@ -1,7 +1,35 @@
+/**
+ * Component: Changelog
+ * ────────────────────────────────────────────────────────────────
+ * Purpose:
+ *   Renders a blueprint’s changelog from its changelog.json file.
+ *
+ *   - Loads changelog entries using changelogsContext().
+ *   - Supports blueprint categories: controllers, hooks, automations.
+ *   - For each entry, displays the date and its associated change list.
+ *   - Highlights “breaking changes” visually.
+ *   - Converts markdown (including emoji codes) into safe inline HTML.
+ *   - Handles missing, empty, or malformed changelog files gracefully.
+ *
+ * Behavior:
+ *   - State flow: Loading → Error → Empty → Rendered changelog.
+ *   - Multi-item entries are expanded into nested bullet lists.
+ *   - All links automatically open in a new browser tab.
+ *
+ * Changelog :):
+ *   • Initial Version (@EPMatt)
+ *   - Updated 2026.12.02 (@yarafie):
+ *      1. Moved utils.ts to utils/contexts.ts
+ *      2. Migrated to Marked v17 configuration with custom Renderer.
+ *      3. Added emoji replacement to support :emoji_codes:
+ *      4. Added explicit variant support
+ * ────────────────────────────────────────────────────────────────
+ */
 import React, { useEffect, useState } from 'react'
 import { marked, Renderer } from 'marked'
-import { changelogsContext } from '../../utils/contexts'
+import { changelogsContext } from '../../utils/contexts' //1. Moved utils.ts to utils/contexts.ts
 
+// 2. Added emoji replacement to support :emoji_codes:
 // Import the full emoji map
 import { emojiMap } from '../../utils/emojiMap'
 
@@ -21,6 +49,7 @@ interface ChangelogEntry {
 interface ChangelogProps {
   category: string
   id: string
+  variant?: string // 3. Added explicit variant support
 }
 
 type ChangelogState =
@@ -54,17 +83,7 @@ const styles = {
   } as React.CSSProperties,
 }
 
-// ─────────────────────────────────────────────
-// Emoji replacement — uses imported emojiMap
-// ─────────────────────────────────────────────
-const replaceEmojiCodes = (text: string): string => {
-  // Supports +1, -1, underscores, skin-tones, flags, etc.
-  return text.replace(
-    /:([a-zA-Z0-9_+-]+):/g,
-    (match) => emojiMap[match] || match,
-  )
-}
-
+// 2. Migrated to Marked v17 configuration with custom Renderer.
 // ─────────────────────────────────────────────
 // Marked v17 configuration
 // ─────────────────────────────────────────────
@@ -82,6 +101,18 @@ marked.setOptions({
   async: false, // required for synchronous parse() marked 17
   renderer,
 })
+
+// 3. Added emoji replacement to support :emoji_codes:
+// ─────────────────────────────────────────────
+// Emoji replacement — uses imported emojiMap
+// ─────────────────────────────────────────────
+const replaceEmojiCodes = (text: string): string => {
+  // Supports +1, -1, underscores, skin-tones, flags, etc.
+  return text.replace(
+    /:([a-zA-Z0-9_+-]+):/g,
+    (match) => emojiMap[match] || match,
+  )
+}
 
 // ─────────────────────────────────────────────
 // Markdown → HTML (inline safe)
@@ -103,7 +134,7 @@ const renderDescription = (description: string) => (
 // ─────────────────────────────────────────────
 // Component
 // ─────────────────────────────────────────────
-const Changelog: React.FC<ChangelogProps> = ({ category, id }) => {
+const Changelog: React.FC<ChangelogProps> = ({ category, id, variant }) => {
   const [state, setState] = useState<ChangelogState>({ status: 'loading' })
 
   useEffect(() => {
@@ -111,11 +142,19 @@ const Changelog: React.FC<ChangelogProps> = ({ category, id }) => {
 
     const loadChangelog = () => {
       try {
-        const path = `./${category}/${id}/changelog.json`
+        // Default non-variant path
+        let path = `./${category}/${id}/changelog.json`
+
+        // 4. If controller + variant provided → use variant changelog.json
+        if (category === 'controllers' && variant) {
+          const variantPath = `./controllers/${id}/${variant}/changelog.json`
+          if (changelogsContext.keys().includes(variantPath)) {
+            path = variantPath
+          }
+        }
+
         const parsed = changelogsContext(path) as unknown as ChangelogEntry[]
-
         if (!isMounted) return
-
         if (!parsed || parsed.length === 0) {
           setState({ status: 'empty' })
           return
@@ -145,7 +184,7 @@ const Changelog: React.FC<ChangelogProps> = ({ category, id }) => {
     return () => {
       isMounted = false
     }
-  }, [category, id])
+  }, [category, id, variant]) // 3. Added explicit variant support
 
   // RENDER STATE
   if (state.status === 'loading') {

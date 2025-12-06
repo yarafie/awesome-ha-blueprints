@@ -1,0 +1,12 @@
+[
+  {
+    "date": "2025.03.29",
+    "changes": [
+      {
+        "author": "@yarafie",
+        "description": "Initial release. (Thanks [@yarafie](https://github.com/yarafie)) 🎉",
+        "breaking": false
+      }
+    ]
+  }
+]

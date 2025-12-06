@@ -3,6 +3,7 @@
     "date": "2021.03.26",
     "changes": [
       {
+        "author": "@EPMatt",
         "description": "First blueprint version 🎉",
         "breaking": false
       }
@@ -12,6 +13,7 @@
     "date": "2021.04.19",
     "changes": [
       {
+        "author": "@EPMatt",
         "description": "Remove unused variable and fix warnings for undefined variables in Home Assistant Core >=2021.4.0.",
         "breaking": false
       }
@@ -21,6 +23,7 @@
     "date": "2021.08.02",
     "changes": [
       {
+        "author": "@EPMatt",
         "description": "Improve inputs documentation and organization.",
         "breaking": false
       }
@@ -30,18 +33,22 @@
     "date": "2021.10.26",
     "changes": [
       {
+        "author": "@EPMatt",
         "description": "Standardize blueprint structure and input naming across the collection.",
         "breaking": false
       },
       {
+        "author": "@EPMatt",
         "description": "Improve blueprint documentation.",
         "breaking": false
       },
       {
+        "author": "@EPMatt",
         "description": "🎉 Add support for alternate mappings.",
         "breaking": false
       },
       {
+        "author": "@EPMatt",
         "description": "Update controller names in the Controller Model input to match full controller names, prevent ambiguities and enable alternate mappings. After updating, reconfigure automations by selecting the correct controller name.",
         "breaking": true
       }
@@ -51,6 +58,7 @@
     "date": "2021.10.29",
     "changes": [
       {
+        "author": "@EPMatt",
         "description": "Add support for IKEA E1766 TRÅDFRI Open/Close Remote.",
         "breaking": false
       }
@@ -60,6 +68,7 @@
     "date": "2021.12.03",
     "changes": [
       {
+        "author": "@EPMatt",
         "description": "Add support for Xiaomi WXCJKG11LM, WXCJKG12LM, and WXCJKG13LM.",
         "breaking": false
       }
@@ -69,6 +78,7 @@
     "date": "2022.07.22",
     "changes": [
       {
+        "author": "@EPMatt",
         "description": "Add support for Xiaomi WXKG11LM.",
         "breaking": false
       }
@@ -78,6 +88,7 @@
     "date": "2022.07.30",
     "changes": [
       {
+        "author": "@EPMatt",
         "description": "Add support for SONOFF SNZB-01.",
         "breaking": false
       }
@@ -87,6 +98,7 @@
     "date": "2025.02.13",
     "changes": [
       {
+        "author": "@yarafie",
         "description": "Migrate to Zigbee2MQTT MQTT Device Triggers. The `controller_entity` input is deprecated and `controller_device` is now mandatory. Remove `controller_entity` from your automation and configure `controller_device` with your controller device ID. (Thanks [@yarafie](https://github.com/yarafie))",
         "breaking": true
       }
@@ -96,6 +108,7 @@
     "date": "2025.02.16",
     "changes": [
       {
+        "author": "@EPMatt",
         "description": "Add support for Xiaomi WXKG01LM Mi Wireless Switch and rename Xiaomi WXKG11LM Aqara Wireless Switch Mini to Aqara WXKG11LM Wireless Mini Switch. Update the `controller_model` input accordingly if needed.",
         "breaking": true
       }
@@ -105,6 +118,7 @@
     "date": "2025.03.20",
     "changes": [
       {
+        "author": "@yarafie",
         "description": "Add support for IKEA E2201 RODRET Dimmer. (Thanks [@yarafie](https://github.com/yarafie))",
         "breaking": false
       }
@@ -114,6 +128,7 @@
     "date": "2025.03.26",
     "changes": [
       {
+        "author": "@yarafie",
         "description": "Add support for IKEA E2213 SOMRIG shortcut button. (Thanks [@yarafie](https://github.com/yarafie))",
         "breaking": false
       }
@@ -123,6 +138,7 @@
     "date": "2025.03.28",
     "changes": [
       {
+        "author": "@yarafie",
         "description": "Add support for IKEA E2123 SYMFONISK sound remote, gen 2. (Thanks [@yarafie](https://github.com/yarafie))",
         "breaking": false
       }
@@ -132,10 +148,12 @@
     "date": "2025.04.12",
     "changes": [
       {
+        "author": "@yarafie",
         "description": "Added support for Shelly Button 1. ([@yarafie](https://github.com/yarafie))",
         "breaking": false
       },
       {
+        "author": "@yarafie",
         "description": "Added support for Aqara WXKG13LM Wireless Mini Switch T1. ([@yarafie](https://github.com/yarafie))",
         "breaking": false
       }
@@ -145,6 +163,7 @@
     "date": "2025.10.20",
     "changes": [
       {
+        "author": "@yarafie",
         "description": "Added support for IKEA E2001/E2002 STYRBAR Remote control. ([@yarafie](https://github.com/yarafie))",
         "breaking": false
       }

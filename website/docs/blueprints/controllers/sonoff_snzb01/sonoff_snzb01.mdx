@@ -1,101 +1,14 @@
 ---
+id: sonoff_snzb01
 title: Controller - SONOFF SNZB-01 Wireless Switch
-description: Controller automation for executing any kind of action triggered by the provided SONOFF SNZB-01 Wireless Switch. Supports Zigbee2MQTT, ZHA, deCONZ.
+description: SONOFF SNZB-01 Wireless Switch
 manufacturer: SONOFF
 model: SNZB-01
 model_name: SONOFF SNZB-01 Wireless Switch
-integrations: [Zigbee2MQTT, ZHA, deCONZ]
+hide_title: true
+hide_table_of_contents: true
 ---
 
-import {
-  Input,
-  Inputs,
-  Requirement,
-  ImportCard,
-  Changelog,
-} from '/src/components/blueprints_docs'
+import { DevicePage } from '/src/components/blueprints_docs'
 
-<ImportCard id='sonoff_snzb01' category='controllers' />
-
-<br />
-
-:::tip
-This blueprint is part of the **Controllers-Hooks Ecosystem**. You can read more about this topic [here](/docs/controllers-hooks-ecosystem).
-:::
-
-## Description
-
-This blueprint provides universal support for running any custom action when a button is pressed on the provided SONOFF SNZB-01 Wireless Switch. Supports controllers integrated with Zigbee2MQTT, ZHA, deCONZ. Just specify the integration used to connect the remote to Home Assistant when setting up the automation, and the blueprint will take care of all the rest.
-
-:::tip
-Automations created with this blueprint can be connected with one or more [Hooks](/docs/blueprints/hooks) supported by this controller.
-Hooks allow to easily create controller-based automations for interacting with media players, lights, covers and more. See the list of [Hooks available for this controller](/docs/blueprints/controllers/sonoff_snzb01#available-hooks) for additional details.
-:::
-
-## Requirements
-
-<Requirement id='zigbee2mqtt'/>
-<Requirement id='zha'/>
-<Requirement id='deconz'/>
-<Requirement name='Input Text Integration' required>
-
-This integration provides the entity which must be provided to the blueprint in the **Helper - Last Controller Event** input. Learn more about this helper by reading the dedicated section in the [Additional Notes](#helper---last-controller-event).
-
-[Input Text Integration Docs](https://www.home-assistant.io/integrations/input_text/)
-
-</Requirement>
-
-## Inputs
-
-<Inputs category='controllers' id='sonoff_snzb01' />
-
-## Available Hooks
-
-### Light
-
-This Hook blueprint allows to build a controller-based automation to control a light. Supports brightness and color control both for white temperature and rgb lights.
-
-#### Default Mapping
-
-- Button short press -> Toggle
-- Button double press -> Color up
-
-[Light Hook docs](/docs/blueprints/hooks/light)
-
-### Media Player
-
-This Hook blueprint allows to build a controller-based automation to control a media player. Supports volume setting, play/pause and track selection.
-
-#### Default Mapping
-
-- Button short press -> Play/Pause
-- Button long press -> Stop
-- Button double press -> Next track
-
-[Media Player Hook docs](/docs/blueprints/hooks/media_player)
-
-### Cover
-
-This Hook blueprint allows to build a controller-based automation to control a cover. Supports opening, closing and tilting the cover.
-
-#### Default Mapping
-
-- Button short press -> Open cover
-- Button long press -> Stop cover and cover tilt
-- Button double press -> Close cover
-
-[Cover Hook docs](/docs/blueprints/hooks/cover)
-
-## Additional Notes
-
-### Helper - Last Controller Event
-
-The `helper_last_controller_event` (Helper - Last Controller Event) input serves as a permanent storage area for the automation. The stored info is used to implement the blueprint's core functionality. To learn more about the helper, how it's used and why it's required, you can read the dedicated section in the [Controllers-Hooks Ecosystem documentation](/docs/controllers-hooks-ecosystem#helper---last-controller-event-input).
-
-### Behaviour of button long press
-
-Please note that the long press action for this controller is triggered after the button is pressed and held for approximately 3 seconds. Since the device does not fire an event when the button is released, the blueprint does not support looping an action over a long press.
-
-## Changelog
-
-<Changelog category='controllers' id='sonoff_snzb01' />
+<DevicePage id='sonoff_snzb01' />

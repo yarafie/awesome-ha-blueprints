@@ -1,3 +1,13 @@
+/**
+ * Component: ControllerItem
+ * ────────────────────────────────────────────────────────────────
+ *
+ * Changelog:
+ *   • Initial Version (@EPMatt)
+ *
+ * ────────────────────────────────────────────────────────────────
+ */
+
 import React, { useState } from 'react'
 import Link from '@docusaurus/Link'
 import { ChevronRight } from 'react-bootstrap-icons'

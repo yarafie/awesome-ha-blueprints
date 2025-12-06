@@ -1,3 +1,13 @@
+/**
+ * Component: InputSection
+ * ────────────────────────────────────────────────────────────────
+ *
+ * Changelog:
+ *   • Initial Version (@EPMatt)
+ *
+ * ────────────────────────────────────────────────────────────────
+ */
+
 import React, { useState } from 'react'
 import Input, { BlueprintInput } from './Input'
 import { ChevronDown } from 'react-bootstrap-icons'

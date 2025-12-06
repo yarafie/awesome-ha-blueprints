@@ -1,3 +1,13 @@
+/**
+ * Component: BlueprintCategoryCard
+ * ────────────────────────────────────────────────────────────────
+ *
+ * Changelog:
+ *   • Initial Version (@EPMatt)
+ *
+ * ────────────────────────────────────────────────────────────────
+ */
+
 import * as Icons from 'react-bootstrap-icons'
 import Link from '@docusaurus/Link'
 

@@ -1,0 +1,12 @@
+[
+  {
+    "date": "2025.10.14",
+    "changes": [
+      {
+        "author": "@yarafie",
+        "description": "Initial release. ([@yarafie](https://github.com/yarafie)) :tada:",
+        "breaking": false
+      }
+    ]
+  }
+]

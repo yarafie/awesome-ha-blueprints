@@ -1,3 +1,13 @@
+/**
+ * Component: VersionBadge
+ * ────────────────────────────────────────────────────────────────
+ *
+ * Changelog:
+ *   • Initial Version (@yarafie)
+ *
+ * ────────────────────────────────────────────────────────────────
+ */
+
 import React from 'react'
 
 interface VersionBadgeProps {

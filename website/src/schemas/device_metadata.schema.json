@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://awesome-ha-blueprints.dev/schemas/device_metadata.schema.json",
+
+  "title": "Awesome HA Blueprints — Device Metadata Schema",
+  "description": "Schema for device-level device_metadata.json.",
+
+  "type": "object",
+  "additionalProperties": false,
+
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique controller identifier (e.g. ikea_e2001_e2002)"
+    },
+    "name": {
+      "type": "string",
+      "description": "Full display name of the controller (e.g. Controller - IKEA E2001/E2002 STYRBAR Remote control)"
+    },
+    "manufacturer": {
+      "type": "string",
+      "description": "Manufacturer name (e.g. IKEA)"
+    },
+    "model": {
+      "type": "string",
+      "description": "Model name identifier (e.g. E2001/E2002)"
+    },
+    "model_name": {
+      "type": "string",
+      "description": "Long descriptive model name (e.g. IKEA E2001/E2002 STYRBAR Remote control)"
+    },
+    "description": {
+      "type": "string",
+      "description": "Controller description (e.g. Controller automation for executing any kind ....)"
+    },
+    "tags": {
+      "type": "array",
+      "description": "Tags representing the controller (e.g. [controller, remote, buttons, 4-buttons])",
+      "items": { "type": "string" },
+      "minItems": 1
+    }
+  },
+
+  "required": [
+    "id",
+    "name",
+    "manufacturer",
+    "model",
+    "model_name",
+    "description",
+    "tags"
+  ]
+}

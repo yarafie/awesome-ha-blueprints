@@ -3,6 +3,7 @@
     "date": "2021.10.22",
     "changes": [
       {
+        "author": "@EPMatt",
         "description": "First blueprint version 🎉",
         "breaking": false
       }
