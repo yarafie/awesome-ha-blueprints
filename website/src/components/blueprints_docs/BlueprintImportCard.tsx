@@ -260,7 +260,6 @@ function BlueprintImportCard({
   const isController = category === 'controllers'
   const [downloadCount, setDownloadCount] = useState<number | null>(null)
   const [isLoading, setIsLoading] = useState<boolean>(false)
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [versions, setVersions] = useState<string[]>([])
   const [selectedVersion, setSelectedVersion] = useState<string>('latest')
   const [isLoadingVersions, setIsLoadingVersions] = useState<boolean>(true)
