@@ -18,6 +18,7 @@ import InputSection from './InputSection'
 interface InputsProps {
   category: string
   id: string
+  variant?: string
 }
 
 interface InputSection {
@@ -33,6 +34,30 @@ interface BlueprintMetadata {
   }
 }
 
+function loadControllerLatestVersion(
+  id: string,
+  variant?: string,
+): string | null {
+  if (!variant) return null
+
+  const yamlPattern = new RegExp(
+    `^\\.\\/controllers\\/${id}\\/${variant}\\/(\\d{4}\\.\\d{2}\\.\\d{2})\\/${id}\\.ya?ml$`,
+  )
+
+  const versionSet = new Set<string>()
+
+  blueprintsContext.keys().forEach((key: string) => {
+    const match = key.match(yamlPattern)
+    if (match && match[1]) {
+      versionSet.add(match[1])
+    }
+  })
+
+  if (versionSet.size === 0) return null
+
+  return Array.from(versionSet).sort((a, b) => b.localeCompare(a))[0]
+}
+
 const Inputs: React.FC<InputsProps> = ({ category, id }) => {
   const [inputs, setInputs] = useState<
     Record<string, BlueprintInput | InputSection>
@@ -40,7 +65,26 @@ const Inputs: React.FC<InputsProps> = ({ category, id }) => {
 
   useEffect(() => {
     try {
-      const path = `./${category}/${id}/${id}.yaml`
+      let path: string
+
+      if (category === 'controllers' && variant) {
+        // 1. Find the latest physical version for this variant
+        const latestVersion = loadControllerLatestVersion(id, variant)
+
+        if (!latestVersion) {
+          console.error(
+            `No versions found for controller ${id} variant ${variant}`,
+          )
+          setInputs({})
+          return
+        }
+
+        path = `./controllers/${id}/${variant}/${latestVersion}/${id}.yaml`
+      } else {
+        // Non-controllers OR controllers without variant fallback
+        path = `./${category}/${id}/${id}.yaml`
+      }
+
       const content = blueprintsContext(path)
       const parsed = yaml.parse(content) as BlueprintMetadata
       setInputs(parsed.blueprint.input || {})
@@ -48,7 +92,7 @@ const Inputs: React.FC<InputsProps> = ({ category, id }) => {
       console.error('Error fetching blueprint:', error)
       setInputs({})
     }
-  }, [category, id])
+  }, [category, id, variant])
 
   return (
     <div className='blueprint-inputs'>
