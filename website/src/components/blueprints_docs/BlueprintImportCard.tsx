@@ -1,3 +1,5 @@
+// website/src/components/blueprints/BlueprintImportCard.tsx
+
 /**
  * Component: BlueprintImportCard
  * ────────────────────────────────────────────────────────────────
@@ -150,24 +152,20 @@ function loadBlueprintMaintainers(
 ): string[] {
   try {
     let path = `./${category}/${id}/${id}.yaml`
-
     if (category === 'controllers' && variant && version) {
       // version here is ALWAYS a physical YYYY.MM.DD, never "latest"
       path = `./controllers/${id}/${variant}/${version}/${id}.yaml`
     }
-
     const content = blueprintsContext(path)
     const parsed = yaml.parse(content) as {
       variables?: { ahb_maintainers?: string[] }
     }
-
     if (
       parsed?.variables?.ahb_maintainers &&
       Array.isArray(parsed.variables.ahb_maintainers)
     ) {
       return parsed.variables.ahb_maintainers
     }
-
     return []
   } catch {
     // If the file is not found or any error occurs, return empty array
@@ -188,17 +186,14 @@ function loadBlueprintVersions(
   try {
     const path = `./${category}/${id}/changelog.json`
     const parsed = changelogsContext(path) as unknown as ChangelogEntry[]
-
     if (!parsed || parsed.length === 0) {
       return null
     }
-
     // Extract all dates and sort them (newest first)
     const dates = parsed.map((entry) => entry.date)
     // Sort dates in descending order (newest first)
     // Dates are in "YYYY.MM.DD" format, so we can sort them as strings
     const sortedDates = [...dates].sort((a, b) => b.localeCompare(a))
-
     return {
       versions: sortedDates,
       latestVersion: sortedDates[0] || 'latest',
@@ -212,9 +207,7 @@ function loadBlueprintVersions(
 
 /**
  * Loads and extracts controller versions by scanning YAML paths:
- * @param category - Blueprint category (e.g., 'automation', 'controllers')
  * @param id - Blueprint ID
- * @returns Array of maintainer usernames or empty array if not found
  * controllers/{id}/{variant}/{version}/{id}.yaml
  */
 function loadControllerVersions(
@@ -229,18 +222,15 @@ function loadControllerVersions(
       `^\\.\\/controllers\\/${id}\\/${variant}\\/(\\d{4}\\.\\d{2}\\.\\d{2})\\/${id}\\.ya?ml$`,
     )
     const versionSet = new Set<string>()
-
     blueprintsContext.keys().forEach((key: string) => {
       const match = key.match(yamlPattern)
       if (match && match[1]) {
         versionSet.add(match[1])
       }
     })
-
     if (versionSet.size === 0) {
       return null
     }
-
     const versions = Array.from(versionSet).sort((a, b) => b.localeCompare(a))
     return {
       versions,
@@ -271,24 +261,29 @@ function BlueprintImportCard({
   useEffect(() => {
     let isMounted = true
 
+    const urlVersion =
+      typeof window !== 'undefined'
+        ? new URL(window.location.href).searchParams.get('version')
+        : null
+
     if (isController) {
       const result = loadControllerVersions(id, variant)
-
       if (!isMounted) return
-
       if (result) {
+        const effectiveVersion =
+          urlVersion && result.versions.includes(urlVersion)
+            ? urlVersion
+            : result.latestVersion
         setVersions(result.versions)
-        // For controllers: selectedVersion is the actual latest version YYYY.MM.DD
-        setSelectedVersion(result.latestVersion)
+        // For controllers: selectedVersion is the actual latest or URL version (YYYY.MM.DD)
+        setSelectedVersion(effectiveVersion)
       } else {
         setVersions([])
         setSelectedVersion('latest')
       }
     } else {
       const result = loadBlueprintVersions(category, id)
-
       if (!isMounted) return
-
       if (result) {
         setVersions(result.versions)
         // For non-controllers we still use the "latest" virtual tag only
@@ -298,9 +293,7 @@ function BlueprintImportCard({
         setSelectedVersion('latest')
       }
     }
-
     setIsLoadingVersions(false)
-
     return () => {
       isMounted = false
     }
@@ -309,22 +302,17 @@ function BlueprintImportCard({
   // Load maintainers from blueprint YAML
   useEffect(() => {
     let isMounted = true
-
     const effectiveVersion =
       isController && versions.length > 0 ? selectedVersion : undefined
-
     const maintainersList = loadBlueprintMaintainers(
       category,
       id,
       variant,
       effectiveVersion,
     )
-
     if (!isMounted) return
-
     setMaintainers(maintainersList)
     setIsLoadingMaintainers(false)
-
     return () => {
       isMounted = false
     }
@@ -336,6 +324,7 @@ function BlueprintImportCard({
     setIsLoading(true)
     const versionParam =
       isController && versions.length > 0 ? selectedVersion : null
+
     getBlueprintDownloads(category, id, variant || null, versionParam)
       .then((count) => {
         if (!isCancelled) setDownloadCount(count)
@@ -346,6 +335,7 @@ function BlueprintImportCard({
       .finally(() => {
         if (!isCancelled) setIsLoading(false)
       })
+
     return () => {
       isCancelled = true
     }
@@ -356,8 +346,9 @@ function BlueprintImportCard({
   // - Others: "latest"
   const versionParam =
     isController && versions.length > 0 ? selectedVersion : 'latest'
-
   const variantParam = variant ? `&variant=${variant}` : ''
+
+  // Import button blueprint URL (unchanged behavior)
   const blueprintUrl = `/awesome-ha-blueprints/blueprints/${category}/${id}?version=${versionParam}${variantParam}`
 
   // Prepare options for react-select
@@ -517,6 +508,7 @@ function BlueprintImportCard({
           ) : (
             <div className='col col--6 margin-bottom--md'></div>
           )}
+
           {/* Total Downloads */}
           <div
             className='col col--6 margin-bottom--md'
@@ -565,8 +557,38 @@ function BlueprintImportCard({
                   (option) => option.value === versionParam,
                 )}
                 onChange={(option) => {
-                  if (option) {
-                    setSelectedVersion(option.value)
+                  if (!option) return
+                  const newVersion = option.value
+                  setSelectedVersion(newVersion)
+
+                  // A-1: standard URL update using window.location.href = new URL(...)
+                  if (isController && typeof window !== 'undefined') {
+                    try {
+                      const url = new URL(window.location.href)
+                      url.searchParams.set('version', newVersion)
+                      if (variant) {
+                        url.searchParams.set('variant', variant)
+                      } else {
+                        url.searchParams.delete('variant')
+                      }
+                      // Hard reload to fully remount page + Inputs
+                      window.location.href = url.toString()
+                    } catch {
+                      const searchParams = new URLSearchParams(
+                        typeof window !== 'undefined'
+                          ? window.location.search
+                          : '',
+                      )
+                      searchParams.set('version', newVersion)
+                      if (variant) {
+                        searchParams.set('variant', variant)
+                      } else {
+                        searchParams.delete('variant')
+                      }
+                      if (typeof window !== 'undefined') {
+                        window.location.search = searchParams.toString()
+                      }
+                    }
                   }
                 }}
                 options={versionOptions}
@@ -578,6 +600,7 @@ function BlueprintImportCard({
                 menuPosition='fixed'
               />
             </div>
+
             {/* Import Button */}
             <div className='col col--6 download-button-wrapper margin-bottom--md'>
               <Link to={blueprintUrl}>

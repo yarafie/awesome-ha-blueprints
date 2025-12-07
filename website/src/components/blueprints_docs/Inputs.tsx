@@ -65,6 +65,23 @@ function loadControllerLatestVersion(
   return Array.from(foundVersions).sort((a, b) => b.localeCompare(a))[0]
 }
 
+/**
+ * Read controller version from URL (?version=YYYY.MM.DD), if present and well-formed.
+ */
+function getControllerVersionFromUrl(): string | null {
+  if (typeof window === 'undefined') return null
+  try {
+    const url = new URL(window.location.href)
+    const v = url.searchParams.get('version')
+    if (!v) return null
+    // Basic YYYY.MM.DD validation
+    if (!/^\d{4}\.\d{2}\.\d{2}$/.test(v)) return null
+    return v
+  } catch {
+    return null
+  }
+}
+
 const Inputs: React.FC<InputsProps> = ({ category, id, variant }) => {
   const [inputs, setInputs] = useState<
     Record<string, BlueprintInput | BlueprintInputSection>
@@ -75,18 +92,35 @@ const Inputs: React.FC<InputsProps> = ({ category, id, variant }) => {
       let yamlPath: string
 
       if (category === 'controllers' && variant) {
-        // 🔍 Resolve newest physical version folder
-        const latestVersion = loadControllerLatestVersion(id, variant) // ← added logic
-        if (!latestVersion) {
-          console.error(
-            `No versions found for controller ${id} variant ${variant}`,
-          )
-          setInputs({})
-          return
+        // 🔍 Resolve from URL first (Option A: URL-driven version), fallback to latest if missing/invalid
+        const urlVersion = getControllerVersionFromUrl()
+        let resolvedVersion: string | null = null
+
+        if (urlVersion) {
+          const candidatePath = `./controllers/${id}/${variant}/${urlVersion}/${id}.yaml`
+          try {
+            // Check that this version actually exists
+            blueprintsContext(candidatePath)
+            yamlPath = candidatePath
+            resolvedVersion = urlVersion
+          } catch {
+            resolvedVersion = null
+          }
         }
 
-        yamlPath = `./controllers/${id}/${variant}/${latestVersion}/${id}.yaml`
+        if (!resolvedVersion) {
+          const latestVersion = loadControllerLatestVersion(id, variant)
+          if (!latestVersion) {
+            console.error(
+              `No versions found for controller ${id} variant ${variant}`,
+            )
+            setInputs({})
+            return
+          }
+          yamlPath = `./controllers/${id}/${variant}/${latestVersion}/${id}.yaml`
+        }
       } else {
+        // Non-controllers: keep existing behaviour
         yamlPath = `./${category}/${id}/${id}.yaml`
       }
 
