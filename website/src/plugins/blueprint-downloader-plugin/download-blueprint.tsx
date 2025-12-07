@@ -25,7 +25,6 @@
  *
  * ────────────────────────────────────────────────────────────────
  */
-
 import React, { useEffect } from 'react'
 // @ts-expect-error no types for this
 import Head from '@docusaurus/Head'
@@ -72,7 +71,6 @@ export default function DownloadBlueprint(props: {
     }
     return 'latest'
   }
-
   const version = getVersion()
 
   // -------------------------------
@@ -86,34 +84,53 @@ export default function DownloadBlueprint(props: {
     }
     return props.route.variant || null
   }
-
   const variant = getVariant()
 
-  // ----------------------------------------------------------
-  //  BUILD RAW GITHUB URL FOR YAML (depends on category)
-  // ----------------------------------------------------------
+  // --------------------------------------------------------------------
+  //  RESOLVE EFFECTIVE VARIANT + VERSION (controllers only)
+  // --------------------------------------------------------------------
+  let effectiveVariant: string | null = variant
+
+  // 1) Controllers — fallback to single variant if none provided
+  if (
+    category === 'controllers' &&
+    !effectiveVariant &&
+    props.route.variantsById &&
+    Object.keys(props.route.variantsById).length === 1
+  ) {
+    effectiveVariant = Object.keys(props.route.variantsById)[0]
+  }
+
+  // 2) Hooks + Automations — enforce Variant = "EPMatt"
+  if (category !== 'controllers') {
+    effectiveVariant = 'EPMatt'
+  }
+
+  // 3) Resolve "latest" → real YYYY.MM.DD version for controllers
+  let effectiveVersion: string = version
+  if (
+    category === 'controllers' &&
+    effectiveVersion === 'latest' &&
+    effectiveVariant &&
+    props.route.variantsById?.[effectiveVariant]?.length
+  ) {
+    const versions = [...props.route.variantsById[effectiveVariant]].sort(
+      (a, b) => b.localeCompare(a),
+    )
+    effectiveVersion = versions[0]
+  }
+
+  // --------------------------------------------------------------------
+  //  BUILD RAW GITHUB URL FOR YAML
+  // --------------------------------------------------------------------
   let githubUrl: string
 
   if (category === 'controllers') {
-    if (!variant && typeof window !== 'undefined') {
+    if (!effectiveVariant && typeof window !== 'undefined') {
       console.error('Missing variant for controller download route.')
     }
 
-    // Resolve real latest version only if needed
-    let effectiveVersion = version
-
-    if (
-      effectiveVersion === 'latest' &&
-      variant &&
-      props.route.variantsById?.[variant]
-    ) {
-      const versions = props.route.variantsById[variant].sort((a, b) =>
-        b.localeCompare(a),
-      )
-      effectiveVersion = versions[0]
-    }
-
-    const versionPath = `${variant}/${effectiveVersion}/${id}.yaml`
+    const versionPath = `${effectiveVariant}/${effectiveVersion}/${id}.yaml`
 
     githubUrl = `https://raw.githubusercontent.com/yarafie/awesome-ha-blueprints/main/website/docs/blueprints/${category}/${id}/${versionPath}`
   } else {
@@ -125,45 +142,40 @@ export default function DownloadBlueprint(props: {
     `https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=` +
     encodeURIComponent(githubUrl)
 
-  // Record download in Supabase
-  // This is not personal information, so we can record it without explicit consent
-  // Use effectiveVersion when controllers resolve "latest"
-  let versionToRecord = version
-
-  if (category === 'controllers') {
-    if (
-      version === 'latest' &&
-      variant &&
-      props.route.variantsById?.[variant]
-    ) {
-      const versions = props.route.variantsById[variant].sort((a, b) =>
-        b.localeCompare(a),
-      )
-      versionToRecord = versions[0]
-    }
-  }
+  // Ensure Supabase always gets physical version + correct variant
+  const versionToRecord = effectiveVersion
 
   // -------------------------------
   //  USE EFFECT: RECORD + REDIRECT
   // -------------------------------
+
   useEffect(() => {
+    // -------------------------------------------------
+    //  FIX: Prevent duplicated runs (back navigation)
+    // -------------------------------------------------
+    if (typeof window !== 'undefined') {
+      if ((window as any).__blueprintDownloadHandled) {
+        return // Abort duplicate run (prevents bad DB inserts)
+      }
+      ;(window as any).__blueprintDownloadHandled = true
+    }
+
     // Track the blueprint download event if user has given consent
     if (consent) {
       trackEvent(
         'blueprint',
         'download',
         category === 'controllers'
-          ? `${category}/${id}/${variant}/${versionToRecord}`
+          ? `${category}/${id}/${effectiveVariant}/${versionToRecord}`
           : `${category}/${id}`,
         undefined,
       )
     }
 
-    // Build record
     const record = {
       category,
       id,
-      variant: variant || null,
+      variant: effectiveVariant || null,
       version: versionToRecord,
     }
 
@@ -186,7 +198,14 @@ export default function DownloadBlueprint(props: {
         // Redirect to HA to download the blueprint
         safeRedirect(myHomeAssistantURL)
       })
-  }, [consent, category, id, variant, version, myHomeAssistantURL])
+  }, [
+    consent,
+    category,
+    id,
+    effectiveVariant,
+    versionToRecord,
+    myHomeAssistantURL,
+  ])
 
   // -------------------------------
   //  PAGE DISPLAY DURING REDIRECT
@@ -196,10 +215,11 @@ export default function DownloadBlueprint(props: {
       <Head>
         <title>
           Download {category}/{id}
-          {version ? `/${version}` : ''}
-          {variant ? `/${variant}` : ''}
+          {effectiveVersion ? `/${effectiveVersion}` : ''}
+          {effectiveVariant ? `/${effectiveVariant}` : ''}
         </title>
       </Head>
+
       <div
         style={{
           display: 'flex',
