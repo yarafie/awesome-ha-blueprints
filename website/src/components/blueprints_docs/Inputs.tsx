@@ -5,12 +5,14 @@
  * Changelog:
  *   • Initial Version (@EPMatt)
  *   - Updated 2026.12.03 (@yarafie):
- *      1. Moved utils.ts to utils/contexts.ts
+ *      1. Moved utils.ts → utils/contexts.ts
+ *      2. Added variant + version resolution for controllers
+ *      3. Added backward compatibility for blueprint YAMLs using "inputs:" instead of "input:"
  * ────────────────────────────────────────────────────────────────
  */
 
 import React, { useEffect, useState } from 'react'
-import { blueprintsContext } from '../../utils/contexts' // 1. Moved utils.ts to utils/contexts.ts
+import { blueprintsContext } from '../../utils/contexts'
 import yaml from 'yaml'
 import Input, { BlueprintInput } from './Input'
 import InputSection from './InputSection'
@@ -21,7 +23,7 @@ interface InputsProps {
   variant?: string
 }
 
-interface InputSection {
+interface BlueprintInputSection {
   name: string
   description?: string
   collapsed?: boolean
@@ -30,10 +32,14 @@ interface InputSection {
 
 interface BlueprintMetadata {
   blueprint: {
-    input?: Record<string, BlueprintInput | InputSection>
+    input?: Record<string, BlueprintInput | BlueprintInputSection>
+    inputs?: Record<string, BlueprintInput | BlueprintInputSection> // ← legacy support
   }
 }
 
+/**
+ * Finds the newest YYYY.MM.DD version folder for a controller variant
+ */
 function loadControllerLatestVersion(
   id: string,
   variant?: string,
@@ -44,33 +50,33 @@ function loadControllerLatestVersion(
     `^\\.\\/controllers\\/${id}\\/${variant}\\/(\\d{4}\\.\\d{2}\\.\\d{2})\\/${id}\\.ya?ml$`,
   )
 
-  const versionSet = new Set<string>()
+  const foundVersions = new Set<string>()
 
   blueprintsContext.keys().forEach((key: string) => {
     const match = key.match(yamlPattern)
     if (match && match[1]) {
-      versionSet.add(match[1])
+      foundVersions.add(match[1])
     }
   })
 
-  if (versionSet.size === 0) return null
+  if (foundVersions.size === 0) return null
 
-  return Array.from(versionSet).sort((a, b) => b.localeCompare(a))[0]
+  // Sort YYYY.MM.DD descending
+  return Array.from(foundVersions).sort((a, b) => b.localeCompare(a))[0]
 }
 
-const Inputs: React.FC<InputsProps> = ({ category, id }) => {
+const Inputs: React.FC<InputsProps> = ({ category, id, variant }) => {
   const [inputs, setInputs] = useState<
-    Record<string, BlueprintInput | InputSection>
+    Record<string, BlueprintInput | BlueprintInputSection>
   >({})
 
   useEffect(() => {
     try {
-      let path: string
+      let yamlPath: string
 
       if (category === 'controllers' && variant) {
-        // 1. Find the latest physical version for this variant
-        const latestVersion = loadControllerLatestVersion(id, variant)
-
+        // 🔍 Resolve newest physical version folder
+        const latestVersion = loadControllerLatestVersion(id, variant) // ← added logic
         if (!latestVersion) {
           console.error(
             `No versions found for controller ${id} variant ${variant}`,
@@ -79,15 +85,22 @@ const Inputs: React.FC<InputsProps> = ({ category, id }) => {
           return
         }
 
-        path = `./controllers/${id}/${variant}/${latestVersion}/${id}.yaml`
+        yamlPath = `./controllers/${id}/${variant}/${latestVersion}/${id}.yaml`
       } else {
-        // Non-controllers OR controllers without variant fallback
-        path = `./${category}/${id}/${id}.yaml`
+        yamlPath = `./${category}/${id}/${id}.yaml`
       }
 
-      const content = blueprintsContext(path)
-      const parsed = yaml.parse(content) as BlueprintMetadata
-      setInputs(parsed.blueprint.input || {})
+      const fileContent = blueprintsContext(yamlPath)
+      const parsed = yaml.parse(fileContent) as BlueprintMetadata
+
+      // 🔄 Normalize: allow old "inputs:" or new "input:"
+      const blueprintRoot = parsed.blueprint || {}
+      const normalizedInputs =
+        blueprintRoot.input ??
+        blueprintRoot.inputs ?? // ← legacy fallback
+        {}
+
+      setInputs(normalizedInputs)
     } catch (error) {
       console.error('Error fetching blueprint:', error)
       setInputs({})
