@@ -532,7 +532,7 @@ function BlueprintImportCard({
               style={styles.versionSelector}
             >
               <label htmlFor='version-select' style={styles.maintainersLabel}>
-                Download
+                Versions
               </label>
               <p style={{ margin: 0, color: 'var(--ifm-color-emphasis-600)' }}>
                 Loading versions…
