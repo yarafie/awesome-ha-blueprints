@@ -267,7 +267,7 @@ const DevicePage: React.FC<DevicePageProps> = ({ id }) => {
         </div>
 
         {/* Row 3 — Centered Table */}
-        <h2 style={{ textAlign: 'center' }}>Available Variants</h2>
+        <h2 style={{ textAlign: 'center' }}>Available Libraries</h2>
 
         {/* table wrapper EXACTLY like download_metrics.tsx-style centering */}
         <div
@@ -288,7 +288,7 @@ const DevicePage: React.FC<DevicePageProps> = ({ id }) => {
             >
               <thead>
                 <tr>
-                  <th style={{ padding: 10, textAlign: 'left' }}>Variant</th>
+                  <th style={{ padding: 10, textAlign: 'left' }}>Library</th>
                   <th style={{ padding: 10, textAlign: 'left' }}>
                     Integrations
                   </th>

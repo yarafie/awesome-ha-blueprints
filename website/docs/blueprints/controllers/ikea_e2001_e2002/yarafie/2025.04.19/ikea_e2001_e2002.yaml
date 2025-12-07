@@ -287,6 +287,7 @@ blueprint:
             boolean:
         button_right_double_press_exposed:
           name: Enable Right Arrow button double press
+          description: >-
             Choose whether or not to enable the virtual double press action for the button.
             Turn this on if you are providing an action for the double press action.
           default: false
