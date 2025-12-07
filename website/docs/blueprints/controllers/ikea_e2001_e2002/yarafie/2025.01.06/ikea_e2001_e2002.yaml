@@ -55,14 +55,14 @@ blueprint:
 
   homeassistant:
     min_version: 2024.10.0
-  source_url: https://raw.githubusercontent.com/yarafie/awesome-ha-blueprints/refs/heads/main/website/docs/blueprints/controllers/ikea_e2001_e2002/yarafie/2025.04.19/ikea_e2001_e2002.yaml
+  source_url: https://raw.githubusercontent.com/yarafie/awesome-ha-blueprints/refs/heads/main/website/docs/blueprints/controllers/ikea_e2001_e2002/yarafie/2025.01.06/ikea_e2001_e2002.yaml
   #
   # Define UI and default values
   input:
     # Device Selector
     remote_device:
       name: (Required) IKEA Styrbar Remote Control
-      description: Select IKEA STYRBAR Remote Control **Version 2025.04.19**
+      description: Select IKEA STYRBAR Remote Control **Version 2025.01.06**
       default: []
       selector:
         device:
@@ -80,7 +80,7 @@ blueprint:
     # Up/Down Buttons
     button_up_short:
       name: Up button - short press
-      description: Action to run when SHORT press on Up button **Version 2025.04.19**
+      description: Action to run when SHORT press on Up button **Version 2025.01.06**
       default: []
       selector:
         action: {}
