@@ -160,12 +160,14 @@ function loadBlueprintMaintainers(
     const parsed = yaml.parse(content) as {
       variables?: { ahb_maintainers?: string[] }
     }
+
     if (
       parsed?.variables?.ahb_maintainers &&
       Array.isArray(parsed.variables.ahb_maintainers)
     ) {
       return parsed.variables.ahb_maintainers
     }
+
     return []
   } catch {
     // If the file is not found or any error occurs, return empty array
@@ -186,14 +188,17 @@ function loadBlueprintVersions(
   try {
     const path = `./${category}/${id}/changelog.json`
     const parsed = changelogsContext(path) as unknown as ChangelogEntry[]
+
     if (!parsed || parsed.length === 0) {
       return null
     }
+
     // Extract all dates and sort them (newest first)
     const dates = parsed.map((entry) => entry.date)
     // Sort dates in descending order (newest first)
     // Dates are in "YYYY.MM.DD" format, so we can sort them as strings
     const sortedDates = [...dates].sort((a, b) => b.localeCompare(a))
+
     return {
       versions: sortedDates,
       latestVersion: sortedDates[0] || 'latest',
@@ -293,7 +298,9 @@ function BlueprintImportCard({
         setSelectedVersion('latest')
       }
     }
+
     setIsLoadingVersions(false)
+
     return () => {
       isMounted = false
     }
@@ -310,9 +317,12 @@ function BlueprintImportCard({
       variant,
       effectiveVersion,
     )
+
     if (!isMounted) return
+
     setMaintainers(maintainersList)
     setIsLoadingMaintainers(false)
+
     return () => {
       isMounted = false
     }
@@ -335,7 +345,6 @@ function BlueprintImportCard({
       .finally(() => {
         if (!isCancelled) setIsLoading(false)
       })
-
     return () => {
       isCancelled = true
     }
@@ -348,10 +357,11 @@ function BlueprintImportCard({
     isController && versions.length > 0 ? selectedVersion : 'latest'
   const variantParam = variant ? `&variant=${variant}` : ''
 
-  // Import button blueprint URL (unchanged behavior)
+  // Import button blueprint URL
   const blueprintUrl = `/awesome-ha-blueprints/blueprints/${category}/${id}?version=${versionParam}${variantParam}`
 
   // Prepare options for react-select
+  // Enabled will show a list of versions
   const versionOptions: VersionOption[] =
     isController && versions.length > 0
       ? versions.map((version, index) => ({
@@ -508,7 +518,6 @@ function BlueprintImportCard({
           ) : (
             <div className='col col--6 margin-bottom--md'></div>
           )}
-
           {/* Total Downloads */}
           <div
             className='col col--6 margin-bottom--md'
@@ -600,7 +609,6 @@ function BlueprintImportCard({
                 menuPosition='fixed'
               />
             </div>
-
             {/* Import Button */}
             <div className='col col--6 download-button-wrapper margin-bottom--md'>
               <Link to={blueprintUrl}>

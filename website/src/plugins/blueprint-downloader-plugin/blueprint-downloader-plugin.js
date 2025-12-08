@@ -208,8 +208,6 @@ export default function blueprintRoutesPlugin(context) {
 
         // Add download route for this blueprint
         addRoute({
-          // path: `/awesome-ha-blueprints/blueprints/${blueprint.category}/${blueprint.id}`,
-          // path: `/awesome-ha-blueprints/website/library/blueprints/${blueprint.category}/${blueprint.id}`,
           path: `/awesome-ha-blueprints/blueprints/${blueprint.category}/${blueprint.id}`,
           component:
             '../src/plugins/blueprint-downloader-plugin/download-blueprint.tsx',

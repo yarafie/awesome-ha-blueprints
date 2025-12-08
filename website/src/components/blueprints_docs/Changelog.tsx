@@ -4,18 +4,6 @@
  * Purpose:
  *   Renders a blueprint’s changelog from its changelog.json file.
  *
- *   - Loads changelog entries using changelogsContext().
- *   - Supports blueprint categories: controllers, hooks, automations.
- *   - For each entry, displays the date and its associated change list.
- *   - Highlights “breaking changes” visually.
- *   - Converts markdown (including emoji codes) into safe inline HTML.
- *   - Handles missing, empty, or malformed changelog files gracefully.
- *
- * Behavior:
- *   - State flow: Loading → Error → Empty → Rendered changelog.
- *   - Multi-item entries are expanded into nested bullet lists.
- *   - All links automatically open in a new browser tab.
- *
  * Changelog :):
  *   • Initial Version (@EPMatt)
  *   - Updated 2026.12.02 (@yarafie):
@@ -33,9 +21,6 @@ import { changelogsContext } from '../../utils/contexts' //1. Moved utils.ts to 
 // Import the full emoji map
 import { emojiMap } from '../../utils/emojiMap'
 
-// ─────────────────────────────────────────────
-// Types
-// ─────────────────────────────────────────────
 interface ChangelogChange {
   description: string
   breaking: boolean
@@ -58,9 +43,6 @@ type ChangelogState =
   | { status: 'empty' }
   | { status: 'ready'; entries: ChangelogEntry[] }
 
-// ─────────────────────────────────────────────
-// Inline styles
-// ─────────────────────────────────────────────
 const styles = {
   list: {
     listStyleType: 'disc',
@@ -131,9 +113,6 @@ const renderDescription = (description: string) => (
   <span dangerouslySetInnerHTML={{ __html: markdownToHtml(description) }} />
 )
 
-// ─────────────────────────────────────────────
-// Component
-// ─────────────────────────────────────────────
 const Changelog: React.FC<ChangelogProps> = ({ category, id, variant }) => {
   const [state, setState] = useState<ChangelogState>({ status: 'loading' })
 
@@ -186,7 +165,6 @@ const Changelog: React.FC<ChangelogProps> = ({ category, id, variant }) => {
     }
   }, [category, id, variant]) // 3. Added explicit variant support
 
-  // RENDER STATE
   if (state.status === 'loading') {
     return <p style={styles.inlineMessage}>Loading changelog…</p>
   }
@@ -205,7 +183,6 @@ const Changelog: React.FC<ChangelogProps> = ({ category, id, variant }) => {
     )
   }
 
-  // READY
   return (
     <>
       <ul style={styles.list}>

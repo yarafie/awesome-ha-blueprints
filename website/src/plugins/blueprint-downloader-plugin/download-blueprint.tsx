@@ -183,8 +183,8 @@ export default function DownloadBlueprint(props: {
     recordBlueprintDownload(
       record.category,
       record.id,
-      record.version,
       record.variant,
+      record.version,
     )
       .then((success) => {
         if (!success) {
@@ -215,8 +215,8 @@ export default function DownloadBlueprint(props: {
       <Head>
         <title>
           Download {category}/{id}
-          {effectiveVersion ? `/${effectiveVersion}` : ''}
           {effectiveVariant ? `/${effectiveVariant}` : ''}
+          {effectiveVersion ? `/${effectiveVersion}` : ''}
         </title>
       </Head>
 

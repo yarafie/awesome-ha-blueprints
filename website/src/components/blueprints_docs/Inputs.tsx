@@ -23,7 +23,7 @@ interface InputsProps {
   variant?: string
 }
 
-interface BlueprintInputSection {
+interface InputSection {
   name: string
   description?: string
   collapsed?: boolean
@@ -32,8 +32,8 @@ interface BlueprintInputSection {
 
 interface BlueprintMetadata {
   blueprint: {
-    input?: Record<string, BlueprintInput | BlueprintInputSection>
-    inputs?: Record<string, BlueprintInput | BlueprintInputSection> // ← legacy support
+    input?: Record<string, BlueprintInput | InputSection>
+    inputs?: Record<string, BlueprintInput | InputSection> // ← legacy support
   }
 }
 
@@ -84,7 +84,7 @@ function getControllerVersionFromUrl(): string | null {
 
 const Inputs: React.FC<InputsProps> = ({ category, id, variant }) => {
   const [inputs, setInputs] = useState<
-    Record<string, BlueprintInput | BlueprintInputSection>
+    Record<string, BlueprintInput | InputSection>
   >({})
 
   useEffect(() => {

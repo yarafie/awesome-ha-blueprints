@@ -6,7 +6,7 @@
  *   • Initial Version (@EPMatt)
  *   - Updated 2026.12.03 (@yarafie):
  *      1. Moved utils.ts to utils/contexts.ts
- *      2. Extract ID from folder structure: ./category/id/id.mdx
+ *      2. Extract ID from folder structure: ./{category}/{id}/......
  * ────────────────────────────────────────────────────────────────
  */
 
@@ -47,7 +47,7 @@ const BlueprintsList: React.FC<BlueprintsListProps> = ({ category }) => {
       const blueprintsData = blueprintKeys.map((key: string) => {
         // Extract ID from the path (remove .mdx extension and category prefix)
         // const id = key.replace(categoryPath, '').replace('.mdx', '')
-        // 2. Extract ID from folder structure: ./category/id/id.mdx
+        // 2. Extract ID from folder structure: ./{category}/{id}/......
         const id = key.split('/')[2]
 
         // Get the MDX module and extract frontmatter

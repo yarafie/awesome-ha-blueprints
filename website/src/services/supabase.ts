@@ -53,15 +53,15 @@ export const initializeSupabase = ({
  *
  * @param category The blueprint category
  * @param id The blueprint ID
- * @param version The blueprint version
  * @param variant The blueprint variant // Added variant support
+ * @param version The blueprint version
  * @returns Promise that resolves to the insertion result or null
  */
 export const recordBlueprintDownload = async (
   category: string,
   id: string,
-  version: string = 'latest',
   variant: string | null = null, // Added variant support
+  version: string = 'latest',
 ): Promise<boolean> => {
   if (!ensureClient()) {
     console.error('Supabase client not initialized')
@@ -75,8 +75,8 @@ export const recordBlueprintDownload = async (
         {
           blueprint_category: category,
           blueprint_id: id,
-          blueprint_version: version, // physical version (e.g., 2025.11.16)
           blueprint_variant: variant, // NEW FIELD: null for hooks/automation
+          blueprint_version: version, // physical version (e.g., 2025.11.16)
           download_date: new Date().toISOString(),
         },
       ])
@@ -124,12 +124,10 @@ export const getBlueprintDownloads = async (
         p_version: version, // NEW RPC PARAM
       },
     )
-
     if (error) {
       console.error('Error getting blueprint downloads via RPC:', error)
       return 0
     }
-
     return typeof data === 'number' ? data : 0
   } catch (error) {
     console.error('Exception getting blueprint downloads:', error)

@@ -86,7 +86,6 @@ const ControllersList: React.FC = () => {
         // deviceId is always the first segment without ".mdx"
         const deviceId = segments[0].replace('.mdx', '')
         const mdxModule = docsContext(key)
-
         const {
           title,
           description,
