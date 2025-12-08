@@ -1,5 +1,3 @@
-// website/src/components/blueprints/BlueprintImportCard.tsx
-
 /**
  * Component: BlueprintImportCard
  * ────────────────────────────────────────────────────────────────
@@ -355,10 +353,15 @@ function BlueprintImportCard({
   // - Others: "latest"
   const versionParam =
     isController && versions.length > 0 ? selectedVersion : 'latest'
-  const variantParam = variant ? `&variant=${variant}` : ''
+  const variantParam = variant ? `${variant}` : ''
 
   // Import button blueprint URL
-  const blueprintUrl = `/awesome-ha-blueprints/blueprints/${category}/${id}?version=${versionParam}${variantParam}`
+  // Non-Controllers
+  let blueprintUrl = `/awesome-ha-blueprints/blueprints/${category}/${id}`
+  // Controllers → keep version + variant parameters
+  if (isController) {
+    blueprintUrl = `/awesome-ha-blueprints/blueprints/${category}/${id}?variant=${variantParam}&version=${versionParam}`
+  }
 
   // Prepare options for react-select
   // Enabled will show a list of versions
@@ -562,9 +565,11 @@ function BlueprintImportCard({
               </label>
               <Select
                 inputId='version-select'
-                value={versionOptions.find(
-                  (option) => option.value === versionParam,
-                )}
+                value={
+                  versionOptions.find(
+                    (option) => option.value === versionParam,
+                  ) || (versionOptions.length > 0 ? versionOptions[0] : null)
+                }
                 onChange={(option) => {
                   if (!option) return
                   const newVersion = option.value

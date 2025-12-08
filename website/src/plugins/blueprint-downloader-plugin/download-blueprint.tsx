@@ -37,6 +37,7 @@ export default function DownloadBlueprint(props: {
     category: string
     id: string
     variant?: string | null
+    version?: string | null
     variantsById?: Record<string, string[]> // FIXED TYPING
   }
 }) {
@@ -63,14 +64,25 @@ export default function DownloadBlueprint(props: {
 
   // -------------------------------
   //  GET VERSION (default = latest)
+  //  Order:
+  //    1) ?version= query param
+  //    2) route.version (for /:version routes)
+  //    3) 'latest'
   // -------------------------------
   const getVersion = (): string => {
     if (typeof window !== 'undefined') {
       const urlParams = new URLSearchParams(window.location.search)
-      return urlParams.get('version') || 'latest'
+      const fromQuery = urlParams.get('version')
+      if (fromQuery && fromQuery.trim().length > 0) {
+        return fromQuery
+      }
+    }
+    if (props.route.version && props.route.version.trim().length > 0) {
+      return props.route.version
     }
     return 'latest'
   }
+
   const version = getVersion()
 
   // -------------------------------
