@@ -116,11 +116,6 @@ const config: Config = {
     footer: {
       links: [],
       copyright: `Awesome HA Blueprints is maintained by <a href='https://github.com/EPMatt'>Matteo Agnoletto</a>.<br/>This fork is  maintained by <a href='https://github.com/yarafie'>yarafie</a>.<br/>Licensed under the <a href='https://github.com/EPMatt/awesome-ha-blueprints/blob/main/LICENSE'>GPL-3.0 License</a>`,
-    },
-
-    footer: {
-      links: [],
-      copyright: `Awesome HA Blueprints is maintained by <a href='https://github.com/EPMatt'>Matteo Agnoletto</a>.<br/>This fork is  maintained by <a href='https://github.com/yarafie'>yarafie</a>.<br/>Licensed under the <a href='https://github.com/EPMatt/awesome-ha-blueprints/blob/main/LICENSE'>GPL-3.0 License</a>`,
       // Metrics Icon (bottom-right of footer)
       logo: {
         html: `
