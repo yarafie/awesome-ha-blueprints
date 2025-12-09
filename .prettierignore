@@ -12,6 +12,7 @@
 .env.production.local
 *.png
 *.pdf
+*.svg
 .gitignore
 .prettierignore
 

@@ -114,39 +114,33 @@ const config: Config = {
     },
 
     footer: {
-      links: [
-        {
-          title: '',
-          items: [
-            {
-              html: `
-                <a href="/awesome-ha-blueprints/download_metrics/"
-                   title="Blueprints Download Metrics"
-                   style="
-                     position: fixed;
-                     right: 22px;
-                     bottom: 22px;
-                     z-index: 9999;
-                     width: 38px;
-                     height: 38px;
-                     border-radius: 6px;
-                     background: var(--ifm-color-primary);
-                     color: white;
-                     display: flex;
-                     align-items: center;
-                     justify-content: center;
-                     text-decoration: none;
-                     font-size: 20px;
-                     box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-                     transition: all 0.2s ease;">
-                   📊
-                </a>
-              `,
-            },
-          ],
+      links: [],
+      logo: {
+        src: 'img/metrics.svg',
+        alt: 'Blueprint Metrics',
+        href: '/awesome-ha-blueprints/download_metrics/',
+        width: 38,
+        height: 38,
+        style: {
+          position: 'fixed',
+          right: '22px',
+          bottom: '22px',
+          zIndex: '9999',
+          borderRadius: '6px',
+          background: 'var(--ifm-color-primary)',
+          boxShadow: '0 4px 10px rgba(0,0,0,0.15)',
+          padding: '6px',
+          transition: 'all 0.2s ease',
         },
-      ],
-      copyright: `Awesome HA Blueprints is maintained by <a href='https://github.com/EPMatt'>Matteo Agnoletto</a>.<br/>This fork is maintained by <a href='https://github.com/yarafie'>yarafie</a>.<br/>Licensed under the <a href='https://github.com/EPMatt/awesome-ha-blueprints/blob/main/LICENSE'>GPL-3.0 License</a>`,
+      },
+      copyright: `Awesome HA Blueprints is maintained by 
+         <a href='https://github.com/EPMatt'>Matteo Agnoletto</a>.<br/>
+         This fork is maintained by 
+         <a href='https://github.com/yarafie'>yarafie</a>.<br/>
+         Licensed under the 
+         <a href='https://github.com/EPMatt/awesome-ha-blueprints/blob/main/LICENSE'>
+         GPL-3.0 License
+         </a>`,
     },
 
     prism: {
