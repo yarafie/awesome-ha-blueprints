@@ -122,22 +122,22 @@ const config: Config = {
         width: 38,
         height: 38,
         style: {
-          position: 'fixed',
-          right: '22px',
-          bottom: '22px',
-          zIndex: '9999',
           borderRadius: '6px',
           background: 'var(--ifm-color-primary)',
           boxShadow: '0 4px 10px rgba(0,0,0,0.15)',
           padding: '6px',
+          cursor: 'pointer',
           transition: 'all 0.2s ease',
+          // Align icon inside footer bar
+          marginLeft: 'auto', // pushes icon to the right
+          display: 'block',
         },
       },
-      copyright: `Awesome HA Blueprints is maintained by 
+      copyright: `Awesome HA Blueprints is maintained by
          <a href='https://github.com/EPMatt'>Matteo Agnoletto</a>.<br/>
-         This fork is maintained by 
+         This fork is maintained by
          <a href='https://github.com/yarafie'>yarafie</a>.<br/>
-         Licensed under the 
+         Licensed under the
          <a href='https://github.com/EPMatt/awesome-ha-blueprints/blob/main/LICENSE'>
          GPL-3.0 License
          </a>`,
