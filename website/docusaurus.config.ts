@@ -139,7 +139,7 @@ const config: Config = {
           /* Horizontal alignment (RIGHT) */
           marginLeft: 'auto',
           /* Vertical alignment (BOTTOM) */
-          marginTop: '100px', // adjust this value to move icon downward
+          marginBottom: '40px', // adjust this value to move icon downward
           display: 'block',
         },
       },
