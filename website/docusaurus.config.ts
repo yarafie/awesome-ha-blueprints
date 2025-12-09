@@ -140,7 +140,7 @@ const config: Config = {
           /* Anchor to lower right corner of the footer with minimal bottom offset */
           position: 'absolute',
           right: '20px',
-          // bottom: '5px', // <-- Reduced bottom offset
+          bottom: '1px', // <-- Reduced bottom offset
           zIndex: 100,
         },
       },
