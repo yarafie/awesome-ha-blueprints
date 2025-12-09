@@ -136,10 +136,11 @@ const config: Config = {
           padding: '6px',
           cursor: 'pointer',
           transition: 'all 0.2s ease',
-          /* Anchor to lower right corner of the footer */
+
+          /* Anchor to lower right corner of the footer with minimal bottom offset */
           position: 'absolute',
           right: '20px',
-          bottom: '20px',
+          bottom: '5px', // <-- Reduced bottom offset
           zIndex: 100,
         },
       },
