@@ -1,3 +1,22 @@
+/**
+ * Page: DownloadMetricsPage
+ * ────────────────────────────────────────────────────────────────
+ * Description:
+ *   Comprehensive metrics dashboard for blueprint downloads:
+ *     • Total downloads
+ *     • Category distribution
+ *     • Top blueprints (sortable table + bar chart)
+ *     • Daily downloads (N-day range)
+ *     • Theme-aware UI with light/dark support
+ *
+ * Changelog:
+ *   - Initial Version 2025.12.03 (@yarafie)
+ *   - Updated: 2025.12.09 (@yarafie)
+ *       • Improved sorting, filtering, theming, and error handling
+ *       • Unified chart styling + tooltip system
+ * ────────────────────────────────────────────────────────────────
+ */
+
 import React, { useEffect, useState, useCallback, useMemo } from 'react'
 import Layout from '@theme/Layout'
 import {
@@ -15,7 +34,6 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
-
 // D3 Imports for Professional Coloring
 import { scaleOrdinal } from 'd3-scale'
 import { schemeCategory10 } from 'd3-scale-chromatic'
@@ -27,13 +45,12 @@ type TopBlueprintMetric = {
   blueprint_category: string
   blueprint_id: string
   total: string
-  last_downloaded?: string // Date of the most recent download (mocked for now)
+  last_downloaded?: string // Date of the most recent download
 }
 type DailyMetric = {
   day: string // ISO date string from RPC
   total: string
 }
-
 type ChartPoint = {
   label: string // e.g. "Nov 18"
   total: number
@@ -60,8 +77,8 @@ type TopBlueprintBarData = {
   Downloads: number // Use 'Downloads' as the data key for the Bar
 }
 
-// --- NEW TYPE FOR TABLE SORTING ---
-type SortKey = 'id' | 'category' | 'total' | 'lastDownloaded' // Added new sort key
+// --- TYPE FOR TABLE SORTING ---
+type SortKey = 'id' | 'category' | 'total' | 'lastDownloaded'
 type SortDirection = 'asc' | 'desc'
 
 const DownloadMetricsPage: React.FC = () => {
@@ -72,17 +89,14 @@ const DownloadMetricsPage: React.FC = () => {
     topBlueprints: [],
     daily: [],
   })
-
   const [isInitialLoading, setIsInitialLoading] = useState(true)
   const [isDailyLoading, setIsDailyLoading] = useState(true)
   const [error, setError] = useState<string | undefined>(undefined)
   const [selectedDays, setSelectedDays] = useState(15)
   const [topLimit, setTopLimit] = useState<number>(10)
   const [isDark, setIsDark] = useState(false)
-
   // Tracks the currently selected category filter from the Pie Chart
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
-
   // Tracks the current sorting for the data table
   const [sortConfig, setSortConfig] = useState<{
     key: SortKey
@@ -121,12 +135,12 @@ const DownloadMetricsPage: React.FC = () => {
 
   // --- HELPER FUNCTIONS ---
 
-  // UTC-safe date formatter
+  // UTC-safe date formatter for API keys
   const formatApiDateUTC = (date: Date): string =>
     date.toISOString().substring(0, 10)
+
   const formatBigNumber = (num: number): string => num.toLocaleString()
 
-  // New Date Formatter for the table
   // UTC-safe date formatter for table display
   const formatDate = (isoString: string | undefined): string => {
     if (!isoString) return 'N/A'
@@ -151,7 +165,6 @@ const DownloadMetricsPage: React.FC = () => {
     const dailyMap = new Map(
       dailyData.map((item) => [item.day, Number(item.total)]),
     )
-
     const result: ChartPoint[] = []
 
     // Today's UTC midnight
@@ -163,10 +176,8 @@ const DownloadMetricsPage: React.FC = () => {
     for (let i = days - 1; i >= 0; i--) {
       const d = new Date(todayUTC)
       d.setUTCDate(todayUTC.getUTCDate() - i)
-
       const apiDate = formatApiDateUTC(d)
       const total = dailyMap.get(apiDate) || 0
-
       result.push({
         label: d.toLocaleDateString(undefined, {
           month: 'short',
@@ -176,11 +187,10 @@ const DownloadMetricsPage: React.FC = () => {
         total,
       })
     }
-
     return result
   }
 
-  // Memoized fetch helper
+  // Memoized fetch helper with retry and backoff for 429
   const fetchWithRetry = useCallback(
     async (url: string, options: RequestInit, retries = 3) => {
       for (let i = 0; i < retries; i++) {
@@ -214,7 +224,9 @@ const DownloadMetricsPage: React.FC = () => {
       const theme = document.documentElement.getAttribute('data-theme')
       setIsDark(theme === 'dark')
     }
+
     checkDarkMode()
+
     const observer = new MutationObserver((mutations) => {
       mutations.forEach((mutation) => {
         if (
@@ -225,10 +237,12 @@ const DownloadMetricsPage: React.FC = () => {
         }
       })
     })
+
     observer.observe(document.documentElement, {
       attributes: true,
       attributeFilter: ['data-theme'],
     })
+
     return () => observer.disconnect()
   }, [])
 
@@ -236,6 +250,7 @@ const DownloadMetricsPage: React.FC = () => {
   useEffect(() => {
     const supabaseUrl = (window as any)?.env?.SUPABASE_URL
     const supabaseAnonKey = (window as any)?.env?.SUPABASE_ANON_KEY
+
     const headers = {
       'Content-Type': 'application/json',
       apikey: supabaseAnonKey,
@@ -333,7 +348,7 @@ const DownloadMetricsPage: React.FC = () => {
 
         setMetricsData((prev) => ({
           ...prev,
-          totalDownloads: totalDownloads,
+          totalDownloads,
           byCategory: Array.isArray(catJson) ? catJson : [],
           // NOTE: Ensure 'get_top_blueprints' RPC returns 'last_downloaded'
           topBlueprints: Array.isArray(topJson) ? topJson : [],
@@ -359,6 +374,7 @@ const DownloadMetricsPage: React.FC = () => {
 
       const supabaseUrl = (window as any)?.env?.SUPABASE_URL
       const supabaseAnonKey = (window as any)?.env?.SUPABASE_ANON_KEY
+
       const headers = {
         'Content-Type': 'application/json',
         apikey: supabaseAnonKey,
@@ -382,11 +398,11 @@ const DownloadMetricsPage: React.FC = () => {
           },
           { day: formatApiDateUTC(new Date()), total: '22' },
         ]
+
         const dailyParsed: ChartPoint[] = fillMissingDailyData(
           mockDaily,
           selectedDays,
         )
-
         setMetricsData((prev) => ({ ...prev, daily: dailyParsed }))
         setIsDailyLoading(false)
         return
@@ -402,13 +418,11 @@ const DownloadMetricsPage: React.FC = () => {
               body: JSON.stringify({ p_days: selectedDays }),
             },
           )
-
           const dailyJson: DailyMetric[] = await dailyRes.json()
           const dailyParsed: ChartPoint[] = fillMissingDailyData(
             Array.isArray(dailyJson) ? dailyJson : [],
             selectedDays,
           )
-
           setMetricsData((prev) => ({ ...prev, daily: dailyParsed }))
         } catch (err: any) {
           setError(
@@ -436,7 +450,6 @@ const DownloadMetricsPage: React.FC = () => {
       totalNum: Number(item.total),
     }))
 
-    // Sort in place (we cloned it above)
     sortableItems.sort((a, b) => {
       // Map 'total' sort key to 'totalNum' property for numeric sorting
       const key = sortConfig.key === 'total' ? 'totalNum' : sortConfig.key
@@ -488,7 +501,77 @@ const DownloadMetricsPage: React.FC = () => {
       Downloads: Number(bp.total),
     }))
 
-  // --- UI Components and Styles ---
+  // --- THEME TOKEN MAP ---
+  const THEME = {
+    bg: isDark ? '#1b1b1d' : '#f9fafb',
+    cardBg: isDark ? '#242526' : '#ffffff',
+    textPrimary: isDark ? '#e5e7eb' : '#1f2937',
+    textSecondary: isDark ? '#9ca3af' : '#6b7280',
+    gridLine: isDark ? '#444' : '#e5e7eb',
+    tooltipBg: isDark ? '#242526' : '#ffffff',
+    tooltipBorder: isDark ? '#444' : '#ccc',
+    tooltipText: isDark ? '#e5e7eb' : '#333',
+    accentColor: '#4f46e5',
+  }
+
+  // --- REUSABLE UI STYLES ---
+  const gridStyleKPIs: React.CSSProperties = {
+    display: 'grid',
+    gridTemplateColumns: '1fr 1fr',
+    gap: '16px',
+    marginBottom: '32px',
+    width: '100%',
+  }
+
+  const gridStyle2Col: React.CSSProperties = {
+    display: 'grid',
+    gridTemplateColumns: '1fr 1fr',
+    gap: '24px',
+    marginBottom: '32px',
+    width: '100%',
+  }
+
+  const mediaQueryMatch =
+    typeof window !== 'undefined' &&
+    window.matchMedia('(max-width: 768px)').matches
+
+  if (mediaQueryMatch) {
+    ;(gridStyleKPIs as any).gridTemplateColumns = '1fr'
+    ;(gridStyle2Col as any).gridTemplateColumns = '1fr'
+  }
+
+  const cardStyle: React.CSSProperties = {
+    backgroundColor: THEME.cardBg,
+    borderRadius: '8px',
+    boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+    overflow: 'hidden',
+    color: THEME.textPrimary,
+    minWidth: '0',
+    border: isDark ? '1px solid #333' : 'none',
+  }
+
+  const cardHeaderStyle = (bgColor: string): React.CSSProperties => ({
+    backgroundColor: bgColor,
+    color: 'white',
+    padding: '12px',
+    fontWeight: 'bold',
+    fontSize: '14px',
+    textTransform: 'uppercase',
+    letterSpacing: '0.05em',
+  })
+
+  const chartHeaderStyle: React.CSSProperties = {
+    padding: '16px',
+    borderBottom: `1px solid ${THEME.gridLine}`,
+    margin: 0,
+    fontSize: '1.25rem',
+    color: THEME.textPrimary,
+    fontWeight: 'bold',
+  }
+
+  // --- SMALL COMPONENTS ---
+
+  // Tooltip for charts
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       // Find the value based on the BarChart's dataKey ('Downloads') or AreaChart's dataKey ('total')
@@ -535,71 +618,6 @@ const DownloadMetricsPage: React.FC = () => {
     )
   }
 
-  const THEME = {
-    bg: isDark ? '#1b1b1d' : '#f9fafb',
-    cardBg: isDark ? '#242526' : '#ffffff',
-    textPrimary: isDark ? '#e5e7eb' : '#1f2937',
-    textSecondary: isDark ? '#9ca3af' : '#6b7280',
-    gridLine: isDark ? '#444' : '#e5e7eb',
-    tooltipBg: isDark ? '#242526' : '#ffffff',
-    tooltipBorder: isDark ? '#444' : '#ccc',
-    tooltipText: isDark ? '#e5e7eb' : '#333',
-    accentColor: '#4f46e5',
-  }
-
-  const gridStyleKPIs: React.CSSProperties = {
-    display: 'grid',
-    gridTemplateColumns: '1fr 1fr',
-    gap: '16px',
-    marginBottom: '32px',
-    width: '100%',
-  }
-
-  const gridStyle2Col: React.CSSProperties = {
-    display: 'grid',
-    gridTemplateColumns: '1fr 1fr',
-    gap: '24px',
-    marginBottom: '32px',
-    width: '100%',
-  }
-
-  const mediaQueryMatch =
-    typeof window !== 'undefined' &&
-    window.matchMedia('(max-width: 768px)').matches
-  if (mediaQueryMatch) {
-    ;(gridStyleKPIs as any).gridTemplateColumns = '1fr'
-    ;(gridStyle2Col as any).gridTemplateColumns = '1fr'
-  }
-
-  const cardStyle: React.CSSProperties = {
-    backgroundColor: THEME.cardBg,
-    borderRadius: '8px',
-    boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-    overflow: 'hidden',
-    color: THEME.textPrimary,
-    minWidth: '0',
-    border: isDark ? '1px solid #333' : 'none',
-  }
-
-  const cardHeaderStyle = (bgColor: string): React.CSSProperties => ({
-    backgroundColor: bgColor,
-    color: 'white',
-    padding: '12px',
-    fontWeight: 'bold',
-    fontSize: '14px',
-    textTransform: 'uppercase',
-    letterSpacing: '0.05em',
-  })
-
-  const chartHeaderStyle: React.CSSProperties = {
-    padding: '16px',
-    borderBottom: `1px solid ${THEME.gridLine}`,
-    margin: 0,
-    fontSize: '1.25rem',
-    color: THEME.textPrimary,
-    fontWeight: 'bold',
-  }
-
   // UI Component for Time Range Selection
   const TimeRangeSelector: React.FC<{
     current: number
@@ -607,6 +625,7 @@ const DownloadMetricsPage: React.FC = () => {
     isDailyLoading: boolean
   }> = ({ current, onSelect, isDailyLoading }) => {
     const ranges = [1, 7, 15, 30, 90]
+
     const activeStyle = (days: number): React.CSSProperties => ({
       padding: '6px 12px',
       margin: '0 4px',
@@ -686,7 +705,6 @@ const DownloadMetricsPage: React.FC = () => {
         >
           Table Data View (Top Results, limited by selection)
         </h3>
-
         <div style={{ overflowX: 'auto' }}>
           <table
             style={{
@@ -707,7 +725,6 @@ const DownloadMetricsPage: React.FC = () => {
               <col style={{ width: '1%', whiteSpace: 'nowrap' }} />{' '}
               {/* Column 4 – fixed */}
             </colgroup>
-
             <thead>
               <tr style={{ backgroundColor: isDark ? '#333' : '#f3f4f6' }}>
                 <th
@@ -763,11 +780,10 @@ const DownloadMetricsPage: React.FC = () => {
                 </th>
               </tr>
             </thead>
-
             <tbody>
               {data.map((item, index) => (
                 <tr
-                  key={item.blueprint_id}
+                  key={`${item.blueprint_category}:${item.blueprint_id}`}
                   style={{
                     borderBottom: `1px solid ${THEME.gridLine}`,
                     backgroundColor:
@@ -789,7 +805,6 @@ const DownloadMetricsPage: React.FC = () => {
                   >
                     {item.blueprint_id}
                   </td>
-
                   {/* Column 2 */}
                   <td
                     style={{
@@ -801,7 +816,6 @@ const DownloadMetricsPage: React.FC = () => {
                   >
                     {item.blueprint_category}
                   </td>
-
                   {/* Column 3 */}
                   <td
                     style={{
@@ -814,7 +828,6 @@ const DownloadMetricsPage: React.FC = () => {
                   >
                     {formatBigNumber(Number(item.total))}
                   </td>
-
                   {/* Column 4 */}
                   <td
                     style={{
@@ -831,7 +844,6 @@ const DownloadMetricsPage: React.FC = () => {
             </tbody>
           </table>
         </div>
-
         {data.length === 0 && (
           <p
             style={{
@@ -911,6 +923,7 @@ const DownloadMetricsPage: React.FC = () => {
                   </p>
                 </div>
               </div>
+
               {/* 1b. Tracked Blueprints */}
               <div style={cardStyle}>
                 <div style={cardHeaderStyle('#9333ea')}>Tracked Blueprints</div>
@@ -1062,7 +1075,6 @@ const DownloadMetricsPage: React.FC = () => {
                                 ? 1
                                 : 0.4
                             }
-                            // Subtle hover effect (using inline listeners is required for functional components in this context)
                             onMouseOver={(e) =>
                               (e.currentTarget.style.opacity = '1')
                             }
@@ -1262,4 +1274,5 @@ const DownloadMetricsPage: React.FC = () => {
     </Layout>
   )
 }
+
 export default DownloadMetricsPage
