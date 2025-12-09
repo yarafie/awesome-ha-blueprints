@@ -130,6 +130,7 @@ const config: Config = {
           transition: 'all 0.2s ease',
           // Align icon inside footer bar
           marginLeft: 'auto', // pushes icon to the right
+          alignSelf: 'flex-end', // pushes icon to the bottom
           display: 'block',
         },
       },
