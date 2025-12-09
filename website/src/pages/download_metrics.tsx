@@ -8,16 +8,19 @@
  *     • Top blueprints (sortable table + bar chart)
  *     • Daily downloads (N-day range)
  *     • Theme-aware UI with light/dark support
- *     • Variant-aware drill-down for controller blueprints
+ *     • Variant-aware drill-down (controllers only)
  *
  * Changelog:
  *   - Initial Version 2025.12.03 (@yarafie)
  *   - Updated: 2025.12.09 (@yarafie)
  *       • Improved sorting, filtering, theming, and error handling
  *       • Unified chart styling + tooltip system
- *   - Updated: 2025.12.09 (@yarafie + ChatGPT)
- *       • Variant-aware analytics for controller blueprints
- *       • "All Variants" default + controller-only variant selector
+ *   - Updated: 2025.12.09 (@yarafie / ChatGPT)
+ *       • Switched to universal RPCs:
+ *           - get_download_aggregates()
+ *           - get_daily_downloads_metrics(p_days)
+ *       • Added variant-aware analytics + controller-only variant selector
+ *       • Daily metrics now honor category + variant filters (client-side)
  * ────────────────────────────────────────────────────────────────
  */
 import React, { useEffect, useState, useCallback, useMemo } from 'react'
@@ -37,29 +40,35 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
+// D3 Imports for professional coloring
 import { scaleOrdinal } from 'd3-scale'
 import { schemeCategory10 } from 'd3-scale-chromatic'
 
-// --- Type Definitions based on SQL RPC Functions ---
-type TotalMetric = { total: string }
-type CategoryMetric = { blueprint_category: string; total: string }
+// --- Type Definitions based on RPC payloads ---
+type TotalMetric = { total: string | number }
+
+type CategoryMetric = {
+  blueprint_category: string
+  total: string
+}
 
 type TopBlueprintMetric = {
   blueprint_category: string
   blueprint_id: string
+  blueprint_variant: string | null
   total: string
   last_downloaded?: string
-  // New: variant (optional so existing RPCs remain compatible)
-  blueprint_variant?: string
 }
 
 type DailyMetric = {
-  day: string
+  day: string // ISO date (YYYY-MM-DD)
+  blueprint_category: string | null
+  blueprint_variant: string | null
   total: string
 }
 
 type ChartPoint = {
-  label: string
+  label: string // e.g. "Nov 18"
   total: number
 }
 
@@ -69,11 +78,21 @@ type ChartData = ChartPoint & {
   category?: string
 }
 
+interface AggregatesResponse {
+  total?: number | string
+  by_category?: CategoryMetric[]
+  top_blueprints?: TopBlueprintMetric[]
+}
+
+interface DailyResponse {
+  daily?: DailyMetric[]
+}
+
 interface MetricsData {
   totalDownloads: number
   byCategory: CategoryMetric[]
   topBlueprints: TopBlueprintMetric[]
-  daily: ChartPoint[]
+  rawDaily: DailyMetric[] // full daily set (all categories/variants); filtered client-side
 }
 
 type TopBlueprintBarData = {
@@ -82,16 +101,17 @@ type TopBlueprintBarData = {
   Downloads: number
 }
 
+// --- Sorting types ---
 type SortKey = 'id' | 'category' | 'total' | 'lastDownloaded'
 type SortDirection = 'asc' | 'desc'
 
 const DownloadMetricsPage: React.FC = () => {
-  // --- STATE MANAGEMENT ---
+  // --- STATE ---
   const [metricsData, setMetricsData] = useState<MetricsData>({
     totalDownloads: 0,
     byCategory: [],
     topBlueprints: [],
-    daily: [],
+    rawDaily: [],
   })
   const [isInitialLoading, setIsInitialLoading] = useState(true)
   const [isDailyLoading, setIsDailyLoading] = useState(true)
@@ -100,11 +120,10 @@ const DownloadMetricsPage: React.FC = () => {
   const [topLimit, setTopLimit] = useState<number>(10)
   const [isDark, setIsDark] = useState(false)
 
-  // Category filter (from Pie chart)
+  // Category filter (from Pie click)
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
-
-  // Variant filter (controllers only) — 'all' = All Variants
-  const [activeVariant, setActiveVariant] = useState<string>('all')
+  // Variant filter (controllers only) – "all" means "All Variants"
+  const [selectedVariant, setSelectedVariant] = useState<string>('all')
 
   // Table sorting
   const [sortConfig, setSortConfig] = useState<{
@@ -115,33 +134,36 @@ const DownloadMetricsPage: React.FC = () => {
     direction: 'desc',
   })
 
-  const { totalDownloads, byCategory, topBlueprints, daily } = metricsData
-  const isControllerSelected = selectedCategory === 'controllers'
+  const { totalDownloads, byCategory, topBlueprints, rawDaily } = metricsData
   const d3ColorScale = scaleOrdinal(schemeCategory10)
+
+  const isControllersCategory = (category: string | null) =>
+    category === 'controllers'
 
   // --- HANDLERS ---
   const handleCategoryClick = (data: ChartData) => {
-    const category = data.category
-    setSelectedCategory((prev) => {
-      const next = prev === category ? null : category
-      // Reset variant filter whenever we leave the controllers category
-      if (next !== 'controllers') setActiveVariant('all')
-      return next
-    })
+    const category = data.category || null
+    setSelectedCategory((prev) => (prev === category ? null : category))
   }
 
   const handleClearFilter = () => {
     setSelectedCategory(null)
-    setActiveVariant('all')
+    setSelectedVariant('all')
   }
 
   const requestSort = (key: SortKey) => {
     let direction: SortDirection = 'desc'
-    if (sortConfig.key === key && sortConfig.direction === 'desc') {
+    if (sortConfig.key === key && sortConfig.direction === 'desc')
       direction = 'asc'
-    }
     setSortConfig({ key, direction })
   }
+
+  // If we leave controllers category, reset variant to "all"
+  useEffect(() => {
+    if (!isControllersCategory(selectedCategory) && selectedVariant !== 'all') {
+      setSelectedVariant('all')
+    }
+  }, [selectedCategory, selectedVariant])
 
   // --- HELPERS ---
   const formatApiDateUTC = (date: Date): string =>
@@ -164,17 +186,23 @@ const DownloadMetricsPage: React.FC = () => {
   }
 
   const fillMissingDailyData = (
-    dailyData: DailyMetric[],
+    dailyData: { day: string; total: string | number }[],
     days: number,
   ): ChartPoint[] => {
-    const dailyMap = new Map(
-      dailyData.map((item) => [item.day, Number(item.total)]),
+    const dailyMap = new Map<string, number>()
+    dailyData.forEach((item) =>
+      dailyMap.set(
+        item.day,
+        (dailyMap.get(item.day) || 0) + Number(item.total),
+      ),
     )
+
     const result: ChartPoint[] = []
     const now = new Date()
     const todayUTC = new Date(
       Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()),
     )
+
     for (let i = days - 1; i >= 0; i--) {
       const d = new Date(todayUTC)
       d.setUTCDate(todayUTC.getUTCDate() - i)
@@ -192,27 +220,27 @@ const DownloadMetricsPage: React.FC = () => {
     return result
   }
 
+  // Fetch helper with retry for 429
   const fetchWithRetry = useCallback(
     async (url: string, options: RequestInit, retries = 3) => {
       for (let i = 0; i < retries; i++) {
         try {
           const response = await fetch(url, options)
-          if (response.ok) {
-            return response
-          } else if (response.status === 429 && i < retries - 1) {
+          if (response.ok) return response
+          if (response.status === 429 && i < retries - 1) {
             const delay = Math.pow(2, i) * 1000 + Math.random() * 1000
             await new Promise((resolve) => setTimeout(resolve, delay))
             continue
-          } else {
-            const text = await response.text()
-            throw new Error(
-              `HTTP error! Status: ${
-                response.status
-              }. Response: ${text.substring(0, 100)}...`,
-            )
           }
-        } catch (error: any) {
-          if (i === retries - 1) throw error
+          const text = await response.text()
+          throw new Error(
+            `HTTP error! Status: ${response.status}. Response: ${text.substring(
+              0,
+              100,
+            )}...`,
+          )
+        } catch (err: any) {
+          if (i === retries - 1) throw err
         }
       }
     },
@@ -227,14 +255,14 @@ const DownloadMetricsPage: React.FC = () => {
     }
     checkDarkMode()
     const observer = new MutationObserver((mutations) => {
-      mutations.forEach((mutation) => {
+      for (const mutation of mutations) {
         if (
           mutation.type === 'attributes' &&
           mutation.attributeName === 'data-theme'
         ) {
           checkDarkMode()
         }
-      })
+      }
     })
     observer.observe(document.documentElement, {
       attributes: true,
@@ -243,7 +271,7 @@ const DownloadMetricsPage: React.FC = () => {
     return () => observer.disconnect()
   }, [])
 
-  // --- EFFECT 1: STATIC METRICS (total/byCategory/top blueprints) ---
+  // --- EFFECT 1: STATIC METRICS (Aggregates) ---
   useEffect(() => {
     const supabaseUrl = (window as any)?.env?.SUPABASE_URL
     const supabaseAnonKey = (window as any)?.env?.SUPABASE_ANON_KEY
@@ -254,7 +282,7 @@ const DownloadMetricsPage: React.FC = () => {
     }
 
     if (!supabaseUrl || !supabaseAnonKey) {
-      // MOCK path (unchanged, now with variants)
+      // Mock aggregates
       setMetricsData((prev) => ({
         ...prev,
         totalDownloads: 1234567,
@@ -273,14 +301,14 @@ const DownloadMetricsPage: React.FC = () => {
           },
           {
             blueprint_category: 'controllers',
-            blueprint_id: 'ikea_e1743',
+            blueprint_id: 'ikea_e2001_e2002',
             blueprint_variant: 'yarafie',
-            total: '7000',
-            last_downloaded: '2025-11-21T10:30:00Z',
+            total: '8000',
+            last_downloaded: '2025-11-20T10:30:00Z',
           },
           {
             blueprint_category: 'hooks',
-            blueprint_id: 'light_control',
+            blueprint_id: 'light-hook',
             blueprint_variant: 'EPMatt',
             total: '5000',
             last_downloaded: '2025-11-21T10:30:00Z',
@@ -299,49 +327,28 @@ const DownloadMetricsPage: React.FC = () => {
       return
     }
 
-    async function fetchStaticMetrics() {
+    async function fetchAggregates() {
       try {
-        const [totalRes, catRes, topRes] = await Promise.all([
-          fetchWithRetry(`${supabaseUrl}/rest/v1/rpc/get_total_downloads`, {
+        const res = await fetchWithRetry(
+          `${supabaseUrl}/rest/v1/rpc/get_download_aggregates`,
+          {
             method: 'POST',
             headers,
             body: JSON.stringify({}),
-          }),
-          fetchWithRetry(
-            `${supabaseUrl}/rest/v1/rpc/get_downloads_by_category`,
-            {
-              method: 'POST',
-              headers,
-              body: JSON.stringify({}),
-            },
-          ),
-          // New RPC: variant-aware top blueprints
-          fetchWithRetry(
-            `${supabaseUrl}/rest/v1/rpc/get_top_blueprints_with_variant`,
-            {
-              method: 'POST',
-              headers,
-              body: JSON.stringify({ p_limit: 500 }),
-            },
-          ),
-        ])
-
-        const totalJson: TotalMetric[] | number = await totalRes.json()
-        const catJson: CategoryMetric[] = await catRes.json()
-        const topJson: TopBlueprintMetric[] = await topRes.json()
-
-        let totalDownloads = 0
-        if (Array.isArray(totalJson) && totalJson.length > 0) {
-          totalDownloads = Number(totalJson[0].total)
-        } else if (typeof totalJson === 'number') {
-          totalDownloads = totalJson
-        }
+          },
+        )
+        const json: AggregatesResponse = await res.json()
+        const totalDownloads = Number(
+          (json.total as number | string | undefined) ?? 0,
+        )
 
         setMetricsData((prev) => ({
           ...prev,
           totalDownloads,
-          byCategory: Array.isArray(catJson) ? catJson : [],
-          topBlueprints: Array.isArray(topJson) ? topJson : [],
+          byCategory: Array.isArray(json.by_category) ? json.by_category : [],
+          topBlueprints: Array.isArray(json.top_blueprints)
+            ? json.top_blueprints
+            : [],
         }))
         setError(undefined)
       } catch (err: any) {
@@ -353,10 +360,10 @@ const DownloadMetricsPage: React.FC = () => {
       }
     }
 
-    fetchStaticMetrics()
+    fetchAggregates()
   }, [fetchWithRetry])
 
-  // --- EFFECT 2: DAILY METRICS (global, all variants) ---
+  // --- EFFECT 2: DAILY METRICS (Raw) ---
   useEffect(() => {
     if (!isInitialLoading) {
       setIsDailyLoading(true)
@@ -374,21 +381,26 @@ const DownloadMetricsPage: React.FC = () => {
             day: formatApiDateUTC(
               new Date(Date.now() - 10 * 24 * 60 * 60 * 1000),
             ),
+            blueprint_category: 'controllers',
+            blueprint_variant: 'EPMatt',
             total: '10',
           },
           {
             day: formatApiDateUTC(
               new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
             ),
+            blueprint_category: 'controllers',
+            blueprint_variant: 'yarafie',
             total: '20',
           },
-          { day: formatApiDateUTC(new Date()), total: '22' },
+          {
+            day: formatApiDateUTC(new Date()),
+            blueprint_category: 'hooks',
+            blueprint_variant: 'EPMatt',
+            total: '22',
+          },
         ]
-        const dailyParsed: ChartPoint[] = fillMissingDailyData(
-          mockDaily,
-          selectedDays,
-        )
-        setMetricsData((prev) => ({ ...prev, daily: dailyParsed }))
+        setMetricsData((prev) => ({ ...prev, rawDaily: mockDaily }))
         setIsDailyLoading(false)
         return
       }
@@ -396,19 +408,18 @@ const DownloadMetricsPage: React.FC = () => {
       async function fetchDailyMetrics() {
         try {
           const dailyRes = await fetchWithRetry(
-            `${supabaseUrl}/rest/v1/rpc/get_daily_downloads`,
+            `${supabaseUrl}/rest/v1/rpc/get_daily_downloads_metrics`,
             {
               method: 'POST',
               headers,
               body: JSON.stringify({ p_days: selectedDays }),
             },
           )
-          const dailyJson: DailyMetric[] = await dailyRes.json()
-          const dailyParsed: ChartPoint[] = fillMissingDailyData(
-            Array.isArray(dailyJson) ? dailyJson : [],
-            selectedDays,
-          )
-          setMetricsData((prev) => ({ ...prev, daily: dailyParsed }))
+          const dailyJson: DailyResponse = await dailyRes.json()
+          const dailyArray: DailyMetric[] = Array.isArray(dailyJson.daily)
+            ? dailyJson.daily
+            : []
+          setMetricsData((prev) => ({ ...prev, rawDaily: dailyArray }))
         } catch (err: any) {
           setError(
             `Failed to load daily metrics: ${err.message || 'Unknown error.'}`,
@@ -422,35 +433,37 @@ const DownloadMetricsPage: React.FC = () => {
     }
   }, [selectedDays, isInitialLoading, fetchWithRetry])
 
-  // --- MEMO: VARIANT LIST (controllers only) ---
+  // --- DERIVED DATA ---
+
+  // Available variants for controllers (for selector)
   const controllerVariants = useMemo(() => {
-    const set = new Set<string>()
+    const variants = new Set<string>()
     topBlueprints.forEach((bp) => {
-      if (bp.blueprint_category === 'controllers' && bp.blueprint_variant) {
-        set.add(bp.blueprint_variant)
+      if (
+        bp.blueprint_category === 'controllers' &&
+        bp.blueprint_variant &&
+        bp.blueprint_variant.trim() !== ''
+      ) {
+        variants.add(bp.blueprint_variant)
       }
     })
-    return Array.from(set).sort()
+    return Array.from(variants).sort()
   }, [topBlueprints])
 
-  const isVariantFilterActive =
-    isControllerSelected && activeVariant !== 'all' && controllerVariants.length
-
-  // --- MEMO: SORTED BLUEPRINTS (category + variant + sort) ---
+  // Sorted + filtered blueprints (category + variant)
   const sortedBlueprints = useMemo(() => {
-    // Step 1: category filter
-    let filtered: TopBlueprintMetric[] = selectedCategory
-      ? topBlueprints.filter((bp) => bp.blueprint_category === selectedCategory)
-      : topBlueprints
-
-    // Step 2: variant filter (controllers only)
-    if (isVariantFilterActive) {
-      filtered = filtered.filter(
-        (bp) =>
-          bp.blueprint_category === 'controllers' &&
-          bp.blueprint_variant === activeVariant,
-      )
-    }
+    const filtered = topBlueprints.filter((bp) => {
+      if (selectedCategory && bp.blueprint_category !== selectedCategory) {
+        return false
+      }
+      if (
+        isControllersCategory(selectedCategory) &&
+        selectedVariant !== 'all'
+      ) {
+        return bp.blueprint_variant === selectedVariant
+      }
+      return true
+    })
 
     const sortableItems = filtered.map((item) => ({
       ...item,
@@ -477,20 +490,13 @@ const DownloadMetricsPage: React.FC = () => {
     return sortableItems.map((item) => ({
       blueprint_category: item.blueprint_category,
       blueprint_id: item.blueprint_id,
+      blueprint_variant: item.blueprint_variant,
       total: item.total,
       last_downloaded: item.last_downloaded,
-      blueprint_variant: item.blueprint_variant,
     })) as TopBlueprintMetric[]
-  }, [
-    topBlueprints,
-    selectedCategory,
-    sortConfig.key,
-    sortConfig.direction,
-    activeVariant,
-    isVariantFilterActive,
-  ])
+  }, [topBlueprints, selectedCategory, selectedVariant, sortConfig])
 
-  // --- CHART DATA PREP ---
+  // Category data for Pie (global; not variant-filtered)
   const categoryData: ChartData[] = byCategory.map((item) => ({
     name: item.blueprint_category,
     category: item.blueprint_category,
@@ -499,6 +505,7 @@ const DownloadMetricsPage: React.FC = () => {
     label: item.blueprint_category,
   }))
 
+  // Top-N data for Bar chart (uses sortedBlueprints)
   const topNBarData: TopBlueprintBarData[] = sortedBlueprints
     .slice(0, topLimit)
     .map((bp) => ({
@@ -510,7 +517,42 @@ const DownloadMetricsPage: React.FC = () => {
       Downloads: Number(bp.total),
     }))
 
-  // --- THEME TOKENS ---
+  // Daily chart data: apply category + variant filter client-side, then fill gaps
+  const dailyChartData: ChartPoint[] = useMemo(() => {
+    if (!rawDaily.length) return fillMissingDailyData([], selectedDays)
+
+    const filteredPerDay = new Map<string, number>()
+
+    rawDaily.forEach((row) => {
+      const cat = row.blueprint_category
+      const variant = row.blueprint_variant
+
+      if (selectedCategory && cat !== selectedCategory) return
+
+      if (
+        isControllersCategory(selectedCategory) &&
+        selectedVariant !== 'all'
+      ) {
+        if (variant !== selectedVariant) return
+      }
+
+      const current = filteredPerDay.get(row.day) || 0
+      filteredPerDay.set(row.day, current + Number(row.total))
+    })
+
+    const summedArray: { day: string; total: number }[] = Array.from(
+      filteredPerDay.entries(),
+    )
+      .map(([day, total]) => ({ day, total }))
+      .sort((a, b) => (a.day < b.day ? -1 : a.day > b.day ? 1 : 0))
+
+    return fillMissingDailyData(
+      summedArray.map((d) => ({ day: d.day, total: d.total })),
+      selectedDays,
+    )
+  }, [rawDaily, selectedCategory, selectedVariant, selectedDays])
+
+  // --- THEME TOKENS & STYLES ---
   const THEME = {
     bg: isDark ? '#1b1b1d' : '#f9fafb',
     cardBg: isDark ? '#242526' : '#ffffff',
@@ -523,7 +565,6 @@ const DownloadMetricsPage: React.FC = () => {
     accentColor: '#4f46e5',
   }
 
-  // --- REUSABLE STYLES ---
   const gridStyleKPIs: React.CSSProperties = {
     display: 'grid',
     gridTemplateColumns: '1fr 1fr',
@@ -531,6 +572,7 @@ const DownloadMetricsPage: React.FC = () => {
     marginBottom: '32px',
     width: '100%',
   }
+
   const gridStyle2Col: React.CSSProperties = {
     display: 'grid',
     gridTemplateColumns: '1fr 1fr',
@@ -538,13 +580,16 @@ const DownloadMetricsPage: React.FC = () => {
     marginBottom: '32px',
     width: '100%',
   }
+
   const mediaQueryMatch =
     typeof window !== 'undefined' &&
     window.matchMedia('(max-width: 768px)').matches
+
   if (mediaQueryMatch) {
     ;(gridStyleKPIs as any).gridTemplateColumns = '1fr'
     ;(gridStyle2Col as any).gridTemplateColumns = '1fr'
   }
+
   const cardStyle: React.CSSProperties = {
     backgroundColor: THEME.cardBg,
     borderRadius: '8px',
@@ -554,6 +599,7 @@ const DownloadMetricsPage: React.FC = () => {
     minWidth: '0',
     border: isDark ? '1px solid #333' : 'none',
   }
+
   const cardHeaderStyle = (bgColor: string): React.CSSProperties => ({
     backgroundColor: bgColor,
     color: 'white',
@@ -563,6 +609,7 @@ const DownloadMetricsPage: React.FC = () => {
     textTransform: 'uppercase',
     letterSpacing: '0.05em',
   })
+
   const chartHeaderStyle: React.CSSProperties = {
     padding: '16px',
     borderBottom: `1px solid ${THEME.gridLine}`,
@@ -685,177 +732,180 @@ const DownloadMetricsPage: React.FC = () => {
     )
   }
 
-  const DataTable: React.FC<{ data: TopBlueprintMetric[] }> = ({ data }) => {
-    return (
-      <div style={{ padding: '24px 16px 16px 16px' }}>
-        <h3
+  const DataTable: React.FC<{ data: TopBlueprintMetric[] }> = ({ data }) => (
+    <div style={{ padding: '24px 16px 16px 16px' }}>
+      <h3
+        style={{
+          fontSize: '1.25rem',
+          color: THEME.textPrimary,
+          fontWeight: 'bold',
+          marginBottom: '15px',
+          textAlign: 'center',
+        }}
+      >
+        Table Data View (Top Results, limited by selection)
+      </h3>
+      <div style={{ overflowX: 'auto' }}>
+        <table
           style={{
-            fontSize: '1.25rem',
-            color: THEME.textPrimary,
-            fontWeight: 'bold',
-            marginBottom: '15px',
-            textAlign: 'center',
+            width: '100%',
+            borderCollapse: 'collapse',
+            tableLayout: 'fixed',
+            fontSize: '14px',
+            margin: '0',
           }}
         >
-          Table Data View (Top Results, limited by selection)
-        </h3>
-        <div style={{ overflowX: 'auto' }}>
-          <table
-            style={{
-              width: '100%',
-              borderCollapse: 'collapse',
-              tableLayout: 'fixed',
-              fontSize: '14px',
-              margin: '0',
-            }}
-          >
-            <colgroup>
-              <col style={{ width: 'auto' }} />
-              <col style={{ width: '1%', whiteSpace: 'nowrap' }} />
-              <col style={{ width: '1%', whiteSpace: 'nowrap' }} />
-              <col style={{ width: '1%', whiteSpace: 'nowrap' }} />
-            </colgroup>
-            <thead>
-              <tr style={{ backgroundColor: isDark ? '#333' : '#f3f4f6' }}>
-                <th
-                  onClick={() => requestSort('id')}
+          <colgroup>
+            <col style={{ width: 'auto' }} />
+            <col style={{ width: '1%', whiteSpace: 'nowrap' }} />
+            <col style={{ width: '1%', whiteSpace: 'nowrap' }} />
+            <col style={{ width: '1%', whiteSpace: 'nowrap' }} />
+          </colgroup>
+          <thead>
+            <tr style={{ backgroundColor: isDark ? '#333' : '#f3f4f6' }}>
+              <th
+                onClick={() => requestSort('id')}
+                style={{
+                  padding: '12px 8px',
+                  textAlign: 'left',
+                  cursor: 'pointer',
+                  color: THEME.textPrimary,
+                  borderBottom: `2px solid ${THEME.accentColor}`,
+                }}
+              >
+                Blueprint ID <SortIcon sortKey='id' />
+              </th>
+              <th
+                onClick={() => requestSort('category')}
+                style={{
+                  padding: '12px 8px',
+                  textAlign: 'left',
+                  cursor: 'pointer',
+                  color: THEME.textPrimary,
+                  borderBottom: `2px solid ${THEME.accentColor}`,
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                Category <SortIcon sortKey='category' />
+              </th>
+              <th
+                onClick={() => requestSort('total')}
+                style={{
+                  padding: '12px 8px',
+                  textAlign: 'center',
+                  cursor: 'pointer',
+                  color: THEME.textPrimary,
+                  borderBottom: `2px solid ${THEME.accentColor}`,
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                Downloads <SortIcon sortKey='total' />
+              </th>
+              <th
+                onClick={() => requestSort('lastDownloaded')}
+                style={{
+                  padding: '12px 8px',
+                  textAlign: 'right',
+                  cursor: 'pointer',
+                  color: THEME.textPrimary,
+                  borderBottom: `2px solid ${THEME.accentColor}`,
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                Last Downloaded <SortIcon sortKey='lastDownloaded' />
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {data.map((item, index) => (
+              <tr
+                key={`${item.blueprint_category}:${item.blueprint_id}:${
+                  item.blueprint_variant || 'novariant'
+                }`}
+                style={{
+                  borderBottom: `1px solid ${THEME.gridLine}`,
+                  backgroundColor:
+                    index % 2 === 0
+                      ? THEME.cardBg
+                      : isDark
+                        ? '#2d2d2f'
+                        : '#fcfcfc',
+                }}
+              >
+                <td
                   style={{
-                    padding: '12px 8px',
-                    textAlign: 'left',
-                    cursor: 'pointer',
+                    padding: '10px 8px',
+                    wordBreak: 'break-word',
                     color: THEME.textPrimary,
-                    borderBottom: `2px solid ${THEME.accentColor}`,
+                    textAlign: 'left',
                   }}
                 >
-                  Blueprint ID <SortIcon sortKey='id' />
-                </th>
-                <th
-                  onClick={() => requestSort('category')}
+                  {item.blueprint_id}
+                  {item.blueprint_variant &&
+                    isControllersCategory(item.blueprint_category) && (
+                      <span
+                        style={{
+                          marginLeft: '6px',
+                          fontSize: '0.75rem',
+                          padding: '2px 6px',
+                          borderRadius: '999px',
+                          backgroundColor: isDark ? '#374151' : '#e5e7eb',
+                          color: THEME.textSecondary,
+                        }}
+                      >
+                        {item.blueprint_variant}
+                      </span>
+                    )}
+                </td>
+                <td
                   style={{
-                    padding: '12px 8px',
+                    padding: '10px 8px',
+                    color: d3ColorScale(item.blueprint_category),
                     textAlign: 'left',
-                    cursor: 'pointer',
-                    color: THEME.textPrimary,
-                    borderBottom: `2px solid ${THEME.accentColor}`,
                     whiteSpace: 'nowrap',
                   }}
                 >
-                  Category <SortIcon sortKey='category' />
-                </th>
-                <th
-                  onClick={() => requestSort('total')}
+                  {item.blueprint_category}
+                </td>
+                <td
                   style={{
-                    padding: '12px 8px',
+                    padding: '10px 8px',
                     textAlign: 'center',
-                    cursor: 'pointer',
+                    fontWeight: 'bold',
                     color: THEME.textPrimary,
-                    borderBottom: `2px solid ${THEME.accentColor}`,
                     whiteSpace: 'nowrap',
                   }}
                 >
-                  Downloads <SortIcon sortKey='total' />
-                </th>
-                <th
-                  onClick={() => requestSort('lastDownloaded')}
+                  {formatBigNumber(Number(item.total))}
+                </td>
+                <td
                   style={{
-                    padding: '12px 8px',
+                    padding: '10px 8px',
                     textAlign: 'right',
-                    cursor: 'pointer',
                     color: THEME.textPrimary,
-                    borderBottom: `2px solid ${THEME.accentColor}`,
                     whiteSpace: 'nowrap',
                   }}
                 >
-                  Last Downloaded <SortIcon sortKey='lastDownloaded' />
-                </th>
+                  {formatDate(item.last_downloaded)}
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              {data.map((item, index) => (
-                <tr
-                  key={`${item.blueprint_category}:${item.blueprint_id}:${item.blueprint_variant ?? 'all'}`}
-                  style={{
-                    borderBottom: `1px solid ${THEME.gridLine}`,
-                    backgroundColor:
-                      index % 2 === 0
-                        ? THEME.cardBg
-                        : isDark
-                          ? '#2d2d2f'
-                          : '#fcfcfc',
-                  }}
-                >
-                  <td
-                    style={{
-                      padding: '10px 8px',
-                      wordBreak: 'break-word',
-                      color: THEME.textPrimary,
-                      textAlign: 'left',
-                    }}
-                  >
-                    {item.blueprint_id}
-                    {item.blueprint_variant &&
-                      item.blueprint_category === 'controllers' && (
-                        <span
-                          style={{
-                            marginLeft: '6px',
-                            fontSize: '0.75rem',
-                            color: THEME.textSecondary,
-                          }}
-                        >
-                          ({item.blueprint_variant})
-                        </span>
-                      )}
-                  </td>
-                  <td
-                    style={{
-                      padding: '10px 8px',
-                      color: d3ColorScale(item.blueprint_category),
-                      textAlign: 'left',
-                      whiteSpace: 'nowrap',
-                    }}
-                  >
-                    {item.blueprint_category}
-                  </td>
-                  <td
-                    style={{
-                      padding: '10px 8px',
-                      textAlign: 'center',
-                      fontWeight: 'bold',
-                      color: THEME.textPrimary,
-                      whiteSpace: 'nowrap',
-                    }}
-                  >
-                    {formatBigNumber(Number(item.total))}
-                  </td>
-                  <td
-                    style={{
-                      padding: '10px 8px',
-                      textAlign: 'right',
-                      color: THEME.textPrimary,
-                      whiteSpace: 'nowrap',
-                    }}
-                  >
-                    {formatDate(item.last_downloaded)}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-        {data.length === 0 && (
-          <p
-            style={{
-              textAlign: 'center',
-              padding: '20px',
-              color: THEME.textSecondary,
-            }}
-          >
-            No detailed data found for the current selection.
-          </p>
-        )}
+            ))}
+          </tbody>
+        </table>
       </div>
-    )
-  }
+      {data.length === 0 && (
+        <p
+          style={{
+            textAlign: 'center',
+            padding: '20px',
+            color: THEME.textSecondary,
+          }}
+        >
+          No detailed data found for the current selection.
+        </p>
+      )}
+    </div>
+  )
 
   // --- MAIN RENDER ---
   return (
@@ -889,6 +939,7 @@ const DownloadMetricsPage: React.FC = () => {
             Loading core metrics...
           </div>
         )}
+
         {!isInitialLoading && error && (
           <div className='alert alert--danger' role='alert'>
             <h4 className='alert__heading'>Error loading metrics</h4>
@@ -898,7 +949,7 @@ const DownloadMetricsPage: React.FC = () => {
 
         {!isInitialLoading && (
           <div style={{ width: '100%' }}>
-            {/* 1. KPI cards */}
+            {/* 1. KPI ROW */}
             <section style={gridStyleKPIs}>
               <div style={cardStyle}>
                 <div style={cardHeaderStyle(THEME.accentColor)}>
@@ -934,12 +985,18 @@ const DownloadMetricsPage: React.FC = () => {
               </div>
             </section>
 
-            {/* 2. Daily + Category Distribution */}
+            {/* 2. DAILY + PIE */}
             <section style={gridStyle2Col}>
-              {/* 2a. Daily Downloads */}
+              {/* Daily */}
               <div style={cardStyle}>
                 <h3 style={chartHeaderStyle}>
-                  Daily Downloads (Last {selectedDays} Days)
+                  Daily Downloads (Last {selectedDays} Days
+                  {selectedCategory ? ` · ${selectedCategory}` : ''}
+                  {isControllersCategory(selectedCategory) &&
+                  selectedVariant !== 'all'
+                    ? ` · Variant: ${selectedVariant}`
+                    : ''}
+                  )
                 </h3>
                 <TimeRangeSelector
                   current={selectedDays}
@@ -979,7 +1036,7 @@ const DownloadMetricsPage: React.FC = () => {
                   )}
                   <ResponsiveContainer width='100%' height='100%'>
                     <AreaChart
-                      data={daily}
+                      data={dailyChartData}
                       margin={{ top: 10, right: 10, left: -10, bottom: 0 }}
                     >
                       <defs>
@@ -1031,7 +1088,7 @@ const DownloadMetricsPage: React.FC = () => {
                 </div>
               </div>
 
-              {/* 2b. Category Distribution */}
+              {/* Pie */}
               <div style={cardStyle}>
                 <h3 style={chartHeaderStyle}>
                   Category Distribution (Click to filter)
@@ -1094,7 +1151,7 @@ const DownloadMetricsPage: React.FC = () => {
               </div>
             </section>
 
-            {/* 3. Top Blueprints Bar Chart */}
+            {/* 3. BAR CHART + VARIANT SELECTOR */}
             <section
               style={{
                 ...cardStyle,
@@ -1109,6 +1166,7 @@ const DownloadMetricsPage: React.FC = () => {
                   justifyContent: 'space-between',
                   padding: '0 16px',
                   borderBottom: `1px solid ${THEME.gridLine}`,
+                  gap: '12px',
                 }}
               >
                 <div
@@ -1117,6 +1175,7 @@ const DownloadMetricsPage: React.FC = () => {
                     justifyContent: 'space-between',
                     alignItems: 'center',
                     marginBottom: '4px',
+                    gap: '12px',
                   }}
                 >
                   <h3
@@ -1129,24 +1188,20 @@ const DownloadMetricsPage: React.FC = () => {
                   >
                     {selectedCategory
                       ? `Top ${topLimit} Blueprints in '${selectedCategory}'`
-                      : `Top ${topLimit} Blueprints (Overall, Sorted by Downloads)${
-                          isVariantFilterActive ? '' : ''
-                        }`}
+                      : `Top ${topLimit} Blueprints (Overall, Sorted by Downloads)`}
+                    {isControllersCategory(selectedCategory) &&
+                    selectedVariant !== 'all'
+                      ? ` · Variant: ${selectedVariant}`
+                      : ''}
                   </h3>
 
-                  <div
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '12px',
-                    }}
-                  >
-                    {/* Variant Selector – only when controllers category is selected */}
-                    {isControllerSelected && controllerVariants.length > 0 && (
+                  {/* Variant selector (controllers only) */}
+                  {isControllersCategory(selectedCategory) &&
+                    controllerVariants.length > 0 && (
                       <div style={{ position: 'relative' }}>
                         <select
-                          value={activeVariant}
-                          onChange={(e) => setActiveVariant(e.target.value)}
+                          value={selectedVariant}
+                          onChange={(e) => setSelectedVariant(e.target.value)}
                           style={{
                             appearance: 'none',
                             padding: '6px 32px 6px 10px',
@@ -1184,44 +1239,43 @@ const DownloadMetricsPage: React.FC = () => {
                       </div>
                     )}
 
-                    {/* Top N selector */}
-                    <div style={{ position: 'relative' }}>
-                      <select
-                        value={topLimit}
-                        onChange={(e) => setTopLimit(Number(e.target.value))}
-                        style={{
-                          appearance: 'none',
-                          padding: '6px 32px 6px 10px',
-                          fontSize: '14px',
-                          cursor: 'pointer',
-                          backgroundColor: 'var(--ifm-navbar-background-color)',
-                          color: 'var(--ifm-font-color-base)',
-                          border: '1px solid var(--ifm-color-emphasis-300)',
-                          borderRadius: '6px',
-                        }}
-                      >
-                        {[5, 10, 15, 20, 25, 30, 40, 50, 75, 100].map((n) => (
-                          <option key={n} value={n}>
-                            Top {n}
-                          </option>
-                        ))}
-                      </select>
-                      <svg
-                        style={{
-                          position: 'absolute',
-                          right: '10px',
-                          top: '50%',
-                          width: '14px',
-                          height: '14px',
-                          transform: 'translateY(-50%)',
-                          opacity: 0.7,
-                          pointerEvents: 'none',
-                        }}
-                        viewBox='0 0 24 24'
-                      >
-                        <path fill='currentColor' d='M7 10l5 5 5-5z' />
-                      </svg>
-                    </div>
+                  {/* Top N selector */}
+                  <div style={{ position: 'relative' }}>
+                    <select
+                      value={topLimit}
+                      onChange={(e) => setTopLimit(Number(e.target.value))}
+                      style={{
+                        appearance: 'none',
+                        padding: '6px 32px 6px 10px',
+                        fontSize: '14px',
+                        cursor: 'pointer',
+                        backgroundColor: 'var(--ifm-navbar-background-color)',
+                        color: 'var(--ifm-font-color-base)',
+                        border: '1px solid var(--ifm-color-emphasis-300)',
+                        borderRadius: '6px',
+                      }}
+                    >
+                      {[5, 10, 15, 20, 25, 30, 40, 50, 75, 100].map((n) => (
+                        <option key={n} value={n}>
+                          Top {n}
+                        </option>
+                      ))}
+                    </select>
+                    <svg
+                      style={{
+                        position: 'absolute',
+                        right: '10px',
+                        top: '50%',
+                        width: '14px',
+                        height: '14px',
+                        transform: 'translateY(-50%)',
+                        opacity: 0.7,
+                        pointerEvents: 'none',
+                      }}
+                      viewBox='0 0 24 24'
+                    >
+                      <path fill='currentColor' d='M7 10l5 5 5-5z' />
+                    </svg>
                   </div>
                 </div>
 
@@ -1238,10 +1292,11 @@ const DownloadMetricsPage: React.FC = () => {
                       cursor: 'pointer',
                       fontWeight: 'bold',
                       transition: 'background-color 0.2s',
+                      whiteSpace: 'nowrap',
                     }}
                     title={`Click to view all ${topBlueprints.length} blueprints`}
                   >
-                    Clear Filter (Reset category & variants)
+                    Clear Filter (View {topBlueprints.length} total)
                   </button>
                 )}
               </div>
@@ -1285,14 +1340,11 @@ const DownloadMetricsPage: React.FC = () => {
                       />
                       <Bar
                         dataKey='Downloads'
-                        name={
-                          isVariantFilterActive
-                            ? `# of Downloads (${activeVariant})`
-                            : '# of Downloads'
-                        }
+                        name='# of Downloads'
                         fill={
-                          isControllerSelected && activeVariant !== 'all'
-                            ? d3ColorScale(activeVariant)
+                          isControllersCategory(selectedCategory) &&
+                          selectedVariant !== 'all'
+                            ? d3ColorScale(selectedVariant)
                             : selectedCategory
                               ? d3ColorScale(selectedCategory)
                               : d3ColorScale('top10')
@@ -1316,7 +1368,7 @@ const DownloadMetricsPage: React.FC = () => {
               </div>
             </section>
 
-            {/* 4. Table */}
+            {/* 4. TABLE VIEW */}
             <section style={{ ...cardStyle, overflow: 'visible' }}>
               <DataTable data={sortedBlueprints} />
             </section>
