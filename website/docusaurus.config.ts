@@ -110,6 +110,11 @@ const config: Config = {
           label: 'GitHub',
           position: 'right',
         },
+        {
+          href: '/awesome-ha-blueprints/download_metrics/',
+          label: 'Metrics',
+          position: 'bottom',
+        },
       ],
     },
 
