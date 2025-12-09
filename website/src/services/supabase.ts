@@ -52,7 +52,6 @@ export const initializeSupabase = ({
   supabaseKey: string
 }): void => {
   supabase = createClient(supabaseUrl, supabaseKey)
-  // eslint-disable-next-line no-console
   console.log('Supabase initialized')
 }
 

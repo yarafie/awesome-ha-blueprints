@@ -45,8 +45,6 @@ import { scaleOrdinal } from 'd3-scale'
 import { schemeCategory10 } from 'd3-scale-chromatic'
 
 // --- Type Definitions based on RPC payloads ---
-type TotalMetric = { total: string | number }
-
 type CategoryMetric = {
   blueprint_category: string
   total: string
