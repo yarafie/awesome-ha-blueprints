@@ -121,7 +121,6 @@ const config: Config = {
         href: '/awesome-ha-blueprints/download_metrics/',
         width: 38,
         height: 38,
-        // Styling INSIDE the footer bar (not floating)
         style: {
           borderRadius: '6px',
           background: 'var(--ifm-color-primary)',
@@ -129,9 +128,10 @@ const config: Config = {
           padding: '6px',
           cursor: 'pointer',
           transition: 'all 0.2s ease',
-          /* --- Footer alignment rules --- */
-          marginLeft: 'auto', // pushes icon to the RIGHT
-          alignSelf: 'center', // vertically centers inside footer row
+          /* Horizontal alignment (RIGHT) */
+          marginLeft: 'auto',
+          /* Vertical alignment (BOTTOM) */
+          marginTop: '40px', // adjust this value to move icon downward
           display: 'block',
         },
       },
