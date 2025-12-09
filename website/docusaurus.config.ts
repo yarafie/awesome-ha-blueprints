@@ -114,26 +114,35 @@ const config: Config = {
     },
 
     footer: {
-      links: [],
-      logo: {
-        src: 'img/metrics.svg',
-        alt: 'Blueprint Metrics',
-        href: '/awesome-ha-blueprints/download_metrics/',
-        width: 38,
-        height: 38,
-        style: {
-          borderRadius: '6px',
-          background: 'var(--ifm-color-primary)',
-          boxShadow: '0 4px 10px rgba(0,0,0,0.15)',
-          padding: '6px',
-          cursor: 'pointer',
-          transition: 'all 0.2s ease',
-          // Align icon inside footer bar
-          marginLeft: 'auto', // pushes icon to the right
-          alignSelf: 'flex-end', // pushes icon to the bottom
-          display: 'block',
+      links: [
+        {
+          title: '',
+          items: [
+            {
+              html: `
+                <a href="/awesome-ha-blueprints/download_metrics/"
+                   title="Blueprints Download Metrics"
+                   style="
+                     display: flex;
+                     align-items: center;
+                     justify-content: center;
+                     width: 38px;
+                     height: 38px;
+                     margin-left: auto;       /* Pushes icon to right */
+                     align-self: center;      /* Vertically centers icon */
+                   ">
+                  <img src="/awesome-ha-blueprints/img/metrics.svg"
+                       alt="Blueprint Metrics"
+                       style="
+                         width: 100%;
+                         height: 100%;
+                       "/>
+                </a>
+              `,
+            },
+          ],
         },
-      },
+      ],
       copyright: `Awesome HA Blueprints is maintained by
          <a href='https://github.com/EPMatt'>Matteo Agnoletto</a>.<br/>
          This fork is maintained by
