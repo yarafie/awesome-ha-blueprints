@@ -136,11 +136,11 @@ const config: Config = {
           padding: '6px',
           cursor: 'pointer',
           transition: 'all 0.2s ease',
-          /* Horizontal alignment (RIGHT) */
-          marginLeft: 'auto',
-          /* Vertical alignment (BOTTOM) */
-          marginBottom: '5px', // adjust this value to move icon downward
-          display: 'block',
+          /* Anchor to lower right corner of the footer */
+          position: 'absolute',
+          right: '20px',
+          bottom: '20px',
+          zIndex: 100,
         },
       },
     },
