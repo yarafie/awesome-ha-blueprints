@@ -113,7 +113,7 @@ const config: Config = {
         {
           href: '/awesome-ha-blueprints/download_metrics/',
           label: 'Metrics',
-          position: 'bottom',
+          position: 'right',
         },
       ],
     },
