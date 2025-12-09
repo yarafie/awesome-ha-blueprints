@@ -118,6 +118,36 @@ const config: Config = {
       copyright: `Awesome HA Blueprints is maintained by <a href='https://github.com/EPMatt'>Matteo Agnoletto</a>.<br/>This fork is  maintained by <a href='https://github.com/yarafie'>yarafie</a>.<br/>Licensed under the <a href='https://github.com/EPMatt/awesome-ha-blueprints/blob/main/LICENSE'>GPL-3.0 License</a>`,
     },
 
+    footer: {
+      links: [],
+      copyright: `Awesome HA Blueprints is maintained by <a href='https://github.com/EPMatt'>Matteo Agnoletto</a>.<br/>This fork is  maintained by <a href='https://github.com/yarafie'>yarafie</a>.<br/>Licensed under the <a href='https://github.com/EPMatt/awesome-ha-blueprints/blob/main/LICENSE'>GPL-3.0 License</a>`,
+      // Metrics Icon (bottom-right of footer)
+      logo: {
+        html: `
+          <a href="/awesome-ha-blueprints/download_metrics/"
+             title="Blueprints Download Metrics"
+             style="position: fixed;
+                    right: 22px;
+                    bottom: 22px;
+                    z-index: 9999;
+                    width: 38px;
+                    height: 38px;
+                    border-radius: 6px;
+                    background: var(--ifm-color-primary);
+                    color: white;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    text-decoration: none;
+                    font-size: 20px;
+                    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+                    transition: all 0.2s ease;">
+             📊
+          </a>
+        `,
+      },
+    },
+
     prism: {
       theme: prismThemes.github,
       darkTheme: prismThemes.dracula,
