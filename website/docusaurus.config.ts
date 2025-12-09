@@ -115,6 +115,14 @@ const config: Config = {
 
     footer: {
       links: [],
+      copyright: `Awesome HA Blueprints is maintained by
+         <a href='https://github.com/EPMatt'>Matteo Agnoletto</a>.<br/>
+         This fork is maintained by
+         <a href='https://github.com/yarafie'>yarafie</a>.<br/>
+         Licensed under the
+         <a href='https://github.com/EPMatt/awesome-ha-blueprints/blob/main/LICENSE'>
+         GPL-3.0 License
+         </a>`,
       logo: {
         src: 'img/metrics.svg',
         alt: 'Blueprint Metrics',
@@ -131,18 +139,10 @@ const config: Config = {
           /* Horizontal alignment (RIGHT) */
           marginLeft: 'auto',
           /* Vertical alignment (BOTTOM) */
-          marginTop: '40px', // adjust this value to move icon downward
+          marginTop: '100px', // adjust this value to move icon downward
           display: 'block',
         },
       },
-      copyright: `Awesome HA Blueprints is maintained by
-         <a href='https://github.com/EPMatt'>Matteo Agnoletto</a>.<br/>
-         This fork is maintained by
-         <a href='https://github.com/yarafie'>yarafie</a>.<br/>
-         Licensed under the
-         <a href='https://github.com/EPMatt/awesome-ha-blueprints/blob/main/LICENSE'>
-         GPL-3.0 License
-         </a>`,
     },
 
     prism: {
