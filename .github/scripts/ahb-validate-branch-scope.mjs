@@ -1,6 +1,7 @@
 import fs from 'node:fs'
 
 /* ---------------- helpers ---------------- */
+
 function ok(msg) {
   console.log(`✅ ${msg}`)
   process.exit(0)
@@ -38,13 +39,15 @@ function isLibId(v) {
 }
 
 /* ---------------- entry ---------------- */
+
 const [, , branchName, diffFile] = process.argv
 
 if (!branchName || !diffFile) {
   fail('Internal error: missing arguments')
 }
 
-/* -------- HARD SKIP for non-AHB branches -------- */
+/* -------- skip non-AHB branches -------- */
+
 if (!branchName.startsWith('ahb/')) {
   console.log('ℹ️  Non-AHB branch detected. Skipping validation.')
   process.exit(0)
@@ -61,6 +64,7 @@ const category = parts[1]
 let allowedPrefix = ''
 
 /* ---------------- controllers ---------------- */
+
 if (category === 'controllers') {
   // ahb/controllers/<device>/<library>/<variant>/vYYYY.MM.DD/author-<user>
   if (parts.length !== 7) {
@@ -77,11 +81,15 @@ if (category === 'controllers') {
   const date = stripV(vDate)
   if (!date || !isDate(date)) fail(`Invalid version: ${vDate}`)
 
-  // 🔑 device root is allowed (stage files)
+  // Device root is intentionally allowed (stage files)
   allowedPrefix = `library/controllers/${device}/`
 } else if (category === 'hooks') {
-  /* ---------------- hooks ---------------- */
-  if (parts.length !== 5) fail('Invalid hooks branch format')
+
+/* ---------------- hooks ---------------- */
+  // ahb/hooks/<hook_id>/vYYYY.MM.DD/author-<user>
+  if (parts.length !== 5) {
+    fail('Invalid hooks branch format')
+  }
 
   const [, , hookId, vDate, author] = parts
 
@@ -93,8 +101,12 @@ if (category === 'controllers') {
 
   allowedPrefix = `library/hooks/${hookId}/`
 } else if (category === 'automations') {
-  /* ---------------- automations ---------------- */
-  if (parts.length !== 5) fail('Invalid automations branch format')
+
+/* ---------------- automations ---------------- */
+  // ahb/automations/<automation_id>/vYYYY.MM.DD/author-<user>
+  if (parts.length !== 5) {
+    fail('Invalid automations branch format')
+  }
 
   const [, , automationId, vDate, author] = parts
 
@@ -109,8 +121,17 @@ if (category === 'controllers') {
   fail(`Unknown AHB category: ${category}`)
 }
 
+/* -------- always-allowed paths -------- */
+
+const ALWAYS_ALLOWED = ['.github/', '.devcontainer/', '.vscode/']
+
 /* ---------------- enforce scope ---------------- */
+
 for (const file of changedFiles) {
+  if (ALWAYS_ALLOWED.some((p) => file.startsWith(p))) {
+    continue
+  }
+
   if (!file.startsWith(allowedPrefix)) {
     fail(
       `File outside allowed scope:\n${file}\n\nAllowed prefix:\n${allowedPrefix}`,
