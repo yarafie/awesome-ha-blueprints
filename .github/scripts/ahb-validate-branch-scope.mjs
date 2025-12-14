@@ -84,8 +84,7 @@ if (category === 'controllers') {
   // Device root is intentionally allowed (stage files)
   allowedPrefix = `library/controllers/${device}/`
 } else if (category === 'hooks') {
-
-/* ---------------- hooks ---------------- */
+  /* ---------------- hooks ---------------- */
   // ahb/hooks/<hook_id>/vYYYY.MM.DD/author-<user>
   if (parts.length !== 5) {
     fail('Invalid hooks branch format')
@@ -101,8 +100,7 @@ if (category === 'controllers') {
 
   allowedPrefix = `library/hooks/${hookId}/`
 } else if (category === 'automations') {
-
-/* ---------------- automations ---------------- */
+  /* ---------------- automations ---------------- */
   // ahb/automations/<automation_id>/vYYYY.MM.DD/author-<user>
   if (parts.length !== 5) {
     fail('Invalid automations branch format')
