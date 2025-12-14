@@ -15,7 +15,12 @@ jobs:
   pr-commenter-ci-success:
     name: Report CI Success
     runs-on: ubuntu-latest
-    if: ${{ github.actor != 'dependabot[bot]' && github.event.workflow_run.conclusion == 'success' }}
+    if: >-
+      ${{
+        github.actor != 'dependabot[bot]' &&
+        github.event.workflow_run.name == 'CI - PR' &&
+        github.event.workflow_run.conclusion == 'success'
+      }}
     steps:
       - name: Download changes analysis
         uses: dawidd6/action-download-artifact@v11
@@ -23,8 +28,10 @@ jobs:
           commit: ${{ github.event.workflow_run.head_sha }}
           workflow: ci_pr.yml
           allow_forks: true
+
       - id: pr_info
         run: echo "::set-output name=num::$(cat changes_pr_num/pr_num.txt)"
+
       - uses: hasura/comment-progress@v2
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -38,12 +45,14 @@ jobs:
             A maintainer will soon review your submission and provide additional feedback regarding your changes.
 
             Thanks again for dedicating your precious time to this project. 🔥
+
       - if: ${{ hashFiles('changes_blueprints/blueprints.txt') != '' }}
         id: blueprints
         run: |
           myblueprints=$(< changes_blueprints/blueprints.txt)
           urls=$(printf '%s' "$myblueprints" | jq --raw-input --slurp '.')
           echo "::set-output name=urls::$urls"
+
       - if: ${{ hashFiles('changes_blueprints/blueprints.txt') != '' }}
         uses: hasura/comment-progress@v2
         with:
@@ -62,7 +71,12 @@ jobs:
   pr-commenter-ci-failure:
     name: Report CI Failure
     runs-on: ubuntu-latest
-    if: ${{ github.actor != 'dependabot[bot]' && github.event.workflow_run.conclusion == 'failure' }}
+    if: >-
+      ${{
+        github.actor != 'dependabot[bot]' &&
+        github.event.workflow_run.name == 'CI - PR' &&
+        github.event.workflow_run.conclusion == 'failure'
+      }}
     steps:
       - name: Download failure reports
         uses: dawidd6/action-download-artifact@v11
@@ -71,8 +85,10 @@ jobs:
           workflow: ci_pr.yml
           workflow_conclusion: failure
           allow_forks: true
+
       - id: pr_info
         run: echo "::set-output name=num::$(cat changes_pr_num/pr_num.txt)"
+
       - name: Create comment to report failure
         uses: hasura/comment-progress@v2
         with:
@@ -97,6 +113,7 @@ jobs:
           append: true
           message: |
             * Your submission includes some code style issues. We invite you to inspect the output of the Pull Request checks and fix reported errors and warnings.
+
       # if the artifact exists, formatters failed
       - if: ${{ hashFiles('format-lint/results.txt') != '' }}
         name: Report formatters failure
@@ -109,6 +126,7 @@ jobs:
           append: true
           message: |
             * Your files are not properly formatted. Did you remember to run `npm run format` before submitting your changes?
+
       - name: Create comment to report failure
         uses: hasura/comment-progress@v2
         with:

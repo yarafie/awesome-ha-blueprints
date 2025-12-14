@@ -7,6 +7,10 @@ permissions:
   pull_request:
     branches:
       - main
+    paths-ignore:
+      - ".github/workflows/ahb-*"
+      - ".github/scripts/ahb-*"
+
 jobs:
   lint:
     name: Run Linters
