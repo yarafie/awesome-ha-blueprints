@@ -80,8 +80,7 @@ if (category === 'controllers') {
   // 🔑 device root is allowed (stage files)
   allowedPrefix = `library/controllers/${device}/`
 } else if (category === 'hooks') {
-
-/* ---------------- hooks ---------------- */
+  /* ---------------- hooks ---------------- */
   if (parts.length !== 5) fail('Invalid hooks branch format')
 
   const [, , hookId, vDate, author] = parts
@@ -94,8 +93,7 @@ if (category === 'controllers') {
 
   allowedPrefix = `library/hooks/${hookId}/`
 } else if (category === 'automations') {
-
-/* ---------------- automations ---------------- */
+  /* ---------------- automations ---------------- */
   if (parts.length !== 5) fail('Invalid automations branch format')
 
   const [, , automationId, vDate, author] = parts
