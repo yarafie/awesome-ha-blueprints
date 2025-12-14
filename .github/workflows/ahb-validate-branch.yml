@@ -10,25 +10,29 @@ permissions:
 
 jobs:
   validate-branch-scope:
-    # Only enforce branch rules for contributor submissions
-    # Infrastructure / CI branches (chore/*, ci/*, etc.) are excluded
-    if: startsWith(github.head_ref, 'ahb/')
     runs-on: ubuntu-latest
-
     steps:
+      - name: Skip non-AHB branches
+        if: ${{ !startsWith(github.head_ref, 'ahb/') }}
+        run: |
+          echo "Not an ahb/* branch – skipping validation."
+          exit 0
+
       - name: Checkout repository (full history)
+        if: ${{ startsWith(github.head_ref, 'ahb/') }}
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
       - name: Compute changed files vs main
+        if: ${{ startsWith(github.head_ref, 'ahb/') }}
         run: |
           git fetch origin main
           git diff --name-only origin/main...HEAD > changed_files.txt
-          echo "Changed files:"
           cat changed_files.txt
 
       - name: Validate branch name and filesystem scope
+        if: ${{ startsWith(github.head_ref, 'ahb/') }}
         env:
           BRANCH_NAME: ${{ github.head_ref }}
         run: |
