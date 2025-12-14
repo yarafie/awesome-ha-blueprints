@@ -1,0 +1,4 @@
+blueprint:
+  name: Test Controller
+  domain: automation
+  input: {}
