@@ -55,70 +55,56 @@ if (changedFiles.length === 0) {
   fail('No changed files detected')
 }
 
+// ahb/controllers/<device>/<library>/<variant>/vYYYY.MM.DD/author-<user>
 const parts = branchName.split('/')
 const category = parts[1]
 
-let allowedPrefix = ''
-
-/* ---------------- controllers ---------------- */
-if (category === 'controllers') {
-  // ahb/controllers/<device>/<library>/<variant>/vYYYY.MM.DD/author-<user>
-  if (parts.length !== 7) {
-    fail('Invalid controllers branch format')
-  }
-
-  const [, , device, library, variant, vDate, author] = parts
-
-  if (!isSimpleId(device)) fail(`Invalid device_id: ${device}`)
-  if (!isLibId(library)) fail(`Invalid library: ${library}`)
-  if (!isLibId(variant)) fail(`Invalid variant: ${variant}`)
-  if (!author.startsWith('author-')) fail(`Invalid author segment: ${author}`)
-
-  const date = stripV(vDate)
-  if (!date || !isDate(date)) fail(`Invalid version: ${vDate}`)
-
-  allowedPrefix = `library/controllers/${device}/${library}/${variant}/${date}/`
-} else if (category === 'hooks') {
-  /* ---------------- hooks ---------------- */
-  // ahb/hooks/<hook_id>/vYYYY.MM.DD/author-<user>
-  if (parts.length !== 5) {
-    fail('Invalid hooks branch format')
-  }
-
-  const [, , hookId, vDate, author] = parts
-
-  if (!isSimpleId(hookId)) fail(`Invalid hook_id: ${hookId}`)
-  if (!author.startsWith('author-')) fail(`Invalid author segment: ${author}`)
-
-  const date = stripV(vDate)
-  if (!date || !isDate(date)) fail(`Invalid version: ${vDate}`)
-
-  allowedPrefix = `library/hooks/${hookId}/${date}/`
-} else if (category === 'automations') {
-  /* ---------------- automations ---------------- */
-  // ahb/automations/<automation_id>/vYYYY.MM.DD/author-<user>
-  if (parts.length !== 5) {
-    fail('Invalid automations branch format')
-  }
-
-  const [, , automationId, vDate, author] = parts
-
-  if (!isSimpleId(automationId)) fail(`Invalid automation_id: ${automationId}`)
-  if (!author.startsWith('author-')) fail(`Invalid author segment: ${author}`)
-
-  const date = stripV(vDate)
-  if (!date || !isDate(date)) fail(`Invalid version: ${vDate}`)
-
-  allowedPrefix = `library/automations/${automationId}/${date}/`
-} else {
-  fail(`Unknown AHB category: ${category}`)
+if (category !== 'controllers') {
+  fail(`Unsupported AHB category: ${category}`)
 }
 
-/* ---------------- enforce scope ---------------- */
+if (parts.length !== 7) {
+  fail('Invalid AHB controllers branch format')
+}
+
+const device = parts[2]
+const library = parts[3]
+const variant = parts[4]
+const vDate = parts[5]
+const author = parts[6]
+
+if (!isSimpleId(device)) fail(`Invalid device_id: ${device}`)
+if (!isLibId(library)) fail(`Invalid library: ${library}`)
+if (!isLibId(variant)) fail(`Invalid variant: ${variant}`)
+if (!author.startsWith('author-')) fail(`Invalid author segment: ${author}`)
+
+const date = stripV(vDate)
+if (!date || !isDate(date)) {
+  fail(`Invalid version segment: ${vDate}`)
+}
+
+/* ---------------- scope enforcement ---------------- */
+/**
+ * IMPORTANT:
+ * Controller submissions are allowed to touch ANY file under:
+ *
+ *   library/controllers/<device>/**
+ *
+ * This enables incremental stage completion:
+ * - device.json
+ * - device.mdx
+ * - library files
+ * - variant files
+ * - version files
+ */
+const allowedPrefixes = [`library/controllers/${device}/`]
+
 for (const file of changedFiles) {
-  if (!file.startsWith(allowedPrefix)) {
+  if (!allowedPrefixes.some((p) => file.startsWith(p))) {
     fail(
-      `File outside allowed scope:\n${file}\n\nAllowed prefix:\n${allowedPrefix}`,
+      `File outside allowed scope:\n${file}\n\nAllowed prefixes:\n${allowedPrefixes.join(
+        '\n',
+      )}`,
     )
   }
 }
