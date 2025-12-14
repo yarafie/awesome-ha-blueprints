@@ -1,0 +1,6 @@
+{
+  "library": "examplelib",
+  "owner": "yarafie",
+  "maintainers": ["yarafie"],
+  "description": "Example library for example_device"
+}

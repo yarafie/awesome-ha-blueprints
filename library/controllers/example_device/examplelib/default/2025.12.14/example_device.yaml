@@ -1,0 +1,10 @@
+blueprint:
+  name: Example Device Controller
+  description: Minimal valid controller blueprint for testing
+  domain: automation
+
+mode: single
+
+trigger: []
+condition: []
+action: []
