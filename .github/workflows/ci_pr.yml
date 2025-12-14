@@ -3,15 +3,15 @@ permissions:
   contents: read
   pull-requests: write
 
-'on':
+on:
   pull_request:
     branches:
       - main
+    paths:
+      - '**'
     paths-ignore:
-      - ".github/workflows/ahb-*"
-      - ".github/scripts/ahb-*"
-      - ".github/workflows/ahb-validate-branch.yml"
-      - ".github/scripts/ahb-validate-branch-scope.mjs"
+      - '.github/workflows/ahb-*'
+      - '.github/scripts/ahb-*'
 
 jobs:
   lint:
