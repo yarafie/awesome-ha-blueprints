@@ -10,6 +10,9 @@ permissions:
 
 jobs:
   validate-branch-scope:
+    # Only enforce branch rules for contributor submissions
+    # Infrastructure / CI branches (chore/*, ci/*, etc.) are excluded
+    if: startsWith(github.head_ref, 'ahb/')
     runs-on: ubuntu-latest
 
     steps:
