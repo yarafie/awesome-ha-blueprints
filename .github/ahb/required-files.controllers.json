@@ -1,0 +1,21 @@
+{
+  "stage_1": [
+    "library/controllers/{device}/{library}/{variant}/{date}/{device}.yaml"
+  ],
+  "stage_2": [
+    "library/controllers/{device}/device.json",
+    "library/controllers/{device}/device.mdx"
+  ],
+  "stage_3": [
+    "library/controllers/{device}/{library}/{library}.json",
+    "library/controllers/{device}/{library}/{library}.mdx"
+  ],
+  "stage_4": [
+    "library/controllers/{device}/{library}/{variant}/{variant}.json",
+    "library/controllers/{device}/{library}/{variant}/{variant}.mdx"
+  ],
+  "stage_5": [
+    "library/controllers/{device}/{library}/{variant}/{date}/metadata.json"
+  ],
+  "stage_6": ["library/controllers/{device}/{library}/{variant}/changelog.json"]
+}
