@@ -30,3 +30,9 @@ jobs:
           BRANCH_NAME: ${{ github.head_ref }}
         run: |
           node .github/scripts/ahb-validate-branch-scope.mjs "$BRANCH_NAME" changed_files.txt
+
+      - name: Check AHB submission stages (controllers)
+        env:
+          BRANCH_NAME: ${{ github.head_ref }}
+        run: |
+          node .github/scripts/ahb-check-stages.mjs "$BRANCH_NAME"
