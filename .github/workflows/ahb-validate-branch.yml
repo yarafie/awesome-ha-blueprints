@@ -1,6 +1,6 @@
 name: AHB – Branch & Scope Validation
 
-on:
+'on':
   pull_request:
     branches:
       - main
