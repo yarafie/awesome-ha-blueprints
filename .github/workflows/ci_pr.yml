@@ -10,6 +10,9 @@ permissions:
     paths-ignore:
       - ".github/workflows/ahb-*"
       - ".github/scripts/ahb-*"
+      - ".github/workflows/ahb-*"
+      - ".github/workflows/ahb-validate-branch.yml"
+      - ".github/scripts/ahb-validate-branch-scope.mjs"
 
 jobs:
   lint:
