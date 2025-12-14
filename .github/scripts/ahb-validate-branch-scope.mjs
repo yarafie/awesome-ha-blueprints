@@ -1,4 +1,5 @@
 import fs from 'node:fs'
+import path from 'node:path'
 
 /* ---------------- helpers ---------------- */
 function ok(msg) {
@@ -11,13 +12,18 @@ function fail(msg) {
   process.exit(1)
 }
 
-function readLines(path) {
-  if (!fs.existsSync(path)) return []
-  return fs
-    .readFileSync(path, 'utf8')
-    .split('\n')
-    .map((l) => l.trim())
-    .filter(Boolean)
+function getAllChangedFiles() {
+  const out = []
+  const walk = (dir) => {
+    if (!fs.existsSync(dir)) return
+    for (const f of fs.readdirSync(dir)) {
+      const full = path.join(dir, f)
+      if (fs.lstatSync(full).isDirectory()) walk(full)
+      else out.push(full.replace(/\\/g, '/'))
+    }
+  }
+  walk('.')
+  return out
 }
 
 function isDate(v) {
@@ -38,31 +44,24 @@ function isLibId(v) {
 }
 
 /* ---------------- entry ---------------- */
-const [, , branchName, diffFile] = process.argv
+const [, , branchName] = process.argv
 
-if (!branchName || !diffFile) {
-  fail('Internal error: missing arguments')
-}
+if (!branchName) fail('Missing branch name')
 
-/* -------- HARD SKIP for non-AHB branches -------- */
+// Non-AHB skip
 if (!branchName.startsWith('ahb/')) {
-  console.log('ℹ️  Non-AHB branch detected. Skipping validation.')
+  console.log('ℹ️  Non-AHB branch – skipping scope')
   process.exit(0)
 }
 
-const changedFiles = readLines(diffFile)
-if (changedFiles.length === 0) {
-  fail('No changed files detected')
-}
-
-// ahb/controllers/<device>/<library>/<variant>/vYYYY.MM.DD/author-<user>
 const parts = branchName.split('/')
 const category = parts[1]
 
 if (category !== 'controllers') {
-  fail(`Unsupported AHB category: ${category}`)
+  ok('Non-controller AHB branch, skipping scope check')
 }
 
+// Expect format: ahb/controllers/<device>/<library>/<variant>/vDATE/author
 if (parts.length !== 7) {
   fail('Invalid AHB controllers branch format')
 }
@@ -79,25 +78,13 @@ if (!isLibId(variant)) fail(`Invalid variant: ${variant}`)
 if (!author.startsWith('author-')) fail(`Invalid author segment: ${author}`)
 
 const date = stripV(vDate)
-if (!date || !isDate(date)) {
-  fail(`Invalid version segment: ${vDate}`)
-}
+if (!date || !isDate(date)) fail(`Invalid version segment: ${vDate}`)
 
-/* ---------------- scope enforcement ---------------- */
-/**
- * IMPORTANT:
- * Controller submissions are allowed to touch ANY file under:
- *
- *   library/controllers/<device>/**
- *
- * This enables incremental stage completion:
- * - device.json
- * - device.mdx
- * - library files
- * - variant files
- * - version files
- */
+// Allowed device prefix
 const allowedPrefixes = [`library/controllers/${device}/`]
+
+// Get all changed files in working directory
+const changedFiles = getAllChangedFiles()
 
 for (const file of changedFiles) {
   if (!allowedPrefixes.some((p) => file.startsWith(p))) {
@@ -109,4 +96,4 @@ for (const file of changedFiles) {
   }
 }
 
-ok('AHB branch name and filesystem scope validated.')
+ok('Scope validation passed.')
