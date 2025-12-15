@@ -127,7 +127,15 @@ if (category === 'controllers') {
 /* =========================================================
    Enforce filesystem scope
    ========================================================= */
+/* -------- always-allowed paths -------- */
+const ALWAYS_ALLOWED = ['.github/', '.devcontainer/', '.vscode/']
+
+/* ---------------- enforce scope ---------------- */
 for (const file of changedFiles) {
+  if (ALWAYS_ALLOWED.some((p) => file.startsWith(p))) {
+    continue
+  }
+
   if (!file.startsWith(allowedPrefix)) {
     fail(
       `File outside allowed scope:\n${file}\n\nAllowed prefix:\n${allowedPrefix}`,
