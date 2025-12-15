@@ -7,14 +7,10 @@ permissions:
   pull_request:
     branches:
       - main
-
 jobs:
   validate:
     runs-on: ubuntu-latest
     steps:
-      # ------------------------------------------------------------
-      # Repo + diff context
-      # ------------------------------------------------------------
       - name: Checkout repository (full history)
         uses: actions/checkout@v6
         with:
@@ -27,9 +23,6 @@ jobs:
           echo "Changed files:"
           cat changed_files.txt
 
-      # ------------------------------------------------------------
-      # Tooling
-      # ------------------------------------------------------------
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
@@ -44,62 +37,37 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      # ------------------------------------------------------------
-      # Structural guardrails
-      # ------------------------------------------------------------
       - name: Validate branch name and filesystem scope
         env:
           BRANCH_NAME: ${{ github.head_ref }}
         run: |
           node .github/scripts/ahb-validate-branch-scope.mjs "$BRANCH_NAME" changed_files.txt
 
-      # ------------------------------------------------------------
-      # Schema-level validation (JSON shape only)
-      # ------------------------------------------------------------
       - name: Validate JSON schemas
         env:
           BRANCH_NAME: ${{ github.head_ref }}
         run: |
           node .github/scripts/ahb-validate-schemas.mjs "$BRANCH_NAME" changed_files.txt
 
-      # ------------------------------------------------------------
-      # Semantic validation (cross-file meaning & consistency)
-      # This replaces the need for running integrity + metadata separately
-      # ------------------------------------------------------------
-      - name: Validate AHB semantic rules
+      - name: Validate AHB semantic rules (integrity + metadata + changelog)
         env:
           BRANCH_NAME: ${{ github.head_ref }}
         run: |
           node .github/scripts/ahb-validate-semantic.mjs "$BRANCH_NAME" changed_files.txt
 
-      # ------------------------------------------------------------
-      # Changelog enforcement
-      # Any meaningful change MUST be accompanied by a changelog update
-      # ------------------------------------------------------------
-      - name: Validate changelog updates
-        env:
-          BRANCH_NAME: ${{ github.head_ref }}
-        run: |
-          node .github/scripts/ahb-validate-changelog.mjs "$BRANCH_NAME" changed_files.txt
-
-      # ------------------------------------------------------------
-      # Legacy / optional guardrails (kept for reference & rollback)
-      # ------------------------------------------------------------
+      # ─────────────────────────────────────────────
+      # Legacy steps (kept for reference / rollback)
+      # ─────────────────────────────────────────────
       # - name: Validate AHB content integrity
-      #   env:
-      #     BRANCH_NAME: ${{ github.head_ref }}
-      #   run: |
-      #     node .github/scripts/ahb-validate-integrity.mjs "$BRANCH_NAME" changed_files.txt
+      #   run: node .github/scripts/ahb-validate-integrity.mjs "$BRANCH_NAME" changed_files.txt
+      #
       # - name: Validate metadata rules
-      #   env:
-      #     BRANCH_NAME: ${{ github.head_ref }}
-      #   run: |
-      #     node .github/scripts/ahb-validate-metadata.mjs "$BRANCH_NAME"
-      # ------------------------------------------------------------
+      #   run: node .github/scripts/ahb-validate-metadata.mjs "$BRANCH_NAME"
+      #
+      # - name: Validate changelog rules
+      #   run: node .github/scripts/ahb-validate-changelog.mjs "$BRANCH_NAME" changed_files.txt
+      # ─────────────────────────────────────────────
 
-      # ------------------------------------------------------------
-      # Submission lifecycle enforcement
-      # ------------------------------------------------------------
       - name: Check AHB submission stages
         env:
           BRANCH_NAME: ${{ github.head_ref }}
