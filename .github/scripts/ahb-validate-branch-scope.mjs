@@ -88,8 +88,7 @@ if (category === 'controllers') {
 
   allowedPrefix = `library/controllers/${device}/`
 } else if (category === 'hooks') {
-
-/* ---------------- HOOKS ---------------- */
+  /* ---------------- HOOKS ---------------- */
   // ahb/hooks/<hook_id>/vYYYY.MM.DD/author-<user>
   if (parts.length !== 5) {
     fail('Invalid AHB hooks branch format')
@@ -105,8 +104,7 @@ if (category === 'controllers') {
 
   allowedPrefix = `library/hooks/${hookId}/`
 } else if (category === 'automations') {
-
-/* ---------------- AUTOMATIONS ---------------- */
+  /* ---------------- AUTOMATIONS ---------------- */
   // ahb/automations/<automation_id>/vYYYY.MM.DD/author-<user>
   if (parts.length !== 5) {
     fail('Invalid AHB automations branch format')
@@ -122,8 +120,7 @@ if (category === 'controllers') {
 
   allowedPrefix = `library/automations/${automationId}/`
 } else {
-
-/* ---------------- UNKNOWN ---------------- */
+  /* ---------------- UNKNOWN ---------------- */
   fail(`Unknown AHB category: ${category}`)
 }
 
