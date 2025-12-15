@@ -55,7 +55,10 @@ const changedFiles = fs
 const schemas = {}
 for (const schemaPath of Object.values(SCHEMA_MAP[category])) {
   const schema = JSON.parse(fs.readFileSync(schemaPath, 'utf8'))
-  ajv.addSchema(schema, schema.$id)
+  if (!schema.$id) {
+    fail(`Schema ${schemaPath} is missing $id`)
+  }
+  ajv.addSchema(schema)
   schemas[schema.$id] = schema
 }
 
