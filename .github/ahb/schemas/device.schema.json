@@ -1,0 +1,12 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "required": ["device_id", "manufacturer", "model"],
+  "properties": {
+    "device_id": { "type": "string", "pattern": "^[a-z0-9_]+$" },
+    "manufacturer": { "type": "string", "minLength": 1 },
+    "model": { "type": "string", "minLength": 1 },
+    "integrations": { "type": "array", "items": { "type": "string" } }
+  },
+  "additionalProperties": false
+}

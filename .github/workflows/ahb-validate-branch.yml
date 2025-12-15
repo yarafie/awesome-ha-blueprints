@@ -31,7 +31,19 @@ jobs:
         run: |
           node .github/scripts/ahb-validate-branch-scope.mjs "$BRANCH_NAME" changed_files.txt
 
-      - name: Check AHB submission stages (controllers)
+      - name: Validate JSON schemas
+        env:
+          BRANCH_NAME: ${{ github.head_ref }}
+        run: |
+          node .github/scripts/ahb-validate-schemas.mjs "$BRANCH_NAME" changed_files.txt
+
+      - name: Validate metadata rules
+        env:
+          BRANCH_NAME: ${{ github.head_ref }}
+        run: |
+          node .github/scripts/ahb-validate-metadata.mjs "$BRANCH_NAME"
+
+      - name: Check AHB submission stages
         env:
           BRANCH_NAME: ${{ github.head_ref }}
         run: |
