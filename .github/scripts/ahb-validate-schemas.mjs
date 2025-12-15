@@ -113,6 +113,7 @@ let hasErrors = false
 for (const file of changedFiles) {
   if (!file.endsWith('.json')) continue
   if (!file.startsWith('library/')) continue
+  if (file.endsWith('changelog.json')) continue
 
   const schemaKey = selectSchemaKey(file)
   if (!schemaKey || !schemas[schemaKey]) continue

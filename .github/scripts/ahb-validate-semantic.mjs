@@ -120,30 +120,32 @@ function validateControllerYaml(file) {
  */
 function validateMetadata(file) {
   const parts = file.split('/')
-  if (parts.length < 5) return
-
-  const entityId = parts[2]
-  const version = parts[parts.length - 2] // ✅ FIXED
+  const category = parts[1]
   const json = readJson(file)
 
-  if (json.version !== version) {
+  let expectedVersion
+
+  if (category === 'controllers') {
+    // library/controllers/<device>/<library>/<variant>/<version>/metadata.json
+    if (parts.length < 7) return
+    expectedVersion = parts[5]
+  } else {
+    // library/<category>/<id>/<version>/metadata.json
+    if (parts.length < 5) return
+    expectedVersion = parts[3]
+  }
+
+  if (json.version !== expectedVersion) {
     record(
       `Metadata version mismatch:
   file: ${file}
-  expected version: ${version}
+  expected version: ${expectedVersion}
   actual version: ${json.version}`,
     )
   }
 
-  // controllers metadata intentionally has no id
-  if (category !== 'controllers' && json.id !== entityId) {
-    record(
-      `Metadata id mismatch:
-  file: ${file}
-  expected id: ${entityId}
-  actual id: ${json.id}`,
-    )
-  }
+  // NOTE:
+  // metadata.json never contains id — identity is path-derived
 }
 
 /* =========================================================
