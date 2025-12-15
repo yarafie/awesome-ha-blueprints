@@ -1,12 +1,12 @@
 name: AHB – Branch & Scope Validation
 
+permissions:
+  contents: read
+
 'on':
   pull_request:
     branches:
       - main
-
-permissions:
-  contents: read
 
 jobs:
   validate:
@@ -14,7 +14,7 @@ jobs:
 
     steps:
       - name: Checkout repository (full history)
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
@@ -24,6 +24,20 @@ jobs:
           git diff --name-only origin/main...HEAD > changed_files.txt
           echo "Changed files:"
           cat changed_files.txt
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.0
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
       - name: Validate branch name and filesystem scope
         env:
