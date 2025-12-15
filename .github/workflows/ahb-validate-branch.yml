@@ -51,6 +51,12 @@ jobs:
         run: |
           node .github/scripts/ahb-validate-schemas.mjs "$BRANCH_NAME" changed_files.txt
 
+      - name: Validate AHB semantic (integrity + metadata) rules
+        env:
+          BRANCH_NAME: ${{ github.head_ref }}
+        run: |
+          node .github/scripts/ahb-validate-semantic.mjs "$BRANCH_NAME" changed_files.txt
+
       - name: Validate AHB content integrity
         env:
           BRANCH_NAME: ${{ github.head_ref }}
