@@ -14,11 +14,11 @@ function record(msg) {
 
 function finalize() {
   if (errors.length) {
-    console.error('❌ AHB semantic validation failed:\n')
+    console.error('❌  AHB semantic validation failed:\n')
     errors.forEach((e) => console.error(e + '\n'))
     process.exit(1)
   }
-  console.log('✅ AHB semantic validation passed')
+  console.log('✅  AHB semantic validation passed')
   process.exit(0)
 }
 
@@ -28,14 +28,16 @@ function finalize() {
 const [, , branchName, diffFile] = process.argv
 
 if (!branchName || !diffFile) {
-  console.error('❌ Missing arguments')
+  console.error('❌  Missing arguments')
   process.exit(1)
 }
 
 if (!branchName.startsWith('ahb/')) {
-  console.log('✅ Non-AHB branch – skipping semantic validation')
+  console.log('✅  Non-AHB branch – skipping semantic validation')
   process.exit(0)
 }
+
+const category = branchName.split('/')[1]
 
 const changedFiles = fs
   .readFileSync(diffFile, 'utf8')
@@ -48,11 +50,10 @@ const changedFiles = fs
    ========================================================= */
 const readJson = (f) => JSON.parse(fs.readFileSync(f, 'utf8'))
 const readYaml = (f) => yaml.load(fs.readFileSync(f, 'utf8')) || {}
-
 const exists = (f) => fs.existsSync(f)
 
 /* =========================================================
-   Guardrail 1: Semantic integrity (existing logic)
+   Guardrail 1: Controller integrity (controllers only)
    ========================================================= */
 
 /**
@@ -61,6 +62,7 @@ const exists = (f) => fs.existsSync(f)
 function validateControllerDevice(file) {
   const parts = file.split('/')
   if (parts.length !== 4) return
+
   const deviceId = parts[2]
   const json = readJson(file)
 
@@ -75,43 +77,13 @@ function validateControllerDevice(file) {
 }
 
 /**
- * library/<category>/<id>/YYYY.MM.DD/metadata.json
- */
-function validateMetadata(file) {
-  const parts = file.split('/')
-  if (parts.length < 5) return
-
-  const category = parts[1]
-  const entityId = parts[2]
-  const date = parts[3]
-  const json = readJson(file)
-
-  if (json.version !== date) {
-    record(
-      `Metadata version mismatch:
-  file: ${file}
-  expected version: ${date}
-  actual version: ${json.version}`,
-    )
-  }
-
-  // controllers metadata intentionally has no id
-  if (category !== 'controllers' && json.id !== entityId) {
-    record(
-      `Metadata id mismatch:
-  file: ${file}
-  expected id: ${entityId}
-  actual id: ${json.id}`,
-    )
-  }
-}
-
-/**
- * YAML filename + internal id consistency
+ * Controller YAML filename + internal id consistency
  */
 function validateControllerYaml(file) {
+  if (!file.endsWith('.yaml')) return
+
   const parts = file.split('/')
-  if (parts[1] !== 'controllers' || !file.endsWith('.yaml')) return
+  if (parts[1] !== 'controllers') return
   if (parts.length < 6) return
 
   const deviceId = parts[2]
@@ -140,12 +112,44 @@ function validateControllerYaml(file) {
 }
 
 /* =========================================================
-   Guardrail 2: Version discipline
+   Guardrail 2: Metadata integrity (ALL categories)
    ========================================================= */
 
 /**
- * Prevent editing older versions when newer ones exist
+ * library/<category>/<id>/<YYYY.MM.DD>/metadata.json
  */
+function validateMetadata(file) {
+  const parts = file.split('/')
+  if (parts.length < 5) return
+
+  const entityId = parts[2]
+  const version = parts[parts.length - 2] // ✅ FIXED
+  const json = readJson(file)
+
+  if (json.version !== version) {
+    record(
+      `Metadata version mismatch:
+  file: ${file}
+  expected version: ${version}
+  actual version: ${json.version}`,
+    )
+  }
+
+  // controllers metadata intentionally has no id
+  if (category !== 'controllers' && json.id !== entityId) {
+    record(
+      `Metadata id mismatch:
+  file: ${file}
+  expected id: ${entityId}
+  actual id: ${json.id}`,
+    )
+  }
+}
+
+/* =========================================================
+   Guardrail 3: Version discipline
+   ========================================================= */
+
 function validateVersionDiscipline(metadataFile) {
   const parts = metadataFile.split('/')
   const base = parts.slice(0, -2).join('/')
@@ -159,6 +163,7 @@ function validateVersionDiscipline(metadataFile) {
     .sort()
 
   const latest = versions[versions.length - 1]
+
   if (latest !== currentVersion) {
     record(
       `Modification of non-latest version detected:
@@ -170,12 +175,9 @@ function validateVersionDiscipline(metadataFile) {
 }
 
 /* =========================================================
-   Guardrail 3: Breaking-change enforcement
+   Guardrail 4: Breaking-change enforcement
    ========================================================= */
 
-/**
- * If metadata declares breaking=true → changelog must mention it
- */
 function validateBreakingChange(metadataFile) {
   const json = readJson(metadataFile)
   if (!json.breaking) return
@@ -206,22 +208,17 @@ function validateBreakingChange(metadataFile) {
 }
 
 /* =========================================================
-   Guardrail 4: Compatibility (contract-level only)
+   Guardrail 5: Compatibility (light, contract-level)
    ========================================================= */
 
-/**
- * Ensures hooks/automations only reference declared controller events
- * (Loose compatibility, no hard binding)
- */
 function validateCompatibility(file) {
   if (!file.endsWith('.yaml')) return
-  const content = readYaml(file)
 
+  const content = readYaml(file)
   const events = content?.triggers || []
   const actions = content?.actions || []
 
-  if (!Array.isArray(events) || !Array.isArray(actions))
-    return // Placeholder: contract names must be strings
+  if (!Array.isArray(events) || !Array.isArray(actions)) return
   ;[...events, ...actions].forEach((e) => {
     if (typeof e !== 'string') {
       record(
@@ -235,16 +232,21 @@ function validateCompatibility(file) {
 /* =========================================================
    Execution
    ========================================================= */
+
 for (const file of changedFiles) {
   if (!file.startsWith('library/') || !exists(file)) continue
 
-  if (file.endsWith('/device.json')) validateControllerDevice(file)
+  if (file.endsWith('/device.json') && category === 'controllers') {
+    validateControllerDevice(file)
+  }
+
   if (file.endsWith('/metadata.json')) {
     validateMetadata(file)
     validateVersionDiscipline(file)
     validateBreakingChange(file)
   }
-  if (file.endsWith('.yaml')) {
+
+  if (file.endsWith('.yaml') && category === 'controllers') {
     validateControllerYaml(file)
     validateCompatibility(file)
   }
