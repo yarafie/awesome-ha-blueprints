@@ -1,6 +1,6 @@
 {
   "device_id": "example_device",
-  "manufacturer": "Example",
+  "manufacturer": "Example Manufacturer",
   "model": "Example Device",
   "integrations": []
 }

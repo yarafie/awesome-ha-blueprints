@@ -8,12 +8,14 @@ const ajv = new Ajv({ allErrors: true })
 function loadSchema(p) {
   return ajv.compile(JSON.parse(fs.readFileSync(p, 'utf8')))
 }
+
 function fail(msg) {
-  console.error(`❌  ${msg}`)
+  console.error(`❌   ${msg}`)
   process.exit(1)
 }
+
 function ok(msg) {
-  console.log(`✅  ${msg}`)
+  console.log(`✅   ${msg}`)
   process.exit(0)
 }
 
@@ -22,6 +24,9 @@ if (!branchName || !branchName.startsWith('ahb/')) {
   ok('Non-AHB branch – skipping metadata validation')
 }
 
+/* -------------------------------------------------
+   Load schemas (definitions only, never validated)
+   ------------------------------------------------- */
 const schemas = {
   device: loadSchema('.github/ahb/schemas/device.schema.json'),
   library: loadSchema('.github/ahb/schemas/library.schema.json'),
@@ -29,6 +34,9 @@ const schemas = {
   version: loadSchema('.github/ahb/schemas/version-metadata.schema.json'),
 }
 
+/* -------------------------------------------------
+   Validation rules for library content only
+   ------------------------------------------------- */
 const filesToCheck = [
   { glob: /device\.json$/, schema: schemas.device },
   { glob: /\/[^/]+\.json$/, schema: schemas.library },
@@ -40,14 +48,28 @@ const changed = fs.readFileSync('changed_files.txt', 'utf8').split('\n')
 
 for (const file of changed) {
   if (!file || !fs.existsSync(file)) continue
+
+  /* ---------------------------------------------
+     HARD SKIP: never validate schema definitions
+     --------------------------------------------- */
+  if (file.startsWith('.github/ahb/schemas/')) continue
+
+  /* ---------------------------------------------
+     Only validate library content
+     --------------------------------------------- */
+  if (!file.startsWith('library/')) continue
+
   const rule = filesToCheck.find((r) => r.glob.test(file))
   if (!rule) continue
 
   const data = JSON.parse(fs.readFileSync(file, 'utf8'))
   const valid = rule.schema(data)
+
   if (!valid) {
     fail(
-      `Schema validation failed for ${file}:\n${ajv.errorsText(rule.schema.errors)}`,
+      `Schema validation failed for ${file}:\n${ajv.errorsText(
+        rule.schema.errors,
+      )}`,
     )
   }
 }
