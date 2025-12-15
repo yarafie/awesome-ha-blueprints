@@ -1,21 +1,20 @@
 #!/usr/bin/env node
 import fs from 'node:fs'
 import path from 'node:path'
+import yaml from 'js-yaml'
 
 /* ---------------- helpers ---------------- */
 function fail(msg) {
-  console.error(`❌   ${msg}`)
+  console.error(`❌    ${msg}`)
   process.exit(1)
 }
-
 function ok(msg) {
-  console.log(`✅   ${msg}`)
+  console.log(`✅    ${msg}`)
   process.exit(0)
 }
 
 /* ---------------- entry ---------------- */
 const [, , branchName, diffFile] = process.argv
-
 if (!branchName || !diffFile) {
   fail('Missing arguments')
 }
@@ -58,7 +57,6 @@ function validateMetadataVersionAndId(file) {
   const category = parts[1]
   const entityId = parts[2]
   const date = parts[3]
-
   const json = JSON.parse(fs.readFileSync(file, 'utf8'))
 
   if (json.version !== date) {
@@ -80,10 +78,46 @@ function validateMetadataVersionAndId(file) {
   }
 }
 
+function validateControllerYaml(file) {
+  // library/controllers/<device_id>/.../<device_id>.yaml
+  const parts = file.split('/')
+
+  if (parts[0] !== 'library' || parts[1] !== 'controllers') return
+  if (!file.endsWith('.yaml')) return
+  if (parts.length < 6) return
+
+  const deviceId = parts[2]
+  const filename = path.basename(file, '.yaml')
+
+  // 1️⃣ filename must match device id
+  if (filename !== deviceId) {
+    fail(
+      `Controller YAML filename mismatch:\n` +
+        `  file: ${file}\n` +
+        `  expected filename: ${deviceId}.yaml\n` +
+        `  actual filename: ${filename}.yaml`,
+    )
+  }
+
+  // 2️⃣ internal id (if present) must match device id
+  const content = yaml.load(fs.readFileSync(file, 'utf8')) || {}
+
+  const internalId =
+    content?.blueprint?.id || content?.blueprint?.name || content?.id || null
+
+  if (internalId && internalId !== deviceId) {
+    fail(
+      `Controller YAML internal id mismatch:\n` +
+        `  file: ${file}\n` +
+        `  expected id: ${deviceId}\n` +
+        `  actual id: ${internalId}`,
+    )
+  }
+}
+
 /* ---------------- execution ---------------- */
 
 for (const file of changedFiles) {
-  if (!file.endsWith('.json')) continue
   if (!file.startsWith('library/')) continue
   if (!fs.existsSync(file)) continue
 
@@ -94,6 +128,11 @@ for (const file of changedFiles) {
 
   if (file.endsWith('/metadata.json')) {
     validateMetadataVersionAndId(file)
+    continue
+  }
+
+  if (file.endsWith('.yaml')) {
+    validateControllerYaml(file)
   }
 }
 
