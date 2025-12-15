@@ -41,12 +41,12 @@ function validateControllerDeviceId(file) {
   const deviceId = parts[2]
   const json = JSON.parse(fs.readFileSync(file, 'utf8'))
 
-  if (json.id !== deviceId) {
+  if (json.device_id !== deviceId) {
     fail(
-      `Controller device.json id mismatch:\n` +
+      `Controller device.json device_id mismatch:\n` +
         `  file: ${file}\n` +
-        `  expected id: ${deviceId}\n` +
-        `  actual id: ${json.id}`,
+        `  expected device_id: ${deviceId}\n` +
+        `  actual device_id: ${json.device_id}`,
     )
   }
 }
