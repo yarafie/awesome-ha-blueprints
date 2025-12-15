@@ -3,17 +3,21 @@ import fs from 'node:fs'
 import path from 'node:path'
 import Ajv from 'ajv'
 
+/* ---------------- AJV SETUP ---------------- */
+
 const ajv = new Ajv({ allErrors: true, strict: false })
 
 function fail(msg) {
-  console.error(`❌  ${msg}`)
+  console.error(`❌   ${msg}`)
   process.exit(1)
 }
 
 function ok(msg) {
-  console.log(`✅  ${msg}`)
+  console.log(`✅   ${msg}`)
   process.exit(0)
 }
+
+/* ---------------- ENTRY ---------------- */
 
 const [, , branchName, diffFile] = process.argv
 
@@ -26,6 +30,8 @@ if (!branchName.startsWith('ahb/')) {
 }
 
 const category = branchName.split('/')[1]
+
+/* ---------------- SCHEMA MAP ---------------- */
 
 const SCHEMA_MAP = {
   controllers: {
@@ -46,21 +52,61 @@ if (!SCHEMA_MAP[category]) {
   ok(`No schemas defined for ${category}`)
 }
 
+/* ---------------- LOAD SCHEMAS (ONCE) ---------------- */
+
+const schemas = {}
+
+for (const [key, schemaPath] of Object.entries(SCHEMA_MAP[category])) {
+  const schema = JSON.parse(fs.readFileSync(schemaPath, 'utf8'))
+
+  if (!schema.$id) {
+    fail(`Schema ${schemaPath} is missing $id`)
+  }
+
+  // Register schema ONCE using its $id as key
+  ajv.addSchema(schema, schema.$id)
+  schemas[key] = schema
+}
+
+/* ---------------- CHANGED FILES ---------------- */
+
 const changedFiles = fs
   .readFileSync(diffFile, 'utf8')
   .split('\n')
   .map((l) => l.trim())
   .filter(Boolean)
 
-const schemas = {}
-for (const schemaPath of Object.values(SCHEMA_MAP[category])) {
-  const schema = JSON.parse(fs.readFileSync(schemaPath, 'utf8'))
-  if (!schema.$id) {
-    fail(`Schema ${schemaPath} is missing $id`)
+/* ---------------- SCHEMA SELECTION ---------------- */
+/*
+  Important fix:
+  Each JSON file must be validated against EXACTLY ONE schema,
+  not all schemas.
+*/
+
+function selectSchemaKey(file) {
+  if (category === 'controllers') {
+    if (file.endsWith('/device.json')) return 'device'
+    if (file.endsWith('/metadata.json')) return 'metadata'
+
+    if (file.match(/^library\/controllers\/[^/]+\/[^/]+\/[^/]+\.json$/)) {
+      return 'library'
+    }
+
+    if (
+      file.match(/^library\/controllers\/[^/]+\/[^/]+\/[^/]+\/[^/]+\.json$/)
+    ) {
+      return 'variant'
+    }
   }
-  ajv.addSchema(schema)
-  schemas[schema.$id] = schema
+
+  if (category === 'hooks' || category === 'automations') {
+    if (file.endsWith('/metadata.json')) return 'metadata'
+  }
+
+  return null
 }
+
+/* ---------------- VALIDATION ---------------- */
 
 let hasErrors = false
 
@@ -68,19 +114,18 @@ for (const file of changedFiles) {
   if (!file.endsWith('.json')) continue
   if (!file.startsWith('library/')) continue
 
+  const schemaKey = selectSchemaKey(file)
+  if (!schemaKey || !schemas[schemaKey]) continue
+
   const json = JSON.parse(fs.readFileSync(file, 'utf8'))
+  const valid = ajv.validate(schemas[schemaKey].$id, json)
 
-  for (const schema of Object.values(schemas)) {
-    if (ajv.validate(schema, json)) {
-      console.log(`✔ Schema OK: ${file}`)
-      continue
-    }
-
-    if (ajv.errors) {
-      hasErrors = true
-      console.error(`❌ Schema errors in ${file}`)
-      console.error(ajv.errors)
-    }
+  if (!valid) {
+    hasErrors = true
+    console.error(`❌  Schema errors in ${file}`)
+    console.error(ajv.errors)
+  } else {
+    console.log(`✔ Schema OK: ${file}`)
   }
 }
 
