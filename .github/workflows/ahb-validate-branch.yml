@@ -11,7 +11,6 @@ permissions:
 jobs:
   validate:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository (full history)
         uses: actions/checkout@v6
@@ -45,29 +44,51 @@ jobs:
         run: |
           node .github/scripts/ahb-validate-branch-scope.mjs "$BRANCH_NAME" changed_files.txt
 
-      - name: Validate JSON schemas
-        env:
-          BRANCH_NAME: ${{ github.head_ref }}
-        run: |
-          node .github/scripts/ahb-validate-schemas.mjs "$BRANCH_NAME" changed_files.txt
-
-      - name: Validate AHB semantic (integrity + metadata) rules
+      # --------------------------------------------------------------------
+      # Canonical semantic validation
+      #
+      # This single step replaces:
+      #  - ahb-validate-schemas.mjs
+      #  - ahb-validate-integrity.mjs
+      #  - ahb-validate-metadata.mjs
+      #
+      # It performs:
+      #  - JSON Schema validation
+      #  - folder ↔ id / device_id consistency
+      #  - metadata version checks
+      #  - YAML filename & internal id checks
+      # --------------------------------------------------------------------
+      - name: Validate AHB semantic rules
         env:
           BRANCH_NAME: ${{ github.head_ref }}
         run: |
           node .github/scripts/ahb-validate-semantic.mjs "$BRANCH_NAME" changed_files.txt
 
-      - name: Validate AHB content integrity
-        env:
-          BRANCH_NAME: ${{ github.head_ref }}
-        run: |
-          node .github/scripts/ahb-validate-integrity.mjs "$BRANCH_NAME" changed_files.txt
+      # --------------------------------------------------------------------
+      # Legacy / redundant validation steps
+      #
+      # ⚠️ Temporarily commented out.
+      # These are kept for reference and rollback only.
+      # DO NOT re-enable unless semantic validation is removed.
+      # --------------------------------------------------------------------
 
-      - name: Validate metadata rules
-        env:
-          BRANCH_NAME: ${{ github.head_ref }}
-        run: |
-          node .github/scripts/ahb-validate-metadata.mjs "$BRANCH_NAME"
+      # - name: Validate JSON schemas
+      #   env:
+      #     BRANCH_NAME: ${{ github.head_ref }}
+      #   run: |
+      #     node .github/scripts/ahb-validate-schemas.mjs "$BRANCH_NAME" changed_files.txt
+
+      # - name: Validate AHB content integrity
+      #   env:
+      #     BRANCH_NAME: ${{ github.head_ref }}
+      #   run: |
+      #     node .github/scripts/ahb-validate-integrity.mjs "$BRANCH_NAME" changed_files.txt
+
+      # - name: Validate metadata rules
+      #   env:
+      #     BRANCH_NAME: ${{ github.head_ref }}
+      #   run: |
+      #     node .github/scripts/ahb-validate-metadata.mjs "$BRANCH_NAME"
 
       - name: Check AHB submission stages
         env:
