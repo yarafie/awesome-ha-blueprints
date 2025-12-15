@@ -5,11 +5,11 @@ import yaml from 'js-yaml'
 
 /* ---------------- helpers ---------------- */
 function fail(msg) {
-  console.error(`❌     ${msg}`)
+  console.error(`❌ ${msg}`)
   process.exit(1)
 }
 function ok(msg) {
-  console.log(`✅     ${msg}`)
+  console.log(`✅ ${msg}`)
   process.exit(0)
 }
 
@@ -18,7 +18,6 @@ const [, , branchName, diffFile] = process.argv
 if (!branchName || !diffFile) {
   fail('Missing arguments')
 }
-
 if (!branchName.startsWith('ahb/')) {
   ok('Non-AHB branch – skipping integrity validation')
 }
@@ -72,6 +71,7 @@ function validateMetadataVersionAndId(file) {
     )
   }
 
+  // controllers metadata does NOT require id
   if (category !== 'controllers' && json.id !== entityId) {
     fail(
       `Metadata id mismatch:\n` +
@@ -94,7 +94,7 @@ function validateControllerYaml(file) {
   const deviceId = parts[2]
   const filename = path.basename(file, '.yaml')
 
-  // 1️⃣ filename must match device id
+  // filename must match device_id
   if (filename !== deviceId) {
     fail(
       `Controller YAML filename mismatch:\n` +
@@ -104,7 +104,7 @@ function validateControllerYaml(file) {
     )
   }
 
-  // 2️⃣ internal id (if present) must match device id
+  // internal id (if present) must match device_id
   const content = yaml.load(fs.readFileSync(file, 'utf8')) || {}
   const internalId =
     content?.blueprint?.id || content?.blueprint?.name || content?.id || null
@@ -124,7 +124,6 @@ function validateControllerYaml(file) {
  */
 function validateJsonIdMatchesFolder(file, expectedId, label) {
   const json = JSON.parse(fs.readFileSync(file, 'utf8'))
-
   if (json.id !== expectedId) {
     fail(
       `${label} id mismatch:\n` +
@@ -136,20 +135,26 @@ function validateJsonIdMatchesFolder(file, expectedId, label) {
 }
 
 /* ---------------- execution ---------------- */
-
 for (const file of changedFiles) {
   if (!file.startsWith('library/')) continue
   if (!fs.existsSync(file)) continue
 
   const parts = file.split('/')
 
-  // controllers
+  // metadata.json FIRST (avoid false matches)
+  if (file.endsWith('/metadata.json')) {
+    validateMetadataVersionAndId(file)
+    continue
+  }
+
+  // controllers/device.json
   if (file.endsWith('/device.json')) {
     validateControllerDeviceId(file)
     continue
   }
 
   // controller library.json
+  // library/controllers/<device>/<library>/<library>.json
   if (
     parts[1] === 'controllers' &&
     parts.length === 5 &&
@@ -160,6 +165,7 @@ for (const file of changedFiles) {
   }
 
   // controller variant.json
+  // library/controllers/<device>/<library>/<variant>/<variant>.json
   if (
     parts[1] === 'controllers' &&
     parts.length === 6 &&
@@ -182,12 +188,6 @@ for (const file of changedFiles) {
     file.endsWith('.json')
   ) {
     validateJsonIdMatchesFolder(file, parts[2], 'Automation')
-    continue
-  }
-
-  // metadata.json
-  if (file.endsWith('/metadata.json')) {
-    validateMetadataVersionAndId(file)
     continue
   }
 
