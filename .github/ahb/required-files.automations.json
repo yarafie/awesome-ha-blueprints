@@ -1,0 +1,11 @@
+{
+  "stage_1": [
+    "library/automations/{automation_id}/{automation_id}.mdx",
+    "library/automations/{automation_id}/{automation_id}.json",
+    "library/automations/{automation_id}/changelog.json"
+  ],
+  "stage_2": [
+    "library/automations/{automation_id}/{date}/{automation_id}.yaml",
+    "library/automations/{automation_id}/{date}/metadata.json"
+  ]
+}
