@@ -9,7 +9,7 @@
     "lint": "turbo run lint",
     "prepare": "husky"
   },
-  "packageManager": "pnpm@9.15.0",
+  "packageManager": "pnpm@10.26.0",
   "devDependencies": {
     "ajv": "^8.17.1",
     "husky": "^9.1.7",
