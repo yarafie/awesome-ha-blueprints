@@ -1,0 +1,1 @@
+"use strict";(globalThis.webpackChunkawesome_ha_blueprints_website=globalThis.webpackChunkawesome_ha_blueprints_website||[]).push([[8066],{42460(e,s,a){a.r(s),a.d(s,{default:()=>b});const b=a.p+"assets/images/ikea_ictc_g_1-9fafba6bd44539771e07f009bbfd787c.png"}}]);

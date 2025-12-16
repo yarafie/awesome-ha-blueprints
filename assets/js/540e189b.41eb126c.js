@@ -1,1 +1,0 @@
-"use strict";(globalThis.webpackChunkawesome_ha_blueprints_website=globalThis.webpackChunkawesome_ha_blueprints_website||[]).push([[5827],{8742:(e,s,a)=>{a.r(s),a.d(s,{default:()=>b});const b=a.p+"assets/images/shelly_snsn_0024x-4d1b214af3e9e38d9daf1dd3d67d5c88.png"}}]);

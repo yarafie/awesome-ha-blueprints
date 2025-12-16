@@ -1,0 +1,1 @@
+"use strict";(globalThis.webpackChunkawesome_ha_blueprints_website=globalThis.webpackChunkawesome_ha_blueprints_website||[]).push([[921],{35516(e,s,a){a.r(s),a.d(s,{default:()=>b});const b=a.p+"assets/images/shelly_button_1-c75952f42d7dc5167de518303cb2530b.png"}}]);
