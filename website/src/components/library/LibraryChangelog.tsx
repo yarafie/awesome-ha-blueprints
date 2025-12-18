@@ -1,43 +1,47 @@
 /**
- * Component: LibraryChangelog
+ * Component: Changelog
  * ────────────────────────────────────────────────────────────────
- * Renders a blueprint’s changelog from its variant-level changelog.json.
+ * Purpose:
+ *   Renders a blueprint’s changelog from its changelog.json file.
  *
- * Expected locations:
- *  - automations/<id>/<variant>/<variant>/changelog.json
- *  - hooks/<id>/<variant>/<variant>/changelog.json
- *  - controllers/<id>/<library>/<variant>/changelog.json
+ * Changelog :):
+ *   • Initial Version (@EPMatt)
+ *   - Updated 2026.12.02 (@yarafie):
+ *      1. Moved utils.ts to utils/contexts.ts
+ *      2. Migrated to Marked v17 configuration with custom Renderer.
+ *      3. Added emoji replacement to support :emoji_codes:
+ *      4. Added explicit variant support
+ * ────────────────────────────────────────────────────────────────
  */
 import React, { useEffect, useState } from 'react'
 import { marked, Renderer } from 'marked'
-import { libraryChangelogsContext } from '../../utils/library_contexts'
+import { LibraryChangelogsContext } from '../../utils/library_contexts' //1. Moved utils.ts to utils/contexts.ts
+
+// 2. Added emoji replacement to support :emoji_codes:
+// Import the full emoji map
 import { emojiMap } from '../../utils/emojiMap'
 
-/* ───────────────────────────── Types ───────────────────────────── */
-
-interface LibraryChangelogChange {
+interface ChangelogChange {
   description: string
   breaking: boolean
 }
 
-interface LibraryChangelogEntry {
+interface ChangelogEntry {
   date: string
-  changes: LibraryChangelogChange[]
+  changes: ChangelogChange[]
 }
 
-interface LibraryChangelogProps {
-  category: 'automation' | 'hooks' | 'controllers'
+interface ChangelogProps {
+  category: string
   id: string
-  variant: string
+  variant?: string // 3. Added explicit variant support
 }
 
-type LibraryChangelogState =
+type ChangelogState =
   | { status: 'loading' }
   | { status: 'error'; message: string }
   | { status: 'empty' }
-  | { status: 'ready'; entries: LibraryChangelogEntry[] }
-
-/* ─────────────────────────── Styling ─────────────────────────── */
+  | { status: 'ready'; entries: ChangelogEntry[] }
 
 const styles = {
   list: {
@@ -61,8 +65,12 @@ const styles = {
   } as React.CSSProperties,
 }
 
-/* ───────────────────── Markdown + Emoji ───────────────────── */
-
+// 2. Migrated to Marked v17 configuration with custom Renderer.
+// ─────────────────────────────────────────────
+// Marked v17 configuration
+// ─────────────────────────────────────────────
+// Configure marked for inline markdown parsing
+// Customize link renderer to open links in new tab
 const renderer = new Renderer()
 renderer.link = ({ href, title, text }) => {
   const titleAttr = title ? ` title="${title}"` : ''
@@ -70,82 +78,94 @@ renderer.link = ({ href, title, text }) => {
 }
 
 marked.setOptions({
-  breaks: true,
-  gfm: true,
-  async: false,
+  breaks: true, // Convert line breaks to <br>
+  gfm: true, // GitHub Flavored Markdown
+  async: false, // required for synchronous parse() marked 17
   renderer,
 })
 
-const replaceEmojiCodes = (text: string): string =>
-  text.replace(/:([a-zA-Z0-9_+-]+):/g, (m) => emojiMap[m] || m)
+// 3. Added emoji replacement to support :emoji_codes:
+// ─────────────────────────────────────────────
+// Emoji replacement — uses imported emojiMap
+// ─────────────────────────────────────────────
+const replaceEmojiCodes = (text: string): string => {
+  // Supports +1, -1, underscores, skin-tones, flags, etc.
+  return text.replace(
+    /:([a-zA-Z0-9_+-]+):/g,
+    (match) => emojiMap[match] || match,
+  )
+}
 
+// ─────────────────────────────────────────────
+// Markdown → HTML (inline safe)
+// ─────────────────────────────────────────────
 const markdownToHtml = (markdown: string): string => {
-  let html = marked.parse(replaceEmojiCodes(markdown)) as string
-  return html
-    .replace(/^<p>/, '')
-    .replace(/<\/p>\s*$/, '')
-    .trim()
+  const withEmojis = replaceEmojiCodes(markdown)
+  // Use parse() to handle line breaks properly, then strip <p> wrapper tags
+  // to avoid extra spacing in inline contexts
+  let html = marked.parse(withEmojis) as string
+  // Remove leading/trailing <p> tags and their content wrappers
+  html = html.replace(/^<p>/, '').replace(/<\/p>\s*$/, '')
+  return html.trim()
 }
 
 const renderDescription = (description: string) => (
   <span dangerouslySetInnerHTML={{ __html: markdownToHtml(description) }} />
 )
 
-/* ───────────────────────── Component ───────────────────────── */
-
-const LibraryChangelog: React.FC<LibraryChangelogProps> = ({
-  category,
-  id,
-  variant,
-}) => {
-  const [state, setState] = useState<LibraryChangelogState>({
-    status: 'loading',
-  })
+const Changelog: React.FC<ChangelogProps> = ({ category, id, variant }) => {
+  const [state, setState] = useState<ChangelogState>({ status: 'loading' })
 
   useEffect(() => {
-    let mounted = true
+    let isMounted = true
 
-    try {
-      let path: string
+    const loadChangelog = () => {
+      try {
+        // Default non-variant path
+        let path = `./${category}/${id}/changelog.json`
 
-      switch (category) {
-        case 'automation':
-          path = `./automations/${id}/${variant}/${variant}/changelog.json`
-          break
-        case 'hooks':
-          path = `./hooks/${id}/${variant}/${variant}/changelog.json`
-          break
-        case 'controllers':
-          path = `./controllers/${id}/${variant}/changelog.json`
-          break
-        default:
-          throw new Error(`Unsupported changelog category: ${category}`)
+        // 4. If controller + variant provided → use variant changelog.json
+        if (category === 'controllers' && variant) {
+          const variantPath = `./controllers/${id}/${variant}/changelog.json`
+          if (LibraryChangelogsContext.keys().includes(variantPath)) {
+            path = variantPath
+          }
+        }
+
+        const parsed = LibraryChangelogsContext(
+          path,
+        ) as unknown as ChangelogEntry[]
+        if (!isMounted) return
+        if (!parsed || parsed.length === 0) {
+          setState({ status: 'empty' })
+          return
+        }
+
+        setState({ status: 'ready', entries: parsed })
+      } catch (error) {
+        if (!isMounted) return
+
+        // If the file is not found by the context, consider it empty
+        const message =
+          error instanceof Error ? error.message : 'Unable to load changelog.'
+
+        if (
+          /^\.\/.+changelog\.json$/.test(message) ||
+          /not found/i.test(message)
+        ) {
+          setState({ status: 'empty' })
+        } else {
+          setState({ status: 'error', message })
+        }
       }
-
-      const entries = libraryChangelogsContext(path) as LibraryChangelogEntry[]
-
-      if (!mounted) return
-
-      if (!entries || entries.length === 0) {
-        setState({ status: 'empty' })
-      } else {
-        setState({ status: 'ready', entries })
-      }
-    } catch (error) {
-      if (!mounted) return
-      setState({
-        status: 'error',
-        message:
-          error instanceof Error ? error.message : 'Unable to load changelog.',
-      })
     }
+
+    loadChangelog()
 
     return () => {
-      mounted = false
+      isMounted = false
     }
-  }, [category, id, variant])
-
-  /* ───────────────────────── Render ───────────────────────── */
+  }, [category, id, variant]) // 3. Added explicit variant support
 
   if (state.status === 'loading') {
     return <p style={styles.inlineMessage}>Loading changelog…</p>
@@ -166,35 +186,40 @@ const LibraryChangelog: React.FC<LibraryChangelogProps> = ({
   }
 
   return (
-    <ul style={styles.list}>
-      {state.entries.map((entry) => {
-        const hasMultiple = entry.changes.length > 1
-        const hasBreaking = entry.changes.some((c) => c.breaking)
+    <>
+      <ul style={styles.list}>
+        {state.entries.map((entry) => {
+          const hasMultipleChanges = entry.changes.length > 1
+          const hasBreakingChanges = entry.changes.some(
+            (change) => change.breaking,
+          )
 
-        return (
-          <li key={entry.date} style={styles.entry}>
-            <strong>{entry.date}</strong>
-            {hasMultiple || hasBreaking ? (
-              <ul style={styles.nestedList}>
-                {entry.changes.map((change, i) => (
-                  <li key={`${entry.date}-${i}`}>
-                    {change.breaking && (
-                      <span style={styles.warning}>
-                        <strong>🚨 Breaking Change</strong>:{' '}
-                      </span>
-                    )}
-                    {renderDescription(change.description)}
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <>: {renderDescription(entry.changes[0].description)}</>
-            )}
-          </li>
-        )
-      })}
-    </ul>
+          return (
+            <li key={`${entry.date}`} style={styles.entry}>
+              <strong>{entry.date}</strong>
+              {hasMultipleChanges || hasBreakingChanges ? (
+                <ul style={styles.nestedList}>
+                  {entry.changes.map((change, index) => (
+                    <li key={`${entry.date}-${index}`}>
+                      {change.breaking && (
+                        <span style={styles.warning}>
+                          <strong>🚨 Breaking Change</strong> :
+                        </span>
+                      )}
+                      {change.breaking && ' '}
+                      {renderDescription(change.description)}
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <>: {renderDescription(entry.changes[0]?.description ?? '')}</>
+              )}
+            </li>
+          )
+        })}
+      </ul>
+    </>
   )
 }
 
-export default LibraryChangelog
+export default Changelog
