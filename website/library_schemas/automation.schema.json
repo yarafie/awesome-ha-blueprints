@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Automation Metadata",
+  "type": "object",
+  "required": [
+    "automation_id",
+    "name",
+    "summary",
+    "maintainers",
+    "variants",
+    "domain",
+    "category",
+    "tags",
+    "status"
+  ],
+  "properties": {
+    "automation_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9_]+$"
+    },
+    "name": {
+      "type": "string"
+    },
+    "summary": {
+      "type": "string"
+    },
+    "maintainers": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 1
+    },
+    "variants": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 1
+    },
+    "domain": {
+      "type": "string",
+      "const": "automation"
+    },
+    "category": {
+      "type": "string"
+    },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "status": {
+      "type": "string",
+      "enum": ["stable", "experimental", "deprecated"]
+    }
+  },
+  "additionalProperties": false
+}

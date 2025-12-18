@@ -1,0 +1,7 @@
+{
+  "automation_id": "simple_safe_scheduler",
+  "variant": "EPMatt",
+  "maintainers": ["EPMatt"],
+  "has_versions": true,
+  "status": "stable"
+}

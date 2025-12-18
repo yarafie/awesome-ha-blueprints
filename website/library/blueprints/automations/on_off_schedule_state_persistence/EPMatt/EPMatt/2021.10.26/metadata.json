@@ -1,0 +1,14 @@
+{
+  "version": "2021.10.26",
+  "automation_id": "on_off_schedule_state_persistence",
+  "variant": "EPMatt",
+  "domain": "automation",
+  "yaml": "on_off_schedule_state_persistence.yaml",
+  "schema_version": "ahb-automation-v1",
+  "deprecated": false,
+  "hidden": false,
+  "changelog_ref": {
+    "file": "../changelog.json",
+    "date": "2021.10.26"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "automation_id": "on_off_schedule_state_persistence",
+  "name": "On-Off schedule with state persistence",
+  "summary": "A simple on-off schedule, with the addition of state persistence across disruptive events, making sure the target device is always in the expected state.",
+  "maintainers": ["EPMatt"],
+  "variants": ["EPMatt"],
+  "domain": "automation",
+  "category": "scheduler",
+  "tags": ["scheduler", "state"],
+  "status": "stable"
+}

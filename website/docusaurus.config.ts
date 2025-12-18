@@ -19,6 +19,7 @@ function webpackConfigPlugin() {
         resolve: {
           alias: {
             '@blueprints': path.resolve(__dirname, 'docs/blueprints'),
+            '@library': path.resolve(__dirname, 'library/blueprints'),
           },
         },
         module: {
@@ -26,7 +27,10 @@ function webpackConfigPlugin() {
             {
               test: /\.ya?ml$/,
               type: 'asset/source',
-              include: [path.resolve(__dirname, 'docs/blueprints')],
+              include: [
+                path.resolve(__dirname, 'docs/blueprints'),
+                path.resolve(__dirname, 'library/blueprints'),
+              ],
             },
           ],
         },
@@ -55,12 +59,15 @@ const config: Config = {
   favicon: 'img/favicon.ico',
   organizationName: 'yarafie',
   projectName: 'awesome-ha-blueprints',
+
   // Removed the GTM script as we're now using react-ga4 for a more stable implementation
   // scripts: ['/awesome-ha-blueprints/js/google-tag-manager.js'],
+
   i18n: {
     defaultLocale: 'en',
     locales: ['en'],
   },
+
   // Make environment variables available to client-side code
   customFields: {
     env: clientEnv,
@@ -70,7 +77,7 @@ const config: Config = {
     announcementBar: {
       id: 'support_us',
       content:
-        '🚀 <b>Love this project?</b> <a target="_blank" href="https://github.com/yarafie/awesome-ha-blueprints">Drop a star on GitHub</a>🌟 or <a target="_blank" href="https://www.buymeacoffee.com/yarafiet">make a small donation</a>☕ to show your support!',
+        '🚀 <b>Love this project?</b> <a target="_blank" href="https://github.com/yarafie/awesome-ha-blueprints">Drop a star on GitHub</a>🌟 or <a target="_blank" href="https://www.buymeacoffee.com/yarafiet">make a small donation</a>☕to show your support!',
       backgroundColor: '#fffbd4',
       textColor: '#091E42',
     },
@@ -82,7 +89,14 @@ const config: Config = {
         alt: 'Awesome HA Blueprints Logo',
         src: 'img/logo.svg',
       },
+      // Adds Library navigation entry to the global navbar
       items: [
+        {
+          to: 'library/introduction',
+          activeBaseRegex: '^/library/introduction',
+          label: 'Getting Started (Library 1.0)',
+          position: 'left',
+        },
         {
           to: 'docs/introduction/',
           activeBaseRegex: '^/docs/introduction',
@@ -117,7 +131,7 @@ const config: Config = {
       links: [],
       copyright: `Awesome HA Blueprints is maintained by
          <a href='https://github.com/EPMatt'>Matteo Agnoletto</a>.<br/>
-         This fork is maintained by
+         This fork is developed and maintained by
          <a href='https://github.com/yarafie'>yarafie</a>.<br/>
          Licensed under the
          <a href='https://github.com/EPMatt/awesome-ha-blueprints/blob/main/LICENSE'>
@@ -170,6 +184,19 @@ const config: Config = {
     webpackConfigPlugin,
     blueprintDownloaderPlugin,
     controllerImagesPlugin,
+
+    // Adds a secondary Docusaurus docs instance for the Awesome HA Blueprints Library
+    [
+      '@docusaurus/plugin-content-docs',
+      {
+        id: 'library',
+        path: 'library',
+        routeBasePath: 'library',
+        sidebarPath: path.resolve(__dirname, 'sidebarsLibrary.js'),
+        editUrl:
+          'https://github.com/yarafie/awesome-ha-blueprints/edit/main/website/',
+      },
+    ],
 
     // Make environment variables available to the client
     function () {

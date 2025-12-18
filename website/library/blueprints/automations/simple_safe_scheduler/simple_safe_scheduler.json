@@ -1,0 +1,11 @@
+{
+  "automation_id": "simple_safe_scheduler",
+  "name": "Simple Safe Scheduler",
+  "summary": "A simple scheduler which executes a certain action at a given time, checking and eventually re-executing the action if the automation did not run at the expected time (e.g. due to a disruptive event).",
+  "maintainers": ["EPMatt"],
+  "variants": ["EPMatt"],
+  "domain": "automation",
+  "category": "scheduler",
+  "tags": ["safety", "scheduler", "time"],
+  "status": "stable"
+}

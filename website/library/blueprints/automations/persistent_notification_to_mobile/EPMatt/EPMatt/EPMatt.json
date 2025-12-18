@@ -1,0 +1,7 @@
+{
+  "automation_id": "persistent_notification_to_mobile",
+  "variant": "EPMatt",
+  "maintainers": ["EPMatt"],
+  "has_versions": true,
+  "status": "stable"
+}

@@ -1,9 +1,8 @@
 # Dependencies
 /node_modules
 
-#ahb files
-_ahb*
-library_phase1_reference
+#local files
+/architecture
 
 # Local Scripts
 /scripts
