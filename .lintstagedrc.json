@@ -1,4 +1,4 @@
 {
   "*.mdx": "prettier --parser mdx --write",
-  "*": "prettier --write"
+  "*.{js,jsx,ts,tsx,json,yaml,yml}": "prettier --write"
 }

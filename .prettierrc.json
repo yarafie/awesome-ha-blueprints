@@ -1,15 +1,5 @@
 {
   "semi": false,
   "jsxSingleQuote": true,
-  "singleQuote": true,
-  "proseWrap": "always",
-  "overrides": [
-    {
-      "files": "*.mdx",
-      "options": {
-        "parser": "mdx",
-        "htmlWhitespaceSensitivity": "ignore"
-      }
-    }
-  ]
+  "singleQuote": true
 }
