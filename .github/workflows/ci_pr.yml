@@ -19,7 +19,7 @@ jobs:
 
       - uses: pnpm/action-setup@v4
         with:
-          version: 9.15.0
+          version: 10.26.0
 
       - uses: actions/setup-node@v6
         with:
@@ -78,7 +78,7 @@ jobs:
 
       - uses: pnpm/action-setup@v4
         with:
-          version: 9.15.0
+          version: 10.26.0
 
       - uses: actions/setup-node@v6
         with:
@@ -117,7 +117,7 @@ jobs:
 
       - uses: pnpm/action-setup@v4
         with:
-          version: 9.15.0
+          version: 10.26.0
 
       - uses: actions/setup-node@v6
         with:
