@@ -1,5 +1,13 @@
 {
   "semi": false,
   "jsxSingleQuote": true,
-  "singleQuote": true
+  "singleQuote": true,
+  "overrides": [
+    {
+      "files": "*.mdx",
+      "options": {
+        "parser": "mdx"
+      }
+    }
+  ]
 }
