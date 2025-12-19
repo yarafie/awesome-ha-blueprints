@@ -15,7 +15,7 @@ export default function AutomationsList(): JSX.Element {
       {automations.map((a) => (
         <Link
           key={a.automation_id}
-          to={`/library/blueprints/automations/${a.automation_id}`}
+          to={`/library/blueprints/automations/${a.automation_id}/${a.automation_id}`}
           className={styles.cardLink}
         >
           <div className={styles.card}>
