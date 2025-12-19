@@ -19,7 +19,7 @@ function webpackConfigPlugin() {
         resolve: {
           alias: {
             '@blueprints': path.resolve(__dirname, 'docs/blueprints'),
-            '@library': path.resolve(__dirname, 'library/blueprints'),
+            '@librarybps': path.resolve(__dirname, 'library/blueprints'),
           },
         },
         module: {

@@ -15,7 +15,7 @@ export interface AutomationMetadata {
  * This runs at build time, not runtime.
  */
 const context = require.context(
-  '@library/automations',
+  '@librarybps/automations',
   true,
   /\/([a-z0-9_]+)\/\1\.json$/,
 )

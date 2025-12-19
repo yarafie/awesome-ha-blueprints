@@ -22,17 +22,13 @@ interface VersionEntry {
 
 // automation-level metadata
 const automationContext = require.context(
-  '../../../../library/automations',
+  '@librarybps/automations',
   true,
   /\/[a-z0-9_]+\/[a-z0-9_]+\.json$/,
 )
 
 // all yaml files
-const yamlContext = require.context(
-  '../../../../library/automations',
-  true,
-  /\.yaml$/,
-)
+const yamlContext = require.context('@librarybps/automations', true, /\.yaml$/)
 
 export default function AutomationDetails({
   automationId,
