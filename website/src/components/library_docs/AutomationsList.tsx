@@ -15,13 +15,13 @@ export default function AutomationsList(): JSX.Element {
       {automations.map((a) => (
         <Link
           key={a.automation_id}
-          to={`/library/blueprints/automations/${a.automation_id}/${a.automation_id}`}
+          to={`/library/blueprints/automations/${a.automation_id}`}
           className={styles.cardLink}
         >
           <div className={styles.card}>
             <div className={styles.iconWrapper}>
               <img
-                src={`/awesome-ha-blueprints/img/automation/${a.automation_id}.png`}
+                src={`/awesome-ha-blueprints/img/library/automations/${a.automation_id}.png`}
                 alt={`${a.name} icon`}
                 className={styles.icon}
                 loading='lazy'

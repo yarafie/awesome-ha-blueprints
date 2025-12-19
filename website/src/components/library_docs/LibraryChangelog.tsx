@@ -6,16 +6,13 @@
  *
  * Changelog :):
  *   • Initial Version (@EPMatt)
- *   - Updated 2026.12.02 (@yarafie):
- *      1. Moved utils.ts to utils/contexts.ts
- *      2. Migrated to Marked v17 configuration with custom Renderer.
- *      3. Added emoji replacement to support :emoji_codes:
- *      4. Added explicit variant support
+ *   - Updated 2026.12.18 (@yarafie):
+ *      1. Created specfic version for new Library
  * ────────────────────────────────────────────────────────────────
  */
 import React, { useEffect, useState } from 'react'
 import { marked, Renderer } from 'marked'
-import { libraryChangelogsContext } from '../../utils/library_contexts' //1. Moved utils.ts to utils/contexts.ts
+import { libraryChangelogsContext } from '../../utils/library_contexts'
 
 // 2. Added emoji replacement to support :emoji_codes:
 // Import the full emoji map

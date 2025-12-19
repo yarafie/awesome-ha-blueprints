@@ -40,7 +40,7 @@ export default function AutomationDetails({
     `./${automationId}/${automationId}.json`,
   )
   /* ---------- resolve image ---------- */
-  const image = `/awesome-ha-blueprints/img/automation/${automationId}.png`
+  const image = `/awesome-ha-blueprints/img/library/automations/${automationId}.png`
 
   /* ---------- collect versions ---------- */
   const versions: VersionEntry[] = []
