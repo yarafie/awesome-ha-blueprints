@@ -15,13 +15,14 @@
  */
 import React, { useEffect, useState } from 'react'
 import { marked, Renderer } from 'marked'
-import { LibraryChangelogsContext } from '../../utils/library_contexts' //1. Moved utils.ts to utils/contexts.ts
+import { libraryChangelogsContext } from '../../utils/library_contexts' //1. Moved utils.ts to utils/contexts.ts
 
 // 2. Added emoji replacement to support :emoji_codes:
 // Import the full emoji map
 import { emojiMap } from '../../utils/emojiMap'
 
 interface ChangelogChange {
+  author: string
   description: string
   breaking: boolean
 }
@@ -127,12 +128,12 @@ const Changelog: React.FC<ChangelogProps> = ({ category, id, variant }) => {
         // 4. If controller + variant provided → use variant changelog.json
         if (category === 'controllers' && variant) {
           const variantPath = `./controllers/${id}/${variant}/changelog.json`
-          if (LibraryChangelogsContext.keys().includes(variantPath)) {
+          if (libraryChangelogsContext.keys().includes(variantPath)) {
             path = variantPath
           }
         }
 
-        const parsed = LibraryChangelogsContext(
+        const parsed = libraryChangelogsContext(
           path,
         ) as unknown as ChangelogEntry[]
         if (!isMounted) return
@@ -207,6 +208,7 @@ const Changelog: React.FC<ChangelogProps> = ({ category, id, variant }) => {
                         </span>
                       )}
                       {change.breaking && ' '}
+                      {change.author && ' '}
                       {renderDescription(change.description)}
                     </li>
                   ))}
