@@ -1,0 +1,17 @@
+{
+  "release_id": "awesome",
+  "library_id": "EPMatt",
+  "blueprint_id": "osram_ac025xx00nj",
+  "title": "Controller - OSRAM AC025XX00NJ SMART+ Switch Mini",
+  "maintainers": [
+    {
+      "id": "EPMatt",
+      "name": "EPMatt"
+    }
+  ],
+  "description": "Controller automation for executing any kind of action triggered by the provided OSRAM AC025XX00NJ SMART+ Switch Mini.",
+  "versions": ["2025.04.19"],
+  "latest_version": "2025.04.19",
+  "supported_integrations": ["ZHA", "Zigbee2MQTT", "deCONZ"],
+  "status": "active"
+}

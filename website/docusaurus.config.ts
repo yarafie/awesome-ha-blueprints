@@ -9,8 +9,8 @@ import blueprintDownloaderPlugin from './src/plugins/blueprint-downloader-plugin
 import controllerImagesPlugin from './src/plugins/controller-images-plugin/controller-images-plugin.js'
 
 // Create a custom plugin for webpack configuration
-// the purpose of this plugin is to allow the use of the @blueprints alias
-// and to copy blueprint files as static assets
+// the purpose of this plugin is to allow the use of the @blueprints and @src aliases
+// and to copy blueprint yaml files under docs/blueprints and as static assets
 function webpackConfigPlugin() {
   return {
     name: 'webpack-config-plugin',
@@ -19,7 +19,7 @@ function webpackConfigPlugin() {
         resolve: {
           alias: {
             '@blueprints': path.resolve(__dirname, 'docs/blueprints'),
-            '@librarybps': path.resolve(__dirname, 'library/blueprints'),
+            '@src': path.resolve(__dirname, 'src'),
           },
         },
         module: {
@@ -27,10 +27,7 @@ function webpackConfigPlugin() {
             {
               test: /\.ya?ml$/,
               type: 'asset/source',
-              include: [
-                path.resolve(__dirname, 'docs/blueprints'),
-                path.resolve(__dirname, 'library/blueprints'),
-              ],
+              include: [path.resolve(__dirname, 'docs/blueprints')],
             },
           ],
         },
@@ -89,14 +86,7 @@ const config: Config = {
         alt: 'Awesome HA Blueprints Logo',
         src: 'img/logo.svg',
       },
-      // Adds Library navigation entry to the global navbar
       items: [
-        {
-          to: 'library/introduction',
-          activeBaseRegex: '^/library/introduction',
-          label: 'Getting Started (Library 1.0)',
-          position: 'left',
-        },
         {
           to: 'docs/introduction/',
           activeBaseRegex: '^/docs/introduction',
@@ -134,7 +124,7 @@ const config: Config = {
          This fork is developed and maintained by
          <a href='https://github.com/yarafie'>yarafie</a>.<br/>
          Licensed under the
-         <a href='https://github.com/EPMatt/awesome-ha-blueprints/blob/main/LICENSE'>
+         <a href='https://github.com/yarafie/awesome-ha-blueprints/blob/main/LICENSE'>
          GPL-3.0 License
          </a>`,
       logo: {
@@ -181,22 +171,12 @@ const config: Config = {
   ],
 
   plugins: [
+    // Default webpack config
     webpackConfigPlugin,
+
+    //Utility Plugins
     blueprintDownloaderPlugin,
     controllerImagesPlugin,
-
-    // Adds a secondary Docusaurus docs instance for the Awesome HA Blueprints Library
-    [
-      '@docusaurus/plugin-content-docs',
-      {
-        id: 'library',
-        path: 'library',
-        routeBasePath: 'library',
-        sidebarPath: path.resolve(__dirname, 'sidebarsLibrary.js'),
-        editUrl:
-          'https://github.com/yarafie/awesome-ha-blueprints/edit/main/website/',
-      },
-    ],
 
     // Make environment variables available to the client
     function () {

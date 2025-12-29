@@ -1,0 +1,38 @@
+{
+  "blueprint_id": "ikea_e2123",
+  "name": "Controller - IKEA E2123 SYMFONISK sound remote, gen 2",
+  "manufacturer": "IKEA",
+  "model": "E2123",
+  "model_name": "IKEA E2123 SYMFONISK sound remote, gen 2",
+  "description": "A second-generation wireless sound remote designed for controlling audio playback and volume.",
+  "category": "controller",
+  "supported_integrations": ["Zigbee2MQTT", "ZHA", "deCONZ"],
+  "images": ["ikea_e2123.png"],
+  "manual_files": [],
+  "external_references": [
+    {
+      "label": "Zigbee2MQTT",
+      "url": "https://www.zigbee2mqtt.io/devices/E2123.html"
+    },
+    {
+      "label": "Blakadder",
+      "url": "https://zigbee.blakadder.com/Ikea_E2123.html"
+    },
+    {
+      "label": "ZHA Quirk",
+      "url": "https://github.com/zigpy/zha-device-handlers/blob/dev/zhaquirks/ikea/symfonisk2.py"
+    },
+    {
+      "label": "deCONZ Device",
+      "url": "https://github.com/dresden-elektronik/deconz-rest-plugin/blob/master/devices/ikea/symfonisk_sound_remote_gen2.json"
+    }
+  ],
+  "tags": ["zigbee", "remote", "media"],
+  "status": "active",
+  "librarians": [
+    {
+      "id": "yarafie",
+      "name": "Yasir Rafie"
+    }
+  ]
+}

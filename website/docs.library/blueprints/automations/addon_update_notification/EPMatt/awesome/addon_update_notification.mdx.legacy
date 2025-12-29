@@ -1,0 +1,85 @@
+---
+title: Send a mobile notification when add-on update is available
+description: Send a notification to the provided mobile devices whenever an update for the given Home Assistant add-on is available.
+---
+
+import {
+  LibraryPage,
+  LibraryRequirement,
+  LibraryInputs,
+  LibraryChangelog,
+  LibraryImportCard,
+} from '@site/src/components/library_docs'
+
+<LibraryPage category="automations" libraryId="addon_update_notification">
+
+<LibraryImportCard category="automations" libraryId="addon_update_notification" />
+
+## Description
+
+Send a notification to the provided mobile devices whenever an update for the given Home Assistant add-on is available.
+
+Supports full notification customization, notification groups, auto-dismissal when the add-on is updated, and a button for starting the update
+directly from your notification tray, with an optional notification after the update completed successfully.
+
+This blueprint does not require any additional sensor to be manually set up, since it uses the built-in add-on sensors introduced with the
+Supervisor integration starting from Home Assistant Core **2021.4.0**.
+
+## Requirements
+
+<LibraryRequirement name="Home Assistant Supervisor + Integration" required>
+
+To use this blueprint you must have a Home Assistant instance running as **Home Assistant OS** or **Home Assistant Supervised**.
+
+You must also have the **Home Assistant Supervisor** integration enabled and correctly set up (enabled by default starting from Home Assistant Core 2021.4.0).
+
+Add-on sensors are disabled by default. Make sure to enable the following entities for the add-on you plan to track:
+- `sensor.<addon>_version`
+- `sensor.<addon>_newest_version`
+- `binary_sensor.<addon>_update_available`
+
+#### How to enable add-on entities
+1. Go to **Settings → Devices & Services → Integrations**
+2. Open **Home Assistant Supervisor**
+3. Click **Entities**
+4. Select the entities above and click **Enable Selected**
+
+[Home Assistant Supervisor Docs](https://www.home-assistant.io/integrations/hassio/)
+</LibraryRequirement>
+<LibraryRequirement name="Mobile App Integration" required>
+
+Provides the service used to send notifications to mobile devices.
+
+Enabled by default unless explicitly removed.
+
+[Mobile App Integration Docs](https://www.home-assistant.io/integrations/mobile_app/)
+</LibraryRequirement>
+<LibraryRequirement name="Home Assistant Companion App" required>
+
+Install and configure the official Home Assistant Companion App on all target devices.
+
+[Companion App Docs](https://companion.home-assistant.io/docs/notifications/notifications-basic#sending-notifications-to-multiple-devices)
+</LibraryRequirement>
+<LibraryRequirement name="Notify Group Integration" required>
+Allows sending notifications to multiple devices at once using notification groups defined in `configuration.yaml`.
+
+[Notify Group Integration Docs](https://www.home-assistant.io/integrations/notify.group/)
+</LibraryRequirement>
+
+## Inputs
+
+<LibraryInputs />
+
+## Additional Notes
+
+If you use notification groups containing **both iOS and Android devices**, some features (such as Android channels and notification grouping)
+may not work consistently.
+
+See the official documentation for details:
+[Companion App Notification Docs](https://companion.home-assistant.io/docs/notifications/notifications-basic#sending-notifications-to-multiple-devices)
+
+## Changelog
+
+<LibraryChangelog />
+
+</LibraryPage>

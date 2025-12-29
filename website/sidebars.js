@@ -19,7 +19,7 @@ export default {
         'blueprints',
         'blueprints/controllers',
         'blueprints/hooks',
-        'blueprints/automation',
+        'blueprints/automations',
       ],
     },
   ],

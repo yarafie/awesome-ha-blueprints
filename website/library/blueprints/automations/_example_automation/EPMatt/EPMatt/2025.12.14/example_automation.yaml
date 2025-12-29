@@ -1,5 +1,0 @@
-blueprint:
-  name: Example Automation
-  description: Minimal automation blueprint for AHB validation
-  domain: automation
-  input: {}

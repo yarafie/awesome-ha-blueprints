@@ -1,0 +1,17 @@
+{
+  "release_id": "awesome",
+  "library_id": "EPMatt",
+  "blueprint_id": "xiaomi_wxkg01lm",
+  "title": "Controller - Xiaomi WXKG01LM Mi Wireless Switch",
+  "maintainers": [
+    {
+      "id": "EPMatt",
+      "name": "EPMatt"
+    }
+  ],
+  "description": "Controller automation for executing any kind of action triggered by the provided Xiaomi WXKG01LM Mi Wireless Switch.",
+  "versions": ["2025.12.22"],
+  "latest_version": "2025.12.22",
+  "supported_integrations": ["ZHA", "Zigbee2MQTT", "deCONZ"],
+  "status": "active"
+}

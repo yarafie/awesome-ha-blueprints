@@ -1,0 +1,18 @@
+{
+  "blueprint_id": "light",
+  "name": "Hook - Light",
+  "description": "This Hook blueprint allows building a controller-based automation to control a light. Supports brightness and color control for both white temperature and RGB lights.",
+  "category": "hook",
+  "status": "active",
+  "images": ["light.png"],
+  "manual_files": ["light.pdf"],
+  "external_references": [],
+  "supported_integrations": [],
+  "tags": ["brightness", "color", "dim", "hue", "light", "off", "on"],
+  "librarians": [
+    {
+      "id": "EPMatt",
+      "name": "EPMatt"
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "blueprint_id": "aqara_wxkg13lm",
+  "name": "Controller - Aqara WXKG13LM Wireless Mini Switch T1",
+  "manufacturer": "Aqara",
+  "model": "WXKG13LM",
+  "model_name": "Aqara WXKG13LM Wireless Mini Switch T1",
+  "description": "A Zigbee wireless mini switch (T1) offering improved reliability and support for multiple button actions.",
+  "category": "controller",
+  "supported_integrations": ["Zigbee2MQTT"],
+  "images": ["aqara_wxkg13lm.png"],
+  "manual_files": [],
+  "external_references": [
+    {
+      "label": "Zigbee2MQTT",
+      "url": "https://www.zigbee2mqtt.io/devices/WXKG13LM.html"
+    },
+    {
+      "label": "Blakadder",
+      "url": "https://zigbee.blakadder.com/Aqara_WXKG13LM.html"
+    }
+  ],
+  "tags": ["zigbee", "button", "remote"],
+  "status": "active",
+  "librarians": [
+    {
+      "id": "yarafie",
+      "name": "Yasir Rafie"
+    }
+  ]
+}

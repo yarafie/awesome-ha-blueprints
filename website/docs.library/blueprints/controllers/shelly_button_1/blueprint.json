@@ -1,0 +1,21 @@
+{
+  "blueprint_id": "shelly_button_1",
+  "name": "Controller - Shelly Button 1",
+  "manufacturer": "Shelly",
+  "model": "SHBTN-2",
+  "model_name": "Shelly Button 1",
+  "description": "A Wi-Fi button device designed for triggering automations and smart home actions with single or multi-press input.",
+  "category": "controller",
+  "supported_integrations": ["Shelly"],
+  "images": ["shelly_button_1.png"],
+  "manual_files": [],
+  "external_references": [],
+  "tags": ["wifi", "button"],
+  "status": "active",
+  "librarians": [
+    {
+      "id": "yarafie",
+      "name": "Yasir Rafie"
+    }
+  ]
+}

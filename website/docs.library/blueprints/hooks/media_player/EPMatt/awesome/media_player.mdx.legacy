@@ -1,0 +1,87 @@
+---
+title: Hook - Media Player
+description: This Hook blueprint allows building a controller-based automation to control a media player. Supports volume setting, play/pause and track selection.
+---
+
+import {
+  LibraryPage,
+  LibraryRequirement,
+  LibraryInputs,
+  LibraryChangelog,
+  LibraryImportCard,
+} from '@site/src/components/library_docs'
+
+<LibraryPage category="hooks" libraryId="media_player">
+
+<LibraryImportCard category="hooks" libraryId="media_player" />
+
+:::tip
+This blueprint is part of the **Controllers–Hooks Ecosystem**.
+You can read more about this topic [here](/library/controllers-hooks-ecosystem).
+:::
+
+## Description
+
+This Hook blueprint allows building a controller-based automation to control a media player.
+It supports **volume control**, **play / pause**, and **track selection**.
+
+:::info
+An automation created with this blueprint must be linked to a **Controller** automation.
+Controllers integrate physical devices and emit normalized controller events.
+Hooks listen to these events and perform the actual control logic.
+See the list of **supported controllers** below for details.
+:::
+
+## Requirements
+<LibraryRequirement libraryId="controller" required/>
+
+<LibraryRequirement name="Media Player Integration" required>
+
+This integration provides the entity which represents a media player in Home Assistant. It should be activated by default so unless you
+tweaked the default configuration you're good to go.
+
+[Media Player Integration Docs](https://www.home-assistant.io/integrations/media_player/)
+
+</LibraryRequirement>
+
+## Inputs
+
+<LibraryInputs />
+
+## Supported Controllers
+
+- [Aqara WXKG11LM Wireless Mini Switch](/library/blueprints/controllers/aqara_wxkg11lm)
+- [Aqara WXKG13LM Wireless Mini Switch T1](/library/blueprints/controllers/aqara_wxkg13lm)
+- [IKEA E1524/E1810 TRÅDFRI Wireless 5-Button Remote](/library/blueprints/controllers/ikea_e1524_e1810)
+- [IKEA E1743 TRÅDFRI On/Off Switch & Dimmer](/library/blueprints/controllers/ikea_e1743)
+- [IKEA E1744 SYMFONISK Rotary Remote](/library/blueprints/controllers/ikea_e1744)
+- [IKEA E1766 TRÅDFRI Open/Close Remote](/library/blueprints/controllers/ikea_e1766)
+- [IKEA E1812 TRÅDFRI Shortcut Button](/library/blueprints/controllers/ikea_e1812)
+- [IKEA E2001/E2002 STYRBAR Remote Control](/library/blueprints/controllers/ikea_e2001_e2002)
+- [IKEA E2123 SYMFONISK Sound Remote Gen 2](/library/blueprints/controllers/ikea_e2123)
+- [IKEA E2201 RODRET Dimmer](/library/blueprints/controllers/ikea_e2201)
+- [IKEA E2213 SOMRIG Shortcut Button](/library/blueprints/controllers/ikea_e2213)
+- [IKEA ICTC-G-1 TRÅDFRI Wireless Dimmer](/library/blueprints/controllers/ikea_ictc_g_1)
+- [OSRAM AC025XX00NJ SMART+ Switch Mini](/library/blueprints/controllers/osram_ac025xx00nj)
+- [Philips 324131092621 Hue Dimmer Switch](/library/blueprints/controllers/philips_324131092621)
+- [Philips 8718699693985 Hue Smart Button](/library/blueprints/controllers/philips_8718699693985)
+- [Philips 929002398602 Hue Dimmer Switch v2](/library/blueprints/controllers/philips_929002398602)
+- [Shelly Button 1](/library/blueprints/controllers/shelly_button_1)
+- [Shelly SNSN-0024x Plus i4](/library/blueprints/controllers/shelly_snsn_0024x)
+- [SONOFF SNZB-01 Wireless Switch](/library/blueprints/controllers/sonoff_snzb01)
+- [Tuya ERS-10TZBVK-AA Smart Knob](/library/blueprints/controllers/tuya_ERS-10TZBVK-AA)
+- [Tuya ZG-101Z/D Smart Knob](/library/blueprints/controllers/tuya_ZG-101Z-D)
+- [Xiaomi WXCJKG11LM Aqara Opple 2-Button Remote](/library/blueprints/controllers/xiaomi_wxcjkg11lm)
+- [Xiaomi WXCJKG12LM Aqara Opple 4-Button Remote](/library/blueprints/controllers/xiaomi_wxcjkg12lm)
+- [Xiaomi WXCJKG13LM Aqara Opple 6-Button Remote](/library/blueprints/controllers/xiaomi_wxcjkg13lm)
+- [Xiaomi WXKG01LM Mi Wireless Switch](/library/blueprints/controllers/xiaomi_wxkg01lm)
+
+## Additional Notes
+
+Not all media players support the customization of the number of steps for volume control, due to the fact that some of them do not expose their current volume level to Home Assistant. In these situations, the automation will fallback to the `media_player.volume_up` and `media_player.volume_down` services.
+
+## Changelog
+
+<LibraryChangelog />
+
+</LibraryPage>

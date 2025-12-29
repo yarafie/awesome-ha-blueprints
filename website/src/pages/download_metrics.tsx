@@ -801,7 +801,7 @@ const DownloadMetricsPage: React.FC = () => {
           last_downloaded: '2025-11-18T10:30:00Z',
         },
         {
-          blueprint_category: 'automation',
+          blueprint_category: 'automations',
           blueprint_id: 'mock-addon_update_notification',
           blueprint_variant: 'EPMatt',
           total: 250,

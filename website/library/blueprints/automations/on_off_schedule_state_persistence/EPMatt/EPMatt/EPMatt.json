@@ -1,7 +1,0 @@
-{
-  "automation_id": "on_off_schedule_state_persistence",
-  "variant": "EPMatt",
-  "maintainers": ["EPMatt"],
-  "has_versions": true,
-  "status": "stable"
-}

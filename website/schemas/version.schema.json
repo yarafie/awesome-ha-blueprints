@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yarafie.github.io/awesome-ha-blueprints/schemas/version.schema.json",
+  "title": "Awesome HA Library - Unified Version Schema",
+  "description": "Canonical schema describing a single blueprint version for controllers, hooks, and automations.",
+  "type": "object",
+  "required": [
+    "version",
+    "blueprint_id",
+    "library_id",
+    "release_id",
+    "date",
+    "blueprint_file",
+    "status"
+  ],
+  "properties": {
+    "version": {
+      "type": "string",
+      "pattern": "^\\d{4}\\.\\d{2}\\.\\d{2}$",
+      "description": "Version identifier in YYYY.MM.DD format."
+    },
+    "date": {
+      "type": "string",
+      "format": "date",
+      "description": "Release date of this blueprint version."
+    },
+    "blueprint_id": {
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9_-]+$",
+      "description": "Blueprint identifier (controller, hook, or automation)."
+    },
+    "library_id": {
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9_-]+$",
+      "description": "Owning library identifier."
+    },
+    "release_id": {
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9_-]+$",
+      "description": "Owning release identifier."
+    },
+    "blueprint_file": {
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9_-]+\\.yaml$",
+      "description": "Home Assistant blueprint YAML file."
+    },
+    "supported_integrations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Integrations supported by this specific version (mainly controllers)."
+    },
+    "breaking": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether this version introduces breaking changes."
+    },
+    "changes": {
+      "type": "array",
+      "description": "List of changes introduced in this version.",
+      "items": {
+        "type": "object",
+        "required": ["description"],
+        "properties": {
+          "description": {
+            "type": "string",
+            "description": "Description of the change."
+          },
+          "breaking": {
+            "type": "boolean",
+            "default": false,
+            "description": "Whether this individual change is breaking."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "external_references": {
+      "type": "array",
+      "description": "Optional external references specific to this version.",
+      "items": {
+        "type": "object",
+        "required": ["label", "url"],
+        "properties": {
+          "label": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string",
+            "format": "uri"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "status": {
+      "type": "string",
+      "enum": ["active", "deprecated"],
+      "description": "Lifecycle status of this blueprint version."
+    }
+  },
+  "additionalProperties": false
+}

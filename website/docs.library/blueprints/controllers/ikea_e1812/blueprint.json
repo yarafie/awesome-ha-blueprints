@@ -1,0 +1,30 @@
+{
+  "blueprint_id": "ikea_e1812",
+  "name": "Controller - IKEA E1812 TRÅDFRI Shortcut button",
+  "manufacturer": "IKEA",
+  "model": "E1812",
+  "model_name": "IKEA E1812 TRÅDFRI Shortcut button",
+  "description": "A single-button wireless shortcut controller designed to trigger predefined smart home actions.",
+  "category": "controller",
+  "supported_integrations": ["Zigbee2MQTT", "ZHA", "deCONZ"],
+  "images": ["ikea_e1812.png"],
+  "manual_files": [],
+  "external_references": [
+    {
+      "label": "Zigbee2MQTT",
+      "url": "https://www.zigbee2mqtt.io/devices/E1812.html"
+    },
+    {
+      "label": "ZHA Quirk",
+      "url": "https://github.com/zigpy/zha-device-handlers/blob/dev/zhaquirks/ikea/shortcutbtn.py"
+    }
+  ],
+  "tags": ["zigbee", "button", "shortcut"],
+  "status": "active",
+  "librarians": [
+    {
+      "id": "yarafie",
+      "name": "Yasir Rafie"
+    }
+  ]
+}

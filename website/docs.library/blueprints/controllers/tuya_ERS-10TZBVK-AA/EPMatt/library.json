@@ -1,0 +1,16 @@
+{
+  "library_id": "EPMatt",
+  "blueprint_id": "tuya_ERS-10TZBVK-AA",
+  "releases": ["awesome"],
+  "description": "Controller blueprint library for tuya_ERS-10TZBVK-AA maintained by EPMatt.",
+  "supported_integrations": ["ZHA", "Zigbee2MQTT"],
+  "category": "controller",
+  "status": "active",
+  "title": "EPMatt controller library",
+  "maintainers": [
+    {
+      "id": "EPMatt",
+      "name": "EPMatt"
+    }
+  ]
+}

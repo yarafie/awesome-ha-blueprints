@@ -1,0 +1,26 @@
+{
+  "blueprint_id": "osram_ac025xx00nj",
+  "name": "Controller - OSRAM AC025XX00NJ SMART+ Switch Mini",
+  "manufacturer": "OSRAM",
+  "model": "AC025XX00NJ",
+  "model_name": "OSRAM AC025XX00NJ SMART+ Switch Mini",
+  "description": "A Zigbee smart switch module designed for wireless control of lights and automations using physical buttons.",
+  "category": "controller",
+  "supported_integrations": ["Zigbee2MQTT", "ZHA", "deCONZ"],
+  "images": ["osram_ac025xx00nj.png"],
+  "manual_files": [],
+  "external_references": [
+    {
+      "label": "Zigbee2MQTT",
+      "url": "https://www.zigbee2mqtt.io/devices/AC0251100NJ_AC0251600NJ_AC0251700NJ.html"
+    }
+  ],
+  "tags": ["zigbee", "switch"],
+  "status": "active",
+  "librarians": [
+    {
+      "id": "yarafie",
+      "name": "Yasir Rafie"
+    }
+  ]
+}

@@ -35,7 +35,7 @@ export default function controllerImagesPlugin(context) {
           continue
         }
 
-        const category = segments[0] // eg. automations, controllers, hook
+        const category = segments[0] // eg. automations, controllers, hooks
         const blueprintId = segments[1] // eg. light, ikea_e2001_e2002
         const imageFile = segments[2] // eg. light.png, ikea_e2001_e2002.png
 

@@ -17,5 +17,8 @@
     "lint-staged": "^16.2.7",
     "prettier": "^3.7.4",
     "turbo": "^2.6.3"
+  },
+  "dependencies": {
+    "gray-matter": "^4.0.3"
   }
 }

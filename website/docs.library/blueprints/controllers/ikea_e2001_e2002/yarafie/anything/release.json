@@ -1,0 +1,17 @@
+{
+  "release_id": "anything",
+  "library_id": "yarafie",
+  "blueprint_id": "ikea_e2001_e2002",
+  "title": "Controller - IKEA E2001/E2002 STYRBAR Remote control",
+  "maintainers": [
+    {
+      "id": "yarafie",
+      "name": "yarafie"
+    }
+  ],
+  "description": "Controller automation for executing any kind of action triggered by the provided IKEA E2001/E2002 STYRBAR Remote control.",
+  "versions": ["2025.01.06", "2025.04.19"],
+  "latest_version": "2025.04.19",
+  "supported_integrations": ["Zigbee2MQTT"],
+  "status": "active"
+}

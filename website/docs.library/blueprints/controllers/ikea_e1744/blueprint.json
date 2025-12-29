@@ -1,0 +1,26 @@
+{
+  "blueprint_id": "ikea_e1744",
+  "name": "Controller - IKEA E1744 SYMFONISK Rotary Remote",
+  "manufacturer": "IKEA",
+  "model": "E1744",
+  "model_name": "IKEA E1744 SYMFONISK Rotary Remote",
+  "description": "A rotary Zigbee remote control designed primarily for volume and media control in IKEA SYMFONISK systems.",
+  "category": "controller",
+  "supported_integrations": ["Zigbee2MQTT", "ZHA", "deCONZ"],
+  "images": ["ikea_e1744.png"],
+  "manual_files": [],
+  "external_references": [
+    {
+      "label": "Zigbee2MQTT",
+      "url": "https://www.zigbee2mqtt.io/devices/E1744.html"
+    }
+  ],
+  "tags": ["zigbee", "knob", "rotary", "media"],
+  "status": "active",
+  "librarians": [
+    {
+      "id": "yarafie",
+      "name": "Yasir Rafie"
+    }
+  ]
+}

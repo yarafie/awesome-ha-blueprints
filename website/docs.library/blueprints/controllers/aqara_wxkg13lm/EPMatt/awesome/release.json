@@ -1,0 +1,17 @@
+{
+  "release_id": "awesome",
+  "library_id": "EPMatt",
+  "blueprint_id": "aqara_wxkg13lm",
+  "title": "Controller - Aqara WXKG13LM Wireless Mini Switch T1",
+  "maintainers": [
+    {
+      "id": "EPMatt",
+      "name": "EPMatt"
+    }
+  ],
+  "description": "Controller automation for executing any kind of action triggered by the provided Aqara WXKG13LM Wireless Mini Switch T1.",
+  "versions": ["2025.04.12"],
+  "latest_version": "2025.04.12",
+  "supported_integrations": ["Zigbee2MQTT"],
+  "status": "active"
+}

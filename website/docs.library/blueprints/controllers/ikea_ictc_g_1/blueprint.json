@@ -1,0 +1,26 @@
+{
+  "blueprint_id": "ikea_ictc_g_1",
+  "name": "Controller - IKEA ICTC-G-1 TRÅDFRI wireless dimmer",
+  "manufacturer": "IKEA",
+  "model": "ICTC-G-1",
+  "model_name": "IKEA ICTC-G-1 TRÅDFRI wireless dimmer",
+  "description": "A round wireless dimmer knob designed for smooth brightness control of connected lights.",
+  "category": "controller",
+  "supported_integrations": ["Zigbee2MQTT", "ZHA", "deCONZ"],
+  "images": ["ikea_ictc_g_1.png"],
+  "manual_files": [],
+  "external_references": [
+    {
+      "label": "Zigbee2MQTT",
+      "url": "https://www.zigbee2mqtt.io/devices/ICTC-G-1.html"
+    }
+  ],
+  "tags": ["zigbee", "dimmer", "wall"],
+  "status": "active",
+  "librarians": [
+    {
+      "id": "yarafie",
+      "name": "Yasir Rafie"
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "version": "2025.03.29",
+  "date": "2025-03-29",
+  "blueprint_id": "tuya_ERS-10TZBVK-AA",
+  "library_id": "EPMatt",
+  "release_id": "awesome",
+  "blueprint_file": "tuya_ERS-10TZBVK-AA.yaml",
+  "supported_integrations": ["ZHA", "Zigbee2MQTT"],
+  "breaking": false,
+  "changes": [
+    {
+      "description": "Initial release. (Thanks [@yarafie](https://github.com/yarafie)) 🎉"
+    }
+  ],
+  "status": "active"
+}

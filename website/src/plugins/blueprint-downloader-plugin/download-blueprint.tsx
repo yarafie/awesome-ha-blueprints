@@ -21,7 +21,7 @@
  *           /blueprints/controllers/ikea_e2001_e2002/EPMatt
  *           /blueprints/controllers/ikea_e2001_e2002/yarafie
  *
- *        Backward compatible with hooks and automation categories
+ *        Backward compatible with hooks and automations categories
  *
  * ────────────────────────────────────────────────────────────────
  */
@@ -146,7 +146,7 @@ export default function DownloadBlueprint(props: {
 
     githubUrl = `https://raw.githubusercontent.com/yarafie/awesome-ha-blueprints/main/website/docs/blueprints/${category}/${id}/${versionPath}`
   } else {
-    // AUTOMATION + HOOKS
+    // AUTOMATIONS + HOOKS
     githubUrl = `https://raw.githubusercontent.com/yarafie/awesome-ha-blueprints/main/website/docs/blueprints/${category}/${id}/${id}.yaml`
   }
 

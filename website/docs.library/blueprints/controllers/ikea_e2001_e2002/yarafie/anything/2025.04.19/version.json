@@ -1,0 +1,16 @@
+{
+  "version": "2025.04.19",
+  "date": "2025-04-19",
+  "blueprint_id": "ikea_e2001_e2002",
+  "library_id": "yarafie",
+  "release_id": "anything",
+  "blueprint_file": "ikea_e2001_e2002.yaml",
+  "supported_integrations": ["Zigbee2MQTT"],
+  "breaking": false,
+  "changes": [
+    {
+      "description": "Strybar Blueprint was expanded to add an optional looping for any of the long button presses. This needs to be enabled in the blueprint. Two safe guards were added in order to stop any infinite loops, a count was added to loop a finite number of times and also a timeout was added to stop the wait for the release of button. Additionaly, virtual double press actions was also added to any of the buttons which also needs to be exposed. ([@yarafie](https://github.com/yarafie))"
+    }
+  ],
+  "status": "active"
+}

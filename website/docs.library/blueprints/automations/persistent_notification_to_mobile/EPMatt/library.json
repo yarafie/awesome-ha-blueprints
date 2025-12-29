@@ -1,0 +1,16 @@
+{
+  "library_id": "EPMatt",
+  "blueprint_id": "persistent_notification_to_mobile",
+  "releases": ["awesome"],
+  "description": "Automation blueprint library for persistent_notification_to_mobile maintained by EPMatt.",
+  "supported_integrations": [],
+  "category": "automation",
+  "status": "active",
+  "title": "EPMatt automation library for persistent_notification_to_mobile",
+  "maintainers": [
+    {
+      "id": "EPMatt",
+      "name": "EPMatt"
+    }
+  ]
+}

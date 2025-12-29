@@ -1,0 +1,16 @@
+{
+  "library_id": "EPMatt",
+  "blueprint_id": "ikea_e1766",
+  "releases": ["awesome"],
+  "description": "Controller blueprint library for ikea_e1766 maintained by EPMatt.",
+  "supported_integrations": ["ZHA", "Zigbee2MQTT", "deCONZ"],
+  "category": "controller",
+  "status": "active",
+  "title": "EPMatt controller library",
+  "maintainers": [
+    {
+      "id": "EPMatt",
+      "name": "EPMatt"
+    }
+  ]
+}

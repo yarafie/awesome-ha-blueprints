@@ -1,0 +1,55 @@
+The below trees describe the different levels under website/docs/blueprints/
+
+--------------------------------------
+Controllers Tree Structure Schema v1.5
+--------------------------------------
+controllers/                                                         # Controllers root
+└── <blueprint_id>/                    (^[a-z0-9_]+$)                # Physical controller model (canonical ID)
+    ├── blueprint.json                                               # Controller-level metadata (manufacturer, model, integrations)
+    ├── <blueprint_id>.png                                           # Controller image (globally unique filename)
+    ├── <blueprint_id>.pdf             (optional)                    # Controller manual / datasheet
+    ├── <library_id>/                  (^[a-zA-Z0-9_-]+$)            # Library namespace (maintainer / author)
+    │   ├── library.json                                             # Library-level metadata (owner, maintainers, description)
+    │   ├── <release_id>/              (^[a-zA-Z0-9_-]+$)            # Release under the library (behavior/mapping style)
+    │   │   ├── release.json                                         # Release metadata (features, hook usage, notes)
+    │   │   ├── <blueprint_id>.mdx                                   # Release documentation (behavior, philosophy, examples)
+    │   │   ├── changelog.json                                       # Release changelog across versions
+    │   │   ├── YYYY.MM.DD/            (^\\d{4}\\.\\d{2}\\.\\d{2}$)  # Version release folder
+    │   │   │   ├── version.json                                     # Version metadata (version, compatibility, hooks support)
+    │   │   │   ├── <blueprint_id>.yaml                              # Controllet Blueprint YAML
+
+--------------------------------
+Hooks Tree Structure Schema v1.5
+--------------------------------
+hooks/                                                               # Hooks root
+└── <blueprint_id>/                    (^[a-z0-9_]+$)                # Hook identifier (e.g. light, cover, media_player)
+    ├── blueprint.json                                               # Hook-level metadata
+    ├── <blueprint_id>.png                                           # Hook icon/image (globally unique filename)
+    ├── <blueprint_id>.pdf             (optional)                    # Hook manual / documentation
+    ├── <library_id>/                  (^[a-zA-Z0-9_-]+$)            # Hook Library namespace (maintainer / author)
+    │   ├── library.json                                             # Hook Library-level metadata (owner, maintainers, description)
+    │   ├── <release_id>/              (^[a-zA-Z0-9_-]+$)            # Release (behavior / implementation style)
+    │   │   ├── release.json                                         # Release metadata
+    │   │   ├── <blueprint_id>.mdx                                   # Release documentation
+    │   │   ├── changelog.json                                       # Release-wide changelog
+    │   │   ├── YYYY.MM.DD/            (^\\d{4}\\.\\d{2}\\.\\d{2}$)  # Version release folder
+    │   │   │   ├── version.json                                     # Version metadata (version, compatibility, requirements)
+    │   │   │   ├── <blueprint_id>.yaml                              # Hook blueprint YAML (always hook-named)
+
+--------------------------------------
+Automations Tree Structure Schema v1.5
+--------------------------------------
+automations/                                                         # Automations root
+└── <automation_id>/                   (^[a-z0-9_]+$)                # Automation identifier
+    ├── blueprint.json                                               # Automation-level metadata
+    ├── <blueprint_id>.png                                           # Automation icon/image (globally unique filename)
+    ├── <blueprint_id>.pdf             (optional)                    # Automation manual / documentation
+    ├── <library_id>/                  (^[a-zA-Z0-9_-]+$)            # Autimation Library namespace (maintainer / author)
+    │   ├── library.json                                             # Automation Library-level metadata (owner, maintainers, description)
+    │   ├── <release_id>/              (^[a-zA-Z0-9_-]+$)            # Release (behavior / implementation style)
+    │   │   ├── release.json                                         # Release metadata
+    │   │   ├── <blueprint_id>.mdx                                   # Release documentation
+    │   │   ├── changelog.json                                       # Release-wide changelog
+    │   │   ├── YYYY.MM.DD/            (^\\d{4}\\.\\d{2}\\.\\d{2}$)  # Version release folder
+    │   │   │   ├── version.json                                     # Version metadata (version, compatibility, requirements)
+    │   │   │   ├── <blueprint_id>.yaml                              # Automation blueprint YAML (always automation-named)

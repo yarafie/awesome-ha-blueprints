@@ -1,0 +1,26 @@
+{
+  "blueprint_id": "ikea_e1524_e1810",
+  "name": "Controller - IKEA E1524/E1810 TRÅDFRI Wireless 5-Button Remote",
+  "manufacturer": "IKEA",
+  "model": "E1524/E1810",
+  "model_name": "IKEA E1524/E1810 TRÅDFRI Wireless 5-Button Remote",
+  "description": "A five-button Zigbee remote control from IKEA designed for wireless control of lights, media, and other smart home devices.",
+  "category": "controller",
+  "supported_integrations": ["Zigbee2MQTT", "ZHA", "deCONZ"],
+  "images": ["ikea_e1524_e1810.png"],
+  "manual_files": [],
+  "external_references": [
+    {
+      "label": "Zigbee2MQTT",
+      "url": "https://www.zigbee2mqtt.io/devices/E1524_E1810.html"
+    }
+  ],
+  "tags": ["zigbee", "button", "remote", "5-button"],
+  "status": "active",
+  "librarians": [
+    {
+      "id": "yarafie",
+      "name": "Yasir Rafie"
+    }
+  ]
+}

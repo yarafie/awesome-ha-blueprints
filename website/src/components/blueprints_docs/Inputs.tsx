@@ -4,7 +4,7 @@
  *
  * Changelog:
  *   • Initial Version (@EPMatt)
- *   - Updated 2026.12.03 (@yarafie):
+ *   - Updated 2025.12.03 (@yarafie):
  *      1. Moved utils.ts → utils/contexts.ts
  *      2. Added variant + version resolution for controllers
  *      3. Added backward compatibility for blueprint YAMLs using "inputs:" instead of "input:"

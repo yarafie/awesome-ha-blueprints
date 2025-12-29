@@ -116,7 +116,7 @@ export interface DailySeriesOptions extends DownloadFilterOptions {
 /**
  * Record a blueprint download in the Supabase database
  *
- * @param category The blueprint category (e.g., 'controllers', 'hooks', 'automation')
+ * @param category The blueprint category (e.g., 'controllers', 'hooks', 'automations')
  * @param id       The blueprint ID (e.g., 'ikea_e2001_e2002')
  * @param variant  The blueprint variant (e.g., 'EPMatt', 'yarafie') – controllers only // Added variant support
  * @param version  The blueprint version (e.g., '2025.12.01')
@@ -139,7 +139,7 @@ export const recordBlueprintDownload = async (
       {
         blueprint_category: category,
         blueprint_id: id,
-        blueprint_variant: variant, // null for hooks/automation
+        blueprint_variant: variant, // null for hooks/automations
         blueprint_version: version, // physical version (e.g., 2025.11.16) or "latest"
         download_date: new Date().toISOString(),
       },

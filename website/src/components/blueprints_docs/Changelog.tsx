@@ -6,7 +6,7 @@
  *
  * Changelog :):
  *   • Initial Version (@EPMatt)
- *   - Updated 2026.12.02 (@yarafie):
+ *   - Updated 2025.12.02 (@yarafie):
  *      1. Moved utils.ts to utils/contexts.ts
  *      2. Migrated to Marked v17 configuration with custom Renderer.
  *      3. Added emoji replacement to support :emoji_codes:

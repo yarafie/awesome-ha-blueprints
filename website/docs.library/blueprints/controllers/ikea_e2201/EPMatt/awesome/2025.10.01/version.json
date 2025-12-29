@@ -1,0 +1,16 @@
+{
+  "version": "2025.10.01",
+  "date": "2025-10-01",
+  "blueprint_id": "ikea_e2201",
+  "library_id": "EPMatt",
+  "release_id": "awesome",
+  "blueprint_file": "ikea_e2201.yaml",
+  "supported_integrations": ["ZHA", "Zigbee2MQTT", "deCONZ"],
+  "breaking": false,
+  "changes": [
+    {
+      "description": "Add additional model name for ZHA. This will close ([EPMatt-issue#957](https://github.com/EPMatt/awesome-ha-blueprints/issues/957)). ([@yarafie](https://github.com/yarafie))"
+    }
+  ],
+  "status": "active"
+}

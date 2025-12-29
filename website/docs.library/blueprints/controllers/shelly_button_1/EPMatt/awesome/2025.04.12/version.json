@@ -1,0 +1,16 @@
+{
+  "version": "2025.04.12",
+  "date": "2025-04-12",
+  "blueprint_id": "shelly_button_1",
+  "library_id": "EPMatt",
+  "release_id": "awesome",
+  "blueprint_file": "shelly_button_1.yaml",
+  "supported_integrations": ["Shelly"],
+  "breaking": false,
+  "changes": [
+    {
+      "description": "Initial release. ([@yarafie](https://github.com/yarafie)) :tada:"
+    }
+  ],
+  "status": "active"
+}

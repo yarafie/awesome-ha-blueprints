@@ -4,7 +4,7 @@
  *
  * Changelog :):
  *   • Initial Version (@EPMatt)
- *   - Updated 2026.12.03 (@yarafie):
+ *   - Updated 2025.12.03 (@yarafie):
  *      1. Added import of DevicePage
  *      1. Added import of VersionBadge
  * ────────────────────────────────────────────────────────────────

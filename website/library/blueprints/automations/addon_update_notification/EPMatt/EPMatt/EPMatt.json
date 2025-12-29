@@ -1,7 +1,0 @@
-{
-  "automation_id": "addon_update_notification",
-  "variant": "EPMatt",
-  "maintainers": ["EPMatt"],
-  "has_versions": true,
-  "status": "stable"
-}

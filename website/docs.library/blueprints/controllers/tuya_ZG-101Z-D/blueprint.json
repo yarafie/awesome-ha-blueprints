@@ -1,0 +1,30 @@
+{
+  "blueprint_id": "tuya_ZG-101Z-D",
+  "name": "Controller - Tuya ZG-101Z/D Smart knob",
+  "manufacturer": "Tuya",
+  "model": "ZG-101Z/D",
+  "model_name": "Tuya ZG-101Z/D Smart knob",
+  "description": "A Zigbee smart rotary knob designed for controlling brightness, volume, and other adjustable values.",
+  "category": "controller",
+  "supported_integrations": ["Zigbee2MQTT", "ZHA"],
+  "images": ["tuya_ZG-101Z-D.png"],
+  "manual_files": [],
+  "external_references": [
+    {
+      "label": "Zigbee2MQTT",
+      "url": "https://www.zigbee2mqtt.io/devices/ZG-101Z_D.html"
+    },
+    {
+      "label": "Zigbee2MQTT",
+      "url": "https://www.zigbee2mqtt.io/devices/ZG-101Z_D_1.html"
+    }
+  ],
+  "tags": ["zigbee", "knob", "rotary"],
+  "status": "active",
+  "librarians": [
+    {
+      "id": "yarafie",
+      "name": "Yasir Rafie"
+    }
+  ]
+}

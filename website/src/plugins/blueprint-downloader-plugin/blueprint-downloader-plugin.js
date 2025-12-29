@@ -21,7 +21,7 @@
  *           /blueprints/controllers/ikea_e2001_e2002/EPMatt
  *           /blueprints/controllers/ikea_e2001_e2002/yarafie
  *
- *        Backward compatible with hooks and automation categories
+ *        Backward compatible with hooks and automations categories
  *
  * ────────────────────────────────────────────────────────────────
  */
@@ -70,7 +70,7 @@ export default function blueprintRoutesPlugin(context) {
           // 🆕 Derive variant/version for controllers:
           // Expected controller path example:
           // controllers/<id>/<variant>/<version>/<id>.yaml
-          // For non-controller categories (automation/hooks), there is no variant folder.
+          // For non-controller categories (automations/hooks), there is no variant folder.
           let variant = null
           let version = null
 
@@ -200,7 +200,7 @@ export default function blueprintRoutesPlugin(context) {
           continue
         }
 
-        // Non-controller categories (automation, hooks, etc.) keep 1:1 route behavior
+        // Non-controller categories (automations, hooks, etc.) keep 1:1 route behavior
         if (seen.has(key)) {
           continue
         }

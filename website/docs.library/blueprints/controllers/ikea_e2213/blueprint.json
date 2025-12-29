@@ -1,0 +1,30 @@
+{
+  "blueprint_id": "ikea_e2213",
+  "name": "Controller - IKEA E2213 SOMRIG shortcut button",
+  "manufacturer": "IKEA",
+  "model": "E2213",
+  "model_name": "IKEA E2213 SOMRIG shortcut button",
+  "description": "A small wireless shortcut button designed for quick and flexible smart home interactions.",
+  "category": "controller",
+  "supported_integrations": ["Zigbee2MQTT", "ZHA", "deCONZ"],
+  "images": ["ikea_e2213.png"],
+  "manual_files": [],
+  "external_references": [
+    {
+      "label": "Zigbee2MQTT",
+      "url": "https://www.zigbee2mqtt.io/devices/E2213.html"
+    },
+    {
+      "label": "deCONZ Device",
+      "url": "https://github.com/dresden-elektronik/deconz-rest-plugin/blob/8ae69a976bca13f22e8002a13ebe798d1e26c086/button_maps.json#L343"
+    }
+  ],
+  "tags": ["zigbee", "button", "shortcut"],
+  "status": "active",
+  "librarians": [
+    {
+      "id": "yarafie",
+      "name": "Yasir Rafie"
+    }
+  ]
+}

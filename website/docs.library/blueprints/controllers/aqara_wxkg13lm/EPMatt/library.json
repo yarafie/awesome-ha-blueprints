@@ -1,0 +1,16 @@
+{
+  "library_id": "EPMatt",
+  "blueprint_id": "aqara_wxkg13lm",
+  "releases": ["awesome"],
+  "description": "Controller blueprint library for aqara_wxkg13lm maintained by EPMatt.",
+  "supported_integrations": ["Zigbee2MQTT"],
+  "category": "controller",
+  "status": "active",
+  "title": "EPMatt controller library",
+  "maintainers": [
+    {
+      "id": "EPMatt",
+      "name": "EPMatt"
+    }
+  ]
+}

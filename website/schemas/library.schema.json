@@ -1,0 +1,109 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yarafie.github.io/awesome-ha-blueprints/schemas/library.schema.json",
+  "title": "Awesome HA Library - Unified Library Schema",
+  "description": "Canonical schema describing a blueprint library for controllers, hooks, and automations.",
+  "type": "object",
+  "required": [
+    "library_id",
+    "blueprint_id",
+    "title",
+    "description",
+    "maintainers",
+    "releases",
+    "category",
+    "status"
+  ],
+  "properties": {
+    "library_id": {
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9_-]+$",
+      "description": "Owning library identifier (e.g. EPMatt, yarafie)."
+    },
+    "blueprint_id": {
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9_-]+$",
+      "description": "Blueprint identifier this library belongs to."
+    },
+    "title": {
+      "type": "string",
+      "description": "Human-readable library title."
+    },
+    "description": {
+      "type": "string",
+      "description": "Short description of this blueprint library."
+    },
+    "maintainers": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Maintainers responsible for this library.",
+      "items": {
+        "type": "object",
+        "required": ["id", "name"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Maintainer identifier (e.g. GitHub username)."
+          },
+          "name": {
+            "type": "string",
+            "description": "Display name of the maintainer."
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Optional maintainer homepage or profile."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "releases": {
+      "type": "array",
+      "minItems": 1,
+      "description": "List of release identifiers under this library.",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-zA-Z0-9_-]+$"
+      }
+    },
+    "supported_integrations": {
+      "type": "array",
+      "description": "Integrations supported by this library (primarily controllers).",
+      "items": {
+        "type": "string"
+      }
+    },
+    "category": {
+      "type": "string",
+      "enum": ["controller", "hook", "automation"],
+      "description": "Blueprint category."
+    },
+    "external_references": {
+      "type": "array",
+      "description": "Optional external references related to this library.",
+      "items": {
+        "type": "object",
+        "required": ["label", "url"],
+        "properties": {
+          "label": {
+            "type": "string",
+            "description": "Short label for the reference."
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "External reference URL."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "status": {
+      "type": "string",
+      "enum": ["active", "deprecated"],
+      "description": "Lifecycle status of the library."
+    }
+  },
+  "additionalProperties": false
+}

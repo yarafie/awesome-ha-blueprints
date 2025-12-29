@@ -1,0 +1,83 @@
+---
+title: Hook - Cover
+description: This Hook blueprint allows building a controller-based automation to control a cover. Supports opening, closing and tilting the cover.
+---
+
+import {
+  LibraryPage,
+  LibraryRequirement,
+  LibraryInputs,
+  LibraryChangelog,
+  LibraryImportCard,
+} from '@site/src/components/library_docs'
+
+<LibraryPage category="hooks" libraryId="cover">
+
+<LibraryImportCard category="hooks" libraryId="cover" />
+
+:::tip
+This blueprint is part of the **Controllers–Hooks Ecosystem**.
+You can read more about this topic [here](/library/controllers-hooks-ecosystem).
+:::
+
+## Description
+
+This Hook blueprint allows building a controller-based automation to control a cover.
+It supports **opening**, **closing**, and **tilting** covers.
+
+:::info
+An automation created with this blueprint must be linked to a **Controller** automation.
+
+Controllers are blueprints that integrate physical controllers and expose a normalized
+event interface. Hooks listen to these events and perform the actual control logic.
+
+See the list of **supported controllers** below for details.
+:::
+
+## Requirements
+
+<LibraryRequirement libraryId="controller" required/>
+<LibraryRequirement name="Cover Integration" required>
+
+This integration provides the entity representing a cover in Home Assistant. It should be activated by default so unless you tweaked the default configuration you're good to go.
+
+[Cover Integration Docs](https://www.home-assistant.io/integrations/cover/)
+
+</LibraryRequirement>
+
+## Inputs
+
+<LibraryInputs />
+
+## Supported Controllers
+
+- [Aqara WXKG11LM Wireless Mini Switch](/library/blueprints/controllers/aqara_wxkg11lm)
+- [Aqara WXKG13LM Wireless Mini Switch T1](/library/blueprints/controllers/aqara_wxkg13lm)
+- [IKEA E1524/E1810 TRÅDFRI Wireless 5-Button Remote](/library/blueprints/controllers/ikea_e1524_e1810)
+- [IKEA E1743 TRÅDFRI On/Off Switch & Dimmer](/library/blueprints/controllers/ikea_e1743)
+- [IKEA E1766 TRÅDFRI Open/Close Remote](/library/blueprints/controllers/ikea_e1766)
+- [IKEA E1812 TRÅDFRI Shortcut Button](/library/blueprints/controllers/ikea_e1812)
+- [IKEA E2001/E2002 STYRBAR Remote Control](/library/blueprints/controllers/ikea_e2001_e2002)
+- [IKEA E2123 SYMFONISK Sound Remote Gen 2](/library/blueprints/controllers/ikea_e2123)
+- [IKEA E2201 RODRET Dimmer](/library/blueprints/controllers/ikea_e2201)
+- [IKEA E2213 SOMRIG Shortcut Button](/library/blueprints/controllers/ikea_e2213)
+- [Shelly Button 1](/library/blueprints/controllers/shelly_button_1)
+- [Shelly SNSN-0024x Plus i4](/library/blueprints/controllers/shelly_snsn_0024x)
+- [SONOFF SNZB-01 Wireless Switch](/library/blueprints/controllers/sonoff_snzb01)
+- [Xiaomi WXCJKG11LM Aqara Opple 2-Button Remote](/library/blueprints/controllers/xiaomi_wxcjkg11lm)
+- [Xiaomi WXCJKG12LM Aqara Opple 4-Button Remote](/library/blueprints/controllers/xiaomi_wxcjkg12lm)
+- [Xiaomi WXCJKG13LM Aqara Opple 6-Button Remote](/library/blueprints/controllers/xiaomi_wxcjkg13lm)
+- [Xiaomi WXKG01LM Mi Wireless Switch](/library/blueprints/controllers/xiaomi_wxkg01lm)
+
+## Additional Notes
+
+If you want to link **multiple covers** to the same controller, you can either:
+
+- Use [Cover Groups](https://www.home-assistant.io/integrations/cover.group/)
+- Or create multiple Hook automations linked to the same Controller
+
+## Changelog
+
+<LibraryChangelog />
+
+</LibraryPage>

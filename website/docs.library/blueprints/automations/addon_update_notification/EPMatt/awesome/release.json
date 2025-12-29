@@ -1,0 +1,17 @@
+{
+  "release_id": "awesome",
+  "library_id": "EPMatt",
+  "blueprint_id": "addon_update_notification",
+  "title": "Send a mobile notification when add-on update is available",
+  "maintainers": [
+    {
+      "id": "EPMatt",
+      "name": "EPMatt"
+    }
+  ],
+  "description": "Send a notification to the provided mobile devices whenever an update for the given Home Assistant add-on is available.",
+  "versions": ["2021.10.26"],
+  "latest_version": "2021.10.26",
+  "supported_integrations": [],
+  "status": "active"
+}

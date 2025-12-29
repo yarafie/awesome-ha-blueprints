@@ -1,0 +1,26 @@
+{
+  "blueprint_id": "philips_8718699693985",
+  "name": "Controller - Philips 8718699693985 Hue Smart Button",
+  "manufacturer": "Philips",
+  "model": "UNKNOWN",
+  "model_name": "Philips 8718699693985 Hue Smart Button",
+  "description": "A compact Zigbee Hue Smart Button designed for single-button control of lights and automations.",
+  "category": "controller",
+  "supported_integrations": ["Zigbee2MQTT", "ZHA", "deCONZ"],
+  "images": ["philips_8718699693985.png"],
+  "manual_files": [],
+  "external_references": [
+    {
+      "label": "Zigbee2MQTT",
+      "url": "https://www.zigbee2mqtt.io/devices/8718699693985.html"
+    }
+  ],
+  "tags": ["zigbee", "button"],
+  "status": "active",
+  "librarians": [
+    {
+      "id": "yarafie",
+      "name": "Yasir Rafie"
+    }
+  ]
+}

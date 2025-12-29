@@ -1,0 +1,16 @@
+{
+  "version": "2025.04.19",
+  "date": "2025-04-19",
+  "blueprint_id": "xiaomi_wxcjkg12lm",
+  "library_id": "EPMatt",
+  "release_id": "awesome",
+  "blueprint_file": "xiaomi_wxcjkg12lm.yaml",
+  "supported_integrations": ["ZHA", "Zigbee2MQTT", "deCONZ"],
+  "breaking": false,
+  "changes": [
+    {
+      "description": "Improve Last Controller Event Helper JSON Regex with more lenient matching."
+    }
+  ],
+  "status": "active"
+}

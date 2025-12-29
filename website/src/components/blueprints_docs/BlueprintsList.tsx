@@ -4,7 +4,7 @@
  *
  * Changelog:
  *   • Initial Version (@EPMatt)
- *   - Updated 2026.12.03 (@yarafie):
+ *   - Updated 2025.12.03 (@yarafie):
  *      1. Moved utils.ts to utils/contexts.ts
  *      2. Extract ID from folder structure: ./{category}/{id}/......
  * ────────────────────────────────────────────────────────────────

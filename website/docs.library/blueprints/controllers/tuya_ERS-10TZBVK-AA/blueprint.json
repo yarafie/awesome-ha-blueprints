@@ -1,0 +1,30 @@
+{
+  "blueprint_id": "tuya_ERS-10TZBVK-AA",
+  "name": "Controller - Tuya ERS-10TZBVK-AA Smart knob",
+  "manufacturer": "Tuya",
+  "model": "ERS-10TZBVK-AA",
+  "model_name": "Tuya ERS-10TZBVK-AA Smart knob",
+  "description": "A Zigbee smart knob designed for rotation and button-based control of lights, scenes, and automations.",
+  "category": "controller",
+  "supported_integrations": ["Zigbee2MQTT", "ZHA"],
+  "images": ["tuya_ERS-10TZBVK-AA.png"],
+  "manual_files": [],
+  "external_references": [
+    {
+      "label": "Zigbee2MQTT",
+      "url": "https://www.zigbee2mqtt.io/devices/ERS-10TZBVK-AA.html"
+    },
+    {
+      "label": "Blakadder",
+      "url": "https://zigbee.blakadder.com/Eardatek_ERS-10TZBVK-AA.html"
+    }
+  ],
+  "tags": ["zigbee", "knob", "rotary"],
+  "status": "active",
+  "librarians": [
+    {
+      "id": "yarafie",
+      "name": "Yasir Rafie"
+    }
+  ]
+}

@@ -4,7 +4,7 @@
  *
  * Changelog:
  *   • Initial Version (@EPMatt)
- *   - Updated 2026.12.03 (@yarafie):
+ *   - Updated 2025.12.03 (@yarafie):
  *      1. Moved utils.ts to utils/contexts.ts
  *      2. Added variant and versions for controllers
  * ────────────────────────────────────────────────────────────────
@@ -138,7 +138,7 @@ function getGitHubAvatarUrl(username: string): string {
  * Loads and extracts maintainers from blueprint YAML
  * For controllers: controllers/{id}/{variant}/{version}/{id}.yaml
  * For others:      {category}/{id}/{id}.yaml
- * @param category - Blueprint category (e.g., 'automation', 'controllers')
+ * @param category - Blueprint category (e.g., 'automations', 'controllers')
  * @param id - Blueprint ID
  * @returns Array of maintainer usernames or empty array if not found
  */
@@ -175,7 +175,7 @@ function loadBlueprintMaintainers(
 
 /**
  * Loads and extracts versions from changelog.json for non-controllers
- * @param category - Blueprint category (e.g., 'automation', 'hooks')
+ * @param category - Blueprint category (e.g., 'automations', 'hooks')
  * @param id - Blueprint ID
  * @returns Object containing sorted versions array and latest version, or null if no versions found
  */

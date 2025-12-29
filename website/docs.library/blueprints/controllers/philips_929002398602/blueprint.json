@@ -1,0 +1,30 @@
+{
+  "blueprint_id": "philips_929002398602",
+  "name": "Controller - Philips 929002398602 Hue Dimmer switch v2",
+  "manufacturer": "Philips",
+  "model": "UNKNOWN",
+  "model_name": "Philips 929002398602 Hue Dimmer switch v2",
+  "description": "A Zigbee Hue Dimmer Switch v2 designed for controlling lights, scenes, and brightness with multiple buttons.",
+  "category": "controller",
+  "supported_integrations": ["Zigbee2MQTT", "ZHA"],
+  "images": ["philips_929002398602.png"],
+  "manual_files": [],
+  "external_references": [
+    {
+      "label": "Zigbee2MQTT",
+      "url": "https://www.zigbee2mqtt.io/devices/929002398602.html"
+    },
+    {
+      "label": "Blakadder",
+      "url": "https://zigbee.blakadder.com/Philips_RWL022.html"
+    }
+  ],
+  "tags": ["zigbee", "dimmer", "light"],
+  "status": "active",
+  "librarians": [
+    {
+      "id": "yarafie",
+      "name": "Yasir Rafie"
+    }
+  ]
+}

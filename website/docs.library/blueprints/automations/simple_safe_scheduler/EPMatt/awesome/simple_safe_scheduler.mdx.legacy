@@ -1,0 +1,125 @@
+---
+title: Simple Safe Scheduler
+description: A simple scheduler which executes a certain action at a given time, checking and eventually re-executing the action if the automation did not run at the expected time (e.g. due to a disruptive event).
+---
+
+import {
+  LibraryPage,
+  LibraryRequirement,
+  LibraryInputs,
+  LibraryChangelog,
+  LibraryImportCard,
+} from '@site/src/components/library_docs'
+
+<LibraryPage category="automations" libraryId="simple_safe_scheduler">
+
+<LibraryImportCard category="automations" libraryId="simple_safe_scheduler" />
+
+## Description
+
+Scheduling a periodic action in Home Assistant can be trickier than it appears at first glance.
+Time-based automations do not guarantee execution if a disruptive event occurs.
+
+For example, if an automation is scheduled at **12:00**, but Home Assistant goes offline at **11:59**
+and comes back at **12:01**, the automation will be skipped entirely.
+
+The **Simple Safe Scheduler** blueprint mitigates this limitation by providing:
+
+- A configurable periodic scheduler
+- Built-in safety checks
+- Automatic re-execution after disruptive events
+
+The automation allows scheduling actions based on:
+
+- **Time of day** (provided via an `input_datetime`)
+- **Day(s) of the week**
+- **Week frequency** (e.g. every 2 weeks)
+
+If a disruptive event occurs (power outage, reboot, network failure), the automation ensures the
+action is executed as soon as Home Assistant restores its state.
+
+These checks can run on startup and/or in response to a custom event.
+
+This makes the blueprint ideal for **critical automations** such as alarms, watering systems, or
+infrastructure tasks.
+
+## Requirements
+
+<LibraryRequirement name="Input Datetime Integration" required>
+This integration provides the entity used to represent a datetime value in Home Assistant.
+It is enabled by default unless explicitly disabled.
+
+[Input Datetime Docs](https://www.home-assistant.io/integrations/input_datetime/)
+</LibraryRequirement>
+
+## Inputs
+
+<LibraryInputs />
+
+## Additional Notes
+
+### Helper – Storage Input
+
+The `helper_storage` input acts as **permanent storage** for the automation and is required for the
+blueprint’s internal logic.
+
+You must manually create a dedicated `input_text` entity and provide it when configuring the
+automation.
+
+:::caution
+Do **not** modify the text input manually or reuse it across automations.
+
+Each automation created from this blueprint **must have its own dedicated storage input**.
+Any external modification may lead to inconsistencies or unexpected behavior.
+:::
+
+### Advanced Scheduling
+
+You can create multiple automations using this blueprint to support complex schedules.
+
+Example:
+
+**Automation 1** – Every 2 weeks on Monday at 12:00
+
+```yaml
+weeks_frequency: 2
+day_monday: true
+time_entity: input_datetime.automation_1
+```
+
+**Automation 2** – Every week on Wednesday at 13:00
+
+```yaml
+weeks_frequency: 1
+day_wednesday: true
+time_entity: input_datetime.automation_2
+```
+
+### Dynamic Scheduling (Sunrise / Sunset)
+
+Because the schedule is driven by an `input_datetime`, you can dynamically update execution time.
+
+```yaml
+input_datetime:
+  automation_1:
+    name: Automation 1 Execution Time
+    has_date: false
+    has_time: true
+
+- id: automation_1_datetime_update
+  trigger:
+    - platform: sun
+      event: sunset
+  action:
+    - service: input_datetime.set_datetime
+      target:
+        entity_id: input_datetime.automation_1
+      data:
+        time: "{{ now().strftime('%H:%M:%S') }}"
+```
+
+## Changelog
+
+<LibraryChangelog />
+
+</LibraryPage>

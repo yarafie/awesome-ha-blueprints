@@ -1,0 +1,18 @@
+{
+  "blueprint_id": "on_off_schedule_state_persistence",
+  "name": "On-Off schedule with state persistence",
+  "description": "A simple on-off schedule, with the addition of state persistence across disruptive events, making sure the target device is always in the expected state.",
+  "category": "automation",
+  "status": "active",
+  "images": ["on_off_schedule_state_persistence.png"],
+  "manual_files": ["on_off_schedule_state_persistence.pdf"],
+  "external_references": [],
+  "supported_integrations": [],
+  "tags": ["event", "schedule", "time"],
+  "librarians": [
+    {
+      "id": "EPMatt",
+      "name": "EPMatt"
+    }
+  ]
+}
