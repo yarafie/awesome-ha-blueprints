@@ -1,0 +1,33 @@
+{
+  "name": "Controller - IKEA E2213 SOMRIG shortcut button",
+  "external_references": [
+    {
+      "label": "Zigbee2MQTT",
+      "url": "https://www.zigbee2mqtt.io/devices/E2213.html"
+    },
+    {
+      "label": "ZHA Quirk",
+      "url": "https://github.com/zigpy/zha-device-handlers/blob/dev/zhaquirks/ikea/somrigsmartbtn.py#L149"
+    },
+    {
+      "label": "deCONZ Device",
+      "url": "https://github.com/dresden-elektronik/deconz-rest-plugin/blob/8ae69a976bca13f22e8002a13ebe798d1e26c086/button_maps.json#L343"
+    }
+  ],
+  "manual_files": ["ikea_e2213.pdf"],
+  "category": "controllers",
+  "blueprint_id": "ikea_e2213",
+  "model_name": "IKEA E2213 SOMRIG shortcut button",
+  "description": "Controller automation for executing any kind of action triggered by the provided IKEA E2213 SOMRIG shortcut button.",
+  "librarians": [
+    {
+      "id": "EPMatt",
+      "name": "EPMatt"
+    }
+  ],
+  "model": "E2213",
+  "tags": ["zigbee", "button", "shortcut"],
+  "images": ["ikea_e2213.png"],
+  "status": "active",
+  "manufacturer": "IKEA"
+}

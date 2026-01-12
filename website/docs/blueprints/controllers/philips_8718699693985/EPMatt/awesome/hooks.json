@@ -1,0 +1,53 @@
+{
+  "controller": "philips_8718699693985",
+  "library_id": "EPMatt",
+  "release_id": "awesome",
+  "hooks": [
+    {
+      "hook": "light",
+      "label": "Light",
+      "mapping_options": [
+        {
+          "id": "default",
+          "label": "Default",
+          "mappings": [
+            {
+              "event": "button_short",
+              "event_label": "Button short press",
+              "action": "toggle",
+              "action_label": "Toggle",
+              "mode": "single"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "hook": "media_player",
+      "label": "Media Player",
+      "mapping_options": [
+        {
+          "id": "default",
+          "label": "Default",
+          "mappings": [
+            {
+              "event": "button_short",
+              "event_label": "Button short press",
+              "action": "play_pause",
+              "action_label": "Play/Pause",
+              "mode": "single"
+            },
+            {
+              "event": "button_double",
+              "event_label": "Button double press",
+              "action": "next_track",
+              "action_label": "Next track",
+              "mode": "single",
+              "virtual": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

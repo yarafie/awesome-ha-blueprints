@@ -1,0 +1,33 @@
+{
+  "name": "Controller - Philips 8718699693985 Hue Smart Button",
+  "external_references": [
+    {
+      "label": "Zigbee2MQTT",
+      "url": "https://www.zigbee2mqtt.io/devices/8718699693985.html#philips-8718699693985"
+    },
+    {
+      "label": "deCONZ Device",
+      "url": "https://github.com/dresden-elektronik/deconz-rest-plugin/wiki/Supported-Devices"
+    },
+    {
+      "label": "Zigbee2MQTT",
+      "url": "https://www.zigbee2mqtt.io/devices/8718699693985.html#action-enum"
+    }
+  ],
+  "manual_files": ["philips_8718699693985.pdf"],
+  "category": "controllers",
+  "blueprint_id": "philips_8718699693985",
+  "model_name": "Philips 8718699693985 Hue Smart Button",
+  "description": "Controller automation for executing any kind of action triggered by the provided Philips 8718699693985 Hue Smart Button.",
+  "librarians": [
+    {
+      "id": "EPMatt",
+      "name": "EPMatt"
+    }
+  ],
+  "model": "8718699693985",
+  "tags": ["zigbee", "button"],
+  "images": ["philips_8718699693985.png"],
+  "status": "active",
+  "manufacturer": "Philips"
+}

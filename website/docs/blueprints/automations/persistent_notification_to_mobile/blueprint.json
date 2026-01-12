@@ -1,0 +1,17 @@
+{
+  "name": "Send Web UI persistent notifications to Mobile Devices",
+  "external_references": [],
+  "manual_files": ["persistent_notification_to_mobile.pdf"],
+  "category": "automations",
+  "blueprint_id": "persistent_notification_to_mobile",
+  "description": "Send Web UI persistent notifications with the provided ID to the specified Mobile Devices.",
+  "librarians": [
+    {
+      "id": "EPMatt",
+      "name": "EPMatt"
+    }
+  ],
+  "tags": ["event", "mobile", "notification", "notify"],
+  "images": ["persistent_notification_to_mobile.png"],
+  "status": "active"
+}

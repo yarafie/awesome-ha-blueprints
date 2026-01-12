@@ -1,0 +1,29 @@
+{
+  "name": "Controller - Xiaomi WXCJKG11LM Aqara Opple 2 button remote",
+  "external_references": [
+    {
+      "label": "Zigbee2MQTT",
+      "url": "https://www.zigbee2mqtt.io/devices/WXCJKG11LM.html#aqara-wxcjkg11lm"
+    },
+    {
+      "label": "deCONZ Device",
+      "url": "https://github.com/dresden-elektronik/deconz-rest-plugin/wiki/Supported-Devices"
+    }
+  ],
+  "manual_files": ["xiaomi_wxcjkg11lm.pdf"],
+  "category": "controllers",
+  "blueprint_id": "xiaomi_wxcjkg11lm",
+  "model_name": "Xiaomi WXCJKG11LM Aqara Opple 2 button remote",
+  "description": "Controller automation for executing any kind of action triggered by the provided Xiaomi WXCJKG11LM Aqara Opple 2 button remote.",
+  "librarians": [
+    {
+      "id": "EPMatt",
+      "name": "EPMatt"
+    }
+  ],
+  "model": "WXCJKG11LM",
+  "tags": ["zigbee", "button", "remote", "2-button"],
+  "images": ["xiaomi_wxcjkg11lm.png"],
+  "status": "active",
+  "manufacturer": "Xiaomi"
+}

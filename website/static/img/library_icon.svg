@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="gSky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#05070b"/>
+      <stop offset="1" stop-color="#000000"/>
+    </linearGradient>
+
+    <linearGradient id="gRoof" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#9fe2ff"/>
+      <stop offset="0.45" stop-color="#68c6ff"/>
+      <stop offset="1" stop-color="#2b79d6"/>
+    </linearGradient>
+
+    <linearGradient id="gFront" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2b7de0"/>
+      <stop offset="1" stop-color="#1c4ea8"/>
+    </linearGradient>
+
+    <linearGradient id="gPillar" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#bfeaff"/>
+      <stop offset="0.55" stop-color="#78cbff"/>
+      <stop offset="1" stop-color="#4d8fe6"/>
+    </linearGradient>
+
+    <linearGradient id="gBase" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#9fe2ff"/>
+      <stop offset="1" stop-color="#3a7fe0"/>
+    </linearGradient>
+
+    <linearGradient id="gFlag" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#5db6ff"/>
+      <stop offset="1" stop-color="#2b79d6"/>
+    </linearGradient>
+
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="#000" flood-opacity="0.45"/>
+    </filter>
+
+    <filter id="inner" x="-20%" y="-20%" width="140%" height="140%">
+      <feOffset dx="0" dy="2"/>
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="arithmetic" k2="-1" k3="1"/>
+    </filter>
+
+    <filter id="textShadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#0b1a33" flood-opacity="0.85"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1024" height="1024" fill="url(#gSky)"/>
+
+  <!-- Whole icon group -->
+  <g filter="url(#shadow)">
+    <!-- Flag pole -->
+    <rect x="496" y="92" width="22" height="140" rx="11" fill="url(#gPillar)"/>
+    <!-- Flag -->
+    <path d="M518 108
+             C585 95, 646 115, 714 103
+             C714 145, 646 147, 585 163
+             C560 170, 540 170, 518 168 Z"
+          fill="url(#gFlag)"/>
+
+    <!-- Roof / Pediment -->
+    <path d="M160 280 L512 130 L864 280
+             L824 320 L512 190 L200 320 Z"
+          fill="url(#gRoof)"/>
+    <path d="M200 320 L512 190 L824 320
+             L824 355 L200 355 Z"
+          fill="#6ec6ff" opacity="0.55"/>
+
+    <!-- Top fascia -->
+    <rect x="140" y="350" width="744" height="54" rx="16" fill="url(#gRoof)"/>
+
+    <!-- Building front -->
+    <path d="M170 404 H854
+             C872 404, 886 418, 886 436
+             V700
+             C886 718, 872 732, 854 732
+             H170
+             C152 732, 138 718, 138 700
+             V436
+             C138 418, 152 404, 170 404 Z"
+          fill="url(#gFront)" filter="url(#inner)"/>
+
+    <!-- Side shelves (suggested books) -->
+    <g opacity="0.65">
+      <rect x="205" y="500" width="150" height="165" rx="10" fill="#1a3f8e"/>
+      <rect x="225" y="520" width="40" height="60" rx="6" fill="#9fe2ff"/>
+      <rect x="270" y="520" width="35" height="85" rx="6" fill="#78cbff"/>
+      <rect x="310" y="520" width="25" height="70" rx="6" fill="#bfeaff"/>
+      <rect x="225" y="595" width="55" height="55" rx="6" fill="#78cbff"/>
+      <rect x="285" y="610" width="50" height="40" rx="6" fill="#9fe2ff"/>
+
+      <rect x="669" y="500" width="150" height="165" rx="10" fill="#1a3f8e"/>
+      <rect x="689" y="520" width="40" height="70" rx="6" fill="#bfeaff"/>
+      <rect x="734" y="520" width="35" height="95" rx="6" fill="#78cbff"/>
+      <rect x="774" y="520" width="25" height="65" rx="6" fill="#9fe2ff"/>
+      <rect x="689" y="600" width="55" height="50" rx="6" fill="#78cbff"/>
+      <rect x="749" y="610" width="50" height="40" rx="6" fill="#bfeaff"/>
+    </g>
+
+    <!-- Door -->
+    <path d="M420 500
+             H604
+             C618 500, 630 512, 630 526
+             V700
+             H394
+             V526
+             C394 512, 406 500, 420 500 Z"
+          fill="#1c3f8c" opacity="0.9"/>
+    <path d="M452 532 H572
+             C584 532, 594 542, 594 554
+             V690
+             H430
+             V554
+             C430 542, 440 532, 452 532 Z"
+          fill="#2b79d6" opacity="0.75"/>
+    <circle cx="575" cy="612" r="6" fill="#cfefff" opacity="0.9"/>
+
+    <!-- Pillars -->
+    <g>
+      <!-- left outer -->
+      <g>
+        <rect x="182" y="420" width="110" height="285" rx="26" fill="url(#gPillar)"/>
+        <rect x="168" y="690" width="138" height="42" rx="18" fill="url(#gBase)"/>
+        <rect x="170" y="410" width="134" height="42" rx="18" fill="url(#gBase)"/>
+      </g>
+      <!-- left inner -->
+      <g>
+        <rect x="318" y="420" width="110" height="285" rx="26" fill="url(#gPillar)"/>
+        <rect x="304" y="690" width="138" height="42" rx="18" fill="url(#gBase)"/>
+        <rect x="306" y="410" width="134" height="42" rx="18" fill="url(#gBase)"/>
+      </g>
+      <!-- right inner -->
+      <g>
+        <rect x="596" y="420" width="110" height="285" rx="26" fill="url(#gPillar)"/>
+        <rect x="582" y="690" width="138" height="42" rx="18" fill="url(#gBase)"/>
+        <rect x="584" y="410" width="134" height="42" rx="18" fill="url(#gBase)"/>
+      </g>
+      <!-- right outer -->
+      <g>
+        <rect x="732" y="420" width="110" height="285" rx="26" fill="url(#gPillar)"/>
+        <rect x="718" y="690" width="138" height="42" rx="18" fill="url(#gBase)"/>
+        <rect x="720" y="410" width="134" height="42" rx="18" fill="url(#gBase)"/>
+      </g>
+    </g>
+
+    <!-- Base steps -->
+    <g>
+      <rect x="130" y="732" width="764" height="70" rx="18" fill="url(#gBase)"/>
+      <rect x="110" y="790" width="804" height="78" rx="20" fill="#5db6ff" opacity="0.65"/>
+      <rect x="90" y="850" width="844" height="86" rx="22" fill="#3a7fe0"/>
+      <!-- small center step -->
+      <rect x="360" y="760" width="304" height="46" rx="16" fill="#78cbff" opacity="0.7"/>
+    </g>
+
+    <!-- LIBRARY text -->
+    <g filter="url(#textShadow)">
+      <text x="512" y="333"
+            text-anchor="middle"
+            font-family="system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif"
+            font-size="92"
+            font-weight="900"
+            fill="#eaf6ff"
+            stroke="#1a3f8e"
+            stroke-width="10"
+            paint-order="stroke">
+        LIBRARY
+      </text>
+    </g>
+  </g>
+</svg>

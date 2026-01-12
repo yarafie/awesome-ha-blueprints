@@ -1,0 +1,25 @@
+{
+  "name": "Controller - Smarthjemmet.dk QUAD-ZIG-SW 4 button remote",
+  "external_references": [
+    {
+      "label": "Zigbee2MQTT",
+      "url": "https://www.zigbee2mqtt.io/devices/QUAD-ZIG-SW.html"
+    }
+  ],
+  "manual_files": ["smarthjemmet_dk_quad_zig_sw.pdf"],
+  "category": "controllers",
+  "blueprint_id": "smarthjemmet_dk_quad_zig_sw",
+  "model_name": "Smarthjemmet.dk QUAD-ZIG-SW 4 button remote",
+  "description": "Controller automation for executing any kind of action triggered by the provided Smarthjemmet.dk QUAD-ZIG-SW 4 button remote.",
+  "librarians": [
+    {
+      "id": "EPMatt",
+      "name": "EPMatt"
+    }
+  ],
+  "model": "QUAD-ZIG-SW",
+  "tags": ["zigbee", "button", "remote", "4-button"],
+  "images": ["smarthjemmet_dk_quad_zig_sw.png"],
+  "status": "active",
+  "manufacturer": "Smarthjemmet.dk"
+}

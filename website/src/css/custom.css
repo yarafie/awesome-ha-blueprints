@@ -40,3 +40,17 @@ html[data-theme='dark'] {
     margin-right: 3rem;
   }
 }
+
+/* ------------------------------------------------------------------ */
+/* Blueprint pages – title sizing (Docusaurus v3 SAFE)                */
+/* ------------------------------------------------------------------ */
+
+.docs-doc-page .theme-doc-markdown h1 {
+  font-size: 1.8rem;
+  line-height: 1.25;
+  margin-bottom: 0.75rem;
+}
+
+.docs-doc-page .theme-doc-markdown h2 {
+  font-size: 1.3rem;
+}

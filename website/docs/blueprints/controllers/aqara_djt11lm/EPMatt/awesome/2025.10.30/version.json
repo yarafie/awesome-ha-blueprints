@@ -1,0 +1,18 @@
+{
+  "version": "2025.10.30",
+  "date": "2025-10-30",
+  "blueprint_id": "aqara_djt11lm",
+  "library_id": "EPMatt",
+  "release_id": "awesome",
+  "category": "controllers",
+  "title": "Controller - Aqara DJT11LM Vibration Sensor",
+  "description": "Controller automation for executing any kind of action triggered by the provided Aqara DJT11LM Vibration Sensor.",
+  "maintainers": [
+    {
+      "id": "EPMatt",
+      "name": "EPMatt"
+    }
+  ],
+  "blueprint_file": "aqara_djt11lm.yaml",
+  "status": "active"
+}

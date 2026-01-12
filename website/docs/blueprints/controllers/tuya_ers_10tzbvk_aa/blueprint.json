@@ -1,0 +1,33 @@
+{
+  "name": "Controller - Tuya ERS-10TZBVK-AA Smart knob",
+  "external_references": [
+    {
+      "label": "Blakadder",
+      "url": "https://zigbee.blakadder.com/Eardatek_ERS-10TZBVK-AA.html"
+    },
+    {
+      "label": "Zigbee2MQTT",
+      "url": "https://www.zigbee2mqtt.io/devices/ERS-10TZBVK-AA.html#tuya-ers-10tzbvk-aa"
+    },
+    {
+      "label": "ZHA Quirk",
+      "url": "https://github.com/zigpy/zha-device-handlers/blob/b87ac8907765303c915b19d915a1ca5ea9a8bdae/zhaquirks/tuya/ts004f.py#L69"
+    }
+  ],
+  "manual_files": ["tuya_ers_10tzbvk_aa.pdf"],
+  "category": "controllers",
+  "blueprint_id": "tuya_ers_10tzbvk_aa",
+  "model_name": "Tuya ERS-10TZBVK-AA Smart knob",
+  "description": "Controller automation for executing any kind of action triggered by the provided Tuya ERS-10TZBVK-AA Smart knob.",
+  "librarians": [
+    {
+      "id": "EPMatt",
+      "name": "EPMatt"
+    }
+  ],
+  "model": "ERS-10TZBVK-AA",
+  "tags": ["zigbee", "knob", "rotary"],
+  "images": ["tuya_ers_10tzbvk_aa.png"],
+  "status": "active",
+  "manufacturer": "Tuya"
+}

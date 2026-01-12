@@ -1,0 +1,127 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://awesome-ha-blueprints.dev/schemas/hooks.mappings.schema.json",
+  "title": "Controller → Hook Mapping Schema",
+  "description": "Defines how a controller release maps its emitted events to hook actions, grouped into selectable mapping options.",
+  "type": "object",
+  "required": ["controller", "library_id", "release_id", "hooks"],
+  "additionalProperties": false,
+  "properties": {
+    "controller": {
+      "type": "string",
+      "pattern": "^[a-z0-9_]+$",
+      "description": "Controller blueprint_id."
+    },
+    "library_id": {
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9_-]+$",
+      "description": "Library that owns this controller release."
+    },
+    "release_id": {
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9_-]+$",
+      "description": "Controller release identifier."
+    },
+    "hooks": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Hooks supported by this controller release.",
+      "items": {
+        "$ref": "#/$defs/hook"
+      }
+    }
+  },
+  "$defs": {
+    "hook": {
+      "type": "object",
+      "required": ["hook", "label", "mapping_options"],
+      "additionalProperties": false,
+      "properties": {
+        "hook": {
+          "type": "string",
+          "pattern": "^[a-z0-9_]+$",
+          "description": "Hook blueprint_id (e.g. light, cover, media_player)."
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Human-friendly hook name for UI."
+        },
+        "mapping_options": {
+          "type": "array",
+          "minItems": 1,
+          "description": "Selectable mapping options for this hook.",
+          "items": {
+            "$ref": "#/$defs/mapping_option"
+          }
+        }
+      }
+    },
+    "mapping_option": {
+      "type": "object",
+      "required": ["id", "label", "mappings"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9_]+$",
+          "description": "Stable identifier for this mapping option (e.g. default, option_1)."
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Human-friendly label shown in documentation/UI."
+        },
+        "description": {
+          "type": "string",
+          "description": "Optional explanation of when or why to use this mapping option."
+        },
+        "mappings": {
+          "type": "array",
+          "minItems": 1,
+          "description": "Event → action mappings for this option.",
+          "items": {
+            "$ref": "#/$defs/mapping"
+          }
+        }
+      }
+    },
+    "mapping": {
+      "type": "object",
+      "required": ["event", "event_label", "action", "action_label"],
+      "additionalProperties": false,
+      "properties": {
+        "event": {
+          "type": "string",
+          "pattern": "^[a-z0-9_]+$",
+          "description": "Controller event ID emitted by the YAML."
+        },
+        "event_label": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Human-readable event label shown in documentation/UI."
+        },
+        "action": {
+          "type": "string",
+          "pattern": "^[a-z0-9_]+$",
+          "description": "Hook action ID (must exist in hooks actions.json)."
+        },
+        "action_label": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Human-readable hook action label."
+        },
+        "mode": {
+          "type": "string",
+          "enum": ["single", "continuous"],
+          "description": "Execution mode override (optional)."
+        },
+        "virtual": {
+          "type": "boolean",
+          "default": false,
+          "description": "True if this mapping is virtual/derived and not a direct hardware event."
+        }
+      }
+    }
+  }
+}

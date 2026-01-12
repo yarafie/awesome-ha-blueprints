@@ -1,0 +1,29 @@
+{
+  "name": "Controller - IKEA ICTC-G-1 TRÅDFRI wireless dimmer",
+  "external_references": [
+    {
+      "label": "Zigbee2MQTT",
+      "url": "https://www.zigbee2mqtt.io/devices/ICTC-G-1.html#ikea-ictc-g-1"
+    },
+    {
+      "label": "deCONZ Device",
+      "url": "https://github.com/dresden-elektronik/deconz-rest-plugin/wiki/Supported-Devices"
+    }
+  ],
+  "manual_files": ["ikea_ictc_g_1.pdf"],
+  "category": "controllers",
+  "blueprint_id": "ikea_ictc_g_1",
+  "model_name": "IKEA ICTC-G-1 TRÅDFRI wireless dimmer",
+  "description": "Controller automation for executing any kind of action triggered by the provided IKEA ICTC-G-1 TRÅDFRI wireless dimmer.",
+  "librarians": [
+    {
+      "id": "EPMatt",
+      "name": "EPMatt"
+    }
+  ],
+  "model": "ICTC-G-1",
+  "tags": ["zigbee", "dimmer", "wall"],
+  "images": ["ikea_ictc_g_1.png"],
+  "status": "active",
+  "manufacturer": "IKEA"
+}

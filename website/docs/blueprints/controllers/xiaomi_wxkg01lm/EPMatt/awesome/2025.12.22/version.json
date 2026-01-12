@@ -1,0 +1,18 @@
+{
+  "version": "2025.12.22",
+  "date": "2025-12-22",
+  "blueprint_id": "xiaomi_wxkg01lm",
+  "library_id": "EPMatt",
+  "release_id": "awesome",
+  "category": "controllers",
+  "title": "Controller - Xiaomi WXKG01LM Mi Wireless Switch",
+  "description": "Controller automation for executing any kind of action triggered by the provided Xiaomi WXKG01LM Mi Wireless Switch.",
+  "maintainers": [
+    {
+      "id": "EPMatt",
+      "name": "EPMatt"
+    }
+  ],
+  "blueprint_file": "xiaomi_wxkg01lm.yaml",
+  "status": "active"
+}

@@ -1,0 +1,29 @@
+{
+  "name": "Controller - IKEA E1744 SYMFONISK Rotary Remote",
+  "external_references": [
+    {
+      "label": "Zigbee2MQTT",
+      "url": "https://www.zigbee2mqtt.io/devices/E1744.html#ikea-e1744"
+    },
+    {
+      "label": "deCONZ Device",
+      "url": "https://github.com/dresden-elektronik/deconz-rest-plugin/wiki/Supported-Devices"
+    }
+  ],
+  "manual_files": ["ikea_e1744.pdf"],
+  "category": "controllers",
+  "blueprint_id": "ikea_e1744",
+  "model_name": "IKEA E1744 SYMFONISK Rotary Remote",
+  "description": "Controller automation for executing any kind of action triggered by the provided IKEA E1744 SYMFONISK Rotary Remote.",
+  "librarians": [
+    {
+      "id": "EPMatt",
+      "name": "EPMatt"
+    }
+  ],
+  "model": "E1744",
+  "tags": ["zigbee", "knob", "rotary", "media"],
+  "images": ["ikea_e1744.png"],
+  "status": "active",
+  "manufacturer": "IKEA"
+}

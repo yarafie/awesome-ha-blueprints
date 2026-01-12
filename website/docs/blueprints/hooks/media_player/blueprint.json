@@ -1,0 +1,27 @@
+{
+  "name": "Hook - Media Player",
+  "external_references": [],
+  "manual_files": ["media_player.pdf"],
+  "category": "hooks",
+  "blueprint_id": "media_player",
+  "description": "This Hook blueprint allows to build a controller-based automation to control a media player. Supports volume setting, play/pause and track selection.",
+  "librarians": [
+    {
+      "id": "EPMatt",
+      "name": "EPMatt"
+    }
+  ],
+  "tags": [
+    "forward",
+    "mute",
+    "next",
+    "pause",
+    "play",
+    "previous",
+    "reverse",
+    "stop",
+    "volume"
+  ],
+  "images": ["media_player.png"],
+  "status": "active"
+}

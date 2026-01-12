@@ -1,0 +1,29 @@
+{
+  "name": "Controller - Xiaomi WXCJKG13LM Aqara Opple 6 button remote",
+  "external_references": [
+    {
+      "label": "Zigbee2MQTT",
+      "url": "https://www.zigbee2mqtt.io/devices/WXCJKG13LM.html#aqara-wxcjkg13lm"
+    },
+    {
+      "label": "deCONZ Device",
+      "url": "https://github.com/dresden-elektronik/deconz-rest-plugin/wiki/Supported-Devices"
+    }
+  ],
+  "manual_files": ["xiaomi_wxcjkg13lm.pdf"],
+  "category": "controllers",
+  "blueprint_id": "xiaomi_wxcjkg13lm",
+  "model_name": "Xiaomi WXCJKG13LM Aqara Opple 6 button remote",
+  "description": "Controller automation for executing any kind of action triggered by the provided Xiaomi WXCJKG13LM Aqara Opple 6 button remote.",
+  "librarians": [
+    {
+      "id": "EPMatt",
+      "name": "EPMatt"
+    }
+  ],
+  "model": "WXCJKG13LM",
+  "tags": ["zigbee", "button", "remote", "6-button"],
+  "images": ["xiaomi_wxcjkg13lm.png"],
+  "status": "active",
+  "manufacturer": "Xiaomi"
+}

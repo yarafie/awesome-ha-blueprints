@@ -1,0 +1,18 @@
+{
+  "version": "2025.05.08",
+  "date": "2025-05-08",
+  "blueprint_id": "ikea_e2213",
+  "library_id": "EPMatt",
+  "release_id": "awesome",
+  "category": "controllers",
+  "title": "Controller - IKEA E2213 SOMRIG shortcut button",
+  "description": "Controller automation for executing any kind of action triggered by the provided IKEA E2213 SOMRIG shortcut button.",
+  "maintainers": [
+    {
+      "id": "EPMatt",
+      "name": "EPMatt"
+    }
+  ],
+  "blueprint_file": "ikea_e2213.yaml",
+  "status": "active"
+}

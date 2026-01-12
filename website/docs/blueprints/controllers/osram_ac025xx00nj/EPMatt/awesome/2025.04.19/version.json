@@ -1,0 +1,18 @@
+{
+  "version": "2025.04.19",
+  "date": "2025-04-19",
+  "blueprint_id": "osram_ac025xx00nj",
+  "library_id": "EPMatt",
+  "release_id": "awesome",
+  "category": "controllers",
+  "title": "Controller - OSRAM AC025XX00NJ SMART+ Switch Mini",
+  "description": "Controller automation for executing any kind of action triggered by the provided OSRAM AC025XX00NJ SMART+ Switch Mini.",
+  "maintainers": [
+    {
+      "id": "EPMatt",
+      "name": "EPMatt"
+    }
+  ],
+  "blueprint_file": "osram_ac025xx00nj.yaml",
+  "status": "active"
+}

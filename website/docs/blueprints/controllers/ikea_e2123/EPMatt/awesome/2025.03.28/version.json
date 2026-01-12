@@ -1,0 +1,18 @@
+{
+  "version": "2025.03.28",
+  "date": "2025-03-28",
+  "blueprint_id": "ikea_e2123",
+  "library_id": "EPMatt",
+  "release_id": "awesome",
+  "category": "controllers",
+  "title": "Controller - IKEA E2123 SYMFONISK sound remote, gen 2",
+  "description": "Controller automation for executing any kind of action triggered by the provided IKEA E2123 SYMFONISK sound remote, gen 2. Supports Zigbee2MQTT, ZHA, deCONZ.",
+  "maintainers": [
+    {
+      "id": "EPMatt",
+      "name": "EPMatt"
+    }
+  ],
+  "blueprint_file": "ikea_e2123.yaml",
+  "status": "active"
+}

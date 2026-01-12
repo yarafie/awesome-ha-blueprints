@@ -1,0 +1,105 @@
+---
+variant: EPMatt
+title: Controller - IKEA E1812 TRÅDFRI Shortcut button
+description: Controller automation for executing any kind of action triggered by the provided IKEA E1812 TRÅDFRI Shortcut button.
+manufacturer: IKEA
+model: E1812
+model_name: IKEA E1812 TRÅDFRI Shortcut button
+integrations: [Zigbee2MQTT, ZHA, deCONZ]
+---
+
+import {
+  BlueprintImportCard,
+  Inputs,
+  Requirement,
+  Changelog,
+  SupportedHooks,
+} from '/src/components/library_docs'
+
+<BlueprintImportCard
+  category='controllers'
+  id='ikea_e1812'
+  library='EPMatt'
+  release='awesome'
+/>
+
+<br />
+
+:::tip
+This blueprint is part of the **Controllers-Hooks Ecosystem**. You can read more about this topic [here](/docs/controllers-hooks-ecosystem).
+:::
+
+## Description
+
+This blueprint provides universal support for running any custom action when a button is pressed on the provided IKEA E1812 TRÅDFRI Shortcut button. Supports controllers integrated with Zigbee2MQTT, ZHA, deCONZ. Just specify the integration used to connect the remote to Home Assistant when setting up the automation, and the blueprint will take care of all the rest.
+
+In addition of being able to provide custom actions for every kind of button press supported by the remote, the blueprint allows to loop the long press actions while the corresponding button is being held. Once released, the loop stops. This is useful when holding down a button should result in a continuous action (such as lowering the volume of a media player, or controlling a light brightness).
+
+:::tip
+Automations created with this blueprint can be connected with one or more [Hooks](/docs/blueprints/hooks) supported by this controller.
+Hooks allow to easily create controller-based automations for interacting with media players, lights, covers and more. See the list of [Hooks available for this controller](#available-hooks) for additional details.
+:::
+
+## Requirements
+
+<Requirement id='zigbee2mqtt' />
+<Requirement id='zha' />
+<Requirement id='deconz' />
+
+## Inputs
+
+<Inputs
+  category='controllers'
+  id='ikea_e1812'
+  library='EPMatt'
+  release='awesome'
+/>
+
+## Available Hooks
+
+### Light
+
+This Hook blueprint allows to build a controller-based automation to control a light. Supports brightness and color control both for white temperature and rgb lights.
+
+<SupportedHooks
+  category='controllers'
+  id='ikea_e1812'
+  library='EPMatt'
+  release='awesome'
+  hook='light'
+/>
+
+### Media Player
+
+This Hook blueprint allows to build a controller-based automation to control a media player. Supports volume setting, play/pause and track selection.
+
+<SupportedHooks
+  category='controllers'
+  id='ikea_e1812'
+  library='EPMatt'
+  release='awesome'
+  hook='media_player'
+/>
+
+### Cover
+
+This Hook blueprint allows to build a controller-based automation to control a cover. Supports opening, closing and tilting the cover.
+
+<SupportedHooks
+  category='controllers'
+  id='ikea_e1812'
+  library='EPMatt'
+  release='awesome'
+  hook='cover'
+/>
+
+## Additional Notes
+
+## Changelog
+
+<Changelog
+  category='controllers'
+  id='ikea_e1812'
+  library='EPMatt'
+  release='awesome'
+/>

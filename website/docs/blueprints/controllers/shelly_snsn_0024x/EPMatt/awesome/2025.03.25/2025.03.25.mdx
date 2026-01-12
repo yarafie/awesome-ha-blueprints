@@ -1,0 +1,119 @@
+---
+variant: EPMatt
+title: Controller - Shelly SNSN-0024x Plus i4 with Wall switch 4
+description: Controller automation for executing any kind of action triggered by the provided Shelly SNSN-0024x Plus i4 with Wall switch 4.
+manufacturer: Shelly
+model: SNSN-0024x
+model_name: Shelly SNSN-0024x Plus i4 with Wall switch 4
+integrations: [Shelly]
+---
+
+import {
+  BlueprintImportCard,
+  Inputs,
+  Requirement,
+  Changelog,
+  SupportedHooks,
+} from '/src/components/library_docs'
+
+<BlueprintImportCard
+  category='controllers'
+  id='shelly_snsn_0024x'
+  library='EPMatt'
+  release='awesome'
+/>
+
+<br />
+
+:::tip
+This blueprint is part of the **Controllers-Hooks Ecosystem**. You can read more about this topic [here](/docs/controllers-hooks-ecosystem).
+:::
+
+## Description
+
+This blueprint provides universal support for running any custom action when a button is pressed on the provided Shelly SNSN-0024x Plus i4 with Wall switch 4. Supports controllers integrated with Shelly. The blueprint will automagically detect the integration type and take care of all the rest.
+
+In addition of being able to provide custom actions for every kind of button press supported by the remote, the blueprint allows to loop the long press actions while the corresponding button is being held. Once released, the loop stops. This is useful when holding down a button should result in a continuous action (such as lowering the volume of a media player, or controlling a light brightness).
+
+:::tip
+Automations created with this blueprint can be connected with one or more [Hooks](/docs/blueprints/hooks) supported by this controller.
+Hooks allow to easily create controller-based automations for interacting with lights, media players, covers and maybe more in the future. See the list of [Hooks available for this controller](#available-hooks) for additional details.
+:::
+
+## Requirements
+
+<Requirement id='shelly' />
+
+## Inputs
+
+<Inputs
+  category='controllers'
+  id='shelly_snsn_0024x'
+  library='EPMatt'
+  release='awesome'
+/>
+
+## Available Hooks
+
+### Light
+
+This Hook blueprint allows to build a controller-based automation to control a light. Supports brightness and color control both for white temperature and rgb lights.
+
+<SupportedHooks
+  category='controllers'
+  id='shelly_snsn_0024x'
+  library='EPMatt'
+  release='awesome'
+  hook='light'
+/>
+
+### Media Player
+
+This Hook blueprint allows to build a controller-based automation to control a media player. Supports volume setting, play/pause and track selection.
+
+<SupportedHooks
+  category='controllers'
+  id='shelly_snsn_0024x'
+  library='EPMatt'
+  release='awesome'
+  hook='media_player'
+/>
+
+### Cover
+
+This Hook blueprint allows to build a controller-based automation to control a cover. Supports opening, closing and tilting the cover.
+
+<SupportedHooks
+  category='controllers'
+  id='shelly_snsn_0024x'
+  library='EPMatt'
+  release='awesome'
+  hook='cover'
+/>
+
+## Additional Notes
+
+### Button Order
+
+The button order is based on the plus i4 wiring and is as follows:
+
+SW1 -> Button 1 (Top Left)
+SW2 -> Button 2 (Top Right)
+SW3 -> Button 3 (Bottom Left)
+SW4 -> Button 4 (Bottom Right)
+
+Additional details [Shelly Plus i4](https://kb.shelly.cloud/knowledge-base/shelly-plus-i4)
+
+### Specifics related to Home Assistant Shelly Integration
+
+Only supports firmware 1.0 and later installed on Shelly SNSN-0024x Plus i4.
+Check [Home Assistant Shelly Integration](https://www.home-assistant.io/integrations/shelly) for additional details.
+
+## Changelog
+
+<Changelog
+  category='controllers'
+  id='shelly_snsn_0024x'
+  library='EPMatt'
+  release='awesome'
+/>

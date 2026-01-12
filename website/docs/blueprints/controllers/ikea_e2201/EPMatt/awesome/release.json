@@ -1,0 +1,19 @@
+{
+  "release_id": "awesome",
+  "library_id": "EPMatt",
+  "blueprint_id": "ikea_e2201",
+  "category": "controllers",
+  "title": "Controller - IKEA E2201 RODRET Dimmer",
+  "maintainers": [
+    {
+      "id": "EPMatt",
+      "name": "EPMatt"
+    }
+  ],
+  "description": "Controller automation for executing any kind of action triggered by the provided IKEA E2201 RODRET Dimmer.",
+  "versions": ["2025.10.01"],
+  "latest_version": "2025.10.01",
+  "status": "active",
+  "supported_hooks": ["cover", "light", "media_player"],
+  "supported_integrations": ["ZHA", "Zigbee2MQTT", "deCONZ"]
+}

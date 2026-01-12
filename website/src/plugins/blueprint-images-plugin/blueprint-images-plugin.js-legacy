@@ -1,0 +1,92 @@
+// website/src/plugins/blueprint-images-plugin/blueprint-images-plugin.js
+import fs from 'fs'
+import path from 'path'
+import { globSync } from 'glob'
+
+export default function blueprintImagesPlugin(context) {
+  return {
+    name: 'blueprint-images-plugin',
+
+    async loadContent() {
+      const { siteDir } = context
+
+      // All blueprint images live under: website/docs/blueprints/{category}/{id}/{id}.png
+      const blueprintsDir = path.join(siteDir, 'docs', 'blueprints')
+
+      // Find all PNG images
+      const imageFiles = globSync('**/*.png', {
+        cwd: blueprintsDir,
+        absolute: false,
+      })
+
+      return { blueprintsDir, imageFiles }
+    },
+
+    async contentLoaded({ content, actions }) {
+      const { blueprintsDir, imageFiles } = content
+      const { createData, addRoute } = actions
+      const mapping = {}
+
+      for (const imageRelPath of imageFiles) {
+        const absPath = path.join(blueprintsDir, imageRelPath)
+        const segments = imageRelPath.split('/')
+
+        // Expect structure: category / blueprintId / blueprintId.png
+        if (segments.length < 2) {
+          continue
+        }
+
+        const category = segments[0] // eg. automations, controllers, hooks
+        const blueprintId = segments[1] // eg. light, ikea_e2001_e2002
+        const imageFile = segments[2] // eg. light.png, ikea_e2001_e2002.png
+
+        // Expose a route so Webpack knows about the image asset
+        addRoute({
+          path: `/assets/images/blueprints/${blueprintId}.png`,
+          component: '@theme/NotFound', // required placeholder
+          exact: true,
+          modules: {
+            image: absPath,
+          },
+        })
+
+        const { siteDir, siteConfig } = context
+
+        const staticDir = path.join(
+          siteDir,
+          siteConfig.staticDirectories[0] || 'static',
+        ) // Get the static directory path
+
+        // Define the source and destination paths for your asset
+        //const sourceAssetPath = path.join(__dirname, 'assets', 'my-image.png'); // Asset within your plugin
+        const sourceAssetPath = absPath // Asset within your plugin
+        const destinationAssetPath = path.join(
+          staticDir,
+          'img',
+          category,
+          imageFile,
+        ) // Target in static/img
+
+        // Ensure the target directory exists
+        fs.mkdirSync(path.dirname(destinationAssetPath), { recursive: true })
+
+        // Copy the asset
+        fs.copyFileSync(sourceAssetPath, destinationAssetPath)
+
+        mapping[blueprintId] =
+          `/awesome-ha-blueprints/img/${category}/${blueprintId}/${blueprintId}.png`
+      }
+
+      // This will end up at:
+      // .docusaurus/blueprint-images-plugin/default/blueprintimages.json
+      await createData(
+        'blueprintimages.json',
+        JSON.stringify(mapping, null, 2),
+      )
+
+      console.log(
+        `✅ blueprintImagesPlugin: Processed ${imageFiles.length} blueprint images`,
+      )
+    },
+  }
+}

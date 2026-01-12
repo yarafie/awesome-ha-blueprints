@@ -1,0 +1,18 @@
+{
+  "version": "2021.10.22",
+  "date": "2021-10-22",
+  "blueprint_id": "simple_safe_scheduler",
+  "library_id": "EPMatt",
+  "release_id": "awesome",
+  "category": "automations",
+  "title": "Simple Safe Scheduler",
+  "description": "A simple scheduler which executes a certain action at a given time, checking and eventually re-executing the action if the automation did not run at the expected time (e.g. due to a disruptive event).",
+  "maintainers": [
+    {
+      "id": "EPMatt",
+      "name": "EPMatt"
+    }
+  ],
+  "blueprint_file": "simple_safe_scheduler.yaml",
+  "status": "active"
+}

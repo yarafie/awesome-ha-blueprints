@@ -1,0 +1,18 @@
+{
+  "version": "2025.04.12",
+  "date": "2025-04-12",
+  "blueprint_id": "ikea_e1812",
+  "library_id": "EPMatt",
+  "release_id": "awesome",
+  "category": "controllers",
+  "title": "Controller - IKEA E1812 TRÅDFRI Shortcut button",
+  "description": "Controller automation for executing any kind of action triggered by the provided IKEA E1812 TRÅDFRI Shortcut button.",
+  "maintainers": [
+    {
+      "id": "EPMatt",
+      "name": "EPMatt"
+    }
+  ],
+  "blueprint_file": "ikea_e1812.yaml",
+  "status": "active"
+}

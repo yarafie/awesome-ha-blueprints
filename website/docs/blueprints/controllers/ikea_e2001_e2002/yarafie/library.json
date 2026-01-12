@@ -1,0 +1,16 @@
+{
+  "library_id": "yarafie",
+  "blueprint_id": "ikea_e2001_e2002",
+  "title": "yarafie controller library",
+  "description": "Controller blueprint library for ikea_e2001_e2002 maintained by yarafie.",
+  "maintainers": [
+    {
+      "id": "yarafie",
+      "name": "yarafie"
+    }
+  ],
+  "releases": ["anything"],
+  "category": "controllers",
+  "status": "active",
+  "supported_integrations": ["Zigbee2MQTT"]
+}

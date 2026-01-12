@@ -1,0 +1,18 @@
+{
+  "version": "2025.10.16",
+  "date": "2025-10-16",
+  "blueprint_id": "philips_929002398602",
+  "library_id": "EPMatt",
+  "release_id": "awesome",
+  "category": "controllers",
+  "title": "Controller - Philips 929002398602 Hue Dimmer switch v2",
+  "description": "Controller automation for executing any kind of action triggered by the provided Philips 929002398602 Hue Dimmer switch v2.",
+  "maintainers": [
+    {
+      "id": "EPMatt",
+      "name": "EPMatt"
+    }
+  ],
+  "blueprint_file": "philips_929002398602.yaml",
+  "status": "active"
+}

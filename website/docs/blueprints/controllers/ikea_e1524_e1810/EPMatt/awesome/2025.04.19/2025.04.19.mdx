@@ -1,0 +1,139 @@
+---
+variant: EPMatt
+title: Controller - IKEA E1524/E1810 TRÅDFRI Wireless 5-Button Remote
+description: Controller automation for executing any kind of action triggered by the provided IKEA E1524/E1810 TRÅDFRI Wireless 5-Button Remote.
+manufacturer: IKEA
+model: E1524/E1810
+model_name: IKEA E1524/E1810 TRÅDFRI Wireless 5-Button Remote
+integrations: [Zigbee2MQTT, ZHA, deCONZ]
+---
+
+import {
+  BlueprintImportCard,
+  Inputs,
+  Requirement,
+  Changelog,
+  SupportedHooks,
+} from '/src/components/library_docs'
+
+<BlueprintImportCard
+  category='controllers'
+  id='ikea_e1524_e1810'
+  library='EPMatt'
+  release='awesome'
+/>
+
+<br />
+
+:::tip
+This blueprint is part of the **Controllers-Hooks Ecosystem**. You can read more about this topic [here](/docs/controllers-hooks-ecosystem).
+:::
+
+## Description
+
+This blueprint provides universal support for running any custom action when a button is pressed on the provided IKEA E1524/E1810 TRÅDFRI Wireless 5-Button Remote. Supports controllers integrated with Zigbee2MQTT, ZHA, deCONZ. Just specify the integration used to connect the remote to Home Assistant when setting up the automation, and the blueprint will take care of all the rest.
+
+In addition of being able to provide custom actions for every kind of button press supported by the remote, the blueprint allows to loop the long press actions while the corresponding button is being held. Once released, the loop stops. This is useful when holding down a button should result in a continuous action (such as lowering the volume of a media player, or controlling a light brightness).
+
+The blueprint also adds support for virtual double button press events, which are not exposed by the controller itself.
+
+:::tip
+Automations created with this blueprint can be connected with one or more [Hooks](/docs/blueprints/hooks) supported by this controller.
+Hooks allow to easily create controller-based automations for interacting with media players, lights, covers and more. See the list of [Hooks available for this controller](#available-hooks) for additional details.
+:::
+
+## Requirements
+
+<Requirement id='zigbee2mqtt'/>
+<Requirement id='zha'/>
+<Requirement id='deconz'/>
+<Requirement name='Input Text Integration' required>
+
+This integration provides the entity which must be provided to the blueprint in the **Helper - Last Controller Event** input. Learn more about this helper by reading the dedicated section in the [Additional Notes](#helper---last-controller-event).
+
+[Input Text Integration Docs](https://www.home-assistant.io/integrations/input_text/)
+
+</Requirement>
+
+## Inputs
+
+<Inputs
+  category='controllers'
+  id='ikea_e1524_e1810'
+  library='EPMatt'
+  release='awesome'
+/>
+
+## Available Hooks
+
+:::note Virtual double press actions
+Some of the following mappings might include actions for virtual double press events, which are disabled by default.
+If you are using a hook mapping which provides an action for a virtual double press event, please make sure to enable support for virtual double press on the corresponding buttons with the corresponding blueprint input.
+:::
+
+### Light
+
+This Hook blueprint allows to build a controller-based automation to control a light. Supports brightness and color control both for white temperature and rgb lights.
+
+<SupportedHooks
+  category='controllers'
+  id='ikea_e1524_e1810'
+  library='EPMatt'
+  release='awesome'
+  hook='light'
+/>
+
+### Media Player
+
+This Hook blueprint allows to build a controller-based automation to control a media player. Supports volume setting, play/pause and track selection.
+
+<SupportedHooks
+  category='controllers'
+  id='ikea_e1524_e1810'
+  library='EPMatt'
+  release='awesome'
+  hook='media_player'
+/>
+
+### Cover
+
+This Hook blueprint allows to build a controller-based automation to control a cover. Supports opening, closing and tilting the cover.
+
+<SupportedHooks
+  category='controllers'
+  id='ikea_e1524_e1810'
+  library='EPMatt'
+  release='awesome'
+  hook='cover'
+/>
+
+## Additional Notes
+
+### Helper - Last Controller Event
+
+The `helper_last_controller_event` (Helper - Last Controller Event) input serves as a permanent storage area for the automation. The stored info is used to implement the blueprint's core functionality. To learn more about the helper, how it's used and why it's required, you can read the dedicated section in the [Controllers-Hooks Ecosystem documentation](/docs/controllers-hooks-ecosystem#helper---last-controller-event-input).
+
+The helper is used to determine button release events when the controller is integrated with ZHA, because of the actions mapping for the controller with these integrations. Natively, the controller doesn't allow to distinguish between different button release events, so the blueprint must store the previous clicked button.
+
+### Virtual double press events
+
+It's also important to note that the controller doesn't natively support double press events. Instead , this blueprint provides virtual double press events. You can read more about them in the [general Controllers-Hooks Ecosystem documentation](/docs/controllers-hooks-ecosystem#virtual-events).
+
+### Center button long press
+
+Please note that the long press on the center button behaves differently from the long press for other buttons, due to how the controller implements this feature: when long pressing the center button, the controller first fires the short press event, then after a couple of seconds it sends the long press event as well. This behaviour is due to the controller design and it's not relative to any integration or the blueprint itself.
+
+### Issues with the E1810 model firing bad events
+
+It has been reported that the newer IKEA E1810 controller, which looks identical to the E1524, might fire wrong events in certain situations when interacting with it. This is due to an issue with the controller design and is not relative to the blueprint itself.
+
+If you notice your controller is not behaving as expected please remove the battery, wait about 2 minutes, insert it back and try again.
+
+## Changelog
+
+<Changelog
+  category='controllers'
+  id='ikea_e1524_e1810'
+  library='EPMatt'
+  release='awesome'
+/>

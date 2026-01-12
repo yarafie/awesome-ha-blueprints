@@ -2,19 +2,26 @@
 title: Controllers-Hooks Ecosystem
 ---
 
+<img
+  src='/awesome-ha-blueprints/img/awesome-ha-blueprints-library.png'
+  width='28'
+  style={{ verticalAlign: 'middle' }}
+/>
+**Awesome HA Library 1.0**
+
 ## Introduction
 
-The Controllers-Hooks ecosystem includes a set of blueprints which allow to easily create controller-based automations in just a few clicks. As the name implies, it consists of two main blueprint categories: Controllers and Hooks.
+The Controllers-Hooks ecosystem includes a set of blueprints which allow you to easily create controller-based automations in just a few clicks. As the name implies, it consists of two main blueprint categories: Controllers and Hooks.
 
 ## Controllers
 
-**Controllers** are blueprints which allow to easily integrate a wide range of controllers (wall switches, remotes, dimmers, etc.) and use them to run a set of actions when interacting with them. They consist in a practical abstraction layer for building controlled-based automations without worrying about the handling of RAW controller events and the integration used to connect controllers to Home Assistant (Zigbee2MQTT, ZHA, deCONZ, ZWave, Shelly, proprietary hubs, etc.).
+**Controllers** are blueprints which allow you to easily integrate a wide range of controllers (wall switches, remotes, dimmers, etc.) and use them to run a set of actions when interacting with them. They consist in a practical abstraction layer for building controller-based automations without worrying about the handling of RAW controller events and the integration used to connect controllers to Home Assistant (Zigbee2MQTT, ZHA, deCONZ, ZWave, Shelly, proprietary hubs, etc.).
 
 :::info
 The type of exposed events depends on the controller model. Some controllers can also expose virtual events. You can read more about them [here](#virtual-events).
 :::
 
-Most importantly, beside providing custom action sequences to Controller blueprints, you can connect Controllers with [Hooks](#hooks).
+Most importantly, besides providing custom action sequences to Controller blueprints, you can connect Controllers with [Hooks](#hooks).
 
 ### Helper - Last Controller Event Input
 
@@ -58,7 +65,7 @@ Such events can introduce some delay in the automation, therefore they can be di
 
 **Hooks** are blueprints which seamlessly integrate with [Controllers](#controllers) to enable control of lights, media players, covers and much more, without you ever writing a single line of code.
 
-While Controllers are responsible for integrating the hardware and exposing an abstract interface to the user, Hooks can, as the name suggests, link to this interface and listen for events fired by a Controller. With the received events, Hooks take care of providing the actual control functionality for common use cases (eg. controlling a Media Player).
+While Controllers are responsible for integrating the hardware and exposing an abstract interface to the user, Hooks can, as the name suggests, link to this interface and listen for events fired by a Controller. With the received events, Hooks take care of providing the actual control functionality for common use cases (e.g. controlling a Media Player).
 
 ## How to build a controller-based automation
 
@@ -70,10 +77,10 @@ The simplest use case for such blueprints consists in creating an entirely custo
 
 When setting up an automation with a Controller blueprint, you may be asked to select the integration used to connect the controller to Home Assistant, and the `device` (depending on the integration) representing the Controller. You can then specify a sequence of actions for each of the events the controller exposes.
 
-Each time an event is fired by the controller (eg. button press) the automation will run the provided custom action corresponding to that specific event.
+Each time an event is fired by the controller (e.g. button press) the automation will run the provided custom action corresponding to that specific event.
 
 :::tip
-Even in this simple scenario, you can still benefit from most of the features of the ecosystem: the blueprint will take care of handling the RAW events fired by the controller, as well as providing virtual events (eg. double clicks) not natively exposed by the controller.
+Even in this simple scenario, you can still benefit from most of the features of the ecosystem: the blueprint will take care of handling the RAW events fired by the controller, as well as providing virtual events (e.g. double clicks) not natively exposed by the controller.
 :::
 
 ### Controller and Hook
@@ -98,7 +105,7 @@ If you need to customize certain actions or extend a Hook functionality, you can
 
 For more flexibility, you can link multiple Hooks to the same Controller: just create a Controller automation, then build as many Hook automations as needed.
 
-This might be useful when you'd like to control multiple devices with the same controller (eg. multiple media players or lights) without relying on Home Assistant groups.
+This might be useful when you'd like to control multiple devices with the same controller (e.g. multiple media players or lights) without relying on Home Assistant groups.
 
 ## Examples
 

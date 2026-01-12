@@ -1,0 +1,109 @@
+/* stylelint-disable docusaurus/copyright-header */
+/**
+ * Any CSS included here will be global. The classic template
+ * bundles Infima by default. Infima is a CSS framework designed to
+ * work well for content-centric websites.
+ */
+
+/* You can override the default Infima variables here. */
+
+/* ------------------------------------------------------------------ */
+/* Infima theme overrides                                             */
+/* ------------------------------------------------------------------ */
+:root {
+  --ifm-color-primary: #004382;
+  --ifm-color-primary-dark: #003c75;
+  --ifm-color-primary-darker: #00396e;
+  --ifm-color-primary-darkest: #002f5b;
+  --ifm-color-primary-light: #004a8f;
+  --ifm-color-primary-lighter: #004d96;
+  --ifm-color-primary-lightest: #0057a9;
+  --ifm-code-font-size: 95%;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+html[data-theme='dark'] {
+  --ifm-color-primary: #2595ff;
+  --ifm-color-primary-dark: #0887ff;
+  --ifm-color-primary-darker: #0080f8;
+  --ifm-color-primary-darkest: #0069cc;
+  --ifm-color-primary-light: #42a3ff;
+  --ifm-color-primary-lighter: #51aaff;
+  --ifm-color-primary-lightest: #7dc0ff;
+}
+
+/* ------------------------------------------------------------------ */
+/* Navbar                                                             */
+/* ------------------------------------------------------------------ */
+.navbar * {
+  color: white;
+}
+
+@media all and (max-width: 996px) {
+  .navbar__brand {
+    margin-right: 3rem;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Layout width                                                       */
+/* ------------------------------------------------------------------ */
+.theme-layout-main {
+  width: 90%;
+}
+
+.theme-layout-sidebar {
+  width: 10%;
+}
+
+/* ------------------------------------------------------------------ */
+/* Blueprint pages – title sizing (Docusaurus v3 SAFE)                */
+/* ------------------------------------------------------------------ */
+
+.docs-doc-page .theme-doc-markdown h1 {
+  font-size: 1.8rem;
+  line-height: 1.25;
+  margin-bottom: 0.75rem;
+}
+
+.docs-doc-page .theme-doc-markdown h2 {
+  font-size: 1.3rem;
+}
+
+/* ------------------------------------------------------------------ */
+/* Docs layout – fix TOC width & left empty space                      */
+/* ------------------------------------------------------------------ */
+
+/* Remove default centering + max-width that causes empty left space */
+.docs-doc-page .container {
+  max-width: 100% !important;
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
+/* Desktop-only layout: content + slim TOC */
+@media (min-width: 997px) {
+  .theme-doc-main-container {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 200px;
+    align-items: start;
+    gap: 2rem;
+  }
+
+  .theme-doc-toc-desktop {
+    width: 200px;
+    max-width: 200px;
+    min-width: 200px;
+    flex: 0 0 200px;
+  }
+}
+
+/* Mobile & tablet: untouched */
+@media (max-width: 996px) {
+  .theme-doc-main-container {
+    display: block;
+  }
+}

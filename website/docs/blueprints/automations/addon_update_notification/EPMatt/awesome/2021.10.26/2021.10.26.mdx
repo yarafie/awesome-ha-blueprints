@@ -1,0 +1,96 @@
+---
+title: Send a mobile notification when add-on update is available
+description: Send a notification to the provided mobile devices whenever an update for the given Home Assistant add-on is available.
+---
+
+import {
+  BlueprintImportCard,
+  Inputs,
+  Requirement,
+  Changelog,
+} from '/src/components/library_docs'
+
+<BlueprintImportCard
+  category='automations'
+  id='addon_update_notification'
+  library='EPMatt'
+  release='awesome'
+/>
+
+<br />
+
+## Description
+
+Send a notification to the provided mobile devices whenever an update for the given Home Assistant add-on is available.
+Supports full notification customization, notification groups, auto-dismissal when the add-on is updated and button for starting the update directly from your notification tray, with optional notification after the update completed succesfully.
+This blueprint doesn't require any additional sensor to be manually set up, since it uses the built-in add-on sensors introduced with the Supervisor integration starting from Home Assistant Core 2021.4.0.
+
+## Requirements
+
+<Requirement name='Home Assistant Supervisor + Integration' required>
+
+To use this blueprint you must have an Home Assistant instance running installed as Home Assistant Managed OS or Home Assistant Supervised.
+You can learn more about Home Assistant installation methods in the
+
+[official Home Assistant docs](https://www.home-assistant.io/installation/).
+
+You must also have the Home Assistant Supervisor integration enabled and correctly set up. This is available and enabled by default starting from Home Assistant Core 2021.4.0.
+
+Moreover, add-on sensors are disabled by default in the Supervisor integration. Please make sure to enable the following entities for the add-on you plan to track before setting up this blueprint:
+
+- `sensor.<addon>_version`
+- `sensor.<addon>_newest_version`
+- `binary_sensor.<addon>_update_available`
+
+#### How to enable add-on entities
+
+1. Navigate to _Configuration_ -> _Integrations_ in your Home Assistant UI. You can click the following button to navigate to the Integrations dashboard for your installation.
+
+[![Open your Home Assistant instance and show your integrations.](https://my.home-assistant.io/badges/integrations.svg)](https://my.home-assistant.io/redirect/integrations/) 2. Click on _Entities_ in the _Home Assistant Supervisor_ card you find in the Integrations page. You'll be presented with a table of entities exposed by the Supervisor integration. 3. Select all the entities you want to use with this blueprint, then hit _Enable Selected_ on the top right of the table. 4. You've succesfully enabled the add-on entities required by this blueprint.
+
+[Home Assistant Supervisor Docs](https://www.home-assistant.io/integrations/hassio/)
+
+</Requirement>
+<Requirement name='Mobile App Integration' required>
+
+This integration provides the service to send notification to mobile devices. This should be activated by default so unless you tweaked the default configuration you're good to go.
+
+[Mobile App Integration Docs](https://www.home-assistant.io/integrations/mobile_app/)
+
+</Requirement>
+<Requirement name='Home Assistant Companion App' required>
+
+The official mobile app for Home Assistant. Make sure to have the Home Assistant Companion App installed and configured on mobile devices you plan to use for this automation.
+
+[Home Assistant Companion App Docs](https://companion.home-assistant.io/docs/notifications/notifications-basic#sending-notifications-to-multiple-devices)
+
+</Requirement>
+<Requirement name='Notify Group Integration' required>
+
+If you want to simultaneously send the notification to multiple devices, you can define a notification group using this integration in your `configuration.yaml`, then provide the service for the notification group in the [Mobile devices notification service input](https://companion.home-assistant.io/docs/notifications/notifications-basic#sending-notifications-to-multiple-devices). This integration should be enabled by default. More on how to setup notification groups in the official docs.
+
+[Notify Group Integration Docs](https://www.home-assistant.io/integrations/notify.group/)
+
+</Requirement>
+
+## Inputs
+
+<Inputs
+  category='automations'
+  id='addon_update_notification'
+  library='EPMatt'
+  release='awesome'
+/>
+
+## Additional Notes
+
+Please be aware that if you use notification groups which include both iOS and Android devices, some features (like Android Channels and notification groups) won't work. More details in the [Home Assistant Companion App Docs](https://companion.home-assistant.io/docs/notifications/notifications-basic#sending-notifications-to-multiple-devices).
+
+## Changelog
+
+<Changelog
+  category='automations'
+  id='addon_update_notification'
+  library='EPMatt'
+  release='awesome'
+/>

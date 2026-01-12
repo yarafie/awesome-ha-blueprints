@@ -1,0 +1,99 @@
+{
+  "controller": "aqara_wxkg11lm",
+  "library_id": "EPMatt",
+  "release_id": "awesome",
+  "hooks": [
+    {
+      "hook": "cover",
+      "label": "Cover",
+      "mapping_options": [
+        {
+          "id": "default",
+          "label": "Default",
+          "mappings": [
+            {
+              "event": "button_short",
+              "event_label": "Button short press",
+              "action": "open_cover",
+              "action_label": "Open cover",
+              "mode": "single"
+            },
+            {
+              "event": "button_long",
+              "event_label": "Button long press",
+              "action": "stop_cover_all",
+              "action_label": "Stop cover and cover tilt",
+              "mode": "single"
+            },
+            {
+              "event": "button_double",
+              "event_label": "Button double press",
+              "action": "close_cover",
+              "action_label": "Close cover",
+              "mode": "single"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "hook": "light",
+      "label": "Light",
+      "mapping_options": [
+        {
+          "id": "default",
+          "label": "Default",
+          "mappings": [
+            {
+              "event": "button_short",
+              "event_label": "Button short press",
+              "action": "toggle",
+              "action_label": "Toggle",
+              "mode": "single"
+            },
+            {
+              "event": "button_double",
+              "event_label": "Button double press",
+              "action": "color_up",
+              "action_label": "Color up",
+              "mode": "single"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "hook": "media_player",
+      "label": "Media Player",
+      "mapping_options": [
+        {
+          "id": "default",
+          "label": "Default",
+          "mappings": [
+            {
+              "event": "button_short",
+              "event_label": "Button short press",
+              "action": "play_pause",
+              "action_label": "Play/Pause",
+              "mode": "single"
+            },
+            {
+              "event": "button_long",
+              "event_label": "Button long press",
+              "action": "stop",
+              "action_label": "Stop",
+              "mode": "single"
+            },
+            {
+              "event": "button_double",
+              "event_label": "Button double press",
+              "action": "next_track",
+              "action_label": "Next track",
+              "mode": "single"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

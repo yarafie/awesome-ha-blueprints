@@ -1,0 +1,29 @@
+{
+  "name": "Controller - Tuya ZG-101Z/D Smart knob",
+  "external_references": [
+    {
+      "label": "Zigbee2MQTT",
+      "url": "https://www.zigbee2mqtt.io/devices/ZG-101Z_D.html"
+    },
+    {
+      "label": "Zigbee2MQTT",
+      "url": "https://www.zigbee2mqtt.io/devices/ZG-101Z_D_1.html"
+    }
+  ],
+  "manual_files": ["tuya_zg_101z_d.pdf"],
+  "category": "controllers",
+  "blueprint_id": "tuya_zg_101z_d",
+  "model_name": "Tuya ZG-101Z/D Smart knob",
+  "description": "Controller automation for executing any kind of action triggered by the provided Tuya ZG-101Z/D Smart knob.",
+  "librarians": [
+    {
+      "id": "EPMatt",
+      "name": "EPMatt"
+    }
+  ],
+  "model": "ZG-101Z/D",
+  "tags": ["zigbee", "knob", "rotary"],
+  "images": ["tuya_zg_101z_d.png"],
+  "status": "active",
+  "manufacturer": "Tuya"
+}

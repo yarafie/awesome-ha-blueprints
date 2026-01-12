@@ -1,0 +1,15 @@
+{
+  "title": "EPMatt hook library for cover",
+  "maintainers": [
+    {
+      "id": "EPMatt",
+      "name": "EPMatt"
+    }
+  ],
+  "releases": ["awesome"],
+  "category": "hooks",
+  "status": "active",
+  "library_id": "EPMatt",
+  "description": "Hook blueprint library for cover maintained by EPMatt.",
+  "blueprint_id": "cover"
+}

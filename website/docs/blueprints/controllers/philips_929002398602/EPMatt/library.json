@@ -1,0 +1,16 @@
+{
+  "library_id": "EPMatt",
+  "blueprint_id": "philips_929002398602",
+  "title": "EPMatt controller library",
+  "description": "Controller blueprint library for philips_929002398602 maintained by EPMatt.",
+  "maintainers": [
+    {
+      "id": "EPMatt",
+      "name": "EPMatt"
+    }
+  ],
+  "releases": ["awesome"],
+  "category": "controllers",
+  "status": "active",
+  "supported_integrations": ["ZHA", "Zigbee2MQTT"]
+}

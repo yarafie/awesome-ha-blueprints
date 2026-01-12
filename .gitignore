@@ -3,7 +3,6 @@
 
 #local files
 /architecture
-*.old
 
 # Local Scripts
 /scripts

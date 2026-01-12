@@ -1,0 +1,18 @@
+{
+  "version": "2025.03.25",
+  "date": "2025-03-25",
+  "blueprint_id": "shelly_snsn_0024x",
+  "library_id": "EPMatt",
+  "release_id": "awesome",
+  "category": "controllers",
+  "title": "Controller - Shelly SNSN-0024x Plus i4 with Wall switch 4",
+  "description": "Controller automation for executing any kind of action triggered by the provided Shelly SNSN-0024x Plus i4 with Wall switch 4.",
+  "maintainers": [
+    {
+      "id": "EPMatt",
+      "name": "EPMatt"
+    }
+  ],
+  "blueprint_file": "shelly_snsn_0024x.yaml",
+  "status": "active"
+}

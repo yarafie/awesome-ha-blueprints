@@ -1,0 +1,29 @@
+{
+  "name": "Controller - Philips 324131092621 Hue Dimmer switch",
+  "external_references": [
+    {
+      "label": "Zigbee2MQTT",
+      "url": "https://www.zigbee2mqtt.io/devices/324131092621.html#philips-324131092621"
+    },
+    {
+      "label": "deCONZ Device",
+      "url": "https://github.com/dresden-elektronik/deconz-rest-plugin/wiki/Supported-Devices"
+    }
+  ],
+  "manual_files": ["philips_324131092621.pdf"],
+  "category": "controllers",
+  "blueprint_id": "philips_324131092621",
+  "model_name": "Philips 324131092621 Hue Dimmer switch",
+  "description": "Controller automation for executing any kind of action triggered by the provided Philips 324131092621 Hue Dimmer switch.",
+  "librarians": [
+    {
+      "id": "EPMatt",
+      "name": "EPMatt"
+    }
+  ],
+  "model": "324131092621",
+  "tags": ["zigbee", "dimmer", "light"],
+  "images": ["philips_324131092621.png"],
+  "status": "active",
+  "manufacturer": "Philips"
+}

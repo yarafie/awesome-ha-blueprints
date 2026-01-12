@@ -1,0 +1,19 @@
+{
+  "release_id": "awesome",
+  "library_id": "EPMatt",
+  "blueprint_id": "ikea_e1766",
+  "category": "controllers",
+  "title": "Controller - IKEA E1766 TR\u00c5DFRI Open/Close Remote",
+  "maintainers": [
+    {
+      "id": "EPMatt",
+      "name": "EPMatt"
+    }
+  ],
+  "description": "Controller automation for executing any kind of action triggered by the provided IKEA E1766 TR\u00c5DFRI Open/Close Remote.",
+  "versions": ["2025.04.19"],
+  "latest_version": "2025.04.19",
+  "status": "active",
+  "supported_hooks": ["cover", "light", "media_player"],
+  "supported_integrations": ["ZHA", "Zigbee2MQTT", "deCONZ"]
+}

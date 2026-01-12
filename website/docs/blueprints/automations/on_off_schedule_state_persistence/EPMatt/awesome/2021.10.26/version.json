@@ -1,0 +1,18 @@
+{
+  "version": "2021.10.26",
+  "date": "2021-10-26",
+  "blueprint_id": "on_off_schedule_state_persistence",
+  "library_id": "EPMatt",
+  "release_id": "awesome",
+  "category": "automations",
+  "title": "On-Off schedule with state persistence",
+  "description": "A simple on-off schedule, with the addition of state persistence across disruptive events, making sure the target device is always in the expected state.",
+  "maintainers": [
+    {
+      "id": "EPMatt",
+      "name": "EPMatt"
+    }
+  ],
+  "blueprint_file": "on_off_schedule_state_persistence.yaml",
+  "status": "active"
+}

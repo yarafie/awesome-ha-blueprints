@@ -1,0 +1,19 @@
+{
+  "release_id": "awesome",
+  "library_id": "EPMatt",
+  "blueprint_id": "smarthjemmet_dk_quad_zig_sw",
+  "category": "controllers",
+  "title": "Controller - Smarthjemmet.dk QUAD-ZIG-SW 4 button remote",
+  "maintainers": [
+    {
+      "id": "EPMatt",
+      "name": "EPMatt"
+    }
+  ],
+  "description": "Controller automation for executing any kind of action triggered by the provided Smarthjemmet.dk QUAD-ZIG-SW 4 button remote.",
+  "versions": ["2025.03.03"],
+  "latest_version": "2025.03.03",
+  "status": "active",
+  "supported_hooks": ["light"],
+  "supported_integrations": ["Zigbee2MQTT"]
+}

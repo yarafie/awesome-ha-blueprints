@@ -1,0 +1,29 @@
+{
+  "name": "Controller - IKEA E1524/E1810 TRÅDFRI Wireless 5-Button Remote",
+  "external_references": [
+    {
+      "label": "Zigbee2MQTT",
+      "url": "https://www.zigbee2mqtt.io/devices/E1524_E1810.html#ikea-e1524-e1810"
+    },
+    {
+      "label": "deCONZ Device",
+      "url": "https://github.com/dresden-elektronik/deconz-rest-plugin/wiki/Supported-Devices"
+    }
+  ],
+  "manual_files": ["ikea_e1524_e1810.pdf"],
+  "category": "controllers",
+  "blueprint_id": "ikea_e1524_e1810",
+  "model_name": "IKEA E1524/E1810 TRÅDFRI Wireless 5-Button Remote",
+  "description": "Controller automation for executing any kind of action triggered by the provided IKEA E1524/E1810 TRÅDFRI Wireless 5-Button Remote.",
+  "librarians": [
+    {
+      "id": "EPMatt",
+      "name": "EPMatt"
+    }
+  ],
+  "model": "E1524/E1810",
+  "tags": ["zigbee", "button", "remote", "5-button"],
+  "images": ["ikea_e1524_e1810.png"],
+  "status": "active",
+  "manufacturer": "IKEA"
+}

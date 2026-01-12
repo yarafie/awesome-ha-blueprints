@@ -1,0 +1,18 @@
+{
+  "version": "2025.04.19",
+  "date": "2025-04-19",
+  "blueprint_id": "sonoff_snzb01",
+  "library_id": "EPMatt",
+  "release_id": "awesome",
+  "category": "controllers",
+  "title": "Controller - SONOFF SNZB-01 Wireless Switch",
+  "description": "Controller automation for executing any kind of action triggered by the provided SONOFF SNZB-01 Wireless Switch.",
+  "maintainers": [
+    {
+      "id": "EPMatt",
+      "name": "EPMatt"
+    }
+  ],
+  "blueprint_file": "sonoff_snzb01.yaml",
+  "status": "active"
+}

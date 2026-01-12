@@ -1,0 +1,29 @@
+{
+  "name": "Controller - Aqara WXKG11LM Wireless Mini Switch",
+  "external_references": [
+    {
+      "label": "Zigbee2MQTT",
+      "url": "https://www.zigbee2mqtt.io/devices/WXKG11LM.html#aqara-wxkg11lm"
+    },
+    {
+      "label": "deCONZ Device",
+      "url": "https://github.com/dresden-elektronik/deconz-rest-plugin/wiki/Supported-Devices"
+    }
+  ],
+  "manual_files": ["aqara_wxkg11lm.pdf"],
+  "category": "controllers",
+  "blueprint_id": "aqara_wxkg11lm",
+  "model_name": "Aqara WXKG11LM Wireless Mini Switch",
+  "description": "Controller automation for executing any kind of action triggered by the provided Aqara WXKG11LM Wireless Mini Switch.",
+  "librarians": [
+    {
+      "id": "EPMatt",
+      "name": "EPMatt"
+    }
+  ],
+  "model": "WXKG11LM",
+  "tags": ["zigbee", "button", "remote"],
+  "images": ["aqara_wxkg11lm.png"],
+  "status": "active",
+  "manufacturer": "Aqara"
+}

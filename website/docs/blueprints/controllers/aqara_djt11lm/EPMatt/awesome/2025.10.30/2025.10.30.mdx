@@ -1,0 +1,74 @@
+---
+variant: EPMatt
+title: Controller - Aqara DJT11LM Vibration Sensor
+description: Controller automation for executing any kind of action triggered by the provided Aqara DJT11LM Vibration Sensor.
+manufacturer: Aqara
+model: DJT11LM
+model_name: Aqara DJT11LM Vibration Sensor
+integrations: [Zigbee2MQTT]
+---
+
+import {
+  BlueprintImportCard,
+  Inputs,
+  Requirement,
+  Changelog,
+  SupportedHooks,
+} from '/src/components/library_docs'
+
+<BlueprintImportCard
+  category='controllers'
+  id='aqara_djt11lm'
+  library='EPMatt'
+  release='awesome'
+/>
+
+<br />
+
+:::tip
+This blueprint is part of the **Controllers-Hooks Ecosystem**. You can read more about this topic [here](/docs/controllers-hooks-ecosystem).
+:::
+
+## Description
+
+This blueprint provides universal support for running any custom action when an event is detected on the provided Aqara DJT11LM Vibration Sensor.
+Supports controllers integrated with Zigbee2MQTT.
+The blueprint will automagically detect the integration type and take care of all the rest.
+
+:::tip
+Automations created with this blueprint is not connected to any [Hooks](/docs/blueprints/hooks).
+:::
+
+## Requirements
+
+<Requirement id='zigbee2mqtt' />
+
+## Inputs
+
+<Inputs
+  category='controllers'
+  id='aqara_djt11lm'
+  library='EPMatt'
+  release='awesome'
+/>
+
+## Available Hooks
+
+There are no available hooks for this device.
+
+## Additional Notes
+
+### Device Sensitivity
+
+Please note that although this blueprint provides support for setting the sensitivity of the device to High [1], Medium [11] or Low [21].
+
+According to Zigbee2MQTT documentation [Zigbee2MQTT](https://www.zigbee2mqtt.io/devices/DJT11LM.html#sensitivity) After setting the sensitivity you immediately have to start pressing the reset button with an interval of 1 second until you see Zigbee2MQTT publishing the new sensitivity to MQTT.
+
+## Changelog
+
+<Changelog
+  category='controllers'
+  id='aqara_djt11lm'
+  library='EPMatt'
+  release='awesome'
+/>

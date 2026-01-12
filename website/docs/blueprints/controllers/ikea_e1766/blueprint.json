@@ -1,0 +1,29 @@
+{
+  "name": "Controller - IKEA E1766 TRÅDFRI Open/Close Remote",
+  "external_references": [
+    {
+      "label": "Zigbee2MQTT",
+      "url": "https://www.zigbee2mqtt.io/devices/E1766.html#ikea-e1766"
+    },
+    {
+      "label": "deCONZ Device",
+      "url": "https://github.com/dresden-elektronik/deconz-rest-plugin/wiki/Supported-Devices"
+    }
+  ],
+  "manual_files": ["ikea_e1766.pdf"],
+  "category": "controllers",
+  "blueprint_id": "ikea_e1766",
+  "model_name": "IKEA E1766 TRÅDFRI Open/Close Remote",
+  "description": "Controller automation for executing any kind of action triggered by the provided IKEA E1766 TRÅDFRI Open/Close Remote.",
+  "librarians": [
+    {
+      "id": "EPMatt",
+      "name": "EPMatt"
+    }
+  ],
+  "model": "E1766",
+  "tags": ["zigbee", "remote", "open-close"],
+  "images": ["ikea_e1766.png"],
+  "status": "active",
+  "manufacturer": "IKEA"
+}

@@ -1,0 +1,18 @@
+{
+  "version": "2025.10.14",
+  "date": "2025-10-14",
+  "blueprint_id": "tuya_zg_101z_d",
+  "library_id": "EPMatt",
+  "release_id": "awesome",
+  "category": "controllers",
+  "title": "Controller - Tuya ZG-101Z/D Smart knob",
+  "description": "Controller automation for executing any kind of action triggered by the provided Tuya ZG-101Z/D Smart knob.",
+  "maintainers": [
+    {
+      "id": "EPMatt",
+      "name": "EPMatt"
+    }
+  ],
+  "blueprint_file": "tuya_zg_101z_d.yaml",
+  "status": "active"
+}

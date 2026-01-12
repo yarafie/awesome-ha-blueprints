@@ -1,0 +1,18 @@
+{
+  "version": "2025.04.19",
+  "date": "2025-04-19",
+  "blueprint_id": "ikea_e1744",
+  "library_id": "EPMatt",
+  "release_id": "awesome",
+  "category": "controllers",
+  "title": "Controller - IKEA E1744 SYMFONISK Rotary Remote",
+  "description": "Controller automation for executing any kind of action triggered by the provided IKEA E1744 SYMFONISK Rotary Remote.",
+  "maintainers": [
+    {
+      "id": "EPMatt",
+      "name": "EPMatt"
+    }
+  ],
+  "blueprint_file": "ikea_e1744.yaml",
+  "status": "active"
+}

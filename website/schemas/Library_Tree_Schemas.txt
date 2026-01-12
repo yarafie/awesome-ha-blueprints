@@ -1,10 +1,11 @@
 The below trees describe the different levels under website/docs/blueprints/
 
 --------------------------------------
-Controllers Tree Structure Schema v1.5
+Controllers Tree Structure Schema v1.7
 --------------------------------------
 controllers/                                                         # Controllers root
 └── <blueprint_id>/                    (^[a-z0-9_]+$)                # Physical controller model (canonical ID)
+    ├── index.mdx                                                    # Controller-level Device Landing Page
     ├── blueprint.json                                               # Controller-level metadata (manufacturer, model, integrations)
     ├── <blueprint_id>.png                                           # Controller image (globally unique filename)
     ├── <blueprint_id>.pdf             (optional)                    # Controller manual / datasheet
@@ -12,17 +13,19 @@ controllers/                                                         # Controlle
     │   ├── library.json                                             # Library-level metadata (owner, maintainers, description)
     │   ├── <release_id>/              (^[a-zA-Z0-9_-]+$)            # Release under the library (behavior/mapping style)
     │   │   ├── release.json                                         # Release metadata (features, hook usage, notes)
-    │   │   ├── <blueprint_id>.mdx                                   # Release documentation (behavior, philosophy, examples)
+    │   │   ├── hooks.json                                           # Release controller to hook mappings
     │   │   ├── changelog.json                                       # Release changelog across versions
     │   │   ├── YYYY.MM.DD/            (^\\d{4}\\.\\d{2}\\.\\d{2}$)  # Version release folder
     │   │   │   ├── version.json                                     # Version metadata (version, compatibility, hooks support)
-    │   │   │   ├── <blueprint_id>.yaml                              # Controllet Blueprint YAML
+    │   │   │   ├── <version>.mdx                                    # Version Specfic Documentation
+    │   │   │   ├── <blueprint_id>.yaml                              # Controller Blueprint YAML
 
 --------------------------------
-Hooks Tree Structure Schema v1.5
+Hooks Tree Structure Schema v1.7
 --------------------------------
 hooks/                                                               # Hooks root
 └── <blueprint_id>/                    (^[a-z0-9_]+$)                # Hook identifier (e.g. light, cover, media_player)
+    ├── index.mdx                                                    # Hook-level Landing Page
     ├── blueprint.json                                               # Hook-level metadata
     ├── <blueprint_id>.png                                           # Hook icon/image (globally unique filename)
     ├── <blueprint_id>.pdf             (optional)                    # Hook manual / documentation
@@ -30,17 +33,19 @@ hooks/                                                               # Hooks roo
     │   ├── library.json                                             # Hook Library-level metadata (owner, maintainers, description)
     │   ├── <release_id>/              (^[a-zA-Z0-9_-]+$)            # Release (behavior / implementation style)
     │   │   ├── release.json                                         # Release metadata
-    │   │   ├── <blueprint_id>.mdx                                   # Release documentation
+    │   │   ├── actions.json                                         # Release actions
     │   │   ├── changelog.json                                       # Release-wide changelog
     │   │   ├── YYYY.MM.DD/            (^\\d{4}\\.\\d{2}\\.\\d{2}$)  # Version release folder
     │   │   │   ├── version.json                                     # Version metadata (version, compatibility, requirements)
+    │   │   │   ├── <version>.mdx                                    # Version Specfic Documentation
     │   │   │   ├── <blueprint_id>.yaml                              # Hook blueprint YAML (always hook-named)
 
 --------------------------------------
-Automations Tree Structure Schema v1.5
+Automations Tree Structure Schema v1.7
 --------------------------------------
 automations/                                                         # Automations root
 └── <automation_id>/                   (^[a-z0-9_]+$)                # Automation identifier
+    ├── index.mdx                                                    # Automation-level Landing Page
     ├── blueprint.json                                               # Automation-level metadata
     ├── <blueprint_id>.png                                           # Automation icon/image (globally unique filename)
     ├── <blueprint_id>.pdf             (optional)                    # Automation manual / documentation
@@ -48,8 +53,8 @@ automations/                                                         # Automatio
     │   ├── library.json                                             # Automation Library-level metadata (owner, maintainers, description)
     │   ├── <release_id>/              (^[a-zA-Z0-9_-]+$)            # Release (behavior / implementation style)
     │   │   ├── release.json                                         # Release metadata
-    │   │   ├── <blueprint_id>.mdx                                   # Release documentation
     │   │   ├── changelog.json                                       # Release-wide changelog
     │   │   ├── YYYY.MM.DD/            (^\\d{4}\\.\\d{2}\\.\\d{2}$)  # Version release folder
     │   │   │   ├── version.json                                     # Version metadata (version, compatibility, requirements)
+    │   │   │   ├── <version>.mdx                                    # Version Specfic Documentation
     │   │   │   ├── <blueprint_id>.yaml                              # Automation blueprint YAML (always automation-named)

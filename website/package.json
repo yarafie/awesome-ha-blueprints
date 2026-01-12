@@ -1,6 +1,6 @@
 {
-  "name": "awesome-ha-blueprints-website",
-  "version": "0.1.0",
+  "name": "awesome-ha-library-website",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "lint": "eslint .",
@@ -26,6 +26,7 @@
     "dotenv": "^17.2.3",
     "glob": "^13.0.0",
     "js-cookie": "^3.0.5",
+    "js-yaml": "^4.1.1",
     "marked": "^17.0.1",
     "prism-react-renderer": "^2.4.1",
     "prop-types": "^15.8.1",
@@ -35,8 +36,10 @@
     "react-dom": "^19.2.3",
     "react-ga4": "^2.1.0",
     "react-json-view-lite": "^2.5.0",
+    "react-markdown": "^10.1.0",
     "react-select": "^5.10.2",
-    "recharts": "^3.6.0"
+    "recharts": "^3.6.0",
+    "remark-gfm": "^4.0.1"
   },
   "browserslist": {
     "production": [

@@ -1,0 +1,18 @@
+{
+  "version": "2025.03.29",
+  "date": "2025-03-29",
+  "blueprint_id": "tuya_ers_10tzbvk_aa",
+  "library_id": "EPMatt",
+  "release_id": "awesome",
+  "category": "controllers",
+  "title": "Controller - Tuya ERS-10TZBVK-AA Smart knob",
+  "description": "Controller automation for executing any kind of action triggered by the provided Tuya ERS-10TZBVK-AA Smart knob.",
+  "maintainers": [
+    {
+      "id": "EPMatt",
+      "name": "EPMatt"
+    }
+  ],
+  "blueprint_file": "tuya_ers_10tzbvk_aa.yaml",
+  "status": "active"
+}

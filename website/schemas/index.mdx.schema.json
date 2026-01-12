@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://awesome-ha-blueprints.dev/schemas/index.mdx.schema.json",
+  "title": "Blueprint Index MDX Frontmatter Schema",
+  "description": "Minimal frontmatter for blueprint index pages. Blueprint content is sourced from blueprint.json.",
+  "type": "object",
+  "required": ["blueprint_id", "category", "title"],
+  "additionalProperties": false,
+  "properties": {
+    "blueprint_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9_]+$",
+      "description": "Canonical blueprint identifier."
+    },
+    "category": {
+      "type": "string",
+      "enum": ["controllers", "hooks", "automations"],
+      "description": "Blueprint category."
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Page title shown in docs sidebar and header."
+    },
+    "hide_title": {
+      "type": "boolean",
+      "description": "Optional Docusaurus flag to hide the rendered title."
+    },
+    "hide_table_of_contents": {
+      "type": "boolean",
+      "description": "Optional Docusaurus flag to hide the TOC."
+    }
+  }
+}

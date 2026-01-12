@@ -1,0 +1,56 @@
+{
+  "hook": "media_player",
+  "actions": [
+    {
+      "id": "play_pause",
+      "label": "Play/Pause",
+      "mode": "single",
+      "group": "Playback"
+    },
+    { "id": "stop", "label": "Stop", "mode": "single", "group": "Playback" },
+    {
+      "id": "toggle",
+      "label": "Toggle",
+      "mode": "single",
+      "group": "Playback"
+    },
+
+    {
+      "id": "next_track",
+      "label": "Next track",
+      "mode": "single",
+      "group": "Navigation"
+    },
+    {
+      "id": "prev_track",
+      "label": "Previous track",
+      "mode": "single",
+      "group": "Navigation"
+    },
+
+    {
+      "id": "volume_up",
+      "label": "Volume up",
+      "mode": "single",
+      "group": "Volume"
+    },
+    {
+      "id": "volume_up_repeat",
+      "label": "Volume up (continuous, until release)",
+      "mode": "continuous",
+      "group": "Volume"
+    },
+    {
+      "id": "volume_down",
+      "label": "Volume down",
+      "mode": "single",
+      "group": "Volume"
+    },
+    {
+      "id": "volume_down_repeat",
+      "label": "Volume down (continuous, until release)",
+      "mode": "continuous",
+      "group": "Volume"
+    }
+  ]
+}

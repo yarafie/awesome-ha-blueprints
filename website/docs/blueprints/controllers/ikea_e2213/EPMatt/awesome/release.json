@@ -1,0 +1,19 @@
+{
+  "release_id": "awesome",
+  "library_id": "EPMatt",
+  "blueprint_id": "ikea_e2213",
+  "category": "controllers",
+  "title": "Controller - IKEA E2213 SOMRIG shortcut button",
+  "maintainers": [
+    {
+      "id": "EPMatt",
+      "name": "EPMatt"
+    }
+  ],
+  "description": "Controller automation for executing any kind of action triggered by the provided IKEA E2213 SOMRIG shortcut button.",
+  "versions": ["2025.05.08"],
+  "latest_version": "2025.05.08",
+  "status": "active",
+  "supported_hooks": ["cover", "light", "media_player"],
+  "supported_integrations": ["ZHA", "Zigbee2MQTT", "deCONZ"]
+}

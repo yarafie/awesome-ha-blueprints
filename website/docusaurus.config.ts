@@ -5,12 +5,12 @@ dotenv.config({ path: path.resolve(__dirname, '.env') })
 import { themes as prismThemes } from 'prism-react-renderer'
 
 // Plugins
-import blueprintDownloaderPlugin from './src/plugins/blueprint-downloader-plugin/blueprint-downloader-plugin.js'
-import controllerImagesPlugin from './src/plugins/controller-images-plugin/controller-images-plugin.js'
+import libraryDownloaderPlugin from './src/plugins/blueprint-downloader-plugin/library-downloader-plugin.js'
+import blueprintImagesPlugin from './src/plugins/blueprint-images-plugin/blueprint-images-plugin.js'
 
 // Create a custom plugin for webpack configuration
-// the purpose of this plugin is to allow the use of the @blueprints and @src aliases
-// and to copy blueprint yaml files under docs/blueprints and as static assets
+// the purpose of this plugin is to allow the use of the @blueprints and @librarysrc aliases
+// and to copy blueprint yaml files under docs/blueprints as static assets
 function webpackConfigPlugin() {
   return {
     name: 'webpack-config-plugin',
@@ -19,7 +19,8 @@ function webpackConfigPlugin() {
         resolve: {
           alias: {
             '@blueprints': path.resolve(__dirname, 'docs/blueprints'),
-            '@src': path.resolve(__dirname, 'src'),
+            '@librarysrc': path.resolve(__dirname, 'src'),
+            '@schemas': path.resolve(__dirname, 'schemas'),
           },
         },
         module: {
@@ -43,8 +44,8 @@ const clientEnv = {
 }
 
 const config: Config = {
-  title: 'Awesome HA Blueprints',
-  tagline: 'A curated list of automation blueprints for Home Assistant.',
+  title: 'Awesome HA Library',
+  tagline: 'A curated Library of automation blueprints for Home Assistant.',
   url: 'https://yarafie.github.io',
   baseUrl: '/awesome-ha-blueprints/',
   onBrokenLinks: 'throw',
@@ -74,16 +75,16 @@ const config: Config = {
     announcementBar: {
       id: 'support_us',
       content:
-        '🚀 <b>Love this project?</b> <a target="_blank" href="https://github.com/yarafie/awesome-ha-blueprints">Drop a star on GitHub</a>🌟 or <a target="_blank" href="https://www.buymeacoffee.com/yarafiet">make a small donation</a>☕to show your support!',
+        '🚀 <b>Love this project?</b> <a target="_blank" href="https://github.com/yarafie/awesome-ha-blueprints">Drop a star on GitHub</a>🌟 or <a target="_blank" href="https://www.buymeacoffee.com/yarafiet">make a small donation</a>☕ to show your support!',
       backgroundColor: '#fffbd4',
       textColor: '#091E42',
     },
 
     navbar: {
       style: 'primary',
-      title: 'Awesome HA Blueprints',
+      title: 'Awesome HA Library',
       logo: {
-        alt: 'Awesome HA Blueprints Logo',
+        alt: 'Awesome HA Library Logo',
         src: 'img/logo.svg',
       },
       items: [
@@ -117,9 +118,22 @@ const config: Config = {
       ],
     },
 
+    /**
+     * - Desktop: sidebar stays docked
+     * - Mobile: sidebar is hidden by default
+     * - Mobile: sidebar opens only via hamburger button
+     * - Sidebar does NOT auto-open unless user navigates into docs
+     */
+    docs: {
+      sidebar: {
+        hideable: true, // Allows user to toggle sidebar
+        autoCollapseCategories: true,
+      },
+    },
+
     footer: {
       links: [],
-      copyright: `Awesome HA Blueprints is maintained by
+      copyright: `Awesome HA Library is maintained by
          <a href='https://github.com/EPMatt'>Matteo Agnoletto</a>.<br/>
          This fork is developed and maintained by
          <a href='https://github.com/yarafie'>yarafie</a>.<br/>
@@ -162,6 +176,8 @@ const config: Config = {
           sidebarPath: './sidebars.js',
           editUrl:
             'https://github.com/yarafie/awesome-ha-blueprints/edit/main/website/',
+          showLastUpdateTime: false,
+          showLastUpdateAuthor: false,
         },
         theme: {
           customCss: './src/css/custom.css',
@@ -175,8 +191,8 @@ const config: Config = {
     webpackConfigPlugin,
 
     //Utility Plugins
-    blueprintDownloaderPlugin,
-    controllerImagesPlugin,
+    libraryDownloaderPlugin,
+    blueprintImagesPlugin,
 
     // Make environment variables available to the client
     function () {
@@ -196,5 +212,4 @@ const config: Config = {
     },
   ],
 }
-
 export default config

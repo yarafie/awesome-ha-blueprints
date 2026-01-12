@@ -1,0 +1,39 @@
+{
+  "release_id": "awesome",
+  "library_id": "EPMatt",
+  "blueprint_id": "cover",
+  "category": "hooks",
+  "title": "Hook - Cover",
+  "maintainers": [
+    {
+      "id": "EPMatt",
+      "name": "EPMatt"
+    }
+  ],
+  "description": "This Hook blueprint allows building a controller-based automation to control a cover. Supports opening, closing and tilting the cover.",
+  "versions": ["2025.12.22"],
+  "latest_version": "2025.12.22",
+  "status": "active",
+  "supported_controllers": {
+    "controllers": [
+      "aqara_wxkg11lm",
+      "aqara_wxkg13lm",
+      "ikea_e1524_e1810",
+      "ikea_e1743",
+      "ikea_e1766",
+      "ikea_e1812",
+      "ikea_e2001_e2002",
+      "ikea_e2123",
+      "ikea_e2201",
+      "ikea_e2213",
+      "shelly_button_1",
+      "shelly_snsn_0024x",
+      "sonoff_snzb01",
+      "xiaomi_wxcjkg11lm",
+      "xiaomi_wxcjkg12lm",
+      "xiaomi_wxcjkg13lm",
+      "xiaomi_wxkg01lm"
+    ],
+    "count": 17
+  }
+}

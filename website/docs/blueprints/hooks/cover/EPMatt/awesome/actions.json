@@ -1,0 +1,38 @@
+{
+  "hook": "cover",
+  "actions": [
+    {
+      "id": "open_cover",
+      "label": "Open cover",
+      "mode": "single",
+      "group": "Movement"
+    },
+    {
+      "id": "close_cover",
+      "label": "Close cover",
+      "mode": "single",
+      "group": "Movement"
+    },
+
+    {
+      "id": "open_cover_tilt",
+      "label": "Open the cover tilt",
+      "mode": "single",
+      "group": "Tilt"
+    },
+    {
+      "id": "close_cover_tilt",
+      "label": "Close the cover tilt",
+      "mode": "single",
+      "group": "Tilt"
+    },
+
+    { "id": "stop", "label": "Stop", "mode": "single", "group": "Stop" },
+    {
+      "id": "stop_cover_all",
+      "label": "Stop cover and cover tilt",
+      "mode": "single",
+      "group": "Stop"
+    }
+  ]
+}

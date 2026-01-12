@@ -1,0 +1,18 @@
+{
+  "version": "2025.04.19",
+  "date": "2025-04-19",
+  "blueprint_id": "ikea_ictc_g_1",
+  "library_id": "EPMatt",
+  "release_id": "awesome",
+  "category": "controllers",
+  "title": "Controller - IKEA ICTC-G-1 TRÅDFRI wireless dimmer",
+  "description": "Controller automation for executing any kind of action triggered by the provided IKEA ICTC-G-1 TRÅDFRI wireless dimmer.",
+  "maintainers": [
+    {
+      "id": "EPMatt",
+      "name": "EPMatt"
+    }
+  ],
+  "blueprint_file": "ikea_ictc_g_1.yaml",
+  "status": "active"
+}

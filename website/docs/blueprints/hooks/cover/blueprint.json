@@ -1,0 +1,17 @@
+{
+  "name": "Hook - Cover",
+  "external_references": [],
+  "manual_files": ["cover.pdf"],
+  "category": "hooks",
+  "blueprint_id": "cover",
+  "description": "This Hook blueprint allows building a controller-based automation to control a cover. Supports opening, closing and tilting the cover.",
+  "librarians": [
+    {
+      "id": "EPMatt",
+      "name": "EPMatt"
+    }
+  ],
+  "tags": ["close", "garage", "open", "stop"],
+  "images": ["cover.png"],
+  "status": "active"
+}

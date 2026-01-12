@@ -1,0 +1,162 @@
+{
+  "controller": "xiaomi_wxcjkg11lm",
+  "library_id": "EPMatt",
+  "release_id": "awesome",
+  "hooks": [
+    {
+      "hook": "cover",
+      "label": "Cover",
+      "mapping_options": [
+        {
+          "id": "default",
+          "label": "Default",
+          "mappings": [
+            {
+              "event": "button_1_short",
+              "event_label": "Button 1 short press",
+              "action": "open_cover",
+              "action_label": "Open cover",
+              "mode": "single"
+            },
+            {
+              "event": "button_1_long",
+              "event_label": "Button 1 long press",
+              "action": "open_cover_tilt",
+              "action_label": "Open the cover tilt",
+              "mode": "single"
+            },
+            {
+              "event": "button_2_short",
+              "event_label": "Button 2 short press",
+              "action": "close_cover",
+              "action_label": "Close cover",
+              "mode": "single"
+            },
+            {
+              "event": "button_2_long",
+              "event_label": "Button 2 long press",
+              "action": "close_cover_tilt",
+              "action_label": "Close the cover tilt",
+              "mode": "single"
+            },
+            {
+              "event": "button_2_double",
+              "event_label": "Button 2 double press",
+              "action": "stop_cover_all",
+              "action_label": "Stop cover and cover tilt",
+              "mode": "single"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "hook": "light",
+      "label": "Light",
+      "mapping_options": [
+        {
+          "id": "default",
+          "label": "Default",
+          "mappings": [
+            {
+              "event": "button_1_short",
+              "event_label": "Button 1 short press",
+              "action": "turn_on",
+              "action_label": "Turn on",
+              "mode": "single"
+            },
+            {
+              "event": "button_1_long",
+              "event_label": "Button 1 long press",
+              "action": "brightness_up_repeat",
+              "action_label": "Brightness up (continuous, until release)",
+              "mode": "continuous"
+            },
+            {
+              "event": "button_1_double",
+              "event_label": "Button 1 double press",
+              "action": "color_up",
+              "action_label": "Color up",
+              "mode": "single"
+            },
+            {
+              "event": "button_2_short",
+              "event_label": "Button 2 short press",
+              "action": "turn_off",
+              "action_label": "Turn off",
+              "mode": "single"
+            },
+            {
+              "event": "button_2_long",
+              "event_label": "Button 2 long press",
+              "action": "brightness_down_repeat",
+              "action_label": "Brightness down (continuous, until release)",
+              "mode": "continuous"
+            },
+            {
+              "event": "button_2_double",
+              "event_label": "Button 2 double press",
+              "action": "color_down",
+              "action_label": "Color down",
+              "mode": "single"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "hook": "media_player",
+      "label": "Media Player",
+      "mapping_options": [
+        {
+          "id": "default",
+          "label": "Default",
+          "mappings": [
+            {
+              "event": "button_1_short",
+              "event_label": "Button 1 short press",
+              "action": "volume_up",
+              "action_label": "Volume up",
+              "mode": "single"
+            },
+            {
+              "event": "button_1_long",
+              "event_label": "Button 1 long press",
+              "action": "volume_up_repeat",
+              "action_label": "Volume up (continuous, until release)",
+              "mode": "continuous"
+            },
+            {
+              "event": "button_1_double",
+              "event_label": "Button 1 double press",
+              "action": "next_track",
+              "action_label": "Next track",
+              "mode": "single"
+            },
+            {
+              "event": "button_2_short",
+              "event_label": "Button 2 short press",
+              "action": "volume_down",
+              "action_label": "Volume down",
+              "mode": "single"
+            },
+            {
+              "event": "button_2_long",
+              "event_label": "Button 2 long press",
+              "action": "volume_down",
+              "action_label": "Volume down",
+              "mode": "single"
+            },
+            {
+              "event": "button_2_double",
+              "event_label": "Button 2 double press",
+              "action": "play_pause",
+              "action_label": "Play/Pause",
+              "mode": "single"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

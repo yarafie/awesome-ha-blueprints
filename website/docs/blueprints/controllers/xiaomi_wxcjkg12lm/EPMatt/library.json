@@ -1,0 +1,16 @@
+{
+  "library_id": "EPMatt",
+  "blueprint_id": "xiaomi_wxcjkg12lm",
+  "title": "EPMatt controller library",
+  "description": "Controller blueprint library for xiaomi_wxcjkg12lm maintained by EPMatt.",
+  "maintainers": [
+    {
+      "id": "EPMatt",
+      "name": "EPMatt"
+    }
+  ],
+  "releases": ["awesome"],
+  "category": "controllers",
+  "status": "active",
+  "supported_integrations": ["ZHA", "Zigbee2MQTT", "deCONZ"]
+}

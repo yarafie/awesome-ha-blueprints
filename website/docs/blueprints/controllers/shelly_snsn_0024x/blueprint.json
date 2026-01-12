@@ -1,0 +1,25 @@
+{
+  "name": "Controller - Shelly SNSN-0024x Plus i4 with Wall switch 4",
+  "external_references": [
+    {
+      "label": "External",
+      "url": "https://www.home-assistant.io/integrations/shelly"
+    }
+  ],
+  "manual_files": ["shelly_snsn_0024x.pdf"],
+  "category": "controllers",
+  "blueprint_id": "shelly_snsn_0024x",
+  "model_name": "Shelly SNSN-0024x Plus i4 with Wall switch 4",
+  "description": "Controller automation for executing any kind of action triggered by the provided Shelly SNSN-0024x Plus i4 with Wall switch 4.",
+  "librarians": [
+    {
+      "id": "EPMatt",
+      "name": "EPMatt"
+    }
+  ],
+  "model": "SNSN-0024x",
+  "tags": ["wifi", "wall-switch", "input-module"],
+  "images": ["shelly_snsn_0024x.png"],
+  "status": "active",
+  "manufacturer": "Shelly"
+}

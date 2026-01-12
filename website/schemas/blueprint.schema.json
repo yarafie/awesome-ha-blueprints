@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://yarafie.github.io/awesome-ha-blueprints/schemas/blueprint.schema.json",
-  "title": "Awesome HA Library - Unified Blueprint Schema",
-  "description": "Canonical schema describing a blueprint identity for controllers, hooks, and automations.",
+  "title": "Awesome HA Library – Blueprint Schema",
+  "description": "Canonical schema describing the identity and semantics of a blueprint (controller, hook, or automation).",
   "type": "object",
   "required": [
     "blueprint_id",
@@ -10,124 +10,142 @@
     "description",
     "category",
     "status",
-    "librarians"
+    "librarians",
+    "images"
   ],
   "properties": {
     "blueprint_id": {
       "type": "string",
-      "pattern": "^[a-zA-Z0-9_-]+$",
+      "pattern": "^[a-z0-9_]+$",
       "description": "Canonical blueprint identifier."
     },
     "name": {
       "type": "string",
+      "minLength": 1,
       "description": "Human-readable blueprint name."
     },
     "description": {
       "type": "string",
-      "description": "Description of what this blueprint represents."
+      "minLength": 1,
+      "description": "Canonical description of what this blueprint does."
     },
     "category": {
       "type": "string",
-      "enum": ["controller", "hook", "automation"],
+      "enum": ["controllers", "hooks", "automations"],
       "description": "Blueprint category."
-    },
-    "manufacturer": {
-      "type": "string",
-      "description": "Device manufacturer (controllers only)."
-    },
-    "model": {
-      "type": "string",
-      "description": "Device model identifier (controllers only)."
-    },
-    "model_name": {
-      "type": "string",
-      "description": "Human-readable device model name (controllers only)."
-    },
-    "supported_integrations": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      },
-      "description": "Integrations supported by this blueprint."
-    },
-    "images": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      },
-      "description": "Image assets for this blueprint."
-    },
-    "manual_files": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      },
-      "description": "Documentation or manual files."
-    },
-    "external_references": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "required": ["label", "url"],
-        "properties": {
-          "label": {
-            "type": "string"
-          },
-          "url": {
-            "type": "string",
-            "format": "uri"
-          }
-        },
-        "additionalProperties": false
-      },
-      "description": "External reference links."
-    },
-    "tags": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      },
-      "description": "Searchable tags."
     },
     "status": {
       "type": "string",
       "enum": ["active", "deprecated"],
-      "description": "Lifecycle status of this blueprint."
+      "description": "Default lifecycle status of this blueprint."
     },
     "librarians": {
       "type": "array",
       "minItems": 1,
-      "description": "Curators responsible for this blueprint definition.",
+      "description": "Curators responsible for defining this blueprint.",
       "items": {
         "type": "object",
         "required": ["id", "name"],
+        "additionalProperties": false,
         "properties": {
           "id": {
-            "type": "string"
+            "type": "string",
+            "description": "Librarian identifier (e.g. GitHub username)."
           },
           "name": {
-            "type": "string"
+            "type": "string",
+            "description": "Display name of the librarian."
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Optional librarian profile URL."
+          }
+        }
+      }
+    },
+    "images": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Image assets associated with this blueprint. At least one image is required.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "tags": {
+      "type": "array",
+      "description": "Optional searchable tags for this blueprint.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "manual_files": {
+      "type": "array",
+      "description": "Optional documentation or manual files associated with this blueprint.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "external_references": {
+      "type": "array",
+      "description": "Optional external reference links related to this blueprint.",
+      "items": {
+        "type": "object",
+        "required": ["label", "url"],
+        "additionalProperties": false,
+        "properties": {
+          "label": {
+            "type": "string",
+            "minLength": 1
           },
           "url": {
             "type": "string",
             "format": "uri"
           }
-        },
-        "additionalProperties": false
+        }
       }
+    },
+    "manufacturer": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Device manufacturer (controllers only)."
+    },
+    "model": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Device model identifier (controllers only)."
+    },
+    "model_name": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Human-readable device model name (controllers only)."
     }
   },
   "allOf": [
     {
       "if": {
         "properties": {
-          "category": {
-            "const": "controller"
-          }
+          "category": { "const": "controllers" }
         }
       },
       "then": {
         "required": ["manufacturer", "model", "model_name"]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "category": { "enum": ["hooks", "automations"] }
+        }
+      },
+      "then": {
+        "not": {
+          "anyOf": [
+            { "required": ["manufacturer"] },
+            { "required": ["model"] },
+            { "required": ["model_name"] }
+          ]
+        }
       }
     }
   ],

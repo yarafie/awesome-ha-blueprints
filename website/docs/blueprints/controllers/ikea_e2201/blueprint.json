@@ -1,0 +1,37 @@
+{
+  "name": "Controller - IKEA E2201 RODRET Dimmer",
+  "external_references": [
+    {
+      "label": "Blakadder",
+      "url": "https://zigbee.blakadder.com/Ikea_E2201.html"
+    },
+    {
+      "label": "Zigbee2MQTT",
+      "url": "https://www.zigbee2mqtt.io/devices/E2201.html#ikea-e2201"
+    },
+    {
+      "label": "ZHA Quirk",
+      "url": "https://github.com/zigpy/zha-device-handlers/blob/dev/zhaquirks/ikea/twobtnremote.py#L206"
+    },
+    {
+      "label": "deCONZ Device",
+      "url": "https://github.com/dresden-elektronik/deconz-rest-plugin/blob/8ae69a976bca13f22e8002a13ebe798d1e26c086/button_maps.json#L236"
+    }
+  ],
+  "manual_files": ["ikea_e2201.pdf"],
+  "category": "controllers",
+  "blueprint_id": "ikea_e2201",
+  "model_name": "IKEA E2201 RODRET Dimmer",
+  "description": "Controller automation for executing any kind of action triggered by the provided IKEA E2201 RODRET Dimmer.",
+  "librarians": [
+    {
+      "id": "EPMatt",
+      "name": "EPMatt"
+    }
+  ],
+  "model": "E2201",
+  "tags": ["zigbee", "dimmer", "light"],
+  "images": ["ikea_e2201.png"],
+  "status": "active",
+  "manufacturer": "IKEA"
+}

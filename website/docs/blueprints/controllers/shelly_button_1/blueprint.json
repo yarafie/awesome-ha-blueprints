@@ -1,0 +1,25 @@
+{
+  "name": "Controller - Shelly Button 1",
+  "external_references": [
+    {
+      "label": "External",
+      "url": "https://www.home-assistant.io/integrations/shelly"
+    }
+  ],
+  "manual_files": ["shelly_button_1.pdf"],
+  "category": "controllers",
+  "blueprint_id": "shelly_button_1",
+  "model_name": "Shelly Button 1",
+  "description": "Controller automation for executing any kind of action triggered by the provided Shelly Button 1.",
+  "librarians": [
+    {
+      "id": "EPMatt",
+      "name": "EPMatt"
+    }
+  ],
+  "model": "SHBTN-2",
+  "tags": ["wifi", "button"],
+  "images": ["shelly_button_1.png"],
+  "status": "active",
+  "manufacturer": "Shelly"
+}

@@ -26,15 +26,15 @@ export const thumbnailsContext = require.context('@blueprints', true, /\.png$/)
  */
 export const pdfManualsContext = require.context('@blueprints', true, /\.pdf$/)
 
+/**
+ * A Docusaurus-processed MDX module
+ */
 interface DocusaurusFrontMatter {
   title: string
   description: string
   [key: string]: unknown
 }
 
-/**
- * A Docusaurus-processed MDX module
- */
 interface DocusaurusModule {
   /** The frontmatter data from the MDX file */
   readonly frontMatter: DocusaurusFrontMatter

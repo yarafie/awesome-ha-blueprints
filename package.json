@@ -1,6 +1,6 @@
 {
-  "name": "awesome-ha-blueprints",
-  "version": "0.1.0",
+  "name": "awesome-ha-library",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "docs:start": "pnpm --filter ./website start",

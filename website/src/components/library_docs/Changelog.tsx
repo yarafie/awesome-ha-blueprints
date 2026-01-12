@@ -1,0 +1,227 @@
+/**
+ * Component: Changelog
+ * ────────────────────────────────────────────────────────────────
+ * Purpose:
+ *   Renders a blueprint release changelog from its changelog.json file.
+ *
+ * Changelog :):
+ *   • Initial Version (@EPMatt)
+ *   - Updated 2025.12.02 (@yarafie):
+ *      1. Moved utils.ts to utils/contexts.ts
+ *      2. Migrated to Marked v17 configuration with custom Renderer.
+ *      3. Added emoji replacement to support :emoji_codes:
+ *      4. Migrated from variant to library / release / version model
+ *      5. Aligned with unified changelog.schema.json
+ * ────────────────────────────────────────────────────────────────
+ */
+import React, { useEffect, useState } from 'react'
+import { marked, Renderer } from 'marked'
+import { changelogsContext } from '../../utils/contexts' //1. Moved utils.ts to utils/contexts.ts
+// 2. Added emoji replacement to support :emoji_codes:
+// Import the full emoji map
+import { emojiMap } from '../../utils/emojiMap'
+
+interface ChangelogExternalReference {
+  label: string
+  url: string
+}
+
+interface ChangelogChange {
+  author?: string
+  description: string
+  type?: 'feature' | 'fix' | 'refactor' | 'docs' | 'breaking'
+  breaking?: boolean
+  external_references?: ChangelogExternalReference[]
+}
+
+interface ChangelogEntry {
+  date: string
+  changes: ChangelogChange[]
+}
+
+interface ChangelogProps {
+  category: string
+  id: string
+  library: string
+  release: string
+}
+
+type ChangelogState =
+  | { status: 'loading' }
+  | { status: 'error'; message: string }
+  | { status: 'empty' }
+  | { status: 'ready'; entries: ChangelogEntry[] }
+
+const styles = {
+  list: {
+    listStyleType: 'disc',
+    marginLeft: '1.5rem',
+  } as React.CSSProperties,
+  entry: {
+    marginBottom: '0.5rem',
+  } as React.CSSProperties,
+  nestedList: {
+    listStyleType: 'disc',
+    marginTop: '0.5rem',
+    marginLeft: '1.5rem',
+  } as React.CSSProperties,
+  inlineMessage: {
+    margin: 0,
+    color: 'var(--ifm-color-emphasis-600)',
+  } as React.CSSProperties,
+  warning: {
+    fontWeight: 600,
+  } as React.CSSProperties,
+  meta: {
+    marginLeft: '0.25rem',
+    color: 'var(--ifm-color-emphasis-600)',
+    fontSize: '0.875rem',
+  } as React.CSSProperties,
+}
+
+// 2. Migrated to Marked v17 configuration with custom Renderer.
+// ─────────────────────────────────────────────
+// Marked v17 configuration
+// ─────────────────────────────────────────────
+// Configure marked for inline markdown parsing
+// Customize link renderer to open links in new tab
+const renderer = new Renderer()
+renderer.link = ({ href, title, text }) => {
+  const titleAttr = title ? ` title="${title}"` : ''
+  return `<a href="${href}" target="_blank" rel="noopener noreferrer"${titleAttr}>${text}</a>`
+}
+
+marked.setOptions({
+  breaks: true, // Convert line breaks to <br>
+  gfm: true, // GitHub Flavored Markdown
+  async: false, // required for synchronous parse() marked 17
+  renderer,
+})
+
+// 3. Added emoji replacement to support :emoji_codes:
+// ─────────────────────────────────────────────
+// Emoji replacement — uses imported emojiMap
+// ─────────────────────────────────────────────
+const replaceEmojiCodes = (text: string): string =>
+  text.replace(/:([a-zA-Z0-9_+-]+):/g, (match) => emojiMap[match] || match)
+
+// ─────────────────────────────────────────────
+// Markdown → HTML (inline safe)
+// ─────────────────────────────────────────────
+const markdownToHtml = (markdown: string): string => {
+  let html = marked.parse(replaceEmojiCodes(markdown)) as string
+  html = html.replace(/^<p>/, '').replace(/<\/p>\s*$/, '')
+  return html.trim()
+}
+
+const renderDescription = (description: string) => (
+  <span dangerouslySetInnerHTML={{ __html: markdownToHtml(description) }} />
+)
+
+const Changelog: React.FC<ChangelogProps> = ({
+  category,
+  id,
+  library,
+  release,
+}) => {
+  const [state, setState] = useState<ChangelogState>({ status: 'loading' })
+
+  useEffect(() => {
+    let isMounted = true
+
+    const loadChangelog = () => {
+      try {
+        const path = `./${category}/${id}/${library}/${release}/changelog.json`
+        const parsed = changelogsContext(path) as unknown as ChangelogEntry[]
+
+        if (!isMounted) return
+
+        if (!parsed || parsed.length === 0) {
+          setState({ status: 'empty' })
+          return
+        }
+
+        setState({ status: 'ready', entries: parsed })
+      } catch (error) {
+        if (!isMounted) return
+        setState({
+          status: 'error',
+          message:
+            error instanceof Error
+              ? error.message
+              : 'Unable to load changelog.',
+        })
+      }
+    }
+
+    loadChangelog()
+
+    return () => {
+      isMounted = false
+    }
+  }, [category, id, library, release])
+
+  if (state.status === 'loading') {
+    return <p style={styles.inlineMessage}>Loading changelog…</p>
+  }
+
+  if (state.status === 'error') {
+    return (
+      <p style={styles.inlineMessage}>
+        Unable to load changelog. {state.message}
+      </p>
+    )
+  }
+
+  if (state.status === 'empty') {
+    return (
+      <p style={styles.inlineMessage}>No changelog entries available yet.</p>
+    )
+  }
+
+  return (
+    <>
+      <ul style={styles.list}>
+        {state.entries.map((entry) => (
+          <li key={entry.date} style={styles.entry}>
+            <strong>{entry.date}</strong>
+            <ul style={styles.nestedList}>
+              {entry.changes.map((change, index) => (
+                <li key={`${entry.date}-${index}`}>
+                  {(change.breaking || change.type === 'breaking') && (
+                    <span style={styles.warning}>
+                      <strong>🚨 Breaking Change</strong> :
+                    </span>
+                  )}
+                  {(change.breaking || change.type === 'breaking') && ' '}
+                  {renderDescription(change.description)}
+                  {change.author && (
+                    <span style={styles.meta}> — {change.author}</span>
+                  )}
+                  {change.external_references &&
+                    change.external_references.length > 0 && (
+                      <ul style={styles.nestedList}>
+                        {change.external_references.map((ref, refIndex) => (
+                          <li key={`${entry.date}-${index}-ref-${refIndex}`}>
+                            <a
+                              href={ref.url}
+                              target='_blank'
+                              rel='noopener noreferrer'
+                            >
+                              {ref.label}
+                            </a>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                </li>
+              ))}
+            </ul>
+          </li>
+        ))}
+      </ul>
+    </>
+  )
+}
+
+export default Changelog

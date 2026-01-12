@@ -1,0 +1,29 @@
+{
+  "name": "Controller - Xiaomi WXCJKG12LM Aqara Opple 4 button remote",
+  "external_references": [
+    {
+      "label": "Zigbee2MQTT",
+      "url": "https://www.zigbee2mqtt.io/devices/WXCJKG12LM.html#aqara-wxcjkg12lm"
+    },
+    {
+      "label": "deCONZ Device",
+      "url": "https://github.com/dresden-elektronik/deconz-rest-plugin/wiki/Supported-Devices"
+    }
+  ],
+  "manual_files": ["xiaomi_wxcjkg12lm.pdf"],
+  "category": "controllers",
+  "blueprint_id": "xiaomi_wxcjkg12lm",
+  "model_name": "Xiaomi WXCJKG12LM Aqara Opple 4 button remote",
+  "description": "Controller automation for executing any kind of action triggered by the provided Xiaomi WXCJKG12LM Aqara Opple 4 button remote.",
+  "librarians": [
+    {
+      "id": "EPMatt",
+      "name": "EPMatt"
+    }
+  ],
+  "model": "WXCJKG12LM",
+  "tags": ["zigbee", "button", "remote", "4-button"],
+  "images": ["xiaomi_wxcjkg12lm.png"],
+  "status": "active",
+  "manufacturer": "Xiaomi"
+}

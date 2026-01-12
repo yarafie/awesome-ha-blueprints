@@ -1,0 +1,15 @@
+{
+  "title": "EPMatt automation library for addon_update_notification",
+  "maintainers": [
+    {
+      "id": "EPMatt",
+      "name": "EPMatt"
+    }
+  ],
+  "releases": ["awesome"],
+  "category": "automations",
+  "status": "active",
+  "library_id": "EPMatt",
+  "description": "Automation blueprint library for addon_update_notification maintained by EPMatt.",
+  "blueprint_id": "addon_update_notification"
+}

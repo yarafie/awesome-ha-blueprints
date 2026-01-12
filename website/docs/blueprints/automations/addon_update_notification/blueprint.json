@@ -1,0 +1,26 @@
+{
+  "name": "Send a mobile notification when add-on update is available",
+  "external_references": [],
+  "manual_files": ["addon_update_notification.pdf"],
+  "category": "automations",
+  "blueprint_id": "addon_update_notification",
+  "description": "Send a notification to the provided mobile devices whenever an update for the given Home Assistant add-on is available.",
+  "librarians": [
+    {
+      "id": "EPMatt",
+      "name": "EPMatt"
+    }
+  ],
+  "tags": [
+    "addon",
+    "event",
+    "mobile",
+    "notification",
+    "notify",
+    "sensor",
+    "supervisor",
+    "update"
+  ],
+  "images": ["addon_update_notification.png"],
+  "status": "active"
+}

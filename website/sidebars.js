@@ -3,7 +3,8 @@ export default {
     {
       type: 'category',
       label: 'Getting Started',
-      collapsed: false,
+      collapsed: true,
+      collapsible: true,
       items: [
         'introduction',
         'importing-a-blueprint',
@@ -14,7 +15,8 @@ export default {
     {
       type: 'category',
       label: 'Blueprints',
-      collapsed: false,
+      collapsed: true,
+      collapsible: true,
       items: [
         'blueprints',
         'blueprints/controllers',

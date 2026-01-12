@@ -8,10 +8,6 @@
 .docusaurus
 .cache-loader
 
-#local files
-/docs.library
-/docs.docs
-
 # Misc
 .DS_Store
 .env

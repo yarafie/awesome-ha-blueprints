@@ -1,0 +1,33 @@
+{
+  "name": "Controller - OSRAM AC025XX00NJ SMART+ Switch Mini",
+  "external_references": [
+    {
+      "label": "Zigbee2MQTT",
+      "url": "https://www.zigbee2mqtt.io/devices/AC0251100NJ_AC0251600NJ_AC0251700NJ.html#osram-ac0251100nj-ac0251600nj-ac0251700nj"
+    },
+    {
+      "label": "deCONZ Device",
+      "url": "https://github.com/dresden-elektronik/deconz-rest-plugin/wiki/Supported-Devices"
+    },
+    {
+      "label": "Zigbee2MQTT",
+      "url": "https://www.zigbee2mqtt.io/devices/AC0251100NJ_AC0251600NJ_AC0251700NJ.html#actions"
+    }
+  ],
+  "manual_files": ["osram_ac025xx00nj.pdf"],
+  "category": "controllers",
+  "blueprint_id": "osram_ac025xx00nj",
+  "model_name": "OSRAM AC025XX00NJ SMART+ Switch Mini",
+  "description": "Controller automation for executing any kind of action triggered by the provided OSRAM AC025XX00NJ SMART+ Switch Mini.",
+  "librarians": [
+    {
+      "id": "EPMatt",
+      "name": "EPMatt"
+    }
+  ],
+  "model": "AC025XX00NJ",
+  "tags": ["zigbee", "switch"],
+  "images": ["osram_ac025xx00nj.png"],
+  "status": "active",
+  "manufacturer": "OSRAM"
+}

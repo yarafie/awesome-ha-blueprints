@@ -1,0 +1,19 @@
+{
+  "release_id": "awesome",
+  "library_id": "EPMatt",
+  "blueprint_id": "ikea_e2001_e2002",
+  "category": "controllers",
+  "title": "Controller - IKEA E2001/E2002 STYRBAR Remote control",
+  "maintainers": [
+    {
+      "id": "EPMatt",
+      "name": "EPMatt"
+    }
+  ],
+  "description": "Controller automation for executing any kind of action triggered by the provided IKEA E2001/E2002 STYRBAR Remote control.",
+  "versions": ["2025.11.16"],
+  "latest_version": "2025.11.16",
+  "status": "active",
+  "supported_hooks": ["cover", "light", "media_player"],
+  "supported_integrations": ["ZHA", "Zigbee2MQTT", "deCONZ"]
+}

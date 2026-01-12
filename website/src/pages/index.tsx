@@ -14,14 +14,14 @@ interface DocusaurusContext {
   }
 }
 
-// website landing page component
+// Library landing page component
 export default function Home(): React.ReactElement {
   const context = useDocusaurusContext() as DocusaurusContext
   const { siteConfig = {} } = context
 
   return (
     <Layout
-      // websit-specific page title and description
+      // Library-specific page title and description
       title={`${siteConfig.title}`}
       description={`${siteConfig.tagline}`}
     >
@@ -31,24 +31,27 @@ export default function Home(): React.ReactElement {
       >
         <div className='container'>
           <img
-            alt='Awesome HA Blueprints logo'
+            alt='Awesome HA Library logo'
             src={useBaseUrl('img/logo.svg')}
             className='margin-bottom--lg'
             style={{ width: 80 }}
           />
 
-          {/* website-specific hero title */}
+          {/* Library-specific hero title */}
           <h1 className='hero__title' style={{ color: 'white' }}>
             {siteConfig.title}
           </h1>
 
-          {/* website-specific hero subtitle */}
+          {/* Library-specific hero subtitle */}
           <p className='hero__subtitle' style={{ color: 'white' }}>
-            A curated collection of blueprints for Home Assistant.
+            A curated Library to hold collections of blueprints for Home
+            Assistant.
             <br />
-            Reliable, customizable, fully tested by the community.
+            Reliable, customizable, contributed by HA Experts, and aims to be
+            tested by the community.
             <br />
-            Forked and maintained by yarafie.
+            This is a Fork developed and maintained by yarafie all credits go to
+            EPMatt for the original version.
           </p>
 
           <div className={`row margin-top--xl ${styles.buttons}`}>
@@ -58,7 +61,7 @@ export default function Home(): React.ReactElement {
                   'button button button--secondary button--lg margin-horiz--sm',
                   styles.getStarted,
                 )}
-                // Route users into the website documentation
+                // Route users into the Library documentation
                 to={useBaseUrl('docs/introduction')}
               >
                 Get Started
@@ -71,10 +74,10 @@ export default function Home(): React.ReactElement {
                   'button button button--secondary button--lg margin-horiz--sm',
                   styles.getStarted,
                 )}
-                // Route users to website blueprints overview
+                // Route users to Library blueprints overview
                 to={useBaseUrl('docs/blueprints')}
               >
-                Browse Blueprints
+                Browse Library Blueprints
               </Link>
             </div>
           </div>

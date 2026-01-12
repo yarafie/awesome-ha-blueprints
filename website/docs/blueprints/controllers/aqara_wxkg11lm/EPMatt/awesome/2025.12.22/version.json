@@ -1,0 +1,18 @@
+{
+  "version": "2025.12.22",
+  "date": "2025-12-22",
+  "blueprint_id": "aqara_wxkg11lm",
+  "library_id": "EPMatt",
+  "release_id": "awesome",
+  "category": "controllers",
+  "title": "Controller - Aqara WXKG11LM Wireless Mini Switch",
+  "description": "Controller automation for executing any kind of action triggered by the provided Aqara WXKG11LM Wireless Mini Switch.",
+  "maintainers": [
+    {
+      "id": "EPMatt",
+      "name": "EPMatt"
+    }
+  ],
+  "blueprint_file": "aqara_wxkg11lm.yaml",
+  "status": "active"
+}

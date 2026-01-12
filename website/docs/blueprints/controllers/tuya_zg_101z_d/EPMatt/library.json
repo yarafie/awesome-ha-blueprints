@@ -1,0 +1,16 @@
+{
+  "library_id": "EPMatt",
+  "blueprint_id": "tuya_zg_101z_d",
+  "title": "EPMatt controller library",
+  "description": "Controller blueprint library for tuya_zg_101z_d maintained by EPMatt.",
+  "maintainers": [
+    {
+      "id": "EPMatt",
+      "name": "EPMatt"
+    }
+  ],
+  "releases": ["awesome"],
+  "category": "controllers",
+  "status": "active",
+  "supported_integrations": ["ZHA", "Zigbee2MQTT"]
+}
