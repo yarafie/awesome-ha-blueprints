@@ -73,8 +73,7 @@ const VALIDATORS = [
     file: 'ahb-validate-branch-scope.mjs',
     when: role === 'contributor',
     args: [branchName, diffFile],
-    reason:
-      'Contributor branches must be limited to a single blueprint scope',
+    reason: 'Contributor branches must be limited to a single blueprint scope',
   },
   {
     file: 'ahb-validate-schemas.mjs',

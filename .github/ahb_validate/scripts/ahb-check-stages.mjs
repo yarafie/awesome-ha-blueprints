@@ -115,9 +115,7 @@ const vars = {
 const missing = {}
 
 for (const [stage, files] of Object.entries(rules)) {
-  const absent = files
-    .map((f) => expand(f, vars))
-    .filter((f) => !exists(f))
+  const absent = files.map((f) => expand(f, vars)).filter((f) => !exists(f))
 
   if (absent.length) {
     missing[stage] = absent

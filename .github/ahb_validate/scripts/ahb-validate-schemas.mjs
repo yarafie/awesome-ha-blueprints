@@ -73,10 +73,9 @@ function loadSchema(schemaFile) {
   compiled[schemaFile] = schema
 }
 
-;[
-  ...Object.values(JSON_SCHEMAS),
-  ...Object.values(MDX_SCHEMAS),
-].forEach(loadSchema)
+;[...Object.values(JSON_SCHEMAS), ...Object.values(MDX_SCHEMAS)].forEach(
+  loadSchema,
+)
 
 /* =========================================================
    Read changed files (already filtered upstream)
