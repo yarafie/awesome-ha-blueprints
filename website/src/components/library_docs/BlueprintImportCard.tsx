@@ -10,6 +10,9 @@
  *   - Updated 2026.01.11 (@yarafie):
  *      3. Migrated from variant to library / release / version
  *      4. Aligned with libraryContexts + librarySupabase (DB strict)
+ *   - Updated 2026.01.12 (@yarafie):
+ *      5. Filter versions by physical YAML existence
+ *      6. Guarantee download recording before navigation
  * ────────────────────────────────────────────────────────────────
  */
 import Link from '@docusaurus/Link'
@@ -21,15 +24,53 @@ import {
 import {
   changelogsContext,
   blueprintsContext,
-} from '../../utils/libraryContexts' // 1. Moved utils.ts to utils/contexts.ts
+} from '../../utils/libraryContexts'
 import yaml from 'yaml'
 import Select from 'react-select'
 import type { StylesConfig } from 'react-select'
+
+// Markdown rendering (same as Changelog.tsx)
+import { marked, Renderer } from 'marked'
+import { emojiMap } from '../../utils/emojiMap'
+
 type VersionOption = { value: string; label: string }
 interface ChangelogEntry {
   date: string
-  changes: Array<{ description: string; breaking?: boolean }>
+  changes: Array<{
+    description: string
+    breaking?: boolean
+    author?: string
+  }>
 }
+
+// Markdown rendering (same as Changelog.tsx)
+// ─────────────────────────────────────────────
+// Marked v17 configuration
+// ─────────────────────────────────────────────
+const renderer = new Renderer()
+renderer.link = ({ href, title, text }) => {
+  const titleAttr = title ? ` title="${title}"` : ''
+  return `<a href="${href}" target="_blank" rel="noopener noreferrer"${titleAttr}>${text}</a>`
+}
+marked.setOptions({
+  breaks: true, // Convert line breaks to <br>
+  gfm: true, // GitHub Flavored Markdown
+  async: false, // required for synchronous parse() marked 17
+  renderer,
+})
+// Emoji replacement — uses imported emojiMap
+const replaceEmojiCodes = (text: string): string =>
+  text.replace(/:([a-zA-Z0-9_+-]+):/g, (match) => emojiMap[match] || match)
+// Markdown → HTML (inline safe)
+const markdownToHtml = (markdown: string): string => {
+  let html = marked.parse(replaceEmojiCodes(markdown)) as string
+  html = html.replace(/^<p>/, '').replace(/<\/p>\s*$/, '')
+  return html.trim()
+}
+const renderDescription = (description: string) => (
+  <span dangerouslySetInnerHTML={{ __html: markdownToHtml(description) }} />
+)
+
 const styles = {
   header: {
     marginBottom: '1.5rem',
@@ -127,22 +168,31 @@ function formatDownloads(num: number | null): string {
 }
 /**
  * Generates a GitHub avatar URL for a GitHub username
- * @param username - GitHub username
- * @returns GitHub avatar URL
  */
 function getGitHubAvatarUrl(username: string): string {
-  // GitHub provides avatars via redirect from profile URL
-  // Format: https://github.com/{username}.png
-  // This redirects to the actual avatar image hosted on GitHub's CDN
-  // Size is controlled via CSS (styles.maintainerAvatar)
   return `https://github.com/${username}.png`
 }
 /**
+ * Validate that a physical YAML exists for this version
+ */
+function hasBlueprintYaml(
+  category: string,
+  id: string,
+  library: string,
+  release: string,
+  version: string,
+): boolean {
+  try {
+    blueprintsContext(
+      `./${category}/${id}/${library}/${release}/${version}/${id}.yaml`,
+    )
+    return true
+  } catch {
+    return false
+  }
+}
+/**
  * Loads and extracts maintainers from blueprint YAML
- *   <category>/<id>/<library>/<release>/<version>/<id>.yaml
- * @param category - Blueprint category (e.g., 'automations', 'controllers')
- * @param id - Blueprint ID
- * @returns Array of maintainer usernames or empty array if not found
  */
 function loadBlueprintMaintainers(
   category: string,
@@ -152,8 +202,9 @@ function loadBlueprintMaintainers(
   version: string,
 ): string[] {
   try {
-    const path = `./${category}/${id}/${library}/${release}/${version}/${id}.yaml`
-    const content = blueprintsContext(path)
+    const content = blueprintsContext(
+      `./${category}/${id}/${library}/${release}/${version}/${id}.yaml`,
+    )
     const parsed = yaml.parse(content) as {
       variables?: { ahb_maintainers?: string[] }
     }
@@ -165,16 +216,12 @@ function loadBlueprintMaintainers(
     }
     return []
   } catch {
-    // If the file is not found or any error occurs, return empty array
     return []
   }
 }
 /**
- * Loads and extracts versions from changelog.json (release-level)
- *   <category>/<id>/<library>/<release>/changelog.json
- * @param category - Blueprint category (e.g., 'automations', 'hooks', 'controllers')
- * @param id - Blueprint ID
- * @returns Object containing sorted versions array and latest version, or null if no versions found
+ * Loads and extracts versions from changelog.json (release-level),
+ * filtered to versions that have a physical YAML.
  */
 function loadReleaseVersions(
   category: string,
@@ -183,26 +230,72 @@ function loadReleaseVersions(
   release: string,
 ): { versions: string[]; latestVersion: string } | null {
   try {
-    const path = `./${category}/${id}/${library}/${release}/changelog.json`
-    const parsed = changelogsContext(path) as unknown as ChangelogEntry[]
+    const parsed = changelogsContext(
+      `./${category}/${id}/${library}/${release}/changelog.json`,
+    ) as unknown as ChangelogEntry[]
     if (!parsed || parsed.length === 0) {
       return null
     }
-    // Extract all dates and sort them (newest first)
-    // Dates are in "YYYY.MM.DD" format, so we can sort them as strings
     const versions = parsed
       .map((entry) => entry.date)
+      .filter((v) => hasBlueprintYaml(category, id, library, release, v))
       .sort((a, b) => b.localeCompare(a))
+    if (versions.length === 0) return null
     return {
       versions,
-      latestVersion: versions[0] || 'latest',
+      latestVersion: versions[0],
     }
   } catch {
-    // If the file is not found or any error occurs, return null
     return null
   }
 }
-// Start of Main Function
+function loadReleaseChangelogEntries(
+  category: string,
+  id: string,
+  library: string,
+  release: string,
+): ChangelogEntry[] {
+  try {
+    const parsed = changelogsContext(
+      `./${category}/${id}/${library}/${release}/changelog.json`,
+    ) as unknown as ChangelogEntry[]
+    if (!parsed || parsed.length === 0) return []
+    return parsed
+      .filter((entry) =>
+        hasBlueprintYaml(category, id, library, release, entry.date),
+      )
+      .sort((a, b) => b.date.localeCompare(a.date))
+  } catch {
+    return []
+  }
+}
+function summarizeChangesToOneLine(
+  changes: Array<{ description: string }>,
+  maxLen = 160,
+): string {
+  const joined = (changes ?? [])
+    .map((c) => (c?.description ?? '').trim())
+    .filter(Boolean)
+    .join('; ')
+    .replace(/\s+/g, ' ')
+    .trim()
+  if (!joined) return '—'
+  return joined.length > maxLen ? `${joined.slice(0, maxLen)}…` : joined
+}
+function extractAuthorFromChanges(
+  changes: Array<{ author?: string; description: string }>,
+): string {
+  const explicit = changes?.find((c) => c.author)?.author
+  if (explicit && explicit.trim()) return explicit.trim()
+  const firstDesc = changes?.find((c) => c?.description)?.description ?? ''
+  const paren = firstDesc.match(/\(@([^)]+)\)/)?.[1]
+  if (paren && paren.trim()) return `@${paren.trim().replace(/^@/, '')}`
+  const at = firstDesc.match(/@([A-Za-z0-9_-]+)/)?.[0]
+  return at ?? '—'
+}
+// ────────────────────────────────────────────────────────────────
+// Component
+// ────────────────────────────────────────────────────────────────
 function BlueprintImportCard({
   category,
   id,
@@ -217,7 +310,7 @@ function BlueprintImportCard({
   const [maintainers, setMaintainers] = useState<string[]>([])
   const [isLoadingMaintainers, setIsLoadingMaintainers] =
     useState<boolean>(true)
-  // Load changelog to extract versions
+  const [changelogEntries, setChangelogEntries] = useState<ChangelogEntry[]>([])
   useEffect(() => {
     let isMounted = true
     const urlVersion =
@@ -225,6 +318,7 @@ function BlueprintImportCard({
         ? new URL(window.location.href).searchParams.get('version')
         : null
     const result = loadReleaseVersions(category, id, library, release)
+    const entries = loadReleaseChangelogEntries(category, id, library, release)
     if (!isMounted) return
     if (result) {
       const effectiveVersion =
@@ -232,18 +326,18 @@ function BlueprintImportCard({
           ? urlVersion
           : result.latestVersion
       setVersions(result.versions)
-      // selectedVersion is the actual latest or URL version (YYYY.MM.DD)
       setSelectedVersion(effectiveVersion)
+      setChangelogEntries(entries)
     } else {
       setVersions([])
       setSelectedVersion('latest')
+      setChangelogEntries([])
     }
     setIsLoadingVersions(false)
     return () => {
       isMounted = false
     }
   }, [category, id, library, release])
-  // Load maintainers from blueprint YAML
   useEffect(() => {
     let isMounted = true
     if (!selectedVersion || selectedVersion === 'latest') {
@@ -268,7 +362,6 @@ function BlueprintImportCard({
       isMounted = false
     }
   }, [category, id, library, release, selectedVersion])
-  // Load downloads count (library + release + version aware, DB strict)
   useEffect(() => {
     let isCancelled = false
     setIsLoading(true)
@@ -288,21 +381,15 @@ function BlueprintImportCard({
       isCancelled = true
     }
   }, [category, id, library, release, selectedVersion])
-  // Version used in URL:
-  // - Always the physical version (YYYY.MM.DD) if available
   const versionParam = versions.length > 0 ? selectedVersion : 'latest'
-  // Import button blueprint URL (library + release + version aware)
   const blueprintUrl = `/awesome-ha-blueprints/blueprints/${category}/${id}?library=${library}&release=${release}&version=${versionParam}`
-  // Prepare options for react-select
-  // Enabled will show a list of versions
   const versionOptions: VersionOption[] =
     versions.length > 0
-      ? versions.map((version, index) => ({
-          value: version, // ALWAYS a physical version (YYYY.MM.DD)
-          label: index === 0 ? 'Latest' : version,
+      ? versions.map((version) => ({
+          value: version,
+          label: version,
         }))
-      : [{ value: 'latest', label: 'Latest' }]
-  // Custom styles for react-select
+      : [{ value: 'latest', label: 'latest' }]
   const selectStyles: StylesConfig<VersionOption, false> = {
     control: (provided, state) => ({
       ...provided,
@@ -501,15 +588,11 @@ function BlueprintImportCard({
                   if (!option || typeof window === 'undefined') return
                   const newVersion = option.value
                   setSelectedVersion(newVersion)
-                  // A-1: standard URL update using window.location.href = new URL(...)
                   try {
                     const url = new URL(window.location.href)
-                    // Canonical version axis
                     url.searchParams.set('version', newVersion)
-                    // Canonical library / release axes
                     url.searchParams.set('library', library)
                     url.searchParams.set('release', release)
-                    // Hard reload to fully remount page + Inputs
                     window.location.href = url.toString()
                   } catch {
                     const searchParams = new URLSearchParams(
@@ -532,27 +615,248 @@ function BlueprintImportCard({
                   typeof document !== 'undefined' ? document.body : undefined
                 }
                 menuPosition='fixed'
+                formatOptionLabel={(option) => {
+                  const isLatest = option.value === versions[0]
+                  return (
+                    <div
+                      style={{
+                        display: 'flex',
+                        gap: '0.5rem',
+                        alignItems: 'center',
+                      }}
+                    >
+                      <span>{option.label}</span>
+                      {isLatest && (
+                        <span
+                          style={{
+                            fontSize: '0.7rem',
+                            padding: '0.1rem 0.4rem',
+                            borderRadius: '999px',
+                            background: 'var(--ifm-color-emphasis-200)',
+                            color: 'var(--ifm-color-emphasis-700)',
+                            fontWeight: 500,
+                          }}
+                        >
+                          latest
+                        </span>
+                      )}
+                    </div>
+                  )
+                }}
               />
             </div>
             {/* Import Button */}
             <div className='col col--6 download-button-wrapper margin-bottom--md'>
               <Link
                 to={blueprintUrl}
-                onClick={() =>
-                  recordBlueprintDownload(
+                onClick={async (e) => {
+                  e.preventDefault()
+                  await recordBlueprintDownload(
                     category,
                     id,
                     library,
                     release,
                     versionParam,
                   )
-                }
+                  window.location.href = blueprintUrl
+                }}
               >
                 <img
                   src='https://my.home-assistant.io/badges/blueprint_import.svg'
                   alt='Import to Home Assistant'
                 />
               </Link>
+            </div>
+          </div>
+        )}
+        {/* Available Versions */}
+        {versions.length > 0 && (
+          <div className='row margin-top--md margin-bottom--md'>
+            <div className='col col--12'>
+              <table
+                style={{
+                  width: '100%',
+                  borderCollapse: 'collapse',
+                  fontSize: '0.875rem',
+                }}
+              >
+                <thead>
+                  <tr>
+                    <th
+                      style={{
+                        textAlign: 'left',
+                        padding: '0.5rem',
+                        borderBottom: '1px solid var(--ifm-color-emphasis-300)',
+                        color: 'var(--ifm-color-emphasis-700)',
+                        fontWeight: 600,
+                      }}
+                    >
+                      Version
+                    </th>
+                    <th
+                      style={{
+                        textAlign: 'left',
+                        padding: '0.5rem',
+                        borderBottom: '1px solid var(--ifm-color-emphasis-300)',
+                        color: 'var(--ifm-color-emphasis-700)',
+                        fontWeight: 600,
+                      }}
+                    >
+                      Author
+                    </th>
+                    <th
+                      style={{
+                        textAlign: 'left',
+                        padding: '0.5rem',
+                        borderBottom: '1px solid var(--ifm-color-emphasis-300)',
+                        color: 'var(--ifm-color-emphasis-700)',
+                        fontWeight: 600,
+                      }}
+                    >
+                      Status
+                    </th>
+                    <th
+                      style={{
+                        textAlign: 'left',
+                        padding: '0.5rem',
+                        borderBottom: '1px solid var(--ifm-color-emphasis-300)',
+                        color: 'var(--ifm-color-emphasis-700)',
+                        fontWeight: 600,
+                      }}
+                    >
+                      Summary
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {versions.map((version, index) => {
+                    const isLatest = index === 0
+                    const entry = changelogEntries.find(
+                      (e) => e.date === version,
+                    )
+                    const author = entry
+                      ? extractAuthorFromChanges(entry.changes)
+                      : '—'
+                    const summary = entry
+                      ? summarizeChangesToOneLine(entry.changes)
+                      : '—'
+                    const isBreaking = entry
+                      ? entry.changes.some((c) => c.breaking)
+                      : false
+                    return (
+                      <tr key={version}>
+                        {/* Version */}
+                        <td
+                          style={{
+                            padding: '0.5rem',
+                            borderBottom:
+                              '1px solid var(--ifm-color-emphasis-200)',
+                            color: 'var(--ifm-color-emphasis-900)',
+                            whiteSpace: 'nowrap',
+                          }}
+                        >
+                          {version}
+                        </td>
+                        {/* Author */}
+                        <td
+                          style={{
+                            padding: '0.5rem',
+                            borderBottom:
+                              '1px solid var(--ifm-color-emphasis-200)',
+                            minWidth: '80px',
+                            whiteSpace: 'nowrap',
+                          }}
+                        >
+                          {author !== '—' ? (
+                            (() => {
+                              const username = author.replace('@', '')
+                              return (
+                                <a
+                                  href={`https://github.com/${username}`}
+                                  target='_blank'
+                                  rel='noopener noreferrer'
+                                  style={{
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    gap: '0.45rem',
+                                    color: 'var(--ifm-color-primary)',
+                                    textDecoration: 'none',
+                                    fontSize: '0.85rem',
+                                    fontWeight: 500,
+                                  }}
+                                >
+                                  <img
+                                    src={`https://github.com/${username}.png`}
+                                    alt={`${username} avatar`}
+                                    style={{
+                                      width: '22px',
+                                      height: '22px',
+                                      borderRadius: '50%',
+                                      objectFit: 'cover',
+                                    }}
+                                  />
+                                  <span>{username}</span>
+                                </a>
+                              )
+                            })()
+                          ) : (
+                            <span
+                              style={{ color: 'var(--ifm-color-emphasis-500)' }}
+                            >
+                              —
+                            </span>
+                          )}
+                        </td>
+                        {/* Status */}
+                        <td
+                          style={{
+                            padding: '0.5rem',
+                            borderBottom:
+                              '1px solid var(--ifm-color-emphasis-200)',
+                            whiteSpace: 'nowrap',
+                          }}
+                        >
+                          {isLatest && (
+                            <span
+                              style={{
+                                fontSize: '0.7rem',
+                                padding: '0.15rem 0.45rem',
+                                borderRadius: '999px',
+                                background: 'var(--ifm-color-emphasis-200)',
+                                color: 'var(--ifm-color-emphasis-700)',
+                                fontWeight: 500,
+                                marginRight: '0.35rem',
+                                verticalAlign: 'middle',
+                              }}
+                            >
+                              latest
+                            </span>
+                          )}
+                          {isBreaking && (
+                            <span
+                              title='Breaking change'
+                              style={{ verticalAlign: 'middle' }}
+                            >
+                              🚨
+                            </span>
+                          )}
+                        </td>
+                        {/* Summary */}
+                        <td
+                          style={{
+                            padding: '0.5rem',
+                            borderBottom:
+                              '1px solid var(--ifm-color-emphasis-200)',
+                            color: 'var(--ifm-color-emphasis-900)',
+                          }}
+                        >
+                          {renderDescription(summary)}
+                        </td>
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </table>
             </div>
           </div>
         )}

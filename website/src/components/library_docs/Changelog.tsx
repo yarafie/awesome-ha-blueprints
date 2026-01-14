@@ -76,6 +76,15 @@ const styles = {
     marginLeft: '0.25rem',
     color: 'var(--ifm-color-emphasis-600)',
     fontSize: '0.875rem',
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: '0.35rem',
+  } as React.CSSProperties,
+  authorAvatar: {
+    width: '16px',
+    height: '16px',
+    borderRadius: '50%',
+    objectFit: 'cover',
   } as React.CSSProperties,
 }
 
@@ -118,6 +127,9 @@ const renderDescription = (description: string) => (
   <span dangerouslySetInnerHTML={{ __html: markdownToHtml(description) }} />
 )
 
+// Normalize author → username (strip @)
+const normalizeAuthor = (author: string) => author.replace(/^@/, '')
+
 const Changelog: React.FC<ChangelogProps> = ({
   category,
   id,
@@ -128,19 +140,15 @@ const Changelog: React.FC<ChangelogProps> = ({
 
   useEffect(() => {
     let isMounted = true
-
     const loadChangelog = () => {
       try {
         const path = `./${category}/${id}/${library}/${release}/changelog.json`
         const parsed = changelogsContext(path) as unknown as ChangelogEntry[]
-
         if (!isMounted) return
-
         if (!parsed || parsed.length === 0) {
           setState({ status: 'empty' })
           return
         }
-
         setState({ status: 'ready', entries: parsed })
       } catch (error) {
         if (!isMounted) return
@@ -153,9 +161,7 @@ const Changelog: React.FC<ChangelogProps> = ({
         })
       }
     }
-
     loadChangelog()
-
     return () => {
       isMounted = false
     }
@@ -182,43 +188,94 @@ const Changelog: React.FC<ChangelogProps> = ({
   return (
     <>
       <ul style={styles.list}>
-        {state.entries.map((entry) => (
-          <li key={entry.date} style={styles.entry}>
-            <strong>{entry.date}</strong>
-            <ul style={styles.nestedList}>
-              {entry.changes.map((change, index) => (
-                <li key={`${entry.date}-${index}`}>
-                  {(change.breaking || change.type === 'breaking') && (
-                    <span style={styles.warning}>
-                      <strong>🚨 Breaking Change</strong> :
-                    </span>
+        {state.entries.map((entry) => {
+          const hasSingleChange = entry.changes.length === 1
+          const singleChange = entry.changes[0]
+
+          return (
+            <li key={entry.date} style={styles.entry}>
+              {/* One Change only in that date:
+                  <date> - <author> - <?Breaking Change?> - <Description> */}
+              {hasSingleChange ? (
+                <>
+                  <strong>{entry.date}</strong>
+
+                  {singleChange.author &&
+                    (() => {
+                      const author = normalizeAuthor(singleChange.author)
+                      return (
+                        <span style={styles.meta}>
+                          —
+                          <img
+                            src={`https://github.com/${author}.png`}
+                            alt={`${author} avatar`}
+                            style={styles.authorAvatar}
+                          />
+                          <a
+                            href={`https://github.com/${author}`}
+                            target='_blank'
+                            rel='noopener noreferrer'
+                          >
+                            {author}
+                          </a>
+                        </span>
+                      )
+                    })()}
+
+                  {(singleChange.breaking ||
+                    singleChange.type === 'breaking') && (
+                    <span style={styles.warning}> — 🚨 Breaking Change</span>
                   )}
-                  {(change.breaking || change.type === 'breaking') && ' '}
-                  {renderDescription(change.description)}
-                  {change.author && (
-                    <span style={styles.meta}> — {change.author}</span>
-                  )}
-                  {change.external_references &&
-                    change.external_references.length > 0 && (
-                      <ul style={styles.nestedList}>
-                        {change.external_references.map((ref, refIndex) => (
-                          <li key={`${entry.date}-${index}-ref-${refIndex}`}>
-                            <a
-                              href={ref.url}
-                              target='_blank'
-                              rel='noopener noreferrer'
-                            >
-                              {ref.label}
-                            </a>
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                </li>
-              ))}
-            </ul>
-          </li>
-        ))}
+
+                  {' — '}
+                  {renderDescription(singleChange.description)}
+                </>
+              ) : (
+                <>
+                  {/* More than one change:
+                      <date>
+                        . <author> - <?Breaking Change?> - <Description 1>
+                        . <author> - <?Breaking Change?> - <Description 2> */}
+                  <strong>{entry.date}</strong>
+                  <ul style={styles.nestedList}>
+                    {entry.changes.map((change, index) => {
+                      const author = change.author
+                        ? normalizeAuthor(change.author)
+                        : null
+                      return (
+                        <li key={`${entry.date}-${index}`}>
+                          {author && (
+                            <span style={styles.meta}>
+                              <img
+                                src={`https://github.com/${author}.png`}
+                                alt={`${author} avatar`}
+                                style={styles.authorAvatar}
+                              />
+                              <a
+                                href={`https://github.com/${author}`}
+                                target='_blank'
+                                rel='noopener noreferrer'
+                              >
+                                {author}
+                              </a>
+                              {' — '}
+                            </span>
+                          )}
+                          {(change.breaking || change.type === 'breaking') && (
+                            <span style={styles.warning}>
+                              🚨 Breaking Change —{' '}
+                            </span>
+                          )}
+                          {renderDescription(change.description)}
+                        </li>
+                      )
+                    })}
+                  </ul>
+                </>
+              )}
+            </li>
+          )
+        })}
       </ul>
     </>
   )
