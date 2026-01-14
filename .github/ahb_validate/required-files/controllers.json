@@ -1,0 +1,18 @@
+{
+  "blueprint": [
+    "controllers/{blueprint_id}/index.mdx",
+    "controllers/{blueprint_id}/blueprint.json",
+    "controllers/{blueprint_id}/{blueprint_id}.png"
+  ],
+  "library": ["controllers/{blueprint_id}/{library_id}/library.json"],
+  "release": [
+    "controllers/{blueprint_id}/{library_id}/{release_id}/release.json",
+    "controllers/{blueprint_id}/{library_id}/{release_id}/hooks.json",
+    "controllers/{blueprint_id}/{library_id}/{release_id}/changelog.json"
+  ],
+  "version": [
+    "controllers/{blueprint_id}/{library_id}/{release_id}/{version}/version.json",
+    "controllers/{blueprint_id}/{library_id}/{release_id}/{version}/{version}.mdx",
+    "controllers/{blueprint_id}/{library_id}/{release_id}/{version}/{blueprint_id}.yaml"
+  ]
+}

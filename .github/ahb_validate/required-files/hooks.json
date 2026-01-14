@@ -1,0 +1,18 @@
+{
+  "blueprint": [
+    "hooks/{blueprint_id}/index.mdx",
+    "hooks/{blueprint_id}/blueprint.json",
+    "hooks/{blueprint_id}/{blueprint_id}.png"
+  ],
+  "library": ["hooks/{blueprint_id}/{library_id}/library.json"],
+  "release": [
+    "hooks/{blueprint_id}/{library_id}/{release_id}/release.json",
+    "hooks/{blueprint_id}/{library_id}/{release_id}/actions.json",
+    "hooks/{blueprint_id}/{library_id}/{release_id}/changelog.json"
+  ],
+  "version": [
+    "hooks/{blueprint_id}/{library_id}/{release_id}/{version}/version.json",
+    "hooks/{blueprint_id}/{library_id}/{release_id}/{version}/{version}.mdx",
+    "hooks/{blueprint_id}/{library_id}/{release_id}/{version}/{blueprint_id}.yaml"
+  ]
+}

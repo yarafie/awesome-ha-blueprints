@@ -1,0 +1,69 @@
+name: AHB – Validation
+
+permissions:
+  contents: read
+
+'on':
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository (full history)
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Compute changed files vs main
+        run: |
+          git fetch origin main
+          git diff --name-only origin/main...HEAD > changed_files.txt
+          echo "All changed files:"
+          cat changed_files.txt
+
+      # Only blueprint library changes should trigger AHB validation
+      - name: Filter library blueprint changes
+        id: library_changes
+        run: |
+          grep -E '^website/docs/blueprints/(controllers|hooks|automations)/' \
+            changed_files.txt > library_changed_files.txt || true
+
+          echo "Library-scoped changes:"
+          cat library_changed_files.txt || true
+
+          if [ -s library_changed_files.txt ]; then
+            echo "has_library_changes=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_library_changes=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Setup pnpm
+        if: steps.library_changes.outputs.has_library_changes == 'true'
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.26.0
+
+      - name: Setup Node
+        if: steps.library_changes.outputs.has_library_changes == 'true'
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        if: steps.library_changes.outputs.has_library_changes == 'true'
+        run: pnpm install --frozen-lockfile
+
+      # Single entrypoint: routing + validation happens in JS
+      - name: Run AHB validation suite
+        if: steps.library_changes.outputs.has_library_changes == 'true'
+        env:
+          BRANCH_NAME: ${{ github.head_ref }}
+        run: |
+          node .github/ahb_validate/scripts/ahb-validate.mjs \
+            "$BRANCH_NAME" \
+            library_changed_files.txt

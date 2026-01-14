@@ -1,0 +1,17 @@
+{
+  "blueprint": [
+    "automations/{blueprint_id}/index.mdx",
+    "automations/{blueprint_id}/blueprint.json",
+    "automations/{blueprint_id}/{blueprint_id}.png"
+  ],
+  "library": ["automations/{blueprint_id}/{library_id}/library.json"],
+  "release": [
+    "automations/{blueprint_id}/{library_id}/{release_id}/release.json",
+    "automations/{blueprint_id}/{library_id}/{release_id}/changelog.json"
+  ],
+  "version": [
+    "automations/{blueprint_id}/{library_id}/{release_id}/{version}/version.json",
+    "automations/{blueprint_id}/{library_id}/{release_id}/{version}/{version}.mdx",
+    "automations/{blueprint_id}/{library_id}/{release_id}/{version}/{blueprint_id}.yaml"
+  ]
+}
