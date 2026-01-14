@@ -2,33 +2,42 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://awesome-ha-blueprints.dev/schemas/index.mdx.schema.json",
   "title": "Blueprint Index MDX Frontmatter Schema",
-  "description": "Minimal frontmatter for blueprint index pages. Blueprint content is sourced from blueprint.json.",
+  "description": "Frontmatter for blueprint index pages. These pages provide overview and metadata for a blueprint.",
   "type": "object",
   "required": ["blueprint_id", "category", "title"],
   "additionalProperties": false,
   "properties": {
     "blueprint_id": {
       "type": "string",
-      "pattern": "^[a-z0-9_]+$",
-      "description": "Canonical blueprint identifier."
+      "pattern": "^[a-z0-9_]+$"
     },
     "category": {
       "type": "string",
-      "enum": ["controllers", "hooks", "automations"],
-      "description": "Blueprint category."
+      "enum": ["controllers", "hooks", "automations"]
     },
     "title": {
       "type": "string",
-      "minLength": 1,
-      "description": "Page title shown in docs sidebar and header."
+      "minLength": 1
+    },
+    "description": {
+      "type": "string",
+      "minLength": 1
+    },
+    "manufacturer": {
+      "type": "string",
+      "minLength": 1
+    },
+    "model": {
+      "type": "string"
+    },
+    "model_name": {
+      "type": "string"
     },
     "hide_title": {
-      "type": "boolean",
-      "description": "Optional Docusaurus flag to hide the rendered title."
+      "type": "boolean"
     },
     "hide_table_of_contents": {
-      "type": "boolean",
-      "description": "Optional Docusaurus flag to hide the TOC."
+      "type": "boolean"
     }
   }
 }

@@ -1,7 +1,7 @@
 The below trees describe the different levels under website/docs/blueprints/
 
 --------------------------------------
-Controllers Tree Structure Schema v1.7
+Controllers Tree Structure Schema v2.0
 --------------------------------------
 controllers/                                                         # Controllers root
 └── <blueprint_id>/                    (^[a-z0-9_]+$)                # Physical controller model (canonical ID)
@@ -21,7 +21,7 @@ controllers/                                                         # Controlle
     │   │   │   ├── <blueprint_id>.yaml                              # Controller Blueprint YAML
 
 --------------------------------
-Hooks Tree Structure Schema v1.7
+Hooks Tree Structure Schema v2.0
 --------------------------------
 hooks/                                                               # Hooks root
 └── <blueprint_id>/                    (^[a-z0-9_]+$)                # Hook identifier (e.g. light, cover, media_player)
@@ -41,7 +41,7 @@ hooks/                                                               # Hooks roo
     │   │   │   ├── <blueprint_id>.yaml                              # Hook blueprint YAML (always hook-named)
 
 --------------------------------------
-Automations Tree Structure Schema v1.7
+Automations Tree Structure Schema v2.0
 --------------------------------------
 automations/                                                         # Automations root
 └── <automation_id>/                   (^[a-z0-9_]+$)                # Automation identifier
