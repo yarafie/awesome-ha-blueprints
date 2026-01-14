@@ -1,1 +1,0 @@
-"use strict";(globalThis.webpackChunkawesome_ha_blueprints_website=globalThis.webpackChunkawesome_ha_blueprints_website||[]).push([[786],{47766(e,s,a){a.r(s),a.d(s,{default:()=>i});const i=a.p+"assets/images/philips_324131092621-2af26c331a8278c3ce44dcc221a25265.png"}}]);
