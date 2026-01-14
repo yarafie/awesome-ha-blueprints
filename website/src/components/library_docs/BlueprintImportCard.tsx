@@ -292,7 +292,7 @@ function BlueprintImportCard({
   // - Always the physical version (YYYY.MM.DD) if available
   const versionParam = versions.length > 0 ? selectedVersion : 'latest'
   // Import button blueprint URL (library + release + version aware)
-  let blueprintUrl = `/awesome-ha-blueprints/blueprints/${category}/${id}?library=${library}&release=${release}&version=${versionParam}`
+  const blueprintUrl = `/awesome-ha-blueprints/blueprints/${category}/${id}?library=${library}&release=${release}&version=${versionParam}`
   // Prepare options for react-select
   // Enabled will show a list of versions
   const versionOptions: VersionOption[] =

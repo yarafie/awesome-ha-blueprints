@@ -54,22 +54,6 @@ interface SupportedControllersProps {
 /* Helpers                                                       */
 /* ────────────────────────────────────────────────────────────── */
 /**
- * Read version from URL (?version=YYYY.MM.DD), if present and valid.
- */
-function getVersionFromUrl(): string | null {
-  if (typeof window === 'undefined') return null
-  try {
-    const url = new URL(window.location.href)
-    const v = url.searchParams.get('version')
-    if (!v) return null
-    if (!/^\d{4}\.\d{2}\.\d{2}$/.test(v)) return null
-    return v
-  } catch {
-    return null
-  }
-}
-
-/**
  * Load available versions from release-level changelog.json.
  */
 function loadReleaseVersions(
@@ -102,10 +86,6 @@ const SupportedControllers: React.FC<SupportedControllersProps> = ({
   /* Resolve version (URL-driven, fallback to latest) */
   const versions = loadReleaseVersions(category, id, library, release)
   if (versions.length === 0) return null
-
-  const urlVersion = getVersionFromUrl()
-  const resolvedVersion =
-    urlVersion && versions.includes(urlVersion) ? urlVersion : versions[0]
 
   /* Load release.json (release-level, version does not affect path) */
   let releaseJson: ReleaseJson

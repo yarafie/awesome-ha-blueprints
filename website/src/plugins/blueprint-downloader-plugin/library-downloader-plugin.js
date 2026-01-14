@@ -31,7 +31,6 @@
  *
  * ────────────────────────────────────────────────────────────────
  */
-import fs from 'fs'
 import path from 'path'
 import { globSync } from 'glob'
 
@@ -99,13 +98,13 @@ export default function libraryDownloaderPlugin(context) {
 
           // Print to log for debugging purposes
           // console.log(`🪲 Debug for blueprints.push`)
-          // console.log(`​🪲    category    : ${category}`)
-          // console.log(`​🪲    id          : ${id}`)
-          // console.log(`​🪲    library_id  : ${library_id}`)
-          // console.log(`​🪲    release_id  : ${release_id}`)
-          // console.log(`​🪲    version     : ${version}`)
-          // console.log(`​🪲    relativePath: ${relativePath}`)
-          // console.log(`​🪲    file        : ${file}`)
+          // console.log(`🪲    category      : ${category}`)
+          // console.log(`🪲    id            : ${id}`)
+          // console.log(`🪲    library_id    : ${library_id}`)
+          // console.log(`🪲    release_id    : ${release_id}`)
+          // console.log(`🪲    version       : ${version}`)
+          // console.log(`🪲    relativePath  : ${relativePath}`)
+          // console.log(`🪲    file          : ${file}`)
 
           // Store blueprint metadata (flat list)
           blueprints.push({

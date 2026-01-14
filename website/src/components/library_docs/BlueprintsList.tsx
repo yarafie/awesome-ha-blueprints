@@ -99,7 +99,9 @@ const BlueprintsList: React.FC<BlueprintsListProps> = ({ category }) => {
                   integrations.add(i)
                   integrationSet.add(i)
                 })
-              } catch {}
+              } catch {
+                /* ignore malformed library.json */
+              }
             })
         }
 
@@ -114,7 +116,9 @@ const BlueprintsList: React.FC<BlueprintsListProps> = ({ category }) => {
         }
 
         loaded.push(enriched)
-      } catch {}
+      } catch {
+        /* ignore invalid blueprint.json */
+      }
     })
 
     loaded.sort((a, b) => a.name.localeCompare(b.name))

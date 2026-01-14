@@ -216,7 +216,7 @@ const BlueprintPage: React.FC<BlueprintPageProps> = ({
       try {
         const data = jsonContext(`./hooks/${h}/blueprint.json`) as BlueprintJson
         if (data?.description) fetchedDescs[h] = data.description
-      } catch (e) {
+      } catch {
         /* fallback used later */
       }
     })
@@ -306,7 +306,9 @@ const BlueprintPage: React.FC<BlueprintPageProps> = ({
           changelog = changelogsContext(
             `${basePath}${libraryId}/${releaseId}/changelog.json`,
           ) as ChangelogEntry[]
-        } catch {}
+        } catch {
+          /* optional changelog – absence is valid */
+        }
         return { releaseId, release, changelog }
       })
       return { libraryId, library, releases }
