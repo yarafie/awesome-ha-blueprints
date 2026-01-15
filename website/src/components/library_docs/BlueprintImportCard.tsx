@@ -17,10 +17,7 @@
  */
 import Link from '@docusaurus/Link'
 import { useEffect, useState } from 'react'
-import {
-  getBlueprintDownloads,
-  recordBlueprintDownload,
-} from '../../services/librarySupabase'
+import { getBlueprintDownloads } from '../../services/librarySupabase'
 import {
   changelogsContext,
   blueprintsContext,
@@ -649,15 +646,8 @@ function BlueprintImportCard({
             <div className='col col--6 download-button-wrapper margin-bottom--md'>
               <Link
                 to={blueprintUrl}
-                onClick={async (e) => {
-                  e.preventDefault()
-                  await recordBlueprintDownload(
-                    category,
-                    id,
-                    library,
-                    release,
-                    versionParam,
-                  )
+                onClick={() => {
+                  // Recording is handled by the /blueprints/... download route (library-download-blueprint.tsx).
                   window.location.href = blueprintUrl
                 }}
               >
