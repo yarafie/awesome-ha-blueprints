@@ -142,7 +142,10 @@ const SupportedHooks: React.FC<SupportedHooksProps> = ({
     <div className='supported-hooks'>
       {Object.entries(hookEntry.mapping_options).map(([optionKey, option]) => (
         <div key={optionKey} style={{ marginBottom: '1rem' }}>
-          <h4>{option.label ?? `(${optionKey.replace(/_/g, ' ')}) Mapping`}</h4>
+          <h4>
+            {option.label ?? `(${optionKey.replace(/_/g, ' ')}) Mapping`}{' '}
+            Mapping
+          </h4>
           <ul>
             {option.mappings.map((m, idx) => (
               <li key={`${m.event}-${idx}`}>
