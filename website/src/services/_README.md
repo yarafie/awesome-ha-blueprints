@@ -83,9 +83,9 @@
 -
 - Returns:
 - total_downloads → bigint
-- last_downloaded → timestamptz
-  _/
-  CREATE OR REPLACE FUNCTION public.get_library_downloads_aggregates(
+- last*downloaded → timestamptz
+  */
+  CREATE OR REPLACE FUNCTION public.get*library_downloads_aggregates(
   p_category text DEFAULT NULL,
   p_library text DEFAULT NULL,
   p_release text DEFAULT NULL,
@@ -107,7 +107,7 @@
   blueprint_library,
   blueprint_release,
   blueprint_id,
-  COUNT(_)::bigint AS total_downloads,
+  COUNT(*)::bigint AS total_downloads,
   MAX(download_date) AS last_downloaded
   FROM public.library_downloads
   WHERE
