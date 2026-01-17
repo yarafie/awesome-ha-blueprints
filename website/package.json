@@ -32,7 +32,7 @@
     "prop-types": "^15.8.1",
     "react": "^19.2.3",
     "react-bootstrap-icons": "^1.11.6",
-    "react-cookie-consent": "^9.0.0",
+    "react-cookie-consent": "^10.0.0",
     "react-dom": "^19.2.3",
     "react-ga4": "^2.1.0",
     "react-json-view-lite": "^2.5.0",
