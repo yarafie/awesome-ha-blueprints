@@ -97,6 +97,7 @@ jobs:
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          ALLOWED_MAINTAINERS: ${{ secrets.ALLOWED_MAINTAINERS }}
       - name: Create .nojekyll file
         run: touch website/build/.nojekyll
       - name: Deploy to GitHub Pages
