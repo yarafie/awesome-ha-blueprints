@@ -41,6 +41,12 @@ function webpackConfigPlugin() {
 const clientEnv = {
   SUPABASE_URL: process.env.SUPABASE_URL || '',
   SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY || '',
+  // Robust parsing: split, trim, and filter out empty values
+  ALLOWED_MAINTAINERS: process.env.ALLOWED_MAINTAINERS
+    ? process.env.ALLOWED_MAINTAINERS.split(',')
+        .map((email) => email.trim())
+        .filter(Boolean)
+    : [],
 }
 
 const config: Config = {
@@ -144,7 +150,7 @@ const config: Config = {
       logo: {
         src: 'img/metrics.svg',
         alt: 'Blueprint Metrics',
-        href: '/awesome-ha-blueprints/download_metrics/',
+        href: '/awesome-ha-blueprints/metrics/',
         width: 38,
         height: 38,
         style: {
