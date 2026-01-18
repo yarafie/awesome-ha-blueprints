@@ -7,7 +7,7 @@
  *     • Category distribution
  *     • Top blueprints (sortable table + bar chart)
  *     • Daily downloads (N-day range)
- *     • Library-aware analytics (all categories
+ *     • Library-aware analytics (all categories)
  *     • Theme-aware UI with light/dark support
  *
  * Changelog:
@@ -1110,7 +1110,10 @@ const DownloadsMetricsPage: React.FC = () => {
 
   const breadcrumbs = useMemo(() => {
     const items: { label: string; onClick: () => void }[] = [
-      { label: 'All Categories', onClick: resetToCategory },
+      {
+        label: selectedCategory === 'ALL' ? 'Categories' : 'Categories',
+        onClick: resetToCategory,
+      },
     ]
 
     if (selectedCategory !== 'ALL') {
@@ -1903,7 +1906,7 @@ const DownloadsMetricsPage: React.FC = () => {
                     }}
                   >
                     {selectedCategory === 'ALL'
-                      ? `Top ${topLimit} Blueprints (All Categories)`
+                      ? `Top ${topLimit} Blueprints`
                       : selectedLibraries.length > 0
                         ? `Top ${topLimit} Blueprints (Libraries: ${selectedLibraries.length})`
                         : selectedLibrary !== 'ALL'
