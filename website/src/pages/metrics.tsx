@@ -671,7 +671,7 @@ const DownloadsMetricsPage: React.FC = () => {
                     whiteSpace: 'nowrap',
                   }}
                 >
-                  {item.blueprint_library ?? effectiveLibrary ?? '-'}
+                  {item.blueprint_library ?? '—'}
                 </td>
                 <td
                   style={{
@@ -681,8 +681,7 @@ const DownloadsMetricsPage: React.FC = () => {
                     whiteSpace: 'nowrap',
                   }}
                 >
-                  {item.blueprint_release ??
-                    (selectedRelease !== 'ALL' ? selectedRelease : '-')}
+                  {item.blueprint_release ?? '-'}
                 </td>
                 <td
                   style={{
