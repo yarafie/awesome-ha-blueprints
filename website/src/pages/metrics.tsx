@@ -95,7 +95,9 @@ interface ViewRow {
 
 type TopBlueprintBarData = {
   id: string
-  name: string
+  label: string
+  blueprint_library: string | null
+  blueprint_release: string | null
   Downloads: number
 }
 
@@ -178,6 +180,8 @@ const DownloadsMetricsPage: React.FC = () => {
   const [selectedLibrary, setSelectedLibrary] = useState<string>('ALL') // "ALL" == All Libraries
   const [selectedBlueprintId, setSelectedBlueprintId] = useState<string>('ALL') // "ALL" == All Blueprints
   const [selectedRelease, setSelectedRelease] = useState<string>('ALL') // "ALL" == All Releases
+  const [selectedLibraries, setSelectedLibraries] = useState<string[]>([]) // Compare: multi-select libraries
+  const [showVersions, setShowVersions] = useState(false) // Optional (disabled unless backend supports)
 
   // Sorting
   const [sortConfig, setSortConfig] = useState<{
@@ -193,6 +197,9 @@ const DownloadsMetricsPage: React.FC = () => {
 
   // D3 color scale
   const colorScale = scaleOrdinal(schemeCategory10)
+
+  // D3 color scale (blueprint ids)
+  const idColorScale = scaleOrdinal(schemeCategory10)
 
   const { totalDownloads, byCategory, aggregates, daily } = metricsData
 
@@ -225,6 +232,80 @@ const DownloadsMetricsPage: React.FC = () => {
 
     return () => observer.disconnect()
   }, [])
+
+  // ──────────────────────────────────────────────────────────────
+  // URL: hydrate + persist filter/drill state (deep-linkable)
+  // ──────────────────────────────────────────────────────────────
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+
+    const sp = new URLSearchParams(window.location.search)
+
+    const urlDays = sp.get('days')
+    const urlTop = sp.get('top')
+    const urlCategory = sp.get('category')
+    const urlBp = sp.get('blueprint')
+    const urlLibrary = sp.get('library')
+    const urlLibraries = sp.get('libraries')
+    const urlRelease = sp.get('release')
+
+    if (urlDays && /^\d+$/.test(urlDays)) setSelectedDays(Number(urlDays))
+    if (urlTop && /^\d+$/.test(urlTop)) setTopLimit(Number(urlTop))
+
+    if (urlCategory)
+      setSelectedCategory(urlCategory === 'ALL' ? 'ALL' : urlCategory)
+    if (urlBp) setSelectedBlueprintId(urlBp === 'ALL' ? 'ALL' : urlBp)
+    if (urlRelease)
+      setSelectedRelease(urlRelease === 'ALL' ? 'ALL' : urlRelease)
+
+    // Libraries: prefer multi-select param when present
+    if (urlLibraries) {
+      const libs = urlLibraries
+        .split(',')
+        .map((x) => x.trim())
+        .filter(Boolean)
+      if (libs.length > 0) {
+        setSelectedLibraries(libs)
+        setSelectedLibrary('ALL')
+      }
+    } else if (urlLibrary) {
+      setSelectedLibrary(urlLibrary)
+      setSelectedLibraries([])
+    }
+  }, [])
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+
+    const sp = new URLSearchParams(window.location.search)
+
+    sp.set('days', String(selectedDays))
+    sp.set('top', String(topLimit))
+
+    sp.set('category', String(selectedCategory))
+    sp.set('blueprint', String(selectedBlueprintId))
+    sp.set('release', String(selectedRelease))
+
+    if (selectedLibraries.length > 0) {
+      sp.set('libraries', selectedLibraries.join(','))
+      sp.delete('library')
+    } else {
+      sp.delete('libraries')
+      sp.set('library', String(selectedLibrary))
+    }
+
+    const next = `${window.location.pathname}?${sp.toString()}`
+    window.history.replaceState({}, '', next)
+  }, [
+    selectedDays,
+    topLimit,
+    selectedCategory,
+    selectedBlueprintId,
+    selectedLibrary,
+    selectedLibraries,
+    selectedRelease,
+  ])
 
   // ──────────────────────────────────────────────────────────────
   // THEME TOKENS & SHARED STYLES
@@ -600,7 +681,8 @@ const DownloadsMetricsPage: React.FC = () => {
                     whiteSpace: 'nowrap',
                   }}
                 >
-                  {item.blueprint_release ?? '-'}
+                  {item.blueprint_release ??
+                    (selectedRelease !== 'ALL' ? selectedRelease : '-')}
                 </td>
                 <td
                   style={{
@@ -705,12 +787,28 @@ const DownloadsMetricsPage: React.FC = () => {
         r.blueprint_id !== selectedBlueprintId
       )
         return
-      if (selectedLibrary !== 'ALL' && r.blueprint_library !== selectedLibrary)
+      if (selectedLibraries.length > 0) {
+        if (
+          !r.blueprint_library ||
+          !selectedLibraries.includes(r.blueprint_library)
+        )
+          return
+      } else if (
+        selectedLibrary !== 'ALL' &&
+        r.blueprint_library !== selectedLibrary
+      ) {
         return
+      }
       if (r.blueprint_release) set.add(r.blueprint_release)
     })
     return Array.from(set).sort()
-  }, [aggregates, selectedCategory, selectedBlueprintId, selectedLibrary])
+  }, [
+    aggregates,
+    selectedCategory,
+    selectedBlueprintId,
+    selectedLibrary,
+    selectedLibraries,
+  ])
 
   const categoryData = useMemo(
     () =>
@@ -764,8 +862,18 @@ const DownloadsMetricsPage: React.FC = () => {
         r.blueprint_id !== selectedBlueprintId
       )
         return false
-      if (selectedLibrary !== 'ALL' && r.blueprint_library !== selectedLibrary)
+      if (selectedLibraries.length > 0) {
+        if (
+          !r.blueprint_library ||
+          !selectedLibraries.includes(r.blueprint_library)
+        )
+          return false
+      } else if (
+        selectedLibrary !== 'ALL' &&
+        r.blueprint_library !== selectedLibrary
+      ) {
         return false
+      }
       if (selectedRelease !== 'ALL' && r.blueprint_release !== selectedRelease)
         return false
       return true
@@ -775,6 +883,7 @@ const DownloadsMetricsPage: React.FC = () => {
     selectedCategory,
     selectedBlueprintId,
     selectedLibrary,
+    selectedLibraries,
     selectedRelease,
   ])
 
@@ -893,15 +1002,36 @@ const DownloadsMetricsPage: React.FC = () => {
   // Top N bar data from sorted rows
   const topNBarData: TopBlueprintBarData[] = useMemo(
     () =>
-      sortedViewRows.slice(0, topLimit).map((row) => ({
-        id: row.blueprint_id,
-        name:
-          row.blueprint_id.length > 40
-            ? `${row.blueprint_id.substring(0, 37)}...`
-            : row.blueprint_id,
-        Downloads: row.total,
-      })),
-    [sortedViewRows, topLimit],
+      sortedViewRows.slice(0, topLimit).map((row) => {
+        const parts: string[] = [row.blueprint_id]
+
+        // When we are comparing multiple libraries, show which library each bar belongs to.
+        if (
+          drillLevel === 'library' ||
+          drillLevel === 'release' ||
+          drillLevel === 'detail'
+        ) {
+          if (row.blueprint_library) parts.push(row.blueprint_library)
+        }
+
+        // When we are at release scope, include release in the label too.
+        if (drillLevel === 'release' || drillLevel === 'detail') {
+          if (row.blueprint_release) parts.push(row.blueprint_release)
+        }
+
+        const labelRaw = parts.join(' • ')
+        const label =
+          labelRaw.length > 60 ? `${labelRaw.substring(0, 57)}...` : labelRaw
+
+        return {
+          id: row.blueprint_id,
+          label,
+          blueprint_library: row.blueprint_library ?? null,
+          blueprint_release: row.blueprint_release ?? null,
+          Downloads: row.total,
+        }
+      }),
+    [sortedViewRows, topLimit, drillLevel],
   )
 
   // ──────────────────────────────────────────────────────────────
@@ -974,6 +1104,7 @@ const DownloadsMetricsPage: React.FC = () => {
     selectedCategory,
     selectedBlueprintId,
     selectedLibrary,
+    selectedLibraries,
     selectedRelease,
   ])
 
@@ -1004,6 +1135,7 @@ const DownloadsMetricsPage: React.FC = () => {
     selectedCategory,
     selectedBlueprintId,
     selectedLibrary,
+    selectedLibraries,
     selectedRelease,
   ])
 
@@ -1173,18 +1305,80 @@ const DownloadsMetricsPage: React.FC = () => {
       selectedCategory === 'ALL' ? null : (selectedCategory as string)
     const effectiveId =
       selectedBlueprintId === 'ALL' ? null : selectedBlueprintId
-    const effectiveLibrary = selectedLibrary === 'ALL' ? null : selectedLibrary
+    const effectiveLibraries = selectedLibraries.length
+      ? selectedLibraries
+      : selectedLibrary === 'ALL'
+        ? []
+        : [selectedLibrary]
+    const effectiveLibrary =
+      effectiveLibraries.length === 1 ? effectiveLibraries[0] : null
     const effectiveRelease = selectedRelease === 'ALL' ? null : selectedRelease
 
     ;(async () => {
       try {
-        const rows = await getDailyDownloadsSeries({
-          days: selectedDays,
-          category: effectiveCategory,
-          id: effectiveId,
-          library: effectiveLibrary,
-          release: effectiveRelease,
-        })
+        let rows: DailyDownloadsRow[] = []
+        if (effectiveLibraries.length <= 1) {
+          const effectiveLibraries = selectedLibraries.length
+            ? selectedLibraries
+            : selectedLibrary === 'ALL'
+              ? []
+              : [selectedLibrary]
+
+          if (effectiveLibraries.length <= 1) {
+            const lib =
+              effectiveLibraries.length === 1 ? effectiveLibraries[0] : null
+            rows = await getDailyDownloadsSeries({
+              days: selectedDays,
+              category: effectiveCategory,
+              id: effectiveId,
+              library: lib,
+              release: effectiveRelease,
+            })
+          } else {
+            // Multi-library compare: fetch each library and sum by day
+            const results = await Promise.all(
+              effectiveLibraries.map((lib) =>
+                getDailyDownloadsSeries({
+                  days: selectedDays,
+                  category: effectiveCategory,
+                  id: effectiveId,
+                  library: lib,
+                  release: effectiveRelease,
+                }),
+              ),
+            )
+            const map = new Map<string, number>()
+            for (const arr of results) {
+              for (const r of arr) {
+                map.set(r.day, (map.get(r.day) ?? 0) + Number(r.total ?? 0))
+              }
+            }
+            rows = Array.from(map.entries())
+              .sort((a, b) => a[0].localeCompare(b[0]))
+              .map(([day, total]) => ({ day, total }))
+          }
+        } else {
+          const all = await Promise.all(
+            effectiveLibraries.map((lib) =>
+              getDailyDownloadsSeries({
+                days: selectedDays,
+                category: effectiveCategory,
+                id: effectiveId,
+                library: lib,
+                release: effectiveRelease,
+              }),
+            ),
+          )
+          const merged = new Map<string, number>()
+          for (const series of all) {
+            for (const r of series) {
+              merged.set(r.day, (merged.get(r.day) ?? 0) + Number(r.total ?? 0))
+            }
+          }
+          rows = Array.from(merged.entries())
+            .sort((a, b) => a[0].localeCompare(b[0]))
+            .map(([day, total]) => ({ day, total }))
+        }
 
         const dailyParsed = fillMissingDailyData(rows, selectedDays)
         setMetricsData((prev) => ({ ...prev, daily: dailyParsed }))
@@ -1203,6 +1397,7 @@ const DownloadsMetricsPage: React.FC = () => {
     selectedCategory,
     selectedBlueprintId,
     selectedLibrary,
+    selectedLibraries,
     selectedRelease,
   ])
 
@@ -1492,7 +1687,8 @@ const DownloadsMetricsPage: React.FC = () => {
                       disabled={
                         selectedCategory === 'ALL' ||
                         selectedBlueprintId === 'ALL' ||
-                        selectedLibrary === 'ALL'
+                        selectedLibrary === 'ALL' ||
+                        selectedLibraries.length > 1
                       }
                     >
                       <option value='ALL'>ALL</option>
@@ -1502,6 +1698,27 @@ const DownloadsMetricsPage: React.FC = () => {
                         </option>
                       ))}
                     </select>
+
+                    <div style={{ marginTop: '8px' }}>
+                      <label
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '8px',
+                          fontSize: '12px',
+                          color: THEME.textSecondary,
+                        }}
+                        title='Optional: enable only if you later add a version-aware analytics RPC'
+                      >
+                        <input
+                          type='checkbox'
+                          checked={showVersions}
+                          onChange={(e) => setShowVersions(e.target.checked)}
+                          disabled
+                        />
+                        Version (optional)
+                      </label>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1691,12 +1908,14 @@ const DownloadsMetricsPage: React.FC = () => {
                   >
                     {selectedCategory === 'ALL'
                       ? `Top ${topLimit} Blueprints (All Categories)`
-                      : selectedLibrary !== 'ALL'
-                        ? `Top ${topLimit} Controller Blueprints (${selectedLibrary})`
-                        : `Top ${topLimit} ${
-                            selectedCategory.charAt(0).toUpperCase() +
-                            selectedCategory.slice(1)
-                          } Blueprints`}
+                      : selectedLibraries.length > 0
+                        ? `Top ${topLimit} Blueprints (Libraries: ${selectedLibraries.length})`
+                        : selectedLibrary !== 'ALL'
+                          ? `Top ${topLimit} Blueprints (${selectedLibrary})`
+                          : `Top ${topLimit} ${
+                              selectedCategory.charAt(0).toUpperCase() +
+                              selectedCategory.slice(1)
+                            } Blueprints`}
                   </h3>
 
                   {availableLibraries.length > 0 && (
@@ -1712,7 +1931,12 @@ const DownloadsMetricsPage: React.FC = () => {
                       </label>
                       <select
                         value={selectedLibrary}
-                        onChange={(e) => setSelectedLibrary(e.target.value)}
+                        onChange={(e) => {
+                          const value = e.target.value
+                          setSelectedLibrary(value)
+                          setSelectedLibraries([]) // leave compare mode
+                          if (value === 'ALL') setSelectedRelease('ALL')
+                        }}
                         style={{
                           padding: '4px 8px',
                           fontSize: '0.85rem',
@@ -1729,6 +1953,96 @@ const DownloadsMetricsPage: React.FC = () => {
                           </option>
                         ))}
                       </select>
+
+                      {/* Compare: multi-select libraries (stays on this view) */}
+                      <div style={{ marginTop: '10px' }}>
+                        <div
+                          style={{
+                            fontSize: '0.8rem',
+                            color: THEME.textSecondary,
+                            marginBottom: '6px',
+                          }}
+                        >
+                          Compare libraries (multi-select):
+                        </div>
+
+                        <div
+                          style={{
+                            display: 'flex',
+                            flexWrap: 'wrap',
+                            gap: '8px',
+                            maxHeight: '84px',
+                            overflowY: 'auto',
+                            padding: '6px',
+                            border: `1px solid ${THEME.gridLine}`,
+                            borderRadius: '6px',
+                          }}
+                        >
+                          {availableLibraries.map((lib) => {
+                            const checked = selectedLibraries.includes(lib)
+                            return (
+                              <label
+                                key={lib}
+                                style={{
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: '6px',
+                                  fontSize: '0.8rem',
+                                  cursor: 'pointer',
+                                  userSelect: 'none',
+                                }}
+                              >
+                                <input
+                                  type='checkbox'
+                                  checked={checked}
+                                  onChange={() => {
+                                    setSelectedLibraries((prev) => {
+                                      const next = checked
+                                        ? prev.filter((x) => x !== lib)
+                                        : [...prev, lib]
+
+                                      // If exactly one selected, mirror into primary selection for release drill
+                                      if (next.length === 1) {
+                                        setSelectedLibrary(next[0])
+                                      } else {
+                                        setSelectedLibrary('ALL')
+                                      }
+
+                                      // Release-level drill only makes sense with a single library
+                                      if (next.length !== 1)
+                                        setSelectedRelease('ALL')
+
+                                      return next
+                                    })
+                                  }}
+                                />
+                                <span style={{ color: THEME.textPrimary }}>
+                                  {lib}
+                                </span>
+                              </label>
+                            )
+                          })}
+
+                          {availableLibraries.length === 0 && (
+                            <span style={{ color: THEME.textSecondary }}>
+                              No libraries found for current selection.
+                            </span>
+                          )}
+                        </div>
+
+                        {selectedLibraries.length > 1 && (
+                          <div
+                            style={{
+                              marginTop: '6px',
+                              fontSize: '0.75rem',
+                              color: THEME.textSecondary,
+                            }}
+                          >
+                            Release drill-down is disabled while comparing
+                            multiple libraries.
+                          </div>
+                        )}
+                      </div>
                     </div>
                   )}
                 </div>
@@ -1825,7 +2139,7 @@ const DownloadsMetricsPage: React.FC = () => {
                         allowDecimals={false}
                       />
                       <YAxis
-                        dataKey='name'
+                        dataKey='label'
                         type='category'
                         width={100}
                         tickLine={false}
@@ -1843,18 +2157,16 @@ const DownloadsMetricsPage: React.FC = () => {
                       <Bar
                         dataKey='Downloads'
                         name='# of Downloads'
-                        fill={
-                          selectedLibrary !== 'ALL'
-                            ? colorScale(selectedLibrary)
-                            : colorScale(
-                                selectedCategory === 'ALL'
-                                  ? 'top-all'
-                                  : selectedCategory,
-                              )
-                        }
                         barSize={20}
                         radius={[0, 4, 4, 0]}
-                      />
+                      >
+                        {topNBarData.map((entry, idx) => (
+                          <Cell
+                            key={`cell-${entry.id}-${entry.blueprint_library ?? 'ALL'}-${entry.blueprint_release ?? 'ALL'}-${idx}`}
+                            fill={idColorScale(entry.id) as any}
+                          />
+                        ))}
+                      </Bar>
                     </BarChart>
                   </ResponsiveContainer>
                 ) : (
