@@ -3,7 +3,7 @@ import Layout from '@theme/Layout'
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext'
 import { createClient, Session } from '@supabase/supabase-js'
 
-export default function MaintainPage(): JSX.Element {
+export default function MaintainerPage(): JSX.Element {
   const { siteConfig } = useDocusaurusContext()
 
   // 1. Destructure env variables safely
@@ -47,7 +47,7 @@ export default function MaintainPage(): JSX.Element {
       provider: 'github',
       options: {
         // Ensuring the redirect path is clean
-        redirectTo: window.location.origin + siteConfig.baseUrl + 'maintain',
+        redirectTo: window.location.origin + siteConfig.baseUrl + 'maintainer',
       },
     })
   }
