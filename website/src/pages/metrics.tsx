@@ -671,7 +671,8 @@ const DownloadsMetricsPage: React.FC = () => {
                     whiteSpace: 'nowrap',
                   }}
                 >
-                  {item.blueprint_library ?? effectiveLibrary ?? '-'}
+                  {item.blueprint_library ??
+                    (selectedLibrary !== 'ALL' ? selectedLibrary : '-')}
                 </td>
                 <td
                   style={{
@@ -1309,8 +1310,7 @@ const DownloadsMetricsPage: React.FC = () => {
       : selectedLibrary === 'ALL'
         ? []
         : [selectedLibrary]
-    const effectiveLibrary =
-      effectiveLibraries.length === 1 ? effectiveLibraries[0] : null
+    effectiveLibraries.length === 1 ? effectiveLibraries[0] : null
     const effectiveRelease = selectedRelease === 'ALL' ? null : selectedRelease
 
     ;(async () => {
