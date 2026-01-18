@@ -1329,7 +1329,7 @@ const DownloadsMetricsPage: React.FC = () => {
               category: effectiveCategory,
               id: effectiveId,
               library: lib,
-              release: effectiveRelease,
+              release: selectedRelease !== 'ALL' ? selectedRelease : null,
             })
           } else {
             // Multi-library compare: fetch each library and sum by day
@@ -1340,7 +1340,7 @@ const DownloadsMetricsPage: React.FC = () => {
                   category: effectiveCategory,
                   id: effectiveId,
                   library: lib,
-                  release: effectiveRelease,
+                  release: selectedRelease !== 'ALL' ? selectedRelease : null,
                 }),
               ),
             )
@@ -1362,7 +1362,7 @@ const DownloadsMetricsPage: React.FC = () => {
                 category: effectiveCategory,
                 id: effectiveId,
                 library: lib,
-                release: effectiveRelease,
+                release: selectedRelease !== 'ALL' ? selectedRelease : null,
               }),
             ),
           )
