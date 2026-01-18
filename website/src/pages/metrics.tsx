@@ -1311,8 +1311,6 @@ const DownloadsMetricsPage: React.FC = () => {
         ? []
         : [selectedLibrary]
     effectiveLibraries.length === 1 ? effectiveLibraries[0] : null
-    const effectiveRelease = selectedRelease === 'ALL' ? null : selectedRelease
-
     ;(async () => {
       try {
         let rows: DailyDownloadsRow[] = []
