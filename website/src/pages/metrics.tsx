@@ -671,7 +671,7 @@ const DownloadsMetricsPage: React.FC = () => {
                     whiteSpace: 'nowrap',
                   }}
                 >
-                  {item.blueprint_library ?? '—'}
+                  {item.blueprint_library ?? effectiveLibrary ?? '-'}
                 </td>
                 <td
                   style={{
