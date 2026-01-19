@@ -13,7 +13,7 @@
  */
 
 import React from 'react'
-import changelogSchema from '@site/schemas/changelog.schema.json'
+//import changelogSchema from '@site/schemas/changelog.schema.json'
 
 interface ChangelogPanelProps {
   data: unknown
