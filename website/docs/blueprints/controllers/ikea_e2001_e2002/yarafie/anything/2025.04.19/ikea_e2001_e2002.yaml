@@ -45,6 +45,9 @@ blueprint:
   author: yarafie
   domain: automation
   description: |
+    # z2m - IKEA STYRBAR remote control (E2001/E2002)
+
+    ℹ️ Version 2025.04.19
 
     This blueprint is for the IKEA STYRBAR square, 4-button remote when used with zigbee2mqtt.
     It is for general use so all buttons can be connected to any action of your choice.
@@ -323,8 +326,6 @@ max_exceeded: silent
 #
 # Automation schema
 variables:
-  ahb_version: 2025.04.19
-  ahb_maintainers: [yarafie]
   # Remote ID
   remote_device: !input remote_device
   # integration id used to select items in the action mapping

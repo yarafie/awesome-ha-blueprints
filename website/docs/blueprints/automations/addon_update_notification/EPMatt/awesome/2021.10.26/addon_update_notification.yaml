@@ -4,16 +4,17 @@ blueprint:
   description: |
     # Send a mobile notification when add-on update is available
 
+    ℹ️ Version 2021.10.26
+
     Send a notification to the provided mobile devices whenever an update for the given Home Assistant add-on is available.
     Supports full notification customization, notification groups, auto-dismissal when the add-on is updated and button for starting the update directly from your notification tray,
     with optional notification after the update completed succesfully.
 
-    📕 Full documentation regarding this blueprint is available [here](https://epmatt.github.io/awesome-ha-blueprints/docs/blueprints/automation/addon_update_notification).
+    📕 Full documentation regarding this blueprint is available [here](https://yarafie.github.io/awesome-ha-blueprints/docs/blueprints/automation/addon_update_notification).
 
-    🚀 This blueprint is part of the **[Awesome HA Blueprints](https://epmatt.github.io/awesome-ha-blueprints) project**.
+    🚀 This blueprint is part of the **[Awesome HA Blueprints](https://yarafie.github.io/awesome-ha-blueprints) project**.
 
-    ℹ️ Version 2021.10.26
-  source_url: https://github.com/EPMatt/awesome-ha-blueprints/blob/main/blueprints/automation/addon_update_notification/addon_update_notification.yaml
+  source_url: https://github.com/yarafie/awesome-ha-blueprints/blob/main/blueprints/automation/addon_update_notification/EPMatt/awesome/2021.10.26/addon_update_notification.yaml
   domain: automation
   input:
     addon:
@@ -146,8 +147,6 @@ blueprint:
           multiline: true
 # Automation schema
 variables:
-  ahb_version: 2025.11.04
-  ahb_maintainers: [EPMatt]
   # convert blueprint inputs to variables to be used in templates
   notification_title: !input notification_title
   notification_message: !input notification_message

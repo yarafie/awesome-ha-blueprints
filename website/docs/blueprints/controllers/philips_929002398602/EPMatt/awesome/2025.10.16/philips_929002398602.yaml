@@ -4,6 +4,8 @@ blueprint:
   description: |
     # Controller - Philips 929002398602 Hue Dimmer switch v2
 
+    ℹ️ Version 2025.10.16
+
     Controller automation for executing any kind of action triggered by the provided Philips 929002398602 Hue Dimmer switch v2.
     Allows to optionally loop an action on a button long press.
     The blueprint also adds support for virtual double button press events, which are not exposed by the controller device itself. However, It needs to be enabled in the blueprint.
@@ -11,19 +13,18 @@ blueprint:
 
     Automations created with this blueprint can be connected with one or more [Hooks](https://yarafie.github.io/awesome-ha-blueprints/docs/blueprints/hooks) supported by this controller.
     Hooks allow to easily create controller-based automations for interacting with lights, covers, media players, and potentially more.
-    See the list of [Hooks available for this controller](https://yarafie.github.io/awesome-ha-blueprints/docs/blueprints/controllers/philips_929002398602#available-hooks) for additional details.
+    See the list of [Hooks available for this controller](https://yarafie.github.io/awesome-ha-blueprints/docs/blueprints/controllers/philips_929002398602/EPMatt/awesome/2025.10.16#available-hooks) for additional details.
 
     A small note, avoid using both custom actions and Hooks in the same blueprint, otherwise strange things may occur.
 
     ## More Info
 
-    ℹ️ Version 2025.10.16
-    📝 [Changelog](https://yarafie.github.io/awesome-ha-blueprints/docs/blueprints/controllers/philips_929002398602/#changelog)
+    📝 [Changelog](https://yarafie.github.io/awesome-ha-blueprints/docs/blueprints/controllers/philips_929002398602/EPMatt/awesome/2025.10.16#changelog)
     📕 Full documentation regarding this blueprint is available [here](https://yarafie.github.io/awesome-ha-blueprints/docs/blueprints/controllers/philips_929002398602).
 
     🚀 This blueprint is part of the **[Awesome HA Blueprints](https://yarafie.github.io/awesome-ha-blueprints) project**. Please consider **[leaving a star on GitHub](https://github.com/yarafie/awesome-ha-blueprints)**! 🌟
 
-  source_url: https://github.com/yarafie/awesome-ha-blueprints/blob/main/blueprints/controllers/philips_929002398602/philips_929002398602.yaml
+  source_url: https://github.com/yarafie/awesome-ha-blueprints/blob/main/blueprints/controllers/philips_929002398602/EPMatt/awesome/2025.10.16/philips_929002398602.yaml
   domain: automation
   homeassistant:
     min_version: 2024.10.0
@@ -290,8 +291,6 @@ blueprint:
 #
 # Automation schema
 variables:
-  ahb_version: 2025.11.04
-  ahb_maintainers: [EPMatt]
   # Controller ID
   controller_id: !input controller_device
   # integration id used to select items in the action mapping

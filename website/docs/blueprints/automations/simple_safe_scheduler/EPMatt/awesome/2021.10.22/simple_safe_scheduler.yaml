@@ -4,6 +4,8 @@ blueprint:
   description: >
     # Simple Safe Scheduler
 
+    ℹ️ Version 2021.10.22
+
     A simple scheduler which executes a certain action at a given time, checking and eventually re-executing the action if the automation did not run at the expected time (e.g. due to a disruptive event).
 
 
@@ -29,14 +31,12 @@ blueprint:
     In addition, the blueprint implements useful checks to make sure that, in case of a disruptive event (e.g power outage, Home Assistant server outage etc.) happening at the scheduled automation run time, the action is executed as soon as the system restores its state. These checks can be configured to be performed both when Home Assistant boots up and when a custom event is fired (e.g. from another automation or integration). Such safety checks might be particularly important for critical automations, which need to run as close as possible to the scheduled time (e.g. watering plants, configuring an alarm system, etc.).
 
 
-    📕 Full documentation regarding this blueprint is available [here](https://epmatt.github.io/awesome-ha-blueprints/docs/blueprints/automation/simple_safe_scheduler).
+    📕 Full documentation regarding this blueprint is available [here](https://yarafie.github.io/awesome-ha-blueprints/docs/blueprints/automation/simple_safe_scheduler).
 
 
-    🚀 This blueprint is part of the **[Awesome HA Blueprints](https://epmatt.github.io/awesome-ha-blueprints) project**.
+    🚀 This blueprint is part of the **[Awesome HA Blueprints](https://yarafie.github.io/awesome-ha-blueprints) project**.
 
-
-    ℹ️ Version 2021.10.22
-  source_url: https://github.com/EPMatt/awesome-ha-blueprints/blob/main/blueprints/automation/simple_safe_scheduler/simple_safe_scheduler.yaml
+  source_url: https://github.com/yarafie/awesome-ha-blueprints/blob/main/blueprints/automation/simple_safe_scheduler/EPMatt/awesome/2021.10.22/simple_safe_scheduler.yaml
   domain: automation
   input:
     action:
@@ -138,8 +138,6 @@ blueprint:
           mode: slider
 # Automation schema
 variables:
-  ahb_version: 2025.11.04
-  ahb_maintainers: [EPMatt]
   # convert input tags to variables, to be used in templates
   day_monday: !input day_monday
   day_tuesday: !input day_tuesday

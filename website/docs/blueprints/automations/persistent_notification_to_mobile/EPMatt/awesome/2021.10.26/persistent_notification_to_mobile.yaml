@@ -4,14 +4,15 @@ blueprint:
   description: |
     # Send Web UI persistent notifications to Mobile Devices
 
+    ℹ️ Version 2021.10.26
+
     Send Web UI persistent notifications with the provided ID to the specified Mobile Devices.
 
-    📕 Full documentation regarding this blueprint is available [here](https://epmatt.github.io/awesome-ha-blueprints/docs/blueprints/automation/persistent_notification_to_mobile).
+    📕 Full documentation regarding this blueprint is available [here](https://yarafie.github.io/awesome-ha-blueprints/docs/blueprints/automation/persistent_notification_to_mobile).
 
-    🚀 This blueprint is part of the **[Awesome HA Blueprints](https://epmatt.github.io/awesome-ha-blueprints) project**.
+    🚀 This blueprint is part of the **[Awesome HA Blueprints](https://yarafie.github.io/awesome-ha-blueprints) project**.
 
-    ℹ️ Version 2021.10.26
-  source_url: https://github.com/EPMatt/awesome-ha-blueprints/blob/main/blueprints/automation/persistent_notification_to_mobile/persistent_notification_to_mobile.yaml
+  source_url: https://github.com/yarafie/awesome-ha-blueprints/blob/main/blueprints/automation/persistent_notification_to_mobile/EPMatt/awesome/2021.10.26/persistent_notification_to_mobile.yaml
   domain: automation
   input:
     notification_id:
@@ -53,8 +54,6 @@ blueprint:
         text:
 # Automation schema
 variables:
-  ahb_version: 2025.11.04
-  ahb_maintainers: [EPMatt]
   # convert input tags to variables, to be used in templates
   notification_id: !input notification_id
   replace_notifications: !input replace_notifications

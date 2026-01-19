@@ -4,23 +4,24 @@ blueprint:
   description: |
     # Controller - Shelly Button 1
 
+    ℹ️ Version 2025.04.12
+
     Controller automation for executing any kind of action triggered by the provided Shelly Button 1.
     Allows to optionally loop an action on a button long press.
     Supports Shelly Integration.
 
     Automations created with this blueprint can be connected with one or more [Hooks](https://yarafie.github.io/awesome-ha-blueprints/docs/blueprints/hooks) supported by this controller.
     Hooks allow to easily create controller-based automations for interacting with lights, covers, media players, and potentially more.
-    See the list of [Hooks available for this controller](https://yarafie.github.io/awesome-ha-blueprints/docs/blueprints/controllers/shelly_button_1#available-hooks) for additional details.
+    See the list of [Hooks available for this controller](https://yarafie.github.io/awesome-ha-blueprints/docs/blueprints/controllers/shelly_button_1/EPMatt/awesome/2025.04.12#available-hooks) for additional details.
 
     ## More Info
 
-    ℹ️ Version 2025.04.12
-    📝 [Changelog](https://yarafie.github.io/awesome-ha-blueprints/docs/blueprints/controllers/shelly_button_1/#changelog)
+    📝 [Changelog](https://yarafie.github.io/awesome-ha-blueprints/docs/blueprints/controllers/shelly_button_1/EPMatt/awesome/2025.04.12#changelog)
     📕 Full documentation regarding this blueprint is available [here](https://yarafie.github.io/awesome-ha-blueprints/docs/blueprints/controllers/shelly_button_1).
 
     🚀 This blueprint is part of the **[Awesome HA Blueprints](https://yarafie.github.io/awesome-ha-blueprints) project**. Please consider **[leaving a star on GitHub](https://github.com/yarafie/awesome-ha-blueprints)**! 🌟
 
-  source_url: https://github.com/yarafie/awesome-ha-blueprints/blob/main/blueprints/controllers/shelly_button_1/shelly_button_1.yaml
+  source_url: https://github.com/yarafie/awesome-ha-blueprints/blob/main/blueprints/controllers/shelly_button_1/EPMatt/awesome/2025.04.12/shelly_button_1.yaml
   domain: automation
   homeassistant:
     min_version: 2024.10.0
@@ -101,8 +102,6 @@ blueprint:
 #
 # Automation schema
 variables:
-  ahb_version: 2025.11.04
-  ahb_maintainers: [EPMatt]
   # Controller ID
   controller_id: !input controller_device
   # integration id used to select items in the action mapping
