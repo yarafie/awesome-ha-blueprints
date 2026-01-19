@@ -1,12 +1,22 @@
 /**
  * Component: ContributorHeader
- * - header + mock auth
- * - SSR/SSG safe: window only inside useEffect
+ * ────────────────────────────────────────────────────────────────
+ *
+ * Purpose:
+ *  - Contributor page header
+ *  - GitHub OAuth entry point (Supabase)
+ *  - Dispatches auth lifecycle events into auth reducer
+ *
+ * Notes:
+ *  - No authorization logic (contributors are open)
+ *  - No email checks
+ *  - Auth session hydration happens in ContributorsApp
+ *  - SSR/SSG safe: window access only in event handlers
  */
-
-import React, { useEffect, useState } from 'react'
-import type { AuthEvent, AuthState, GitHubUser } from '../state/authState'
-import { parseAuthRedirect, clearAuthParams } from '../state/parseAuthRedirect'
+import React, { useMemo } from 'react'
+import type { AuthEvent, AuthState } from '../state/authState'
+import { createClient } from '@supabase/supabase-js'
+import useDocusaurusContext from '@docusaurus/useDocusaurusContext'
 
 interface Props {
   authState: AuthState
@@ -14,48 +24,45 @@ interface Props {
 }
 
 const ContributorHeader: React.FC<Props> = ({ authState, authDispatch }) => {
-  const [githubInput, setGithubInput] = useState('')
+  const { siteConfig } = useDocusaurusContext()
 
-  useEffect(() => {
-    if (typeof window === 'undefined') return
-    const event = parseAuthRedirect(window.location)
-    if (event) {
-      authDispatch(event)
-      clearAuthParams(window.location)
-    }
-  }, [authDispatch])
-
-  const handleAuthStart = () => {
-    authDispatch({ type: 'AUTH_START' })
-    setTimeout(() => {
-      const login = githubInput.trim()
-      if (!login) {
-        authDispatch({
-          type: 'AUTH_ERROR',
-          error: 'GitHub username is required',
-        })
-        return
-      }
-      const mockUser: GitHubUser = {
-        id: 1,
-        login,
-        name: login,
-        avatar_url: `https://avatars.githubusercontent.com/${login}`,
-        html_url: `https://github.com/${login}`,
-      }
-      authDispatch({ type: 'AUTH_SUCCESS', user: mockUser })
-    }, 500)
+  const { SUPABASE_URL, SUPABASE_ANON_KEY } = (siteConfig.customFields.env ||
+    {}) as {
+    SUPABASE_URL: string
+    SUPABASE_ANON_KEY: string
   }
 
-  const handleLogout = () => {
+  if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+    throw new Error('Supabase environment variables are not configured')
+  }
+
+  const supabase = useMemo(
+    () => createClient(SUPABASE_URL, SUPABASE_ANON_KEY),
+    [SUPABASE_URL, SUPABASE_ANON_KEY],
+  )
+
+  const handleLogin = async () => {
+    authDispatch({ type: 'AUTH_START' })
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'github',
+      options: {
+        redirectTo:
+          window.location.origin + siteConfig.baseUrl + 'contributors',
+      },
+    })
+    if (error) {
+      authDispatch({ type: 'AUTH_ERROR', error: error.message })
+    }
+  }
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut()
     authDispatch({ type: 'AUTH_LOGOUT' })
-    setGithubInput('')
   }
 
   return (
     <div className='container padding-vert--lg'>
       <h1>Welcome to Awesome HA Library Contributors Page</h1>
-
       <div
         style={{
           marginTop: 24,
@@ -70,19 +77,9 @@ const ContributorHeader: React.FC<Props> = ({ authState, authDispatch }) => {
             <h3>GitHub Authentication</h3>
             <p>
               Authenticate with GitHub to contribute. Authentication is handled
-              securely using GitHub’s official authorization flow.
+              using GitHub OAuth.
             </p>
-            <input
-              type='text'
-              placeholder='GitHub username'
-              value={githubInput}
-              onChange={(e) => setGithubInput(e.target.value)}
-              style={{ width: '100%', padding: 8, marginBottom: 12 }}
-            />
-            <button
-              className='button button--primary'
-              onClick={handleAuthStart}
-            >
+            <button className='button button--primary' onClick={handleLogin}>
               Authenticate with GitHub
             </button>
           </>
@@ -91,7 +88,7 @@ const ContributorHeader: React.FC<Props> = ({ authState, authDispatch }) => {
         {authState.status === 'authenticating' && (
           <>
             <h3>Authenticating…</h3>
-            <p>Please wait while we verify your GitHub identity.</p>
+            <p>Please wait while GitHub authentication completes.</p>
           </>
         )}
 
@@ -121,7 +118,6 @@ const ContributorHeader: React.FC<Props> = ({ authState, authDispatch }) => {
                 </div>
               </div>
             </div>
-
             <div style={{ marginTop: 16 }}>
               <button
                 className='button button--secondary'
@@ -139,10 +135,7 @@ const ContributorHeader: React.FC<Props> = ({ authState, authDispatch }) => {
             <p style={{ color: 'var(--ifm-color-danger)' }}>
               {authState.error}
             </p>
-            <button
-              className='button button--primary'
-              onClick={handleAuthStart}
-            >
+            <button className='button button--primary' onClick={handleLogin}>
               Try Again
             </button>
           </>

@@ -1,8 +1,32 @@
+/**
+ * MaintainerPage
+ *
+ * Internal maintainer console entry point.
+ *
+ * Handles:
+ * - GitHub OAuth authentication via Supabase
+ * - client-side authorization using an allow-listed email set
+ * - guarded rendering of maintainer-only tooling
+ *
+ * This page acts as a UI access gate and orchestration shell.
+ * It is not a security boundary and must not be relied upon for
+ * server-side authorization or data protection.
+ *
+ * All privileged operations exposed through this page must be
+ * validated independently on the backend or external systems.
+ */
 import React, { useEffect, useState, useMemo } from 'react'
 import Layout from '@theme/Layout'
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext'
 import { createClient, Session } from '@supabase/supabase-js'
 
+// Maintainer Imports
+import MaintainerContextPanel from '../maintainer/MaintainerContextPanel'
+import MaintainerNavPanel from '../maintainer/MaintainerNavPanel'
+import SystemStatusPanel from '../maintainer/SystemStatusPanel'
+import SafeActionsPanel from '../maintainer/SafeActionsPanel'
+
+//Main
 export default function MaintainerPage(): JSX.Element {
   const { siteConfig } = useDocusaurusContext()
 
@@ -14,8 +38,17 @@ export default function MaintainerPage(): JSX.Element {
     ALLOWED_MAINTAINERS: string[]
   }
 
+  // 5️⃣ Fail fast if Supabase env vars are missing
+  if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+    throw new Error('Supabase environment variables are not configured') // ← added
+  }
+
+  // 6️⃣ Normalize allowed maintainers list
+  const allowedMaintainers = Array.isArray(ALLOWED_MAINTAINERS)
+    ? ALLOWED_MAINTAINERS
+    : [] // ← added
+
   // 2. Prevent client recreation using useMemo
-  // This ensures the Supabase instance is only created once.
   const supabase = useMemo(
     () => createClient(SUPABASE_URL, SUPABASE_ANON_KEY),
     [SUPABASE_URL, SUPABASE_ANON_KEY],
@@ -46,7 +79,6 @@ export default function MaintainerPage(): JSX.Element {
     await supabase.auth.signInWithOAuth({
       provider: 'github',
       options: {
-        // Ensuring the redirect path is clean
         redirectTo: window.location.origin + siteConfig.baseUrl + 'maintainer',
       },
     })
@@ -54,7 +86,7 @@ export default function MaintainerPage(): JSX.Element {
 
   const handleLogout = async () => {
     await supabase.auth.signOut()
-    setSession(null) // Clear local state immediately
+    setSession(null)
   }
 
   if (loading) {
@@ -68,9 +100,11 @@ export default function MaintainerPage(): JSX.Element {
   }
 
   const userEmail = session?.user?.email?.toLowerCase()
+
+  // 7️⃣ Explicit boolean authorization check
   const isAuthorized =
-    userEmail &&
-    ALLOWED_MAINTAINERS?.some((email) => email.toLowerCase() === userEmail)
+    !!userEmail &&
+    allowedMaintainers.some((email) => email.toLowerCase() === userEmail) // ← updated
 
   // VIEW: Unauthenticated
   if (!session) {
@@ -112,10 +146,17 @@ export default function MaintainerPage(): JSX.Element {
   return (
     <Layout title='Maintainer Dashboard'>
       <main style={{ padding: '2rem', maxWidth: '1000px', margin: '0 auto' }}>
-        <h1>Maintenance Dashboard</h1>
-        <div className='alert alert--success' role='alert'>
-          Logged in as: <strong>{userEmail}</strong>
-        </div>
+        <h1 style={{ marginBottom: '1.5rem' }}>Maintenance Dashboard</h1>
+
+        <section>
+          <MaintainerContextPanel session={session} />
+        </section>
+
+        <MaintainerNavPanel />
+
+        <SystemStatusPanel />
+
+        <SafeActionsPanel />
 
         <section
           style={{
@@ -130,9 +171,11 @@ export default function MaintainerPage(): JSX.Element {
             Welcome to the control panel. Use the tools below to manage the
             library.
           </p>
+
           {/* Add your custom management components here */}
 
           <hr />
+
           <button
             onClick={handleLogout}
             className='button button--outline button--danger'

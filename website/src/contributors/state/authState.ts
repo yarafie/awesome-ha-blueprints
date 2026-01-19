@@ -1,8 +1,7 @@
 /**
- * Auth State Contract – v1.1 (Hardened)
+ * Auth State Contract – v1.2 (Session-Aware)
  * Deterministic, side-effect free
  */
-
 export type AuthStatus =
   | 'unauthenticated'
   | 'authenticating'
@@ -42,7 +41,15 @@ export function authReducer(state: AuthState, event: AuthEvent): AuthState {
       return { status: 'authenticating', user: null, error: null }
 
     case 'AUTH_SUCCESS':
-      if (state.status !== 'authenticating') return state
+      // Allow success from:
+      // - interactive login (authenticating)
+      // - session hydration (unauthenticated)
+      if (
+        state.status !== 'authenticating' &&
+        state.status !== 'unauthenticated'
+      ) {
+        return state
+      }
       return { status: 'authenticated', user: event.user, error: null }
 
     case 'AUTH_ERROR':

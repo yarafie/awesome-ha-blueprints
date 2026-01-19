@@ -5,42 +5,102 @@
  * Purpose:
  *  - Single source of truth for contributor page state
  *  - Owns reducers and passes state/dispatch to UI blocks
+ *  - Hydrates contributor auth state from Supabase session
  *
  * IMPORTANT:
- *  - No backend calls
+ *  - No application backend calls (Supabase auth only)
  *  - SSR/SSG safe (no window access during render)
  *
  * Phase 3:
  *  - Wire full Blueprint Metadata UI fields (automation)
  *  - Submit shows Phase 6 payload preview ONLY
  */
-
 import React, { useEffect, useMemo, useReducer, useState } from 'react'
+import { createClient, Session } from '@supabase/supabase-js'
+import useDocusaurusContext from '@docusaurus/useDocusaurusContext'
+
 import ContributorHeader from './ContributorHeader'
 import ContributionTypeSelector from './ContributionTypeSelector'
 import YamlUpload from './YamlUpload'
 import YamlPreview from './YamlPreview'
-
 import { authReducer, initialAuthState } from '../state/authState'
 import {
   contributionReducer,
   initialContributionState,
 } from '../state/contributionState'
-
 import BlueprintMetadataForm from './BlueprintMetadataForm'
 import PayloadPreview from './PayloadPreview'
-
 import {
   deriveBlueprintMetadataDraft,
   type BlueprintMetadataDraft,
 } from '../state/deriveBlueprintMetadata'
 
 const ContributorsApp: React.FC = () => {
+  const { siteConfig } = useDocusaurusContext()
+
+  const { SUPABASE_URL, SUPABASE_ANON_KEY } = (siteConfig.customFields.env ||
+    {}) as {
+    SUPABASE_URL: string
+    SUPABASE_ANON_KEY: string
+  }
+
+  if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+    throw new Error('Supabase environment variables are not configured')
+  }
+
+  const supabase = useMemo(
+    () => createClient(SUPABASE_URL, SUPABASE_ANON_KEY),
+    [SUPABASE_URL, SUPABASE_ANON_KEY],
+  )
+
   const [authState, authDispatch] = useReducer(authReducer, initialAuthState)
   const [contributionState, contributionDispatch] = useReducer(
     contributionReducer,
     initialContributionState,
   )
+
+  /**
+   * Hydrate auth reducer from Supabase session
+   */
+  const hydrateFromSession = (session: Session) => {
+    const meta = session.user.user_metadata || {}
+
+    if (!meta.user_name || !meta.provider_id) return
+
+    authDispatch({
+      type: 'AUTH_SUCCESS',
+      user: {
+        id: Number(meta.provider_id),
+        login: meta.user_name,
+        name: meta.full_name,
+        avatar_url: meta.avatar_url,
+        html_url: `https://github.com/${meta.user_name}`,
+      },
+    })
+  }
+
+  /**
+   * Supabase auth session lifecycle
+   */
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => {
+      if (data.session) {
+        hydrateFromSession(data.session)
+      }
+    })
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!session) {
+        authDispatch({ type: 'AUTH_LOGOUT' })
+        return
+      }
+      hydrateFromSession(session)
+    })
+
+    return () => subscription.unsubscribe()
+  }, [supabase])
 
   const loggedIn = authState.user?.login ?? ''
   const isOwnerOverride = loggedIn === 'yarafie'
@@ -60,6 +120,7 @@ const ContributorsApp: React.FC = () => {
       yamlDescription: contributionState.yaml.description,
       loggedInUser: loggedIn,
     })
+
     setBlueprintDraft(d)
     setSubmitted(false)
   }, [contributionState.status, contributionState.yaml, loggedIn])
@@ -145,9 +206,7 @@ const ContributorsApp: React.FC = () => {
                     setDraft={setBlueprintDraft}
                     isOwnerOverride={isOwnerOverride}
                   />
-
                   <YamlPreview yaml={contributionState.yaml} />
-
                   <section className='container padding-vert--lg'>
                     <button
                       className='button button--primary'
@@ -156,7 +215,6 @@ const ContributorsApp: React.FC = () => {
                     >
                       Submit (Preview Phase 6 Payload)
                     </button>
-
                     {!canSubmit && (
                       <div
                         style={{ marginTop: 10, fontSize: 12, opacity: 0.75 }}
