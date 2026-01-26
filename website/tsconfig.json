@@ -3,7 +3,13 @@
   "compilerOptions": {
     "moduleResolution": "bundler",
     "baseUrl": ".",
-    "typeRoots": ["./node_modules/@types", "./types"]
+    "typeRoots": ["./node_modules/@types", "./types"],
+    "paths": {
+      "@src/*": ["src/*"],
+      "@library/*": ["src/library/*"],
+      "@schemas/*": ["schemas/*"],
+      "@blueprints/*": ["docs/blueprints/*"]
+    }
   },
   "exclude": [".docusaurus", "build"]
 }

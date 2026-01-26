@@ -1,0 +1,38 @@
+/* Page-level width control */
+.contributorsPage {
+  display: flex;
+  justify-content: center;
+  padding-bottom: var(--ifm-spacing-xxl);
+}
+
+.contributorsSection {
+  padding-bottom: var(--ifm-spacing-xl);
+}
+
+.contributorsHeader {
+  padding-bottom: calc(var(--ifm-spacing-xl) * 2);
+}
+
+/* Inner content width normalization */
+.contributorsInner {
+  width: 100%;
+  max-width: 1100px;
+  padding-inline: var(--ifm-spacing-lg);
+}
+
+/* Prevent accidental horizontal overflow */
+.contributorsInner * {
+  box-sizing: border-box;
+}
+
+/* rows layout will be horizontal */
+.updateTargetRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ifm-spacing-md);
+}
+
+.updateTargetRow select {
+  min-width: 160px;
+  flex: 1 1 160px;
+}

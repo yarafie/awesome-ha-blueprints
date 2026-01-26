@@ -9,7 +9,7 @@ import libraryDownloaderPlugin from './src/plugins/blueprint-downloader-plugin/l
 import blueprintImagesPlugin from './src/plugins/blueprint-images-plugin/blueprint-images-plugin.js'
 
 // Create a custom plugin for webpack configuration
-// the purpose of this plugin is to allow the use of the @blueprints and @librarysrc aliases
+// the purpose of this plugin is to allow the use of the @blueprints, @src, @library and @schemas aliases
 // and to copy blueprint yaml files under docs/blueprints as static assets
 function webpackConfigPlugin() {
   return {
@@ -19,7 +19,8 @@ function webpackConfigPlugin() {
         resolve: {
           alias: {
             '@blueprints': path.resolve(__dirname, 'docs/blueprints'),
-            '@librarysrc': path.resolve(__dirname, 'src'),
+            '@src': path.resolve(__dirname, 'src'),
+            '@library': path.resolve(__dirname, 'src/library'),
             '@schemas': path.resolve(__dirname, 'schemas'),
           },
         },
@@ -41,6 +42,7 @@ function webpackConfigPlugin() {
 const clientEnv = {
   SUPABASE_URL: process.env.SUPABASE_URL || '',
   SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY || '',
+  LIBRARY_MAINTAINERS: process.env.LIBRARY_MAINTAINERS || '',
   // Robust parsing: split, trim, and filter out empty values
   ALLOWED_MAINTAINERS: process.env.ALLOWED_MAINTAINERS
     ? process.env.ALLOWED_MAINTAINERS.split(',')

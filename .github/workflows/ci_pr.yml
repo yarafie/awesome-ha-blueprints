@@ -132,6 +132,7 @@ jobs:
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          LIBRARY_MAINTAINERS: ${{ secrets.LIBRARY_MAINTAINERS }}
           ALLOWED_MAINTAINERS: ${{ secrets.ALLOWED_MAINTAINERS }}
 
   changes:
