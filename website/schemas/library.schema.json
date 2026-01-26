@@ -6,27 +6,33 @@
   "type": "object",
 
   "required": [
-    "library_id",
+    "category",
     "blueprint_id",
+    "library_id",
     "title",
     "description",
-    "maintainers",
     "releases",
-    "category",
+    "maintainers",
     "status"
   ],
 
   "properties": {
-    "library_id": {
+    "category": {
       "type": "string",
-      "pattern": "^[a-zA-Z0-9_-]+$",
-      "description": "Owning library identifier (e.g. maintainer or organization name)."
+      "enum": ["controllers", "hooks", "automations"],
+      "description": "Blueprint category."
     },
 
     "blueprint_id": {
       "type": "string",
       "pattern": "^[a-zA-Z0-9_-]+$",
       "description": "Blueprint identifier this library belongs to."
+    },
+
+    "library_id": {
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9_-]+$",
+      "description": "Owning library identifier (e.g. maintainer or organization name)."
     },
 
     "title": {
@@ -39,6 +45,16 @@
       "type": "string",
       "minLength": 1,
       "description": "Short description of this blueprint library."
+    },
+
+    "releases": {
+      "type": "array",
+      "minItems": 1,
+      "description": "List of release identifiers under this library.",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-zA-Z0-9_-]+$"
+      }
     },
 
     "maintainers": {
@@ -67,28 +83,6 @@
       }
     },
 
-    "releases": {
-      "type": "array",
-      "minItems": 1,
-      "description": "List of release identifiers under this library.",
-      "items": {
-        "type": "string",
-        "pattern": "^[a-zA-Z0-9_-]+$"
-      }
-    },
-
-    "category": {
-      "type": "string",
-      "enum": ["controllers", "hooks", "automations"],
-      "description": "Blueprint category."
-    },
-
-    "status": {
-      "type": "string",
-      "enum": ["active", "deprecated"],
-      "description": "Lifecycle status of the library."
-    },
-
     "supported_integrations": {
       "type": "array",
       "description": "Integrations supported by this library (controllers only).",
@@ -115,6 +109,12 @@
           }
         }
       }
+    },
+
+    "status": {
+      "type": "string",
+      "enum": ["active", "deprecated"],
+      "description": "Lifecycle status of the library."
     }
   },
 
@@ -134,6 +134,7 @@
         }
       }
     },
+
     {
       "if": {
         "properties": {

@@ -12,16 +12,19 @@
       "pattern": "^[a-z0-9_]+$",
       "description": "Controller blueprint_id."
     },
+
     "library_id": {
       "type": "string",
       "pattern": "^[a-zA-Z0-9_-]+$",
       "description": "Library that owns this controller release."
     },
+
     "release_id": {
       "type": "string",
       "pattern": "^[a-zA-Z0-9_-]+$",
       "description": "Controller release identifier."
     },
+
     "hooks": {
       "type": "array",
       "minItems": 1,
@@ -31,6 +34,7 @@
       }
     }
   },
+
   "$defs": {
     "hook": {
       "type": "object",
@@ -57,6 +61,7 @@
         }
       }
     },
+
     "mapping_option": {
       "type": "object",
       "required": ["id", "label", "mappings"],
@@ -86,6 +91,7 @@
         }
       }
     },
+
     "mapping": {
       "type": "object",
       "required": ["event", "event_label", "action", "action_label"],

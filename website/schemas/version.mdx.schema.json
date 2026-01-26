@@ -7,35 +7,37 @@
   "required": ["title"],
   "additionalProperties": false,
   "properties": {
+    "id": {
+      "type": "string",
+      "description": "Optional Docusaurus page id override."
+    },
+
     "title": {
       "type": "string",
       "minLength": 1,
       "description": "Human-readable title shown at the top of the version documentation."
     },
+
     "description": {
       "type": "string",
       "description": "Optional short description shown under the title."
     },
-    "id": {
-      "type": "string",
-      "description": "Optional Docusaurus page id override."
-    },
-    "variant": {
-      "type": "string",
-      "description": "Legacy field mapping to release_id (deprecated, kept for backward compatibility)."
-    },
+
     "manufacturer": {
       "type": "string",
       "description": "Controller manufacturer (controllers only)."
     },
+
     "model": {
       "type": "string",
       "description": "Controller model identifier (controllers only)."
     },
+
     "model_name": {
       "type": "string",
       "description": "Human-readable controller model name (controllers only)."
     },
+
     "integrations": {
       "type": "array",
       "items": { "type": "string" },

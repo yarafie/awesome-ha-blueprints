@@ -5,40 +5,57 @@
   "description": "Canonical schema describing the identity and semantics of a blueprint (controller, hook, or automation).",
   "type": "object",
   "required": [
+    "category",
     "blueprint_id",
     "name",
     "description",
-    "category",
-    "status",
     "librarians",
-    "images"
+    "images",
+    "status"
   ],
   "properties": {
-    "blueprint_id": {
-      "type": "string",
-      "pattern": "^[a-z0-9_]+$",
-      "description": "Canonical blueprint identifier."
-    },
-    "name": {
-      "type": "string",
-      "minLength": 1,
-      "description": "Human-readable blueprint name."
-    },
-    "description": {
-      "type": "string",
-      "minLength": 1,
-      "description": "Canonical description of what this blueprint does."
-    },
     "category": {
       "type": "string",
       "enum": ["controllers", "hooks", "automations"],
       "description": "Blueprint category."
     },
-    "status": {
+
+    "blueprint_id": {
       "type": "string",
-      "enum": ["active", "deprecated"],
-      "description": "Default lifecycle status of this blueprint."
+      "pattern": "^[a-z0-9_]+$",
+      "description": "Canonical blueprint identifier."
     },
+
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Human-readable blueprint name."
+    },
+
+    "description": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Canonical description of what this blueprint does."
+    },
+
+    "manufacturer": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Device manufacturer (controllers only)."
+    },
+
+    "model": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Device model identifier (controllers only)."
+    },
+
+    "model_name": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Human-readable device model name (controllers only)."
+    },
+
     "librarians": {
       "type": "array",
       "minItems": 1,
@@ -64,6 +81,7 @@
         }
       }
     },
+
     "images": {
       "type": "array",
       "minItems": 1,
@@ -72,13 +90,7 @@
         "type": "string"
       }
     },
-    "tags": {
-      "type": "array",
-      "description": "Optional searchable tags for this blueprint.",
-      "items": {
-        "type": "string"
-      }
-    },
+
     "manual_files": {
       "type": "array",
       "description": "Optional documentation or manual files associated with this blueprint.",
@@ -86,6 +98,15 @@
         "type": "string"
       }
     },
+
+    "tags": {
+      "type": "array",
+      "description": "Optional searchable tags for this blueprint.",
+      "items": {
+        "type": "string"
+      }
+    },
+
     "external_references": {
       "type": "array",
       "description": "Optional external reference links related to this blueprint.",
@@ -105,22 +126,14 @@
         }
       }
     },
-    "manufacturer": {
+
+    "status": {
       "type": "string",
-      "minLength": 1,
-      "description": "Device manufacturer (controllers only)."
-    },
-    "model": {
-      "type": "string",
-      "minLength": 1,
-      "description": "Device model identifier (controllers only)."
-    },
-    "model_name": {
-      "type": "string",
-      "minLength": 1,
-      "description": "Human-readable device model name (controllers only)."
+      "enum": ["active", "deprecated"],
+      "description": "Default lifecycle status of this blueprint."
     }
   },
+
   "allOf": [
     {
       "if": {
@@ -132,6 +145,7 @@
         "required": ["manufacturer", "model", "model_name"]
       }
     },
+
     {
       "if": {
         "properties": {
@@ -149,5 +163,6 @@
       }
     }
   ],
+
   "additionalProperties": false
 }

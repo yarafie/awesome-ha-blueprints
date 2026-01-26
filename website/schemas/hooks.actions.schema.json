@@ -12,6 +12,7 @@
       "description": "Hook identifier (e.g. light, cover, media_player)",
       "pattern": "^[a-z0-9_]+$"
     },
+
     "actions": {
       "type": "array",
       "description": "List of actions supported by this hook release",
@@ -22,6 +23,7 @@
       }
     }
   },
+
   "$defs": {
     "action": {
       "type": "object",
@@ -33,21 +35,25 @@
           "description": "Canonical action identifier (matches YAML variable name)",
           "pattern": "^[a-z0-9_]+$"
         },
+
         "label": {
           "type": "string",
           "description": "Human-readable action label",
           "minLength": 1
         },
+
         "mode": {
           "type": "string",
           "description": "Execution behavior of the action",
           "enum": ["single", "continuous"]
         },
+
         "group": {
           "type": "string",
           "description": "Optional logical grouping for UI (e.g. Power, Brightness, Color, Transport)",
           "minLength": 1
         },
+
         "notes": {
           "type": "string",
           "description": "Optional clarifying notes shown in documentation"
