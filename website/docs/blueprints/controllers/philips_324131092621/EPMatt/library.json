@@ -5,6 +5,10 @@
   "description": "Controller blueprint library for philips_324131092621 maintained by EPMatt.",
   "maintainers": [
     {
+      "id": "yarafie",
+      "name": "yarafie"
+    },
+    {
       "id": "EPMatt",
       "name": "EPMatt"
     }

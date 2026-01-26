@@ -6,6 +6,10 @@
   "title": "Controller - IKEA E2213 SOMRIG shortcut button",
   "maintainers": [
     {
+      "id": "yarafie",
+      "name": "yarafie"
+    },
+    {
       "id": "EPMatt",
       "name": "EPMatt"
     }

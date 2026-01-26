@@ -6,6 +6,10 @@
   "title": "Controller - OSRAM AC025XX00NJ SMART+ Switch Mini",
   "maintainers": [
     {
+      "id": "yarafie",
+      "name": "yarafie"
+    },
+    {
       "id": "EPMatt",
       "name": "EPMatt"
     }

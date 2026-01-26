@@ -6,6 +6,10 @@
   "title": "Controller - Aqara DJT11LM Vibration Sensor",
   "maintainers": [
     {
+      "id": "yarafie",
+      "name": "yarafie"
+    },
+    {
       "id": "EPMatt",
       "name": "EPMatt"
     }

@@ -9,6 +9,10 @@
   "description": "Controller automation for executing any kind of action triggered by the provided Philips 8718699693985 Hue Smart Button.",
   "maintainers": [
     {
+      "id": "yarafie",
+      "name": "yarafie"
+    },
+    {
       "id": "EPMatt",
       "name": "EPMatt"
     }

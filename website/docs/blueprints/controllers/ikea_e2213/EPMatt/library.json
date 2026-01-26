@@ -5,6 +5,10 @@
   "description": "Controller blueprint library for ikea_e2213 maintained by EPMatt.",
   "maintainers": [
     {
+      "id": "yarafie",
+      "name": "yarafie"
+    },
+    {
       "id": "EPMatt",
       "name": "EPMatt"
     }

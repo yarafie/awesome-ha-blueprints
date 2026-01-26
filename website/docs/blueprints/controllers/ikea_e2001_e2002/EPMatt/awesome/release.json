@@ -6,6 +6,10 @@
   "title": "Controller - IKEA E2001/E2002 STYRBAR Remote control",
   "maintainers": [
     {
+      "id": "yarafie",
+      "name": "yarafie"
+    },
+    {
       "id": "EPMatt",
       "name": "EPMatt"
     }

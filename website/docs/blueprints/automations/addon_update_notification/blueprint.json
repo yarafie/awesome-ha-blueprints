@@ -7,6 +7,10 @@
   "description": "Send a notification to the provided mobile devices whenever an update for the given Home Assistant add-on is available.",
   "librarians": [
     {
+      "id": "yarafie",
+      "name": "yarafie"
+    },
+    {
       "id": "EPMatt",
       "name": "EPMatt"
     }

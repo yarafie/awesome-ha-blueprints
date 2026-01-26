@@ -6,6 +6,10 @@
   "title": "Controller - Xiaomi WXCJKG12LM Aqara Opple 4 button remote",
   "maintainers": [
     {
+      "id": "yarafie",
+      "name": "yarafie"
+    },
+    {
       "id": "EPMatt",
       "name": "EPMatt"
     }

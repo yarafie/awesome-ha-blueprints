@@ -7,6 +7,10 @@
   "description": "A simple scheduler which executes a certain action at a given time, checking and eventually re-executing the action if the automation did not run at the expected time (e.g. due to a disruptive event).",
   "librarians": [
     {
+      "id": "yarafie",
+      "name": "yarafie"
+    },
+    {
       "id": "EPMatt",
       "name": "EPMatt"
     }

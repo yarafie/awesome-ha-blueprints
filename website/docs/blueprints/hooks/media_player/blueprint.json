@@ -7,6 +7,10 @@
   "description": "This Hook blueprint allows to build a controller-based automation to control a media player. Supports volume setting, play/pause and track selection.",
   "librarians": [
     {
+      "id": "yarafie",
+      "name": "yarafie"
+    },
+    {
       "id": "EPMatt",
       "name": "EPMatt"
     }

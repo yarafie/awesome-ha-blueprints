@@ -5,6 +5,10 @@
   "description": "Controller blueprint library for smarthjemmet_dk_quad_zig_sw maintained by EPMatt.",
   "maintainers": [
     {
+      "id": "yarafie",
+      "name": "yarafie"
+    },
+    {
       "id": "EPMatt",
       "name": "EPMatt"
     }

@@ -6,6 +6,10 @@
   "title": "Controller - IKEA E1766 TR\u00c5DFRI Open/Close Remote",
   "maintainers": [
     {
+      "id": "yarafie",
+      "name": "yarafie"
+    },
+    {
       "id": "EPMatt",
       "name": "EPMatt"
     }

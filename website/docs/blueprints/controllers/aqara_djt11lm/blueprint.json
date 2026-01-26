@@ -17,6 +17,10 @@
   "description": "Controller automation for executing any kind of action triggered by the provided Aqara DJT11LM Vibration Sensor.",
   "librarians": [
     {
+      "id": "yarafie",
+      "name": "yarafie"
+    },
+    {
       "id": "EPMatt",
       "name": "EPMatt"
     }

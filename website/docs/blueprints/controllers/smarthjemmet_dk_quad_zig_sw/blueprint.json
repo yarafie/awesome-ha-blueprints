@@ -13,6 +13,10 @@
   "description": "Controller automation for executing any kind of action triggered by the provided Smarthjemmet.dk QUAD-ZIG-SW 4 button remote.",
   "librarians": [
     {
+      "id": "yarafie",
+      "name": "yarafie"
+    },
+    {
       "id": "EPMatt",
       "name": "EPMatt"
     }

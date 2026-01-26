@@ -9,6 +9,10 @@
   "description": "Controller automation for executing any kind of action triggered by the provided Shelly Button 1.",
   "maintainers": [
     {
+      "id": "yarafie",
+      "name": "yarafie"
+    },
+    {
       "id": "EPMatt",
       "name": "EPMatt"
     }

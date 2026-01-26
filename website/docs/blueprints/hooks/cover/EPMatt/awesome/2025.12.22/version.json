@@ -9,6 +9,10 @@
   "description": "This Hook blueprint allows building a controller-based automation to control a cover. Supports opening, closing and tilting the cover.",
   "maintainers": [
     {
+      "id": "yarafie",
+      "name": "yarafie"
+    },
+    {
       "id": "EPMatt",
       "name": "EPMatt"
     }

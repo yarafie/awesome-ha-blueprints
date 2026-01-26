@@ -2,6 +2,10 @@
   "title": "EPMatt hook library for media_player",
   "maintainers": [
     {
+      "id": "yarafie",
+      "name": "yarafie"
+    },
+    {
       "id": "EPMatt",
       "name": "EPMatt"
     }

@@ -9,6 +9,10 @@
   "description": "Controller automation for executing any kind of action triggered by the provided Xiaomi WXCJKG13LM Aqara Opple 6 button remote.",
   "maintainers": [
     {
+      "id": "yarafie",
+      "name": "yarafie"
+    },
+    {
       "id": "EPMatt",
       "name": "EPMatt"
     }

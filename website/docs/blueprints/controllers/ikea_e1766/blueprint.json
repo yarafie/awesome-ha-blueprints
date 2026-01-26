@@ -17,6 +17,10 @@
   "description": "Controller automation for executing any kind of action triggered by the provided IKEA E1766 TRÅDFRI Open/Close Remote.",
   "librarians": [
     {
+      "id": "yarafie",
+      "name": "yarafie"
+    },
+    {
       "id": "EPMatt",
       "name": "EPMatt"
     }

@@ -6,6 +6,10 @@
   "title": "Controller - Shelly SNSN-0024x Plus i4 with Wall switch 4",
   "maintainers": [
     {
+      "id": "yarafie",
+      "name": "yarafie"
+    },
+    {
       "id": "EPMatt",
       "name": "EPMatt"
     }

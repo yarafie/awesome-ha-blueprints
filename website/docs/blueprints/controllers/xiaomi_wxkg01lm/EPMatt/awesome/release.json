@@ -6,6 +6,10 @@
   "title": "Controller - Xiaomi WXKG01LM Mi Wireless Switch",
   "maintainers": [
     {
+      "id": "yarafie",
+      "name": "yarafie"
+    },
+    {
       "id": "EPMatt",
       "name": "EPMatt"
     }

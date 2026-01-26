@@ -21,6 +21,10 @@
   "description": "Controller automation for executing any kind of action triggered by the provided Philips 929002398602 Hue Dimmer switch v2.",
   "librarians": [
     {
+      "id": "yarafie",
+      "name": "yarafie"
+    },
+    {
       "id": "EPMatt",
       "name": "EPMatt"
     }

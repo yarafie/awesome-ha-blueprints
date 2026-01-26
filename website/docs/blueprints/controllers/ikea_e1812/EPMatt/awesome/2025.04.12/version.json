@@ -9,6 +9,10 @@
   "description": "Controller automation for executing any kind of action triggered by the provided IKEA E1812 TRÅDFRI Shortcut button.",
   "maintainers": [
     {
+      "id": "yarafie",
+      "name": "yarafie"
+    },
+    {
       "id": "EPMatt",
       "name": "EPMatt"
     }

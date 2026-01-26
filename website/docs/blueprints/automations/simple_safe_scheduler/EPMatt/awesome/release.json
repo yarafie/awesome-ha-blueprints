@@ -6,6 +6,10 @@
   "title": "Simple Safe Scheduler",
   "maintainers": [
     {
+      "id": "yarafie",
+      "name": "yarafie"
+    },
+    {
       "id": "EPMatt",
       "name": "EPMatt"
     }

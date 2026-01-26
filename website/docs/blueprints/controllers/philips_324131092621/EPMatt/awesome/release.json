@@ -6,6 +6,10 @@
   "title": "Controller - Philips 324131092621 Hue Dimmer switch",
   "maintainers": [
     {
+      "id": "yarafie",
+      "name": "yarafie"
+    },
+    {
       "id": "EPMatt",
       "name": "EPMatt"
     }

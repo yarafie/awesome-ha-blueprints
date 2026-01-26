@@ -6,6 +6,10 @@
   "title": "Controller - IKEA ICTC-G-1 TR\u00c5DFRI wireless dimmer",
   "maintainers": [
     {
+      "id": "yarafie",
+      "name": "yarafie"
+    },
+    {
       "id": "EPMatt",
       "name": "EPMatt"
     }

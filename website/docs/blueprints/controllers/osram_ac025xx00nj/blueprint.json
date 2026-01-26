@@ -21,6 +21,10 @@
   "description": "Controller automation for executing any kind of action triggered by the provided OSRAM AC025XX00NJ SMART+ Switch Mini.",
   "librarians": [
     {
+      "id": "yarafie",
+      "name": "yarafie"
+    },
+    {
       "id": "EPMatt",
       "name": "EPMatt"
     }

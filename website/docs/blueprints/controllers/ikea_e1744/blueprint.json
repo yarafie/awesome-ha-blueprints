@@ -17,6 +17,10 @@
   "description": "Controller automation for executing any kind of action triggered by the provided IKEA E1744 SYMFONISK Rotary Remote.",
   "librarians": [
     {
+      "id": "yarafie",
+      "name": "yarafie"
+    },
+    {
       "id": "EPMatt",
       "name": "EPMatt"
     }

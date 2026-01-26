@@ -25,6 +25,10 @@
   "description": "Controller automation for executing any kind of action triggered by the provided IKEA E2123 SYMFONISK sound remote, gen 2. Supports Zigbee2MQTT, ZHA, deCONZ.",
   "librarians": [
     {
+      "id": "yarafie",
+      "name": "yarafie"
+    },
+    {
       "id": "EPMatt",
       "name": "EPMatt"
     }

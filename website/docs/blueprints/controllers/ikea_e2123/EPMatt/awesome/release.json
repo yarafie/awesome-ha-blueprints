@@ -6,6 +6,10 @@
   "title": "Controller - IKEA E2123 SYMFONISK sound remote, gen 2",
   "maintainers": [
     {
+      "id": "yarafie",
+      "name": "yarafie"
+    },
+    {
       "id": "EPMatt",
       "name": "EPMatt"
     }

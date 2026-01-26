@@ -5,6 +5,10 @@
   "description": "Controller blueprint library for xiaomi_wxkg01lm maintained by EPMatt.",
   "maintainers": [
     {
+      "id": "yarafie",
+      "name": "yarafie"
+    },
+    {
       "id": "EPMatt",
       "name": "EPMatt"
     }

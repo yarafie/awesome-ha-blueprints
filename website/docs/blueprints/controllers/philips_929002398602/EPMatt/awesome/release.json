@@ -6,6 +6,10 @@
   "title": "Controller - Philips 929002398602 Hue Dimmer switch v2",
   "maintainers": [
     {
+      "id": "yarafie",
+      "name": "yarafie"
+    },
+    {
       "id": "EPMatt",
       "name": "EPMatt"
     }

@@ -2,6 +2,10 @@
   "title": "EPMatt automation library for simple_safe_scheduler",
   "maintainers": [
     {
+      "id": "yarafie",
+      "name": "yarafie"
+    },
+    {
       "id": "EPMatt",
       "name": "EPMatt"
     }

@@ -2,6 +2,10 @@
   "title": "EPMatt hook library for cover",
   "maintainers": [
     {
+      "id": "yarafie",
+      "name": "yarafie"
+    },
+    {
       "id": "EPMatt",
       "name": "EPMatt"
     }

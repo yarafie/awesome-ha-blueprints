@@ -2,6 +2,10 @@
   "title": "EPMatt automation library for on_off_schedule_state_persistence",
   "maintainers": [
     {
+      "id": "yarafie",
+      "name": "yarafie"
+    },
+    {
       "id": "EPMatt",
       "name": "EPMatt"
     }

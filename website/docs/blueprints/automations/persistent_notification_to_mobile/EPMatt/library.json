@@ -2,6 +2,10 @@
   "title": "EPMatt automation library for persistent_notification_to_mobile",
   "maintainers": [
     {
+      "id": "yarafie",
+      "name": "yarafie"
+    },
+    {
       "id": "EPMatt",
       "name": "EPMatt"
     }

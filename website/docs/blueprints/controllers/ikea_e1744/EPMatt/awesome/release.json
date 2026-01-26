@@ -6,6 +6,10 @@
   "title": "Controller - IKEA E1744 SYMFONISK Rotary Remote",
   "maintainers": [
     {
+      "id": "yarafie",
+      "name": "yarafie"
+    },
+    {
       "id": "EPMatt",
       "name": "EPMatt"
     }

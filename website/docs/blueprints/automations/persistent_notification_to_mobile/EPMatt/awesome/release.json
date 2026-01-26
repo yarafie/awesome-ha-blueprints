@@ -6,6 +6,10 @@
   "title": "Send Web UI persistent notifications to Mobile Devices",
   "maintainers": [
     {
+      "id": "yarafie",
+      "name": "yarafie"
+    },
+    {
       "id": "EPMatt",
       "name": "EPMatt"
     }

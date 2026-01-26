@@ -9,6 +9,10 @@
   "description": "A simple on-off schedule, with the addition of state persistence across disruptive events, making sure the target device is always in the expected state.",
   "maintainers": [
     {
+      "id": "yarafie",
+      "name": "yarafie"
+    },
+    {
       "id": "EPMatt",
       "name": "EPMatt"
     }

@@ -6,6 +6,10 @@
   "title": "Controller - IKEA E1743 TR\u00c5DFRI On/Off Switch & Dimmer",
   "maintainers": [
     {
+      "id": "yarafie",
+      "name": "yarafie"
+    },
+    {
       "id": "EPMatt",
       "name": "EPMatt"
     }

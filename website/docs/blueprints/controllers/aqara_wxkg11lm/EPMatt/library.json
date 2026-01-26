@@ -5,6 +5,10 @@
   "description": "Controller blueprint library for aqara_wxkg11lm maintained by EPMatt.",
   "maintainers": [
     {
+      "id": "yarafie",
+      "name": "yarafie"
+    },
+    {
       "id": "EPMatt",
       "name": "EPMatt"
     }

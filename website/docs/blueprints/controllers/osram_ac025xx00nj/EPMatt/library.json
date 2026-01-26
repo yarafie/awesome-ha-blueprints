@@ -5,6 +5,10 @@
   "description": "Controller blueprint library for osram_ac025xx00nj maintained by EPMatt.",
   "maintainers": [
     {
+      "id": "yarafie",
+      "name": "yarafie"
+    },
+    {
       "id": "EPMatt",
       "name": "EPMatt"
     }

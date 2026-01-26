@@ -5,6 +5,10 @@
   "description": "Controller blueprint library for tuya_zg_101z_d maintained by EPMatt.",
   "maintainers": [
     {
+      "id": "yarafie",
+      "name": "yarafie"
+    },
+    {
       "id": "EPMatt",
       "name": "EPMatt"
     }

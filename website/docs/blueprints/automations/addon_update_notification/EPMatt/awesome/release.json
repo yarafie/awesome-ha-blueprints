@@ -6,6 +6,10 @@
   "title": "Send a mobile notification when add-on update is available",
   "maintainers": [
     {
+      "id": "yarafie",
+      "name": "yarafie"
+    },
+    {
       "id": "EPMatt",
       "name": "EPMatt"
     }

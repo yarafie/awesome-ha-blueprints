@@ -6,6 +6,10 @@
   "title": "Controller - Philips 8718699693985 Hue Smart Button",
   "maintainers": [
     {
+      "id": "yarafie",
+      "name": "yarafie"
+    },
+    {
       "id": "EPMatt",
       "name": "EPMatt"
     }

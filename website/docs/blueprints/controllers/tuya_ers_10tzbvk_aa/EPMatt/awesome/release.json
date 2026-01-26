@@ -6,6 +6,10 @@
   "title": "Controller - Tuya ERS-10TZBVK-AA Smart knob",
   "maintainers": [
     {
+      "id": "yarafie",
+      "name": "yarafie"
+    },
+    {
       "id": "EPMatt",
       "name": "EPMatt"
     }

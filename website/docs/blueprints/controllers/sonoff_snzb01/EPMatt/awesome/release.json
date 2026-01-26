@@ -6,6 +6,10 @@
   "title": "Controller - SONOFF SNZB-01 Wireless Switch",
   "maintainers": [
     {
+      "id": "yarafie",
+      "name": "yarafie"
+    },
+    {
       "id": "EPMatt",
       "name": "EPMatt"
     }

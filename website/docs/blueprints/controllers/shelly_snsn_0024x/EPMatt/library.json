@@ -5,6 +5,10 @@
   "description": "Controller blueprint library for shelly_snsn_0024x maintained by EPMatt.",
   "maintainers": [
     {
+      "id": "yarafie",
+      "name": "yarafie"
+    },
+    {
       "id": "EPMatt",
       "name": "EPMatt"
     }

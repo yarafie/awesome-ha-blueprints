@@ -17,6 +17,10 @@
   "description": "Controller automation for executing any kind of action triggered by the provided IKEA E1524/E1810 TRÅDFRI Wireless 5-Button Remote.",
   "librarians": [
     {
+      "id": "yarafie",
+      "name": "yarafie"
+    },
+    {
       "id": "EPMatt",
       "name": "EPMatt"
     }

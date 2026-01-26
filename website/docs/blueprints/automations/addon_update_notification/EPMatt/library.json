@@ -2,6 +2,10 @@
   "title": "EPMatt automation library for addon_update_notification",
   "maintainers": [
     {
+      "id": "yarafie",
+      "name": "yarafie"
+    },
+    {
       "id": "EPMatt",
       "name": "EPMatt"
     }

@@ -17,6 +17,10 @@
   "description": "Controller automation for executing any kind of action triggered by the provided Xiaomi WXCJKG11LM Aqara Opple 2 button remote.",
   "librarians": [
     {
+      "id": "yarafie",
+      "name": "yarafie"
+    },
+    {
       "id": "EPMatt",
       "name": "EPMatt"
     }

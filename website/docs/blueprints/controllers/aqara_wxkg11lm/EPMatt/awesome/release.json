@@ -6,6 +6,10 @@
   "title": "Controller - Aqara WXKG11LM Wireless Mini Switch",
   "maintainers": [
     {
+      "id": "yarafie",
+      "name": "yarafie"
+    },
+    {
       "id": "EPMatt",
       "name": "EPMatt"
     }

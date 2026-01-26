@@ -6,6 +6,10 @@
   "title": "On-Off schedule with state persistence",
   "maintainers": [
     {
+      "id": "yarafie",
+      "name": "yarafie"
+    },
+    {
       "id": "EPMatt",
       "name": "EPMatt"
     }

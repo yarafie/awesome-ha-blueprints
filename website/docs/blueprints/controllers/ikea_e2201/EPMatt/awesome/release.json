@@ -6,6 +6,10 @@
   "title": "Controller - IKEA E2201 RODRET Dimmer",
   "maintainers": [
     {
+      "id": "yarafie",
+      "name": "yarafie"
+    },
+    {
       "id": "EPMatt",
       "name": "EPMatt"
     }
