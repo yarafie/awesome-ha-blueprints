@@ -1,15 +1,20 @@
 # Awesome HA Blueprints – Library Report
-_Generated on 2026-01-27_
----
+
+## _Generated on 2026-01-27_
+
 ## Summary
+
 - **Controllers:** 27 blueprints, 29 versions
 - **Automations:** 4 blueprints, 4 versions
 - **Hooks:** 3 blueprints, 3 versions
 - **Breaking versions:** 7
+
 ---
+
 ## 🚨 Breaking Changes Summary (by Category)
 
 ### Controllers
+
 - **aqara_wxkg11lm** – EPMatt / awesome / 2025.12.22
   - Device Name and Model was corrected to Aqara WXKG11LM as it is a different device from the Xiaomi WXKG01LM. Blueprint will need to be redownloaded and setup again.
 - **ikea_e1812** – EPMatt / awesome / 2025.04.12
@@ -20,6 +25,7 @@ _Generated on 2026-01-27_
   - Device Name and Model was corrected to Xiaomi WXKG01LM as it is a different device from the Aqara WXKG11LM. Blueprint will need to be redownloaded and setup again.
 
 ### Hooks
+
 - **cover** – EPMatt / awesome / 2025.12.22
   - Device Name and Model was corrected for both Aqara WXKG11LM and Xiaomi WXKG01LM. Blueprints integrated with these two devices will need to be redownloaded and setup again.
 - **light** – EPMatt / awesome / 2025.12.22
@@ -30,6 +36,7 @@ _Generated on 2026-01-27_
 ## Controllers
 
 ### aqara_djt11lm
+
 - **Title:** Controller - Aqara DJT11LM Vibration Sensor
 - **Librarians:** yarafie, EPMatt
 - **Library Maintainers:** EPMatt, yarafie
@@ -38,12 +45,14 @@ _Generated on 2026-01-27_
 <details>
 <summary>Versions</summary>
 
-| Library | Release | Version | Breaking |
-|--------|---------|--------|----------|
-| EPMatt | awesome | 2025.10.30 | no |
+| Library | Release | Version    | Breaking |
+| ------- | ------- | ---------- | -------- |
+| EPMatt  | awesome | 2025.10.30 | no       |
+
 </details>
 
 ### aqara_wxkg11lm
+
 - **Title:** Controller - Aqara WXKG11LM Wireless Mini Switch
 - **Librarians:** yarafie, EPMatt
 - **Library Maintainers:** EPMatt, yarafie
@@ -52,16 +61,18 @@ _Generated on 2026-01-27_
 <details>
 <summary>Versions</summary>
 
-| Library | Release | Version | Breaking |
-|--------|---------|--------|----------|
-| EPMatt | awesome | 2025.12.22 | **🚨 Breaking Change** |
+| Library | Release | Version    | Breaking               |
+| ------- | ------- | ---------- | ---------------------- |
+| EPMatt  | awesome | 2025.12.22 | **🚨 Breaking Change** |
 
 **Breaking change reasons:**
+
 - Device Name and Model was corrected to Aqara WXKG11LM as it is a different device from the Xiaomi WXKG01LM. Blueprint will need to be redownloaded and setup again.
 
 </details>
 
 ### aqara_wxkg13lm
+
 - **Title:** Controller - Aqara WXKG13LM Wireless Mini Switch T1
 - **Librarians:** yarafie, EPMatt
 - **Library Maintainers:** EPMatt, yarafie
@@ -70,12 +81,14 @@ _Generated on 2026-01-27_
 <details>
 <summary>Versions</summary>
 
-| Library | Release | Version | Breaking |
-|--------|---------|--------|----------|
-| EPMatt | awesome | 2025.04.12 | no |
+| Library | Release | Version    | Breaking |
+| ------- | ------- | ---------- | -------- |
+| EPMatt  | awesome | 2025.04.12 | no       |
+
 </details>
 
 ### ikea_e1524_e1810
+
 - **Title:** Controller - IKEA E1524/E1810 TRÅDFRI Wireless 5-Button Remote
 - **Librarians:** yarafie, EPMatt
 - **Library Maintainers:** EPMatt, yarafie
@@ -84,12 +97,14 @@ _Generated on 2026-01-27_
 <details>
 <summary>Versions</summary>
 
-| Library | Release | Version | Breaking |
-|--------|---------|--------|----------|
-| EPMatt | awesome | 2025.04.19 | no |
+| Library | Release | Version    | Breaking |
+| ------- | ------- | ---------- | -------- |
+| EPMatt  | awesome | 2025.04.19 | no       |
+
 </details>
 
 ### ikea_e1743
+
 - **Title:** Controller - IKEA E1743 TRÅDFRI On/Off Switch & Dimmer
 - **Librarians:** yarafie, EPMatt
 - **Library Maintainers:** EPMatt, yarafie
@@ -98,12 +113,14 @@ _Generated on 2026-01-27_
 <details>
 <summary>Versions</summary>
 
-| Library | Release | Version | Breaking |
-|--------|---------|--------|----------|
-| EPMatt | awesome | 2025.10.12 | no |
+| Library | Release | Version    | Breaking |
+| ------- | ------- | ---------- | -------- |
+| EPMatt  | awesome | 2025.10.12 | no       |
+
 </details>
 
 ### ikea_e1744
+
 - **Title:** Controller - IKEA E1744 SYMFONISK Rotary Remote
 - **Librarians:** yarafie, EPMatt
 - **Library Maintainers:** EPMatt, yarafie
@@ -112,12 +129,14 @@ _Generated on 2026-01-27_
 <details>
 <summary>Versions</summary>
 
-| Library | Release | Version | Breaking |
-|--------|---------|--------|----------|
-| EPMatt | awesome | 2025.04.19 | no |
+| Library | Release | Version    | Breaking |
+| ------- | ------- | ---------- | -------- |
+| EPMatt  | awesome | 2025.04.19 | no       |
+
 </details>
 
 ### ikea_e1766
+
 - **Title:** Controller - IKEA E1766 TRÅDFRI Open/Close Remote
 - **Librarians:** yarafie, EPMatt
 - **Library Maintainers:** EPMatt, yarafie
@@ -126,12 +145,14 @@ _Generated on 2026-01-27_
 <details>
 <summary>Versions</summary>
 
-| Library | Release | Version | Breaking |
-|--------|---------|--------|----------|
-| EPMatt | awesome | 2025.04.19 | no |
+| Library | Release | Version    | Breaking |
+| ------- | ------- | ---------- | -------- |
+| EPMatt  | awesome | 2025.04.19 | no       |
+
 </details>
 
 ### ikea_e1812
+
 - **Title:** Controller - IKEA E1812 TRÅDFRI Shortcut button
 - **Librarians:** yarafie, EPMatt
 - **Library Maintainers:** EPMatt, yarafie
@@ -140,16 +161,18 @@ _Generated on 2026-01-27_
 <details>
 <summary>Versions</summary>
 
-| Library | Release | Version | Breaking |
-|--------|---------|--------|----------|
-| EPMatt | awesome | 2025.04.12 | **🚨 Breaking Change** |
+| Library | Release | Version    | Breaking               |
+| ------- | ------- | ---------- | ---------------------- |
+| EPMatt  | awesome | 2025.04.12 | **🚨 Breaking Change** |
 
 **Breaking change reasons:**
+
 - Add native double press triggers and refactor the blueprint to use triggers and trigger IDs. The integration selector input is removed, and `helper_last_controller_event` is no longer required. Re-download the blueprint and reconfigure existing automations to apply the changes. (Thanks [@yarafie](https://github.com/yarafie))
 
 </details>
 
 ### ikea_e2001_e2002
+
 - **Title:** Controller - IKEA E2001/E2002 STYRBAR Remote control
 - **Librarians:** yarafie, EPMatt
 - **Library Maintainers:** EPMatt, yarafie
@@ -158,18 +181,20 @@ _Generated on 2026-01-27_
 <details>
 <summary>Versions</summary>
 
-| Library | Release | Version | Breaking |
-|--------|---------|--------|----------|
-| yarafie | anything | 2025.01.06 | no |
-| yarafie | anything | 2025.04.19 | no |
-| EPMatt | awesome | 2025.11.16 | **🚨 Breaking Change** |
+| Library | Release  | Version    | Breaking               |
+| ------- | -------- | ---------- | ---------------------- |
+| yarafie | anything | 2025.01.06 | no                     |
+| yarafie | anything | 2025.04.19 | no                     |
+| EPMatt  | awesome  | 2025.11.16 | **🚨 Breaking Change** |
 
 **Breaking change reasons:**
+
 - Blueprint was refactored to add back `helper_last_controller_event` in order to fix Long Press/Release Logic for both hooks and custom actions. This will close ([EPMatt-issue#949](https://github.com/EPMatt/awesome-ha-blueprints/issues/949)). See note at top regarding **Helper - Last Controller Event** input. ([@yarafie](https://github.com/yarafie))
 
 </details>
 
 ### ikea_e2123
+
 - **Title:** Controller - IKEA E2123 SYMFONISK sound remote, gen 2
 - **Librarians:** yarafie, EPMatt
 - **Library Maintainers:** EPMatt, yarafie
@@ -178,12 +203,14 @@ _Generated on 2026-01-27_
 <details>
 <summary>Versions</summary>
 
-| Library | Release | Version | Breaking |
-|--------|---------|--------|----------|
-| EPMatt | awesome | 2025.03.28 | no |
+| Library | Release | Version    | Breaking |
+| ------- | ------- | ---------- | -------- |
+| EPMatt  | awesome | 2025.03.28 | no       |
+
 </details>
 
 ### ikea_e2201
+
 - **Title:** Controller - IKEA E2201 RODRET Dimmer
 - **Librarians:** yarafie, EPMatt
 - **Library Maintainers:** EPMatt, yarafie
@@ -192,12 +219,14 @@ _Generated on 2026-01-27_
 <details>
 <summary>Versions</summary>
 
-| Library | Release | Version | Breaking |
-|--------|---------|--------|----------|
-| EPMatt | awesome | 2025.10.01 | no |
+| Library | Release | Version    | Breaking |
+| ------- | ------- | ---------- | -------- |
+| EPMatt  | awesome | 2025.10.01 | no       |
+
 </details>
 
 ### ikea_e2213
+
 - **Title:** Controller - IKEA E2213 SOMRIG shortcut button
 - **Librarians:** yarafie, EPMatt
 - **Library Maintainers:** EPMatt, yarafie
@@ -206,12 +235,14 @@ _Generated on 2026-01-27_
 <details>
 <summary>Versions</summary>
 
-| Library | Release | Version | Breaking |
-|--------|---------|--------|----------|
-| EPMatt | awesome | 2025.05.08 | no |
+| Library | Release | Version    | Breaking |
+| ------- | ------- | ---------- | -------- |
+| EPMatt  | awesome | 2025.05.08 | no       |
+
 </details>
 
 ### ikea_ictc_g_1
+
 - **Title:** Controller - IKEA ICTC-G-1 TRÅDFRI wireless dimmer
 - **Librarians:** yarafie, EPMatt
 - **Library Maintainers:** EPMatt, yarafie
@@ -220,12 +251,14 @@ _Generated on 2026-01-27_
 <details>
 <summary>Versions</summary>
 
-| Library | Release | Version | Breaking |
-|--------|---------|--------|----------|
-| EPMatt | awesome | 2025.04.19 | no |
+| Library | Release | Version    | Breaking |
+| ------- | ------- | ---------- | -------- |
+| EPMatt  | awesome | 2025.04.19 | no       |
+
 </details>
 
 ### osram_ac025xx00nj
+
 - **Title:** Controller - OSRAM AC025XX00NJ SMART+ Switch Mini
 - **Librarians:** yarafie, EPMatt
 - **Library Maintainers:** EPMatt, yarafie
@@ -234,12 +267,14 @@ _Generated on 2026-01-27_
 <details>
 <summary>Versions</summary>
 
-| Library | Release | Version | Breaking |
-|--------|---------|--------|----------|
-| EPMatt | awesome | 2025.04.19 | no |
+| Library | Release | Version    | Breaking |
+| ------- | ------- | ---------- | -------- |
+| EPMatt  | awesome | 2025.04.19 | no       |
+
 </details>
 
 ### philips_324131092621
+
 - **Title:** Controller - Philips 324131092621 Hue Dimmer switch
 - **Librarians:** yarafie, EPMatt
 - **Library Maintainers:** EPMatt, yarafie
@@ -248,12 +283,14 @@ _Generated on 2026-01-27_
 <details>
 <summary>Versions</summary>
 
-| Library | Release | Version | Breaking |
-|--------|---------|--------|----------|
-| EPMatt | awesome | 2025.10.16 | no |
+| Library | Release | Version    | Breaking |
+| ------- | ------- | ---------- | -------- |
+| EPMatt  | awesome | 2025.10.16 | no       |
+
 </details>
 
 ### philips_8718699693985
+
 - **Title:** Controller - Philips 8718699693985 Hue Smart Button
 - **Librarians:** yarafie, EPMatt
 - **Library Maintainers:** EPMatt, yarafie
@@ -262,12 +299,14 @@ _Generated on 2026-01-27_
 <details>
 <summary>Versions</summary>
 
-| Library | Release | Version | Breaking |
-|--------|---------|--------|----------|
-| EPMatt | awesome | 2025.04.19 | no |
+| Library | Release | Version    | Breaking |
+| ------- | ------- | ---------- | -------- |
+| EPMatt  | awesome | 2025.04.19 | no       |
+
 </details>
 
 ### philips_929002398602
+
 - **Title:** Controller - Philips 929002398602 Hue Dimmer switch v2
 - **Librarians:** yarafie, EPMatt
 - **Library Maintainers:** EPMatt, yarafie
@@ -276,12 +315,14 @@ _Generated on 2026-01-27_
 <details>
 <summary>Versions</summary>
 
-| Library | Release | Version | Breaking |
-|--------|---------|--------|----------|
-| EPMatt | awesome | 2025.10.16 | no |
+| Library | Release | Version    | Breaking |
+| ------- | ------- | ---------- | -------- |
+| EPMatt  | awesome | 2025.10.16 | no       |
+
 </details>
 
 ### shelly_button_1
+
 - **Title:** Controller - Shelly Button 1
 - **Librarians:** yarafie, EPMatt
 - **Library Maintainers:** EPMatt, yarafie
@@ -290,12 +331,14 @@ _Generated on 2026-01-27_
 <details>
 <summary>Versions</summary>
 
-| Library | Release | Version | Breaking |
-|--------|---------|--------|----------|
-| EPMatt | awesome | 2025.04.12 | no |
+| Library | Release | Version    | Breaking |
+| ------- | ------- | ---------- | -------- |
+| EPMatt  | awesome | 2025.04.12 | no       |
+
 </details>
 
 ### shelly_snsn_0024x
+
 - **Title:** Controller - Shelly SNSN-0024x Plus i4 with Wall switch 4
 - **Librarians:** yarafie, EPMatt
 - **Library Maintainers:** EPMatt, yarafie
@@ -304,12 +347,14 @@ _Generated on 2026-01-27_
 <details>
 <summary>Versions</summary>
 
-| Library | Release | Version | Breaking |
-|--------|---------|--------|----------|
-| EPMatt | awesome | 2025.03.25 | no |
+| Library | Release | Version    | Breaking |
+| ------- | ------- | ---------- | -------- |
+| EPMatt  | awesome | 2025.03.25 | no       |
+
 </details>
 
 ### smarthjemmet_dk_quad_zig_sw
+
 - **Title:** Controller - Smarthjemmet.dk QUAD-ZIG-SW 4 button remote
 - **Librarians:** yarafie, EPMatt
 - **Library Maintainers:** EPMatt, yarafie
@@ -318,12 +363,14 @@ _Generated on 2026-01-27_
 <details>
 <summary>Versions</summary>
 
-| Library | Release | Version | Breaking |
-|--------|---------|--------|----------|
-| EPMatt | awesome | 2025.03.03 | no |
+| Library | Release | Version    | Breaking |
+| ------- | ------- | ---------- | -------- |
+| EPMatt  | awesome | 2025.03.03 | no       |
+
 </details>
 
 ### sonoff_snzb01
+
 - **Title:** Controller - SONOFF SNZB-01 Wireless Switch
 - **Librarians:** yarafie, EPMatt
 - **Library Maintainers:** EPMatt, yarafie
@@ -332,12 +379,14 @@ _Generated on 2026-01-27_
 <details>
 <summary>Versions</summary>
 
-| Library | Release | Version | Breaking |
-|--------|---------|--------|----------|
-| EPMatt | awesome | 2025.04.19 | no |
+| Library | Release | Version    | Breaking |
+| ------- | ------- | ---------- | -------- |
+| EPMatt  | awesome | 2025.04.19 | no       |
+
 </details>
 
 ### tuya_ers_10tzbvk_aa
+
 - **Title:** Controller - Tuya ERS-10TZBVK-AA Smart knob
 - **Librarians:** yarafie, EPMatt
 - **Library Maintainers:** EPMatt, yarafie
@@ -346,12 +395,14 @@ _Generated on 2026-01-27_
 <details>
 <summary>Versions</summary>
 
-| Library | Release | Version | Breaking |
-|--------|---------|--------|----------|
-| EPMatt | awesome | 2025.03.29 | no |
+| Library | Release | Version    | Breaking |
+| ------- | ------- | ---------- | -------- |
+| EPMatt  | awesome | 2025.03.29 | no       |
+
 </details>
 
 ### tuya_zg_101z_d
+
 - **Title:** Controller - Tuya ZG-101Z/D Smart knob
 - **Librarians:** yarafie, EPMatt
 - **Library Maintainers:** EPMatt, yarafie
@@ -360,12 +411,14 @@ _Generated on 2026-01-27_
 <details>
 <summary>Versions</summary>
 
-| Library | Release | Version | Breaking |
-|--------|---------|--------|----------|
-| EPMatt | awesome | 2025.10.14 | no |
+| Library | Release | Version    | Breaking |
+| ------- | ------- | ---------- | -------- |
+| EPMatt  | awesome | 2025.10.14 | no       |
+
 </details>
 
 ### xiaomi_wxcjkg11lm
+
 - **Title:** Controller - Xiaomi WXCJKG11LM Aqara Opple 2 button remote
 - **Librarians:** yarafie, EPMatt
 - **Library Maintainers:** EPMatt, yarafie
@@ -374,12 +427,14 @@ _Generated on 2026-01-27_
 <details>
 <summary>Versions</summary>
 
-| Library | Release | Version | Breaking |
-|--------|---------|--------|----------|
-| EPMatt | awesome | 2025.04.19 | no |
+| Library | Release | Version    | Breaking |
+| ------- | ------- | ---------- | -------- |
+| EPMatt  | awesome | 2025.04.19 | no       |
+
 </details>
 
 ### xiaomi_wxcjkg12lm
+
 - **Title:** Controller - Xiaomi WXCJKG12LM Aqara Opple 4 button remote
 - **Librarians:** yarafie, EPMatt
 - **Library Maintainers:** EPMatt, yarafie
@@ -388,12 +443,14 @@ _Generated on 2026-01-27_
 <details>
 <summary>Versions</summary>
 
-| Library | Release | Version | Breaking |
-|--------|---------|--------|----------|
-| EPMatt | awesome | 2025.04.19 | no |
+| Library | Release | Version    | Breaking |
+| ------- | ------- | ---------- | -------- |
+| EPMatt  | awesome | 2025.04.19 | no       |
+
 </details>
 
 ### xiaomi_wxcjkg13lm
+
 - **Title:** Controller - Xiaomi WXCJKG13LM Aqara Opple 6 button remote
 - **Librarians:** yarafie, EPMatt
 - **Library Maintainers:** EPMatt, yarafie
@@ -402,12 +459,14 @@ _Generated on 2026-01-27_
 <details>
 <summary>Versions</summary>
 
-| Library | Release | Version | Breaking |
-|--------|---------|--------|----------|
-| EPMatt | awesome | 2025.04.19 | no |
+| Library | Release | Version    | Breaking |
+| ------- | ------- | ---------- | -------- |
+| EPMatt  | awesome | 2025.04.19 | no       |
+
 </details>
 
 ### xiaomi_wxkg01lm
+
 - **Title:** Controller - Xiaomi WXKG01LM Mi Wireless Switch
 - **Librarians:** yarafie, EPMatt
 - **Library Maintainers:** EPMatt, yarafie
@@ -416,11 +475,12 @@ _Generated on 2026-01-27_
 <details>
 <summary>Versions</summary>
 
-| Library | Release | Version | Breaking |
-|--------|---------|--------|----------|
-| EPMatt | awesome | 2025.12.22 | **🚨 Breaking Change** |
+| Library | Release | Version    | Breaking               |
+| ------- | ------- | ---------- | ---------------------- |
+| EPMatt  | awesome | 2025.12.22 | **🚨 Breaking Change** |
 
 **Breaking change reasons:**
+
 - Device Name and Model was corrected to Xiaomi WXKG01LM as it is a different device from the Aqara WXKG11LM. Blueprint will need to be redownloaded and setup again.
 
 </details>
@@ -428,6 +488,7 @@ _Generated on 2026-01-27_
 ## Automations
 
 ### addon_update_notification
+
 - **Title:** Send a mobile notification when add-on update is available
 - **Librarians:** yarafie, EPMatt
 - **Library Maintainers:** EPMatt, yarafie
@@ -436,12 +497,14 @@ _Generated on 2026-01-27_
 <details>
 <summary>Versions</summary>
 
-| Library | Release | Version | Breaking |
-|--------|---------|--------|----------|
-| EPMatt | awesome | 2021.10.26 | no |
+| Library | Release | Version    | Breaking |
+| ------- | ------- | ---------- | -------- |
+| EPMatt  | awesome | 2021.10.26 | no       |
+
 </details>
 
 ### on_off_schedule_state_persistence
+
 - **Title:** On-Off schedule with state persistence
 - **Librarians:** yarafie, EPMatt
 - **Library Maintainers:** EPMatt, yarafie
@@ -450,12 +513,14 @@ _Generated on 2026-01-27_
 <details>
 <summary>Versions</summary>
 
-| Library | Release | Version | Breaking |
-|--------|---------|--------|----------|
-| EPMatt | awesome | 2021.10.26 | no |
+| Library | Release | Version    | Breaking |
+| ------- | ------- | ---------- | -------- |
+| EPMatt  | awesome | 2021.10.26 | no       |
+
 </details>
 
 ### persistent_notification_to_mobile
+
 - **Title:** Send Web UI persistent notifications to Mobile Devices
 - **Librarians:** yarafie, EPMatt
 - **Library Maintainers:** EPMatt, yarafie
@@ -464,12 +529,14 @@ _Generated on 2026-01-27_
 <details>
 <summary>Versions</summary>
 
-| Library | Release | Version | Breaking |
-|--------|---------|--------|----------|
-| EPMatt | awesome | 2021.10.26 | no |
+| Library | Release | Version    | Breaking |
+| ------- | ------- | ---------- | -------- |
+| EPMatt  | awesome | 2021.10.26 | no       |
+
 </details>
 
 ### simple_safe_scheduler
+
 - **Title:** Simple Safe Scheduler
 - **Librarians:** yarafie, EPMatt
 - **Library Maintainers:** EPMatt, yarafie
@@ -478,14 +545,16 @@ _Generated on 2026-01-27_
 <details>
 <summary>Versions</summary>
 
-| Library | Release | Version | Breaking |
-|--------|---------|--------|----------|
-| EPMatt | awesome | 2021.10.22 | no |
+| Library | Release | Version    | Breaking |
+| ------- | ------- | ---------- | -------- |
+| EPMatt  | awesome | 2021.10.22 | no       |
+
 </details>
 
 ## Hooks
 
 ### cover
+
 - **Title:** Hook - Cover
 - **Librarians:** yarafie, EPMatt
 - **Library Maintainers:** EPMatt, yarafie
@@ -494,16 +563,18 @@ _Generated on 2026-01-27_
 <details>
 <summary>Versions</summary>
 
-| Library | Release | Version | Breaking |
-|--------|---------|--------|----------|
-| EPMatt | awesome | 2025.12.22 | **🚨 Breaking Change** |
+| Library | Release | Version    | Breaking               |
+| ------- | ------- | ---------- | ---------------------- |
+| EPMatt  | awesome | 2025.12.22 | **🚨 Breaking Change** |
 
 **Breaking change reasons:**
+
 - Device Name and Model was corrected for both Aqara WXKG11LM and Xiaomi WXKG01LM. Blueprints integrated with these two devices will need to be redownloaded and setup again.
 
 </details>
 
 ### light
+
 - **Title:** Hook - Light
 - **Librarians:** yarafie, EPMatt
 - **Library Maintainers:** EPMatt, yarafie
@@ -512,16 +583,18 @@ _Generated on 2026-01-27_
 <details>
 <summary>Versions</summary>
 
-| Library | Release | Version | Breaking |
-|--------|---------|--------|----------|
-| EPMatt | awesome | 2025.12.22 | **🚨 Breaking Change** |
+| Library | Release | Version    | Breaking               |
+| ------- | ------- | ---------- | ---------------------- |
+| EPMatt  | awesome | 2025.12.22 | **🚨 Breaking Change** |
 
 **Breaking change reasons:**
+
 - Device Name and Model was corrected for both Aqara WXKG11LM and Xiaomi WXKG01LM. Blueprints integrated with these two devices will need to be redownloaded and setup again.
 
 </details>
 
 ### media_player
+
 - **Title:** Hook - Media Player
 - **Librarians:** yarafie, EPMatt
 - **Library Maintainers:** EPMatt, yarafie
@@ -530,12 +603,12 @@ _Generated on 2026-01-27_
 <details>
 <summary>Versions</summary>
 
-| Library | Release | Version | Breaking |
-|--------|---------|--------|----------|
-| EPMatt | awesome | 2025.12.22 | **🚨 Breaking Change** |
+| Library | Release | Version    | Breaking               |
+| ------- | ------- | ---------- | ---------------------- |
+| EPMatt  | awesome | 2025.12.22 | **🚨 Breaking Change** |
 
 **Breaking change reasons:**
+
 - Device Name and Model was corrected for both Aqara WXKG11LM and Xiaomi WXKG01LM. Blueprints integrated with these two devices will need to be redownloaded and setup again.
 
 </details>
-
