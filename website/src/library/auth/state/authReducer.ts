@@ -57,6 +57,7 @@ export function authReducer(state: AuthState, event: AuthEvent): AuthState {
 
     default: {
       // Exhaustiveness guard (compile-time safety)
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const _exhaustive: never = event
       return state
     }

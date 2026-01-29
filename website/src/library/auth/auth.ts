@@ -12,7 +12,6 @@
  */
 
 import { createAuthClient } from './services/authClient'
-import { AuthAction, AuthState } from './state/authTypes'
 
 /**
  * Parameters required to initialize authentication.

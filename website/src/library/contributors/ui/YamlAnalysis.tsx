@@ -167,7 +167,7 @@ function classifyYamlLine(line: string): 'metadata' | 'logic' | 'other' {
   if (t.startsWith('#')) return 'other'
 
   // Try detect "key:" (YAML mapping key)
-  const m = t.match(/^([A-Za-z0-9_\-]+)\s*:/)
+  const m = t.match(/^([A-Za-z0-9_-]+)\s*:/)
   const key = (m?.[1] || '').toLowerCase()
 
   // Metadata-ish keys (blueprint header / doc / inputs)
