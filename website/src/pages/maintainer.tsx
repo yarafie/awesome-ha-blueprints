@@ -5,7 +5,7 @@
  *
  * Handles:
  * - GitHub OAuth authentication via Supabase
- * - client-side authorization using an allow-listed email set
+ * - client-side authorization using an allow-listed GitHub username set
  * - guarded rendering of maintainer-only tooling
  *
  * This page acts as a UI access gate and orchestration shell.
@@ -15,56 +15,61 @@
  * All privileged operations exposed through this page must be
  * validated independently on the backend or external systems.
  */
+
 import React, { useEffect, useState, useMemo } from 'react'
 import Layout from '@theme/Layout'
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext'
 import { createClient, Session } from '@supabase/supabase-js'
 
 // Maintainer Imports
-import MaintainerContextPanel from '../maintainer/MaintainerContextPanel'
-import MaintainerNavPanel from '../maintainer/MaintainerNavPanel'
-import SystemStatusPanel from '../maintainer/SystemStatusPanel'
-import SafeActionsPanel from '../maintainer/SafeActionsPanel'
+import MaintainerContextPanel from '@library/maintainer/MaintainerContextPanel'
+import MaintainerNavPanel from '@library/maintainer/MaintainerNavPanel'
+import SystemStatusPanel from '@library/maintainer/SystemStatusPanel'
+import SafeActionsPanel from '@library/maintainer/SafeActionsPanel'
 
-//Main
+// Main
 export default function MaintainerPage(): JSX.Element {
   const { siteConfig } = useDocusaurusContext()
 
-  // 1. Destructure env variables safely
+  // 1️⃣ Destructure env variables safely
   const { SUPABASE_URL, SUPABASE_ANON_KEY, ALLOWED_MAINTAINERS } = (siteConfig
     .customFields.env || {}) as {
     SUPABASE_URL: string
     SUPABASE_ANON_KEY: string
-    ALLOWED_MAINTAINERS: string[]
+    ALLOWED_MAINTAINERS: string[] | string
   }
 
-  // 5️⃣ Fail fast if Supabase env vars are missing
-  if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
-    throw new Error('Supabase environment variables are not configured') // ← added
-  }
+  // 2️⃣ Normalize allowed maintainers list (GitHub usernames)
+  const allowedMaintainers: string[] = Array.isArray(ALLOWED_MAINTAINERS)
+    ? ALLOWED_MAINTAINERS.map((u) => u.toLowerCase()).filter(Boolean)
+    : typeof ALLOWED_MAINTAINERS === 'string'
+      ? ALLOWED_MAINTAINERS.split(',')
+          .map((u) => u.trim().toLowerCase())
+          .filter(Boolean)
+      : []
 
-  // 6️⃣ Normalize allowed maintainers list
-  const allowedMaintainers = Array.isArray(ALLOWED_MAINTAINERS)
-    ? ALLOWED_MAINTAINERS
-    : [] // ← added
-
-  // 2. Prevent client recreation using useMemo
-  const supabase = useMemo(
-    () => createClient(SUPABASE_URL, SUPABASE_ANON_KEY),
-    [SUPABASE_URL, SUPABASE_ANON_KEY],
-  )
+  // 3️⃣ Create Supabase client lazily
+  const supabase = useMemo(() => {
+    if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+      return null
+    }
+    return createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+  }, [SUPABASE_URL, SUPABASE_ANON_KEY])
 
   const [session, setSession] = useState<Session | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // Check current session
+    if (!supabase) {
+      setLoading(false)
+      return
+    }
+
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session)
       setLoading(false)
     })
 
-    // Listen for auth changes (Login/Logout)
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
@@ -76,6 +81,8 @@ export default function MaintainerPage(): JSX.Element {
   }, [supabase])
 
   const handleLogin = async () => {
+    if (!supabase) return
+
     await supabase.auth.signInWithOAuth({
       provider: 'github',
       options: {
@@ -85,10 +92,24 @@ export default function MaintainerPage(): JSX.Element {
   }
 
   const handleLogout = async () => {
+    if (!supabase) return
     await supabase.auth.signOut()
     setSession(null)
   }
 
+  // VIEW: Env misconfigured (safe, non-fatal)
+  if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+    return (
+      <Layout title='Configuration Error'>
+        <div style={{ padding: '5rem', textAlign: 'center' }}>
+          <h1>Configuration Error</h1>
+          <p>Supabase environment variables are not configured.</p>
+        </div>
+      </Layout>
+    )
+  }
+
+  // VIEW: Loading
   if (loading) {
     return (
       <Layout title='Loading...'>
@@ -99,12 +120,11 @@ export default function MaintainerPage(): JSX.Element {
     )
   }
 
-  const userEmail = session?.user?.email?.toLowerCase()
+  // 4️⃣ GitHub username from Supabase session
+  const githubLogin =
+    session?.user?.user_metadata?.user_name?.toLowerCase() || null
 
-  // 7️⃣ Explicit boolean authorization check
-  const isAuthorized =
-    !!userEmail &&
-    allowedMaintainers.some((email) => email.toLowerCase() === userEmail) // ← updated
+  const isAuthorized = !!githubLogin && allowedMaintainers.includes(githubLogin)
 
   // VIEW: Unauthenticated
   if (!session) {
@@ -131,8 +151,8 @@ export default function MaintainerPage(): JSX.Element {
         <div style={{ textAlign: 'center', padding: '5rem' }}>
           <h1 style={{ color: 'var(--ifm-color-danger)' }}>Unauthorized</h1>
           <p>
-            The account <strong>{userEmail}</strong> does not have maintainer
-            privileges.
+            The GitHub account <strong>{githubLogin ?? 'unknown'}</strong> does
+            not have maintainer privileges.
           </p>
           <button onClick={handleLogout} className='button button--secondary'>
             Sign Out
@@ -171,8 +191,6 @@ export default function MaintainerPage(): JSX.Element {
             Welcome to the control panel. Use the tools below to manage the
             library.
           </p>
-
-          {/* Add your custom management components here */}
 
           <hr />
 

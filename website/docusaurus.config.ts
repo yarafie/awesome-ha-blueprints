@@ -46,7 +46,7 @@ const clientEnv = {
   // Robust parsing: split, trim, and filter out empty values
   ALLOWED_MAINTAINERS: process.env.ALLOWED_MAINTAINERS
     ? process.env.ALLOWED_MAINTAINERS.split(',')
-        .map((email) => email.trim())
+        .map((login) => login.trim())
         .filter(Boolean)
     : [],
 }
