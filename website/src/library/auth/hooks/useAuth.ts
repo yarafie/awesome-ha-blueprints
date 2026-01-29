@@ -9,7 +9,7 @@
  *  - React-only logic lives here
  *  - Owns auth state machine + session hydration
  *  - Delegates auth actions to shared auth controller
- *  - NO page-specific assumptions (contributors, maintainers, etc.)
+ *  - MUST be safe during Docusaurus SSG (no throws on missing env)
  */
 
 import { useEffect, useMemo, useReducer } from 'react'
@@ -33,9 +33,12 @@ export function useAuth(redirectPath: string) {
       SUPABASE_ANON_KEY?: string
     }) || {}
 
-  if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
-    throw new Error('Supabase environment variables are not configured')
-  }
+  /**
+   * Detect whether auth is actually available in this environment.
+   * - false during SSG / CI / dependabot
+   * - true at runtime with proper env
+   */
+  const hasSupabaseEnv = Boolean(SUPABASE_URL && SUPABASE_ANON_KEY)
 
   /**
    * Auth state machine
@@ -43,33 +46,43 @@ export function useAuth(redirectPath: string) {
   const [state, dispatch] = useReducer(authReducer, initialAuthState)
 
   /**
-   * Supabase client (stable for lifetime of hook)
-   * Used ONLY for session hydration & auth state tracking
+   * Supabase client
+   * - Created ONLY when env is available
+   * - Never during SSG
    */
-  const supabase = useMemo(
-    () => createAuthClient(SUPABASE_URL, SUPABASE_ANON_KEY),
-    [SUPABASE_URL, SUPABASE_ANON_KEY],
-  )
+  const supabase = useMemo(() => {
+    if (!hasSupabaseEnv) return null
+    return createAuthClient(SUPABASE_URL!, SUPABASE_ANON_KEY!)
+  }, [hasSupabaseEnv, SUPABASE_URL, SUPABASE_ANON_KEY])
 
   /**
    * Shared auth controller (login / logout)
-   * This is the single source of auth actions
+   * Single source of auth actions
    */
-  const auth = useMemo(
-    () =>
-      createAuth({
-        redirectPath,
-        supabaseUrl: SUPABASE_URL,
-        supabaseAnonKey: SUPABASE_ANON_KEY,
-        baseUrl: siteConfig.baseUrl,
-      }),
-    [redirectPath, SUPABASE_URL, SUPABASE_ANON_KEY, siteConfig.baseUrl],
-  )
+  const auth = useMemo(() => {
+    if (!hasSupabaseEnv) return null
+
+    return createAuth({
+      redirectPath,
+      supabaseUrl: SUPABASE_URL!,
+      supabaseAnonKey: SUPABASE_ANON_KEY!,
+      baseUrl: siteConfig.baseUrl,
+    })
+  }, [
+    hasSupabaseEnv,
+    redirectPath,
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY,
+    siteConfig.baseUrl,
+  ])
 
   /**
-   * Session hydration on mount + auth state changes
+   * Session hydration + auth state changes
+   * NO-OP during SSG
    */
   useEffect(() => {
+    if (!supabase) return
+
     supabase.auth.getSession().then(({ data }) => {
       if (!data.session) return
 
@@ -118,7 +131,16 @@ export function useAuth(redirectPath: string) {
    * Login action
    */
   const login = async () => {
+    if (!auth) {
+      dispatch({
+        type: 'AUTH_ERROR',
+        error: 'Authentication is not available in this environment',
+      })
+      return
+    }
+
     dispatch({ type: 'AUTH_START' })
+
     try {
       await auth.login()
     } catch (err) {
@@ -133,6 +155,7 @@ export function useAuth(redirectPath: string) {
    * Logout action
    */
   const logout = async () => {
+    if (!auth) return
     await auth.logout()
     dispatch({ type: 'AUTH_LOGOUT' })
   }
