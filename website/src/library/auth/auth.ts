@@ -23,6 +23,17 @@ export interface AuthInitOptions {
    * Example: '/contributors', '/maintainers', '/issues'
    */
   redirectPath: string
+
+  /**
+   * Supabase configuration (explicitly provided by caller)
+   */
+  supabaseUrl: string
+  supabaseAnonKey: string
+
+  /**
+   * Docusaurus baseUrl (e.g. '/awesome-ha-blueprints/')
+   */
+  baseUrl: string
 }
 
 /**
@@ -30,7 +41,9 @@ export interface AuthInitOptions {
  * This keeps auth reusable and context-independent.
  */
 export function createAuth(options: AuthInitOptions) {
-  const { supabase, siteConfig } = createAuthClient()
+  const { redirectPath, supabaseUrl, supabaseAnonKey, baseUrl } = options
+
+  const supabase = createAuthClient(supabaseUrl, supabaseAnonKey)
 
   /**
    * Start GitHub OAuth login.
@@ -40,9 +53,7 @@ export function createAuth(options: AuthInitOptions) {
       provider: 'github',
       options: {
         redirectTo:
-          window.location.origin +
-          siteConfig.baseUrl +
-          options.redirectPath.replace(/^\//, ''),
+          window.location.origin + baseUrl + redirectPath.replace(/^\//, ''),
       },
     })
 

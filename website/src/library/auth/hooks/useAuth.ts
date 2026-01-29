@@ -7,7 +7,8 @@
  *
  * Design rules:
  *  - React-only logic lives here
- *  - Owns Supabase client lifecycle
+ *  - Owns auth state machine + session hydration
+ *  - Delegates auth actions to shared auth controller
  *  - NO page-specific assumptions (contributors, maintainers, etc.)
  */
 
@@ -15,12 +16,8 @@ import { useEffect, useMemo, useReducer } from 'react'
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext'
 
 import { authReducer, initialAuthState } from '../state/authReducer'
-import {
-  createAuthClient,
-  buildRedirectTo,
-  signInWithOAuth,
-  signOut,
-} from '../services/authClient'
+import { createAuth } from '../auth'
+import { createAuthClient } from '../services/authClient'
 
 /**
  * useAuth
@@ -29,6 +26,7 @@ import {
  */
 export function useAuth(redirectPath: string) {
   const { siteConfig } = useDocusaurusContext()
+
   const { SUPABASE_URL, SUPABASE_ANON_KEY } =
     (siteConfig.customFields?.env as {
       SUPABASE_URL?: string
@@ -40,7 +38,13 @@ export function useAuth(redirectPath: string) {
   }
 
   /**
+   * Auth state machine
+   */
+  const [state, dispatch] = useReducer(authReducer, initialAuthState)
+
+  /**
    * Supabase client (stable for lifetime of hook)
+   * Used ONLY for session hydration & auth state tracking
    */
   const supabase = useMemo(
     () => createAuthClient(SUPABASE_URL, SUPABASE_ANON_KEY),
@@ -48,12 +52,22 @@ export function useAuth(redirectPath: string) {
   )
 
   /**
-   * Auth state machine
+   * Shared auth controller (login / logout)
+   * This is the single source of auth actions
    */
-  const [state, dispatch] = useReducer(authReducer, initialAuthState)
+  const auth = useMemo(
+    () =>
+      createAuth({
+        redirectPath,
+        supabaseUrl: SUPABASE_URL,
+        supabaseAnonKey: SUPABASE_ANON_KEY,
+        baseUrl: siteConfig.baseUrl,
+      }),
+    [redirectPath, SUPABASE_URL, SUPABASE_ANON_KEY, siteConfig.baseUrl],
+  )
 
   /**
-   * Session hydration on mount
+   * Session hydration on mount + auth state changes
    */
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -105,21 +119,8 @@ export function useAuth(redirectPath: string) {
    */
   const login = async () => {
     dispatch({ type: 'AUTH_START' })
-
     try {
-      const redirectTo = buildRedirectTo(
-        window.location.origin,
-        siteConfig.baseUrl,
-        redirectPath,
-      )
-
-      const { error } = await signInWithOAuth(supabase, {
-        provider: 'github',
-        redirectTo,
-      })
-      if (error) {
-        dispatch({ type: 'AUTH_ERROR', error: error.message })
-      }
+      await auth.login()
     } catch (err) {
       dispatch({
         type: 'AUTH_ERROR',
@@ -132,7 +133,7 @@ export function useAuth(redirectPath: string) {
    * Logout action
    */
   const logout = async () => {
-    await signOut(supabase)
+    await auth.logout()
     dispatch({ type: 'AUTH_LOGOUT' })
   }
 
