@@ -1145,8 +1145,6 @@ const DownloadsMetricsPage: React.FC = () => {
   // ──────────────────────────────────────────────────────────────
   // Fetch: aggregates (static, once per page load)
   // ──────────────────────────────────────────────────────────────
-  // Fetch: aggregates (static, once per page load)
-  // ──────────────────────────────────────────────────────────────
 
   const hasSupabaseEnv = useCallback(() => {
     if (typeof window === 'undefined') return false

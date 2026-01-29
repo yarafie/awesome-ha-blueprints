@@ -11,7 +11,7 @@
 
 import React from 'react'
 import Layout from '@theme/Layout'
-import LibrarySelectorStrip from '../maintainer/LibrarySelectorStrip'
+import LibrarySelectorStrip from '@library/maintainer/LibrarySelectorStrip'
 
 export default function LibraryExplorerPage(): JSX.Element {
   return (

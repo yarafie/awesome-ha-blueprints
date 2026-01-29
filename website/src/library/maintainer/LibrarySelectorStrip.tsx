@@ -18,7 +18,7 @@
 
 import React, { useMemo, useState } from 'react'
 import { panelBaseStyle, solidPanelBorder } from './panelStyles'
-import { jsonContext } from '../utils/libraryContexts'
+import { jsonContext } from '@src/utils/libraryContexts'
 import LibraryFileViewer from './LibraryFileViewer'
 
 type CategoryId = 'controllers' | 'hooks' | 'automations'

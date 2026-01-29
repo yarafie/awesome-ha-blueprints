@@ -22,7 +22,7 @@ import {
   changelogsContext,
   blueprintsContext,
   docsContext,
-} from '../utils/libraryContexts'
+} from '@src/utils/libraryContexts'
 import { panelBaseStyle, solidPanelBorder } from './panelStyles'
 
 // Metadata panels

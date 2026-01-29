@@ -1,0 +1,256 @@
+/**
+ * UpdateBlueprintSelector
+ * ────────────────────────────────────────────────────────────────
+ *
+ * Purpose:
+ *  - Step 2.1 UI for selecting an existing blueprint update target
+ *  - Forces explicit drill-down to an exact filesystem location
+ *
+ * Canonical order (LOCKED):
+ *  Category
+ *   → Blueprint ID
+ *     → Library ID
+ *       → Release ID
+ *         → Version
+ *
+ * Filesystem truth (LOCKED):
+ *  <category>/<blueprint_id>/<library_id>/<release_id>/<version>/
+ *
+ * Design constraints:
+ *  - No heuristics
+ *  - No auto-selection
+ *  - No defaults
+ *  - YAML paths only (filename ignored)
+ */
+
+import React, { useMemo } from 'react'
+
+import { blueprintsContext } from '@site/src/utils/libraryContexts'
+
+import type { UpdateBlueprintTarget } from '../state/contributionTypes'
+
+interface Props {
+  value: UpdateBlueprintTarget | null
+  onChange: (target: UpdateBlueprintTarget | null) => void
+}
+
+/**
+ * Parse blueprint YAML paths ONLY.
+ * Filename is ignored by design.
+ */
+function parseBlueprintTargets(): UpdateBlueprintTarget[] {
+  return blueprintsContext
+    .keys()
+    .map((key) => {
+      const parts = key.replace(/^\.\//, '').split('/')
+
+      // Require full depth INCLUDING filename
+      // <category>/<blueprint>/<library>/<release>/<version>/<file>.yaml
+      if (parts.length < 6) return null
+
+      return {
+        category: parts[0] as UpdateBlueprintTarget['category'],
+        blueprintId: parts[1],
+        libraryId: parts[2],
+        releaseId: parts[3],
+        version: parts[4],
+      }
+    })
+    .filter(Boolean) as UpdateBlueprintTarget[]
+}
+
+const UpdateBlueprintSelector: React.FC<Props> = ({ value, onChange }) => {
+  const entries = useMemo(parseBlueprintTargets, [])
+
+  const categories = useMemo(
+    () => Array.from(new Set(entries.map((e) => e.category))).sort(),
+    [entries],
+  )
+
+  const blueprints = useMemo(() => {
+    if (!value?.category) return []
+    return Array.from(
+      new Set(
+        entries
+          .filter((e) => e.category === value.category)
+          .map((e) => e.blueprintId),
+      ),
+    ).sort()
+  }, [entries, value?.category])
+
+  const libraries = useMemo(() => {
+    if (!value?.category || !value?.blueprintId) return []
+    return Array.from(
+      new Set(
+        entries
+          .filter(
+            (e) =>
+              e.category === value.category &&
+              e.blueprintId === value.blueprintId,
+          )
+          .map((e) => e.libraryId),
+      ),
+    ).sort()
+  }, [entries, value?.category, value?.blueprintId])
+
+  const releases = useMemo(() => {
+    if (!value?.category || !value?.blueprintId || !value?.libraryId) return []
+    return Array.from(
+      new Set(
+        entries
+          .filter(
+            (e) =>
+              e.category === value.category &&
+              e.blueprintId === value.blueprintId &&
+              e.libraryId === value.libraryId,
+          )
+          .map((e) => e.releaseId),
+      ),
+    ).sort()
+  }, [entries, value?.category, value?.blueprintId, value?.libraryId])
+
+  const versions = useMemo(() => {
+    if (
+      !value?.category ||
+      !value?.blueprintId ||
+      !value?.libraryId ||
+      !value?.releaseId
+    )
+      return []
+
+    return Array.from(
+      new Set(
+        entries
+          .filter(
+            (e) =>
+              e.category === value.category &&
+              e.blueprintId === value.blueprintId &&
+              e.libraryId === value.libraryId &&
+              e.releaseId === value.releaseId,
+          )
+          .map((e) => e.version),
+      ),
+    ).sort()
+  }, [
+    entries,
+    value?.category,
+    value?.blueprintId,
+    value?.libraryId,
+    value?.releaseId,
+  ])
+
+  return (
+    <section className='container padding-vert--lg'>
+      <h3>Select blueprint to update</h3>
+
+      {/* Category */}
+      <select
+        value={value?.category ?? ''}
+        onChange={(e) =>
+          onChange(
+            e.target.value
+              ? {
+                  category: e.target.value as UpdateBlueprintTarget['category'],
+                  blueprintId: '',
+                  libraryId: '',
+                  releaseId: '',
+                  version: '',
+                }
+              : null,
+          )
+        }
+      >
+        <option value=''>Category…</option>
+        {categories.map((c) => (
+          <option key={c} value={c}>
+            {c}
+          </option>
+        ))}
+      </select>
+
+      {/* Blueprint */}
+      <select
+        disabled={!value?.category}
+        value={value?.blueprintId ?? ''}
+        onChange={(e) =>
+          onChange({
+            category: value!.category,
+            blueprintId: e.target.value,
+            libraryId: '',
+            releaseId: '',
+            version: '',
+          })
+        }
+      >
+        <option value=''>Blueprint…</option>
+        {blueprints.map((b) => (
+          <option key={b} value={b}>
+            {b}
+          </option>
+        ))}
+      </select>
+
+      {/* Library */}
+      <select
+        disabled={!value?.blueprintId}
+        value={value?.libraryId ?? ''}
+        onChange={(e) =>
+          onChange({
+            ...value!,
+            libraryId: e.target.value,
+            releaseId: '',
+            version: '',
+          })
+        }
+      >
+        <option value=''>Library…</option>
+        {libraries.map((l) => (
+          <option key={l} value={l}>
+            {l}
+          </option>
+        ))}
+      </select>
+
+      {/* Release */}
+      <select
+        disabled={!value?.libraryId}
+        value={value?.releaseId ?? ''}
+        onChange={(e) =>
+          onChange({
+            ...value!,
+            releaseId: e.target.value,
+            version: '',
+          })
+        }
+      >
+        <option value=''>Release…</option>
+        {releases.map((r) => (
+          <option key={r} value={r}>
+            {r}
+          </option>
+        ))}
+      </select>
+
+      {/* Version */}
+      <select
+        disabled={!value?.releaseId}
+        value={value?.version ?? ''}
+        onChange={(e) =>
+          onChange({
+            ...value!,
+            version: e.target.value,
+          })
+        }
+      >
+        <option value=''>Version…</option>
+        {versions.map((v) => (
+          <option key={v} value={v}>
+            {v}
+          </option>
+        ))}
+      </select>
+    </section>
+  )
+}
+
+export default UpdateBlueprintSelector
