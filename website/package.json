@@ -39,7 +39,7 @@
     "react-json-view-lite": "^2.5.0",
     "react-markdown": "^10.1.0",
     "react-select": "^5.10.2",
-    "recharts": "^3.6.0",
+    "recharts": "^3.7.0",
     "remark-gfm": "^4.0.1"
   },
   "browserslist": {
