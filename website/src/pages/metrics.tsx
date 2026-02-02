@@ -37,7 +37,6 @@ import {
   Bar,
   BarChart,
   CartesianGrid,
-  Cell,
   Legend,
   Pie,
   PieChart,
@@ -1824,7 +1823,17 @@ const DownloadsMetricsPage: React.FC = () => {
                   <ResponsiveContainer width='100%' height='100%'>
                     <PieChart>
                       <Pie
-                        data={categoryData}
+                        data={categoryData.map((entry) => ({
+                          ...entry,
+                          // Pre-calculate the color and opacity for each slice
+                          fill: colorScale(entry.category),
+                          stroke: isDark ? '#242526' : '#fff',
+                          fillOpacity:
+                            selectedCategory === 'ALL' ||
+                            selectedCategory === entry.category
+                              ? 1
+                              : 0.4,
+                        }))}
                         dataKey='value'
                         nameKey='category'
                         cx='50%'
@@ -1832,28 +1841,16 @@ const DownloadsMetricsPage: React.FC = () => {
                         innerRadius={60}
                         outerRadius={90}
                         paddingAngle={3}
-                        fill='#8884d8'
                         labelLine={false}
                         label={({ percent }) =>
                           `${(percent * 100).toFixed(0)}%`
                         }
                         onClick={handleCategoryClick}
                         style={{ cursor: 'pointer' }}
-                      >
-                        {categoryData.map((entry, index) => (
-                          <Cell
-                            key={`cell-${index}`}
-                            fill={colorScale(entry.category)}
-                            stroke={isDark ? '#242526' : '#fff'}
-                            opacity={
-                              selectedCategory === 'ALL' ||
-                              selectedCategory === entry.category
-                                ? 1
-                                : 0.4
-                            }
-                          />
-                        ))}
-                      </Pie>
+                        // We use the standard props here; Recharts 4.0 will
+                        // automatically use the 'fill' and 'fillOpacity' from the data
+                      />
+
                       <Tooltip content={<CustomTooltip />} />
                       <Legend
                         iconType='circle'
@@ -2129,41 +2126,56 @@ const DownloadsMetricsPage: React.FC = () => {
                       />
                       <XAxis
                         type='number'
-                        stroke={THEME.textSecondary}
-                        tick={{ fontSize: 10, fill: THEME.textSecondary }}
                         tickFormatter={formatBigNumber}
-                        domain={[0, 'auto']}
-                        allowDecimals={false}
+                        stroke={THEME.textSecondary}
                       />
                       <YAxis
                         dataKey='label'
                         type='category'
                         width={100}
-                        tickLine={false}
-                        axisLine={false}
                         tick={<CustomYAxisTick />}
                       />
-                      <Tooltip content={<CustomTooltip />} />
-                      <Legend
-                        iconType='circle'
-                        wrapperStyle={{
-                          fontSize: '12px',
-                          color: THEME.textPrimary,
-                        }}
+
+                      {/* Improvement #1: Subtle Ghost Cursor */}
+                      <Tooltip
+                        content={<CustomTooltip />}
+                        cursor={{ fill: THEME.accentColor, opacity: 0.1 }}
                       />
+
                       <Bar
                         dataKey='Downloads'
                         name='# of Downloads'
                         barSize={20}
-                        radius={[0, 4, 4, 0]}
-                      >
-                        {topNBarData.map((entry, idx) => (
-                          <Cell
-                            key={`cell-${entry.id}-${entry.blueprint_library ?? 'ALL'}-${entry.blueprint_release ?? 'ALL'}-${idx}`}
-                            fill={idColorScale(entry.id) as any}
-                          />
-                        ))}
-                      </Bar>
+                        /* Improvement #2: Active Scaling & Highlight */
+                        shape={(props: any) => {
+                          const { x, y, width, height, payload } = props
+                          const isSelected = selectedBlueprintId === payload.id
+
+                          // Dim other bars if a specific one is selected
+                          const opacity =
+                            selectedBlueprintId === 'ALL' || isSelected
+                              ? 1
+                              : 0.4
+
+                          return (
+                            <rect
+                              x={x}
+                              y={y}
+                              width={width}
+                              height={height}
+                              fill={idColorScale(payload.id) as string}
+                              fillOpacity={opacity}
+                              stroke={isSelected ? THEME.accentColor : 'none'}
+                              strokeWidth={isSelected ? 2 : 0}
+                              rx={4}
+                              style={{
+                                transition: 'all 0.3s ease',
+                                cursor: 'pointer',
+                              }}
+                            />
+                          )
+                        }}
+                      />
                     </BarChart>
                   </ResponsiveContainer>
                 ) : (
