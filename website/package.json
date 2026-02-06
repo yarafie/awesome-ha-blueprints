@@ -24,7 +24,7 @@
     "d3-scale": "^4.0.2",
     "d3-scale-chromatic": "^3.1.0",
     "diff": "^8.0.3",
-    "dotenv": "^17.2.3",
+    "dotenv": "^17.2.4",
     "glob": "^13.0.1",
     "js-cookie": "^3.0.5",
     "js-yaml": "^4.1.1",
