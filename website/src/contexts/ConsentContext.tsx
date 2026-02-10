@@ -6,7 +6,7 @@ import React, {
   useEffect,
 } from 'react'
 import Cookies from 'js-cookie'
-import { initializeAnalytics } from '../utils/analytics'
+import { initializeAnalytics } from '@src/utils/analytics'
 
 interface ConsentContextType {
   consent: boolean

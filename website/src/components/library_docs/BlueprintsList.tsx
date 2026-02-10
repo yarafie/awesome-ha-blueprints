@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { jsonContext } from '../../utils/libraryContexts'
+import { jsonContext } from '@src/utils/libraryContexts'
 import BlueprintItem from './BlueprintItem'
 import { Search } from 'react-bootstrap-icons'
 

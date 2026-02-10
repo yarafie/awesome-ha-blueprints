@@ -17,18 +17,18 @@
  */
 import Link from '@docusaurus/Link'
 import { useEffect, useState } from 'react'
-import { getBlueprintDownloads } from '../../services/librarySupabase'
+import { getBlueprintDownloads } from '@src/services/supabase/librarySupabase'
 import {
   changelogsContext,
   blueprintsContext,
-} from '../../utils/libraryContexts'
+} from '@src/utils/libraryContexts'
 import yaml from 'yaml'
 import Select from 'react-select'
 import type { StylesConfig } from 'react-select'
 
 // Markdown rendering (same as Changelog.tsx)
 import { marked, Renderer } from 'marked'
-import { emojiMap } from '../../utils/emojiMap'
+import { emojiMap } from '@src/utils/emojiMap'
 
 type VersionOption = { value: string; label: string }
 interface ChangelogEntry {

@@ -28,9 +28,9 @@
 import React, { useEffect } from 'react'
 // @ts-expect-error no types for this
 import Head from '@docusaurus/Head'
-import { useConsent } from '../../contexts/ConsentContext'
-import { trackEvent } from '../../utils/analytics'
-import { recordBlueprintDownload } from '../../services/supabase'
+import { useConsent } from '@src/contexts/ConsentContext'
+import { trackEvent } from '@src/utils/analytics'
+import { recordBlueprintDownload } from '@src/services/supabase/supabase'
 
 export default function DownloadBlueprint(props: {
   route: {

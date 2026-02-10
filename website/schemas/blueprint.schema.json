@@ -129,8 +129,8 @@
 
     "status": {
       "type": "string",
-      "enum": ["active", "deprecated"],
-      "description": "Default lifecycle status of this blueprint."
+      "enum": ["active", "testing", "development", "retired", "deprecated"],
+      "description": "Lifecycle status of the blueprint."
     }
   },
 

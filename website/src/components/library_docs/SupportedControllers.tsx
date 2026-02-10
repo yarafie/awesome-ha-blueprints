@@ -24,7 +24,7 @@
  */
 import React from 'react'
 import Link from '@docusaurus/Link'
-import { jsonContext, changelogsContext } from '../../utils/libraryContexts'
+import { jsonContext, changelogsContext } from '@src/utils/libraryContexts'
 
 /* ────────────────────────────────────────────────────────────── */
 /* Types                                                         */

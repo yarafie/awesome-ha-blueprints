@@ -11,8 +11,8 @@
  */
 import Link from '@docusaurus/Link'
 import { useEffect, useState } from 'react'
-import { getBlueprintDownloads } from '../../services/supabase'
-import { changelogsContext, blueprintsContext } from '../../utils/contexts' // 1. Moved utils.ts to utils/contexts.ts
+import { getBlueprintDownloads } from '@src/services/supabase/supabase'
+import { changelogsContext, blueprintsContext } from '@src/utils/contexts' // 1. Moved utils.ts to utils/contexts.ts
 import yaml from 'yaml'
 import Select from 'react-select'
 import type { StylesConfig } from 'react-select'

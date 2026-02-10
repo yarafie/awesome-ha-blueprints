@@ -133,7 +133,8 @@
 
     "status": {
       "type": "string",
-      "enum": ["active", "deprecated"]
+      "enum": ["active", "testing", "development", "retired", "deprecated"],
+      "description": "Lifecycle status of the release."
     }
   },
 

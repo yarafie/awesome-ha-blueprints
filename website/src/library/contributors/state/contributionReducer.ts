@@ -2,27 +2,15 @@
  * Contribution Reducer
  * ────────────────────────────────────────────────────────────────
  *
- * Step 1:
- *  - Role selection
- *  - Mode selection
- *
- * Step 2.1:
- *  - Update target selection
- *
- * Step 2.2.1:
- *  - YAML upload (raw text only)
- *
- * Step 2.2.2:
- *  - Load existing YAML (raw text only)
- *
- * Step 2.2.3:
- *  - User-selected update type (Version vs Release)
+ * Handles all contributor flow state transitions.
  */
 
 import type {
   ContributionState,
   ContributionEvent,
   UpdateBlueprintTarget,
+  ReleaseRecord,
+  VersionRecord,
 } from './contributionTypes'
 
 import { blueprintsContext, jsonContext } from '@site/src/utils/libraryContexts'
@@ -34,26 +22,31 @@ export const initialContributionState: ContributionState = {
   // Step 2.1
   updateTarget: undefined,
 
-  // Step 2.2.1
+  // Step 2.1.x — Release metadata
+  release: undefined,
+
+  // Step 2.1.x — Version metadata
+  version: undefined,
+
+  // Step 2.2
   uploadedYaml: undefined,
-
-  // Step 2.2.2
   existingYaml: undefined,
-
-  // Step 2.2.3
   updateType: undefined,
-
-  // Step 2.2.4 (ADDITIVE)
   updateTypeConfirmed: false,
+
+  // Step 2.2.y — Changelog
+  changelogDraft: null,
+
+  // Step H.2
+  author: null,
+  authorDraftId: '',
+  authorLookup: { status: 'idle' },
 }
 
-// ────────────────────────────────────────────────────────────────
-// Step 2.2.2 — Existing YAML loader (contributors.base methodology)
-// ────────────────────────────────────────────────────────────────
-//
-// LOCKED RULE:
-// Existing YAML is resolved ONLY via:
-//   version.json → blueprint_file
+/* ──────────────────────────────────────────────────────────────── */
+/* Guards                                                          */
+/* ──────────────────────────────────────────────────────────────── */
+
 function isUpdateTargetComplete(
   t: UpdateBlueprintTarget | null | undefined,
 ): t is UpdateBlueprintTarget {
@@ -67,27 +60,66 @@ function isUpdateTargetComplete(
   )
 }
 
-function safeLoadExistingYaml(
+/* ──────────────────────────────────────────────────────────────── */
+/* Loaders (LOCKED BEHAVIOR, ADDITIVE)                              */
+/* ──────────────────────────────────────────────────────────────── */
+
+function safeLoadVersion(
   updateTarget: UpdateBlueprintTarget | null | undefined,
-): string | null {
+): VersionRecord | null {
   if (!isUpdateTargetComplete(updateTarget)) return null
 
   const { category, blueprintId, libraryId, releaseId, version } = updateTarget
 
   try {
-    const versionJsonPath = `./${category}/${blueprintId}/${libraryId}/${releaseId}/${version}/version.json`
-    const versionJson = jsonContext(versionJsonPath) as {
-      blueprint_file?: string
-    }
+    const path = `./${category}/${blueprintId}/${libraryId}/${releaseId}/${version}/version.json`
+    return jsonContext(path) as VersionRecord
+  } catch {
+    return null
+  }
+}
 
-    if (!versionJson?.blueprint_file) return null
+function safeLoadExistingYaml(
+  updateTarget: UpdateBlueprintTarget | null | undefined,
+): string | null {
+  const versionJson = safeLoadVersion(updateTarget)
+  if (!versionJson?.blueprint_file) return null
 
-    const yamlPath = `./${category}/${blueprintId}/${libraryId}/${releaseId}/${version}/${versionJson.blueprint_file}`
+  const {
+    category,
+    blueprint_id,
+    library_id,
+    release_id,
+    version,
+    blueprint_file,
+  } = versionJson
+
+  try {
+    const yamlPath = `./${category}/${blueprint_id}/${library_id}/${release_id}/${version}/${blueprint_file}`
     return String(blueprintsContext(yamlPath))
   } catch {
     return null
   }
 }
+
+function safeLoadRelease(
+  updateTarget: UpdateBlueprintTarget | null | undefined,
+): ReleaseRecord | null {
+  if (!updateTarget) return null
+
+  const { category, blueprintId, libraryId, releaseId } = updateTarget
+
+  try {
+    const path = `./${category}/${blueprintId}/${libraryId}/${releaseId}/release.json`
+    return jsonContext(path) as ReleaseRecord
+  } catch {
+    return null
+  }
+}
+
+/* ──────────────────────────────────────────────────────────────── */
+/* Reducer                                                         */
+/* ──────────────────────────────────────────────────────────────── */
 
 export function contributionReducer(
   state: ContributionState,
@@ -96,23 +128,9 @@ export function contributionReducer(
   switch (event.type) {
     case 'SELECT_CONTRIBUTION_MODE':
       return {
-        ...state,
+        ...initialContributionState,
         mode: event.mode,
-
-        // Reset downstream state when mode changes
-        updateTarget: event.mode === 'update_blueprint' ? null : undefined,
-
-        // Step 2.2.1
-        uploadedYaml: undefined,
-
-        // Step 2.2.2
-        existingYaml: undefined,
-
-        // Step 2.2.3
-        updateType: undefined,
-
-        // Step 2.2.4 (ADDITIVE)
-        updateTypeConfirmed: false,
+        effectiveRole: state.effectiveRole,
       }
 
     case 'SET_EFFECTIVE_ROLE':
@@ -122,21 +140,26 @@ export function contributionReducer(
       }
 
     case 'SET_UPDATE_TARGET': {
+      const version = safeLoadVersion(event.target)
       const existingYaml = safeLoadExistingYaml(event.target)
+      const release = safeLoadRelease(event.target)
 
       return {
         ...state,
         updateTarget: event.target,
 
-        // Reset YAML + update type when target changes
-        uploadedYaml: null,
-        updateType: null,
+        // Resolved metadata
+        version,
+        release,
 
-        // Step 2.2.4 (ADDITIVE)
+        // Reset downstream state
+        uploadedYaml: null,
+        existingYaml,
+
+        updateType: null,
         updateTypeConfirmed: false,
 
-        // Step 2.2.2 — Deterministic local resolve/load
-        existingYaml,
+        changelogDraft: null,
       }
     }
 
@@ -144,11 +167,7 @@ export function contributionReducer(
       return {
         ...state,
         uploadedYaml: event.yaml,
-
-        // Changing uploaded YAML invalidates downstream decisions
         updateType: null,
-
-        // Step 2.2.4 (ADDITIVE)
         updateTypeConfirmed: false,
       }
 
@@ -161,19 +180,134 @@ export function contributionReducer(
     case 'SET_UPDATE_TYPE':
       return {
         ...state,
-
-        // Step 2.2.3 — Explicit user choice
         updateType: event.updateType,
-
-        // Step 2.2.4 (ADDITIVE)
         updateTypeConfirmed: false,
       }
 
-    // Step 2.2.4 — Explicit confirmation gate (ADDITIVE)
     case 'CONFIRM_UPDATE_TYPE':
       return {
         ...state,
         updateTypeConfirmed: true,
+      }
+
+    case 'RESET_UPDATE_FORM_FLOW':
+      return {
+        ...state,
+
+        // Fully reset everything downstream of target selection
+        version: undefined,
+        release: undefined,
+
+        uploadedYaml: undefined,
+        existingYaml: undefined,
+
+        updateType: undefined,
+        updateTypeConfirmed: false,
+
+        changelogDraft: null,
+      }
+
+    /* ──────────────────────────────────────────────── */
+    /* Changelog                                       */
+    /* ──────────────────────────────────────────────── */
+
+    case 'SET_CHANGELOG_DATE':
+      return {
+        ...state,
+        changelogDraft: {
+          date: event.date,
+          changes: state.changelogDraft?.changes ?? [],
+        },
+      }
+
+    case 'ADD_CHANGELOG_CHANGE':
+      return {
+        ...state,
+        changelogDraft: {
+          date: state.changelogDraft?.date ?? '',
+          changes: [...(state.changelogDraft?.changes ?? []), event.change],
+        },
+      }
+
+    case 'UPDATE_CHANGELOG_CHANGE':
+      if (!state.changelogDraft) return state
+
+      return {
+        ...state,
+        changelogDraft: {
+          ...state.changelogDraft,
+          changes: state.changelogDraft.changes.map((c, i) =>
+            i === event.index ? { ...c, ...event.change } : c,
+          ),
+        },
+      }
+
+    case 'REMOVE_CHANGELOG_CHANGE':
+      if (!state.changelogDraft) return state
+
+      return {
+        ...state,
+        changelogDraft: {
+          ...state.changelogDraft,
+          changes: state.changelogDraft.changes.filter(
+            (_, i) => i !== event.index,
+          ),
+        },
+      }
+
+    case 'RESET_CHANGELOG_DRAFT':
+      return {
+        ...state,
+        changelogDraft: null,
+      }
+
+    case 'SET_CHANGELOG_BREAKING':
+      return {
+        ...state,
+        changelogDraft: state.changelogDraft
+          ? {
+              ...state.changelogDraft,
+              breaking: event.breaking,
+            }
+          : {
+              date: '',
+              changes: [],
+              breaking: event.breaking,
+            },
+      }
+
+    /* ──────────────────────────────────────────────── */
+    /* Author Attribution                              */
+    /* ──────────────────────────────────────────────── */
+
+    case 'SET_AUTHOR_DRAFT_ID':
+      return {
+        ...state,
+        authorDraftId: event.id,
+        authorLookup: { status: 'idle' },
+      }
+
+    case 'AUTHOR_LOOKUP_START':
+      return {
+        ...state,
+        authorLookup: { status: 'loading' },
+      }
+
+    case 'AUTHOR_LOOKUP_SUCCESS':
+      return {
+        ...state,
+        author: event.author,
+        authorDraftId: event.author.id,
+        authorLookup: { status: 'resolved' },
+      }
+
+    case 'AUTHOR_LOOKUP_ERROR':
+      return {
+        ...state,
+        authorLookup: {
+          status: 'error',
+          error: event.error,
+        },
       }
 
     default:

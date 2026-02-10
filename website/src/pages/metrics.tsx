@@ -52,7 +52,7 @@ import {
   getDailyDownloadsSeries,
   type DownloadsAggregateRow,
   type DailyDownloadsRow,
-} from '../services/metricsSupabase'
+} from '@src/services/supabase/metricsSupabase'
 
 // ────────────────────────────────────────────────────────────────
 // Types

@@ -16,10 +16,10 @@
  */
 import React, { useEffect, useState } from 'react'
 import { marked, Renderer } from 'marked'
-import { changelogsContext } from '../../utils/contexts' //1. Moved utils.ts to utils/contexts.ts
+import { changelogsContext } from '@src/utils/libraryContexts' //1. Moved utils.ts to utils/contexts.ts
 // 2. Added emoji replacement to support :emoji_codes:
 // Import the full emoji map
-import { emojiMap } from '../../utils/emojiMap'
+import { emojiMap } from '@src/utils/emojiMap'
 
 interface ChangelogExternalReference {
   label: string

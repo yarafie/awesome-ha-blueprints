@@ -19,7 +19,7 @@ import React, { useEffect, useState } from 'react'
 import {
   blueprintsContext,
   changelogsContext,
-} from '../../utils/libraryContexts'
+} from '@src/utils/libraryContexts'
 import yaml from 'yaml'
 import Input, { BlueprintInput } from './Input'
 import InputSection from './InputSection'

@@ -21,7 +21,7 @@
  *  - User choice is final (on confirm)
  */
 
-import React from 'react'
+import React, { useState } from 'react'
 import type { UpdateType } from '../state/contributionTypes'
 
 interface Props {
@@ -29,7 +29,6 @@ interface Props {
   onChange: (value: UpdateType) => void
 
   /**
-   * NEW (additive):
    * Fired only when user explicitly confirms their choice
    */
   onConfirm?: () => void
@@ -40,6 +39,13 @@ const UpdateTypeSelector: React.FC<Props> = ({
   onChange,
   onConfirm,
 }) => {
+  /**
+   * Local confirmation latch.
+   * Ensures the Continue button disappears immediately after click,
+   * even before parent re-renders or unmounts this step.
+   */
+  const [confirmed, setConfirmed] = useState(false)
+
   return (
     <div className='card'>
       <div className='card__body'>
@@ -56,7 +62,8 @@ const UpdateTypeSelector: React.FC<Props> = ({
               display: 'flex',
               gap: 12,
               alignItems: 'flex-start',
-              cursor: 'pointer',
+              cursor: confirmed ? 'default' : 'pointer',
+              opacity: confirmed ? 0.6 : 1,
             }}
           >
             <input
@@ -64,6 +71,7 @@ const UpdateTypeSelector: React.FC<Props> = ({
               name='updateType'
               value='version'
               checked={value === 'version'}
+              disabled={confirmed}
               onChange={() => onChange('version')}
             />
             <div>
@@ -81,7 +89,8 @@ const UpdateTypeSelector: React.FC<Props> = ({
               display: 'flex',
               gap: 12,
               alignItems: 'flex-start',
-              cursor: 'pointer',
+              cursor: confirmed ? 'default' : 'pointer',
+              opacity: confirmed ? 0.6 : 1,
             }}
           >
             <input
@@ -89,6 +98,7 @@ const UpdateTypeSelector: React.FC<Props> = ({
               name='updateType'
               value='release'
               checked={value === 'release'}
+              disabled={confirmed}
               onChange={() => onChange('release')}
             />
             <div>
@@ -101,13 +111,22 @@ const UpdateTypeSelector: React.FC<Props> = ({
           </label>
         </div>
 
-        {/* ✅ Confirmation (additive, gated) */}
-        {value && onConfirm && (
-          <div style={{ marginTop: 18 }}>
+        {/* Confirmation — bottom-right, disappears immediately after click */}
+        {value && onConfirm && !confirmed && (
+          <div
+            style={{
+              marginTop: 24,
+              display: 'flex',
+              justifyContent: 'flex-end',
+            }}
+          >
             <button
               className='button button--primary'
               type='button'
-              onClick={onConfirm}
+              onClick={() => {
+                setConfirmed(true)
+                onConfirm()
+              }}
             >
               Continue
             </button>

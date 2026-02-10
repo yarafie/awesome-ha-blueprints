@@ -4,16 +4,18 @@
  *
  * Step 2.2.5
  *  - Read-only summary of the resolved update target
+ *  - Explicit transition gate into Update Form Mode
  *
  * Purpose:
  *  - Make the selected blueprint target explicit
  *  - Prevent accidental updates to the wrong path
+ *  - Require an explicit user action before entering the Update Form
  *
  * Design constraints:
- *  - Read-only
- *  - No actions
- *  - No editing
- *  - Presentation only
+ *  - Read-only (no editing of target)
+ *  - No mutation or submission logic
+ *  - Single explicit Continue action
+ *  - Presentation + flow control only
  */
 
 import React from 'react'
@@ -21,6 +23,11 @@ import type { UpdateBlueprintTarget } from '../state/contributionTypes'
 
 interface Props {
   target: UpdateBlueprintTarget
+  /**
+   * Called when the user explicitly confirms the target
+   * and wishes to proceed into Update Form Mode.
+   */
+  onContinue: () => void
 }
 
 function Pill({ children }: { children: React.ReactNode }) {
@@ -43,7 +50,7 @@ function Pill({ children }: { children: React.ReactNode }) {
   )
 }
 
-const UpdateTargetSummaryCard: React.FC<Props> = ({ target }) => {
+const UpdateTargetSummaryCard: React.FC<Props> = ({ target, onContinue }) => {
   const fullPath = `${target.category}/${target.blueprintId}/${target.libraryId}/${target.releaseId}/${target.version}/`
 
   return (
@@ -132,6 +139,21 @@ const UpdateTargetSummaryCard: React.FC<Props> = ({ target }) => {
           This is a read-only confirmation step to prevent accidental updates to
           the wrong blueprint location.
         </p>
+
+        {/* ───────────────────────────────────────────── */}
+        {/* Explicit transition into Update Form Mode */}
+        {/* ───────────────────────────────────────────── */}
+        <div
+          style={{
+            marginTop: 24,
+            display: 'flex',
+            justifyContent: 'flex-end',
+          }}
+        >
+          <button className='button button--primary' onClick={onContinue}>
+            Continue
+          </button>
+        </div>
       </div>
     </div>
   )

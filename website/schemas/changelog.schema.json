@@ -34,7 +34,7 @@
 
             "type": {
               "type": "string",
-              "enum": ["feature", "fix", "refactor", "docs", "breaking"],
+              "enum": ["feature", "fix", "refactor", "docs"],
               "description": "Optional classification of the change."
             },
 

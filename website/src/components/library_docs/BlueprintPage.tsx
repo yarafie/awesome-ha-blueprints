@@ -26,12 +26,12 @@ import {
   jsonContext,
   changelogsContext,
   pdfContext,
-} from '../../utils/libraryContexts'
+} from '@src/utils/libraryContexts'
 // MARKDOWN SUPPORT
 import { marked, Renderer } from 'marked'
-import { emojiMap } from '../../utils/emojiMap'
+import { emojiMap } from '@src/utils/emojiMap'
 // DOWNLOAD METRICS
-import { getBlueprintDownloads } from '../../services/librarySupabase'
+import { getBlueprintDownloads } from '@src/services/supabase/librarySupabase'
 /* ------------------------------------------------------------------ */
 /* Schema-aligned Types (LOCKED)                                       */
 /* ------------------------------------------------------------------ */
