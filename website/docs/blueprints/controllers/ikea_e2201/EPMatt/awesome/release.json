@@ -15,8 +15,8 @@
     }
   ],
   "description": "Controller automation for executing any kind of action triggered by the provided IKEA E2201 RODRET Dimmer.",
-  "versions": ["2025.10.01"],
-  "latest_version": "2025.10.01",
+  "versions": ["2025.10.01", "2026.01.28"],
+  "latest_version": "2026.01.28",
   "status": "active",
   "supported_hooks": ["cover", "light", "media_player"],
   "supported_integrations": ["ZHA", "Zigbee2MQTT", "deCONZ"]

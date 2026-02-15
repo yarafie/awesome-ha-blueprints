@@ -28,5 +28,15 @@
         "breaking": false
       }
     ]
+  },
+  {
+    "date": "2026.01.28",
+    "changes": [
+      {
+        "author": "@just-max",
+        "description": "Fixed for zha Changed from stop to stop_with_on_off for down press button",
+        "breaking": false
+      }
+    ]
   }
 ]
