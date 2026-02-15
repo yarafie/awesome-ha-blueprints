@@ -358,5 +358,15 @@
         "breaking": true
       }
     ]
+  },
+  {
+    "date": "2026.02.09",
+    "changes": [
+      {
+        "author": "@Nicolai-",
+        "description": "Add optional force color temperature inputs when turning on lights.",
+        "breaking": false
+      }
+    ]
   }
 ]
