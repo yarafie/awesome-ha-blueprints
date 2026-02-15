@@ -1,0 +1,20 @@
+{
+  "library_id": "Nicolai-",
+  "blueprint_id": "philips_8719514440937_8719514440999",
+  "title": "Nicolai- controller library",
+  "description": "Controller blueprint library for philips_8719514440937_8719514440999 maintained by Nicolai-.",
+  "maintainers": [
+    {
+      "id": "yarafie",
+      "name": "yarafie"
+    },
+    {
+      "id": "Nicolai-",
+      "name": "Nicolai-"
+    }
+  ],
+  "releases": ["awesome"],
+  "category": "controllers",
+  "status": "active",
+  "supported_integrations": ["Zigbee2MQTT"]
+}

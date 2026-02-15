@@ -1,0 +1,32 @@
+{
+  "name": "Controller - Philips 8719514440937/8719514440999 Hue Tap dial switch",
+  "external_references": [
+    {
+      "label": "Zigbee2MQTT",
+      "url": "https://www.zigbee2mqtt.io/devices/8719514440937_8719514440999.html"
+    },
+    {
+      "label": "Zigbee2MQTT '",
+      "url": "https://www.zigbee2mqtt.io/devices/8719514440937_8719514440999.html#action-enum"
+    }
+  ],
+  "category": "controllers",
+  "blueprint_id": "philips_8719514440937_8719514440999",
+  "model_name": "Philips 8719514440937/8719514440999 Hue Tap dial switch",
+  "description": "Controller automation for executing any kind of action triggered by the provided Philips 8719514440937/8719514440999 Hue Tap dial switch.",
+  "librarians": [
+    {
+      "id": "yarafie",
+      "name": "yarafie"
+    },
+    {
+      "id": "Nicolai-",
+      "name": "Nicolai-"
+    }
+  ],
+  "model": "8719514440937/8719514440999",
+  "tags": ["zigbee", "button", "remote", "rotary", "4-button"],
+  "images": ["philips_8719514440937_8719514440999.png"],
+  "status": "active",
+  "manufacturer": "Philips"
+}

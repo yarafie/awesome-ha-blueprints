@@ -1,0 +1,81 @@
+---
+title: Controller - Philips 8719514440937/8719514440999 Hue Tap dial switch
+description: Controller automation for executing any kind of action triggered by the provided Philips 8719514440937/8719514440999 Hue Tap dial switch.
+manufacturer: Philips
+model: '8719514440937/8719514440999'
+model_name: Philips 8719514440937/8719514440999 Hue Tap dial switch
+integrations: [Zigbee2MQTT]
+---
+
+import {
+  BlueprintImportCard,
+  Inputs,
+  Requirement,
+  Changelog,
+  SupportedHooks,
+} from '/src/components/library_docs'
+
+<BlueprintImportCard
+  category='controllers'
+  id='philips_8719514440937_8719514440999'
+  library='Nicolai-'
+  release='awesome'
+/>
+
+<br />
+
+::::tip
+This blueprint is part of the **Controllers-Hooks Ecosystem**. You can read more about this topic [here](/docs/controllers-hooks-ecosystem).
+::::
+
+## Description
+
+This blueprint provides support for running custom actions whenever any of the buttons or dial gestures are used on the Philips Hue Tap dial switch (models 8719514440937 / 8719514440999). It targets controllers integrated via Zigbee2MQTT and normalises the event set exposed by the device, including button presses and brightness step events.
+
+Long press inputs optionally loop until a matching release event is received, mirroring the behaviour of other Awesome HA Blueprints controllers.
+
+::::tip
+Automations created with this blueprint can be connected with one or more [Hooks](/docs/blueprints/hooks) supported by this controller.
+Hooks allow you to quickly build controller-based automations for lights, media players, covers and more. See the list of [Hooks available for this controller](#available-hooks) for additional details.
+::::
+
+## Requirements
+
+<Requirement id='zigbee2mqtt' />
+
+## Inputs
+
+<Inputs
+  category='controllers'
+  id='philips_8719514440937_8719514440999'
+  library='Nicolai-'
+  release='awesome'
+/>
+
+## Available Hooks
+
+### Light
+
+This Hook blueprint allows you to control a light including brightness and colour adjustments using the Tap dial's buttons and dial gestures.
+
+<SupportedHooks
+  category='controllers'
+  id='philips_8719514440937_8719514440999'
+  library='Nicolai-'
+  release='awesome'
+  hook='light'
+/>
+
+## Additional Notes
+
+- The dial emits brightness step events which are exposed as dedicated controller actions to keep discrete adjustments distinct from continuous button holds.
+- Releases for long button presses are surfaced as their own actions, allowing Hooks or custom sequences to stop loops or handle clean-up when the button is released.
+
+## Changelog
+
+<Changelog
+  category='controllers'
+  id='philips_8719514440937_8719514440999'
+  library='Nicolai-'
+  release='awesome'
+/>
