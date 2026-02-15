@@ -12,10 +12,6 @@
     {
       "id": "EPMatt",
       "name": "EPMatt"
-    },
-    {
-      "id": "Nicolai-",
-      "name": "Nicolai-"
     }
   ],
   "description": "This Hook blueprint allows to build a controller-based automation to control a light. Supports brightness and color control both for white temperature and rgb lights.",
