@@ -56,6 +56,7 @@ blueprint:
             - OSRAM AC025XX00NJ SMART+ Switch Mini
             - Philips 324131092621 Hue Dimmer switch
             - Philips 8718699693985 Hue Smart Button
+            - Philips 8719514440937/8719514440999 Hue Tap Dial Switch
             - Philips 929002398602 Hue Dimmer switch v2
             - Shelly Button 1
             - Shelly SNSN-0024x Plus i4 with Wall switch 4
@@ -331,6 +332,14 @@ variables:
       brightness_down_repeat: button_down_long
     Philips 8718699693985 Hue Smart Button:
       toggle: button_short
+    Philips 8719514440937/8719514440999 Hue Tap Dial Switch:
+      toggle: button_1_short
+      color_up: button_2_short
+      color_up_repeat: button_2_long
+      color_down: button_4_short
+      color_down_repeat: button_4_long
+      brightness_up: brightness_up
+      brightness_down: brightness_down
     Philips 929002398602 Hue Dimmer switch v2:
       turn_on: button_on_short
       color_up_repeat: button_on_long
