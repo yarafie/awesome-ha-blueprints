@@ -1,0 +1,68 @@
+{
+  "controller": "philips_8719514440937_8719514440999",
+  "library_id": "Nicolai-",
+  "release_id": "awesome",
+  "hooks": [
+    {
+      "hook": "light",
+      "label": "Light",
+      "mapping_options": [
+        {
+          "id": "default",
+          "label": "Default",
+          "mappings": [
+            {
+              "event": "button_1_short",
+              "event_label": "Button 1 short press",
+              "action": "toggle",
+              "action_label": "Toggle",
+              "mode": "single"
+            },
+            {
+              "event": "button_2_short",
+              "event_label": "Button 2 short press",
+              "action": "color_up",
+              "action_label": "Color up",
+              "mode": "single"
+            },
+            {
+              "event": "button_2_long",
+              "event_label": "Button 2 long press",
+              "action": "color_up_repeat",
+              "action_label": "Color up (continuous, until release)",
+              "mode": "continuous"
+            },
+            {
+              "event": "button_4_short",
+              "event_label": "Button 4 short press",
+              "action": "color_down",
+              "action_label": "Color down",
+              "mode": "single"
+            },
+            {
+              "event": "button_4_long",
+              "event_label": "Button 4 long press",
+              "action": "color_down_repeat",
+              "action_label": "Color down (continuous, until release)",
+              "mode": "continuous"
+            },
+            {
+              "event": "brightness_up",
+              "event_label": "Dial brightness step up",
+              "action": "brightness_up",
+              "action_label": "Brightness up",
+              "mode": "single"
+            },
+            {
+              "event": "brightness_down",
+              "event_label": "Dial brightness step down",
+              "action": "brightness_down",
+              "action_label": "Brightness down",
+              "mode": "single"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

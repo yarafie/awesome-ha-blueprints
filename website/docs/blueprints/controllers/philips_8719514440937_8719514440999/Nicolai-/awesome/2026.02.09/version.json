@@ -1,0 +1,22 @@
+{
+  "version": "2026.02.09",
+  "date": "2026-02-09",
+  "blueprint_id": "philips_8719514440937_8719514440999",
+  "library_id": "Nicolai-",
+  "release_id": "awesome",
+  "category": "controllers",
+  "title": "Controller - Philips 8719514440937/8719514440999 Hue Tap dial switch",
+  "description": "Controller automation for executing any kind of action triggered by the provided Philips 8719514440937/8719514440999 Hue Tap dial switch.",
+  "maintainers": [
+    {
+      "id": "yarafie",
+      "name": "yarafie"
+    },
+    {
+      "id": "Nicolai-",
+      "name": "Nicolai-"
+    }
+  ],
+  "blueprint_file": "philips_8719514440937_8719514440999.yaml",
+  "status": "active"
+}
