@@ -34,7 +34,7 @@
     "changes": [
       {
         "author": "@yarafie",
-        "description": "Added support for Zigbee2MQTT variant Immax NEO Smart rotary knob (Untested)",
+        "description": "Added support for ZHA variants by @Ecuashungo and @dorny. Also added Zigbee2MQTT variant Immax NEO Smart rotary knob (Untested)",
         "breaking": false
       }
     ]
