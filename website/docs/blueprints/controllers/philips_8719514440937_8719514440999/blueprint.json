@@ -2,10 +2,6 @@
   "name": "Controller - Philips 8719514440937/8719514440999 Hue Tap dial switch",
   "external_references": [
     {
-      "label": "Zigbee2MQTT",
-      "url": "https://www.zigbee2mqtt.io/devices/8719514440937_8719514440999.html"
-    },
-    {
       "label": "Zigbee2MQTT '",
       "url": "https://www.zigbee2mqtt.io/devices/8719514440937_8719514440999.html#action-enum"
     }
