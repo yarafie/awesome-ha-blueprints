@@ -283,5 +283,15 @@
         "breaking": true
       }
     ]
+  },
+  {
+    "date": "2026.02.17",
+    "changes": [
+      {
+        "author": "@olvrb",
+        "description": "[Bug Fix] Update volume down button mappings for IKEA E2201 RODRET Dimmer (ikea_e2201)",
+        "breaking": false
+      }
+    ]
   }
 ]

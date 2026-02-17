@@ -1,0 +1,22 @@
+{
+  "version": "2026.02.17",
+  "date": "2026-02-17",
+  "blueprint_id": "ikea_e2201",
+  "library_id": "EPMatt",
+  "release_id": "awesome",
+  "category": "controllers",
+  "title": "Controller - IKEA E2201 RODRET Dimmer",
+  "description": "Controller automation for executing any kind of action triggered by the provided IKEA E2201 RODRET Dimmer.",
+  "maintainers": [
+    {
+      "id": "yarafie",
+      "name": "yarafie"
+    },
+    {
+      "id": "olvrb",
+      "name": "olvrb"
+    }
+  ],
+  "blueprint_file": "ikea_e2201.yaml",
+  "status": "active"
+}

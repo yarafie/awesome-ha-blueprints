@@ -15,8 +15,8 @@
     }
   ],
   "description": "This Hook blueprint allows to build a controller-based automation to control a media player. Supports volume setting, play/pause and track selection.",
-  "versions": ["2025.12.22"],
-  "latest_version": "2025.12.22",
+  "versions": ["2025.12.22", "2026.02.17"],
+  "latest_version": "2026.02.17",
   "status": "active",
   "supported_controllers": {
     "controllers": [
