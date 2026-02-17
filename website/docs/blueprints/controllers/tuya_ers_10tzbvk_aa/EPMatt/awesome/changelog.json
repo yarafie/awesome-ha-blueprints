@@ -8,5 +8,35 @@
         "breaking": false
       }
     ]
+  },
+  {
+    "date": "2025.12.15",
+    "changes": [
+      {
+        "author": "@Ecuashungo",
+        "description": "Added support for ZHA variant _TZ3000_gwkzibhs/TS004F",
+        "breaking": false
+      }
+    ]
+  },
+  {
+    "date": "2026.02.14",
+    "changes": [
+      {
+        "author": "@dorny",
+        "description": "Added support for ZHA variant _TZ3000_ugi8ky6u/TS004F",
+        "breaking": false
+      }
+    ]
+  },
+  {
+    "date": "2026.02.17",
+    "changes": [
+      {
+        "author": "@yarafie",
+        "description": "Added support for Zigbee2MQTT variant Immax NEO Smart rotary knob (Untested)",
+        "breaking": false
+      }
+    ]
   }
 ]
