@@ -366,6 +366,11 @@
         "author": "@Nicolai-",
         "description": "Add optional force color temperature inputs when turning on lights.",
         "breaking": false
+      },
+      {
+        "author": "@Nicolai-",
+        "description": "Add `controller_devices` input to support selecting multiple controller devices in a single Hook automation. Keep `controller_device` as a legacy fallback to preserve compatibility with existing automations.",
+        "breaking": false
       }
     ]
   }
