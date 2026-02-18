@@ -38,5 +38,15 @@
         "breaking": false
       }
     ]
+  },
+  {
+    "date": "2026.02.17",
+    "changes": [
+      {
+        "author": "@olvrb",
+        "description": "[Bug Fix] Update volume down button mappings for media_player hook",
+        "breaking": false
+      }
+    ]
   }
 ]

@@ -15,8 +15,8 @@
     }
   ],
   "description": "Controller automation for executing any kind of action triggered by the provided Tuya ERS-10TZBVK-AA Smart knob.",
-  "versions": ["2025.03.29"],
-  "latest_version": "2025.03.29",
+  "versions": ["2025.03.29", "2026.02.17"],
+  "latest_version": "2026.02.17",
   "status": "active",
   "supported_hooks": ["light", "media_player"],
   "supported_integrations": ["ZHA", "Zigbee2MQTT"]

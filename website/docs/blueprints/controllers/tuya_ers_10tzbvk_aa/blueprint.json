@@ -10,8 +10,20 @@
       "url": "https://www.zigbee2mqtt.io/devices/ERS-10TZBVK-AA.html#tuya-ers-10tzbvk-aa"
     },
     {
+      "label": "Zigbee2MQTT",
+      "url": "https://www.zigbee2mqtt.io/devices/07768L.html"
+    },
+    {
       "label": "ZHA Quirk",
       "url": "https://github.com/zigpy/zha-device-handlers/blob/b87ac8907765303c915b19d915a1ca5ea9a8bdae/zhaquirks/tuya/ts004f.py#L69"
+    },
+    {
+      "label": "Ali Express",
+      "url": "https://de.aliexpress.com/item/1005007575864175.html"
+    },
+    {
+      "label": "Immax",
+      "url": "https://www.immax.eu/immax-neo-smart-rotary-knob-change-cct-dimming-scene-zigbee-tuya-p17656/"
     }
   ],
   "manual_files": ["tuya_ers_10tzbvk_aa.pdf"],

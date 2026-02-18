@@ -197,9 +197,9 @@
             {
               "event": "button_down_long",
               "event_label": "Down button long press",
-              "action": "volume_down",
-              "action_label": "Volume down",
-              "mode": "single"
+              "action": "volume_down_repeat",
+              "action_label": "Volume down (continuous, until release)",
+              "mode": "continuous"
             },
             {
               "event": "button_down_double",

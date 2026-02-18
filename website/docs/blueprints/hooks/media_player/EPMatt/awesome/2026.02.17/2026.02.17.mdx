@@ -1,0 +1,71 @@
+---
+title: Hook - Media Player
+description: This Hook blueprint allows to build a controller-based automation to control a media player. Supports volume setting, play/pause and track selection.
+---
+
+import {
+  BlueprintImportCard,
+  Inputs,
+  Requirement,
+  Changelog,
+  SupportedControllers,
+} from '/src/components/library_docs'
+
+<BlueprintImportCard
+  category='hooks'
+  id='media_player'
+  library='EPMatt'
+  release='awesome'
+/>
+
+<br />
+
+:::tip
+This blueprint is part of the **Controllers-Hooks Ecosystem**. You can read more about this topic [here](/docs/controllers-hooks-ecosystem).
+:::
+
+## Description
+
+This Hook blueprint allows to build a controller-based automation to control a media player. Supports volume setting, play/pause and track selection.
+:::info
+An automation created with this blueprint must be linked to a [Controller](/docs/blueprints/controllers) automation. Controllers are blueprints which allow to easily integrate a wide range of controllers and use them to run a set of actions when interacting with them. They expose an abstract interface used by Hooks to create controller-based automations.
+
+See the list of [Controllers supported by this Hook](#supported-controllers) for additional details.
+:::
+
+## Requirements
+
+<Requirement id='controller' required/>
+<Requirement name='Media Player Integration' required>
+
+This integration provides the entity which represents a media player in Home Assistant. It should be activated by default so unless you tweaked the default configuration you're good to go.
+
+[Media Player Integration Docs](https://www.home-assistant.io/integrations/media_player/)
+
+</Requirement>
+
+## Inputs
+
+<Inputs category='hooks' id='media_player' library='EPMatt' release='awesome' />
+
+## Supported Controllers
+
+<SupportedControllers
+  category='hooks'
+  id='media_player'
+  library='EPMatt'
+  release='awesome'
+/>
+
+## Additional Notes
+
+Not all media players support the customization of the number of steps for volume control, due to the fact that some of them do not expose their current volume level to Home Assistant. In these situations, the automation will fallback to the `media_player.volume_up` and `media_player.volume_down` services.
+
+## Changelog
+
+<Changelog
+  category='hooks'
+  id='media_player'
+  library='EPMatt'
+  release='awesome'
+/>

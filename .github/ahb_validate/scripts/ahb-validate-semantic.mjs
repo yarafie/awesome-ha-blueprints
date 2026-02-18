@@ -4,6 +4,32 @@ import path from 'node:path'
 import yaml from 'js-yaml'
 
 /* =========================================================
+   Home Assistant YAML tags
+   ---------------------------------------------------------
+   js-yaml does not recognize HA blueprint tags like !input.
+   We extend the schema so semantic validation can parse
+   blueprint YAML without failing on these tags.
+   ========================================================= */
+
+function makeTaggedScalar(tagName) {
+  return new yaml.Type(tagName, {
+    kind: 'scalar',
+    resolve: (data) => data !== null && data !== undefined,
+    construct: (data) => ({
+      __ahb_tag: tagName.replace(/^!/, ''),
+      value: data,
+    }),
+  })
+}
+
+// Minimal set needed for HA blueprints (extend if you start using more)
+const AHB_YAML_SCHEMA = yaml.DEFAULT_SCHEMA.extend([
+  makeTaggedScalar('!input'),
+  makeTaggedScalar('!secret'),
+  makeTaggedScalar('!include'),
+])
+
+/* =========================================================
    Error collection
    ========================================================= */
 const errors = []
@@ -14,11 +40,11 @@ function record(msg) {
 
 function finalize() {
   if (errors.length) {
-    console.error('❌      AHB semantic validation failed:\n')
+    console.error('❌       AHB semantic validation failed:\n')
     errors.forEach((e) => console.error(e + '\n'))
     process.exit(1)
   }
-  console.log('✅      AHB semantic validation passed')
+  console.log('✅       AHB semantic validation passed')
   process.exit(0)
 }
 
@@ -27,7 +53,8 @@ function finalize() {
    ========================================================= */
 const exists = (f) => fs.existsSync(f)
 const readJson = (f) => JSON.parse(fs.readFileSync(f, 'utf8'))
-const readYaml = (f) => yaml.load(fs.readFileSync(f, 'utf8')) || {}
+const readYaml = (f) =>
+  yaml.load(fs.readFileSync(f, 'utf8'), { schema: AHB_YAML_SCHEMA }) || {}
 
 function isVersionDirName(v) {
   return /^\d{4}\.\d{2}\.\d{2}$/.test(v)
@@ -110,7 +137,7 @@ function parseIdentity(file) {
 const [, , branchName, diffFile] = process.argv
 
 if (!branchName || !diffFile) {
-  console.error('❌      Missing arguments')
+  console.error('❌       Missing arguments')
   process.exit(1)
 }
 
@@ -123,7 +150,7 @@ if (
   !branchName.startsWith('ahb_contrib/') &&
   !branchName.startsWith('ahb_maintain/')
 ) {
-  console.log('✅      Non-AHB branch – skipping semantic validation')
+  console.log('✅       Non-AHB branch – skipping semantic validation')
   process.exit(0)
 }
 
