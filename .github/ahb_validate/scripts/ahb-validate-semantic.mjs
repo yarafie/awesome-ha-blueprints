@@ -15,7 +15,10 @@ function makeTaggedScalar(tagName) {
   return new yaml.Type(tagName, {
     kind: 'scalar',
     resolve: (data) => data !== null && data !== undefined,
-    construct: (data) => ({ __ahb_tag: tagName.replace(/^!/, ''), value: data }),
+    construct: (data) => ({
+      __ahb_tag: tagName.replace(/^!/, ''),
+      value: data,
+    }),
   })
 }
 
