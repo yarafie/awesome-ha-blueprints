@@ -19,7 +19,7 @@ jobs:
 
     steps:
       - name: Download changes analysis
-        uses: dawidd6/action-download-artifact@v14
+        uses: dawidd6/action-download-artifact@v15
         with:
           commit: ${{ github.event.workflow_run.head_sha }}
           workflow: ci_pr.yml
@@ -67,7 +67,7 @@ jobs:
 
     steps:
       - name: Download failure reports
-        uses: dawidd6/action-download-artifact@v14
+        uses: dawidd6/action-download-artifact@v15
         with:
           commit: ${{ github.event.workflow_run.head_sha }}
           workflow: ci_pr.yml
