@@ -24,9 +24,26 @@ blueprint:
   source_url: https://github.com/yarafie/awesome-ha-blueprints/blob/main/blueprints/hooks/light/EPMatt/awesome/2026.02.09/light.yaml
   domain: automation
   input:
+    controller_devices:
+      name: (Required) Controller Devices
+      description: >-
+        The controller device(s) which will control the Light.
+        Choose one or more values only if the integration used to connect the
+        controllers to Home Assistant exposes them as Devices.
+        Selected devices should match the ones specified in corresponding
+        Controller automations and should use the same controller model selected
+        below.
+      default: []
+      selector:
+        device:
+          multiple: true
     controller_device:
-      name: (Required) Controller Device
-      description: The controller device which will control the Light. Choose a value only if the integration used to connect the controller to Home Assistant exposes it as a Device. This value should match the one specified in the corresponding Controller automation.
+      name: (Legacy) Controller Device
+      description: >-
+        For new automations, prefer "Controller Devices" above.
+        This will be **removed** in a future release.
+        This value should match the one specified in the corresponding
+        Controller automation.
       default: ''
       selector:
         device:
@@ -197,6 +214,8 @@ blueprint:
 variables:
   # convert blueprint inputs into variables to be used in templates
   controller_model: !input controller_model
+  controller_device_legacy: !input controller_device
+  controller_devices: !input controller_devices
   # supported controllers and mappings
   controller_mapping:
     Aqara WXKG11LM Wireless Mini Switch:
@@ -484,9 +503,15 @@ max_exceeded: silent
 triggers:
   - trigger: event
     event_type: ahb_controller_event
-    event_data:
-      controller: !input controller_device
-condition: []
+condition:
+  - condition: template
+    value_template: >-
+      {%- set devices = controller_devices if controller_devices is iterable and controller_devices is not string else [] -%}
+      {{
+        ((devices | length) > 0 and trigger.event.data.controller in devices)
+        or
+        ((devices | length) == 0 and controller_device_legacy != '' and trigger.event.data.controller == controller_device_legacy)
+      }}
 actions:
   - variables:
       action: '{{ trigger.event.data.action }}'
