@@ -1,0 +1,22 @@
+{
+  "version": "2026.02.20",
+  "date": "2026-02-20",
+  "blueprint_id": "cover",
+  "library_id": "EPMatt",
+  "release_id": "awesome",
+  "category": "hooks",
+  "title": "Hook - Cover",
+  "description": "This Hook blueprint allows building a controller-based automation to control a cover. Supports opening, closing and tilting the cover.",
+  "maintainers": [
+    {
+      "id": "yarafie",
+      "name": "yarafie"
+    },
+    {
+      "id": "EPMatt",
+      "name": "EPMatt"
+    }
+  ],
+  "blueprint_file": "cover.yaml",
+  "status": "active"
+}

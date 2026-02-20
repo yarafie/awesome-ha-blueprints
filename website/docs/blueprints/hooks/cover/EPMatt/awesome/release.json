@@ -15,8 +15,8 @@
     }
   ],
   "description": "This Hook blueprint allows building a controller-based automation to control a cover. Supports opening, closing and tilting the cover.",
-  "versions": ["2025.12.22"],
-  "latest_version": "2025.12.22",
+  "versions": ["2025.12.22", "2026.02.20"],
+  "latest_version": "2026.02.20",
   "status": "active",
   "supported_controllers": {
     "controllers": [
@@ -33,11 +33,12 @@
       "shelly_button_1",
       "shelly_snsn_0024x",
       "sonoff_snzb01",
+      "sonoff_snzb01p",
       "xiaomi_wxcjkg11lm",
       "xiaomi_wxcjkg12lm",
       "xiaomi_wxcjkg13lm",
       "xiaomi_wxkg01lm"
     ],
-    "count": 17
+    "count": 18
   }
 }

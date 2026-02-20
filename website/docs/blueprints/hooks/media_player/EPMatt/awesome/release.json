@@ -15,8 +15,8 @@
     }
   ],
   "description": "This Hook blueprint allows to build a controller-based automation to control a media player. Supports volume setting, play/pause and track selection.",
-  "versions": ["2025.12.22", "2026.02.17"],
-  "latest_version": "2026.02.17",
+  "versions": ["2025.12.22", "2026.02.17", "2026.02.20"],
+  "latest_version": "2026.02.20",
   "status": "active",
   "supported_controllers": {
     "controllers": [
@@ -39,6 +39,7 @@
       "shelly_button_1",
       "shelly_snsn_0024x",
       "sonoff_snzb01",
+      "sonoff_snzb01p",
       "tuya_ers_10tzbvk_aa",
       "tuya_zg_101z_d",
       "xiaomi_wxcjkg11lm",
@@ -46,6 +47,6 @@
       "xiaomi_wxcjkg13lm",
       "xiaomi_wxkg01lm"
     ],
-    "count": 24
+    "count": 26
   }
 }

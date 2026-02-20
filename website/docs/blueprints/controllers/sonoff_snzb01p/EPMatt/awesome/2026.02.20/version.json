@@ -1,0 +1,22 @@
+{
+  "version": "2026.02.20",
+  "date": "2025-02-20",
+  "blueprint_id": "sonoff_snzb01p",
+  "library_id": "EPMatt",
+  "release_id": "awesome",
+  "category": "controllers",
+  "title": "Controller - SONOFF SNZB-01P Wireless Button",
+  "description": "Controller automation for executing any kind of action triggered by the provided SONOFF SNZB-01P Wireless Button.",
+  "maintainers": [
+    {
+      "id": "yarafie",
+      "name": "yarafie"
+    },
+    {
+      "id": "EPMatt",
+      "name": "EPMatt"
+    }
+  ],
+  "blueprint_file": "sonoff_snzb01p.yaml",
+  "status": "active"
+}

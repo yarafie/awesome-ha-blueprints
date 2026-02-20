@@ -1,0 +1,12 @@
+[
+  {
+    "date": "2026.02.20",
+    "changes": [
+      {
+        "author": "@yarafie",
+        "description": "First blueprint version based on Sonoff SNZB-01 🎉",
+        "breaking": false
+      }
+    ]
+  }
+]

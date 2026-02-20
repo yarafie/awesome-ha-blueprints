@@ -373,5 +373,15 @@
         "breaking": false
       }
     ]
+  },
+  {
+    "date": "2026.02.20",
+    "changes": [
+      {
+        "author": "@yarafie",
+        "description": "Added support for SONOFF SNZB-01P Wireless Button.",
+        "breaking": false
+      }
+    ]
   }
 ]
