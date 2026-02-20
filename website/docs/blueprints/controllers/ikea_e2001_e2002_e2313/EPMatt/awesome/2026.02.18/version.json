@@ -1,0 +1,22 @@
+{
+  "version": "2026.02.18",
+  "date": "2026-02-18",
+  "blueprint_id": "ikea_e2001_e2002_e2313",
+  "library_id": "EPMatt",
+  "release_id": "awesome",
+  "category": "controllers",
+  "title": "Controller - IKEA E2001/E2002/E2313 STYRBAR Remote control",
+  "description": "Controller automation for executing any kind of action triggered by the provided IKEA E2001/E2002/E2313 STYRBAR Remote control.",
+  "maintainers": [
+    {
+      "id": "yarafie",
+      "name": "yarafie"
+    },
+    {
+      "id": "EPMatt",
+      "name": "EPMatt"
+    }
+  ],
+  "blueprint_file": "ikea_e2001_e2002_e2313.yaml",
+  "status": "active"
+}

@@ -4,7 +4,7 @@
 
 ## Summary
 
-- **Controllers:** 30 blueprints, 38 versions
+- **Controllers:** 30 blueprints, 37 versions
 - **Automations:** 4 blueprints, 4 versions
 - **Hooks:** 3 blueprints, 8 versions
 - **Breaking versions:** 9
@@ -96,7 +96,7 @@
 - **Title:** Controller - IKEA E1524/E1810 TRÅDFRI Wireless 5-Button Remote
 - **Librarians:** yarafie, EPMatt
 - **Library Maintainers:** EPMatt, yarafie
-- **Latest Version:** 2025.04.19
+- **Latest Version:** 2026.01.25
 - **Tags:** zigbee, button, remote, 5-button
 <details>
 <summary>Versions</summary>
@@ -104,6 +104,7 @@
 | Library | Release | Version    | Breaking |
 | ------- | ------- | ---------- | -------- |
 | EPMatt  | awesome | 2025.04.19 | no       |
+| EPMatt  | awesome | 2026.01.25 | no       |
 
 </details>
 
@@ -207,11 +208,9 @@
 <details>
 <summary>Versions</summary>
 
-| Library | Release  | Version    | Breaking               |
-| ------- | -------- | ---------- | ---------------------- |
-| yarafie | anything | 2025.01.06 | no                     |
-| yarafie | anything | 2025.04.19 | no                     |
-| EPMatt  | awesome  | 2025.11.16 | **🚨 Breaking Change** |
+| Library | Release | Version    | Breaking               |
+| ------- | ------- | ---------- | ---------------------- |
+| EPMatt  | awesome | 2025.11.16 | **🚨 Breaking Change** |
 
 **Breaking change reasons:**
 
