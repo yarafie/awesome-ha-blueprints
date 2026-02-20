@@ -15,8 +15,8 @@
     }
   ],
   "description": "Controller automation for executing any kind of action triggered by the provided IKEA E1524/E1810 TR\u00c5DFRI Wireless 5-Button Remote.",
-  "versions": ["2025.04.19"],
-  "latest_version": "2025.04.19",
+  "versions": ["2025.04.19", "2026.01.25"],
+  "latest_version": "2026.01.25",
   "status": "active",
   "supported_hooks": ["cover", "light", "media_player"],
   "supported_integrations": ["ZHA", "Zigbee2MQTT", "deCONZ"]
