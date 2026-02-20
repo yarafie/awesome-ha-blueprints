@@ -1,13 +1,13 @@
 # Awesome HA Blueprints – Library Report
 
-## _Generated on 2026-02-10_
+## _Generated on 2026-02-20_
 
 ## Summary
 
-- **Controllers:** 27 blueprints, 29 versions
+- **Controllers:** 30 blueprints, 38 versions
 - **Automations:** 4 blueprints, 4 versions
-- **Hooks:** 3 blueprints, 3 versions
-- **Breaking versions:** 7
+- **Hooks:** 3 blueprints, 8 versions
+- **Breaking versions:** 9
 
 ---
 
@@ -21,6 +21,10 @@
   - Add native double press triggers and refactor the blueprint to use triggers and trigger IDs. The integration selector input is removed, and `helper_last_controller_event` is no longer required. Re-download the blueprint and reconfigure existing automations to apply the changes. (Thanks [@yarafie](https://github.com/yarafie))
 - **ikea_e2001_e2002** – EPMatt / awesome / 2025.11.16
   - Blueprint was refactored to add back `helper_last_controller_event` in order to fix Long Press/Release Logic for both hooks and custom actions. This will close ([EPMatt-issue#949](https://github.com/EPMatt/awesome-ha-blueprints/issues/949)). See note at top regarding **Helper - Last Controller Event** input. ([@yarafie](https://github.com/yarafie))
+- **ikea_e2001_e2002_e2313** – EPMatt / awesome / 2025.11.16
+  - Blueprint was refactored to add back `helper_last_controller_event` in order to fix Long Press/Release Logic for both hooks and custom actions. This will close ([EPMatt-issue#949](https://github.com/EPMatt/awesome-ha-blueprints/issues/949)). See note at top regarding **Helper - Last Controller Event** input. ([@yarafie](https://github.com/yarafie))
+- **ikea_e2001_e2002_e2313** – EPMatt / awesome / 2026.02.18
+  - [Update] Added the IKEA Styrbar Model E2313. If you download this version of the blueprint you may need to and set up your automations again.
 - **xiaomi_wxkg01lm** – EPMatt / awesome / 2025.12.22
   - Device Name and Model was corrected to Xiaomi WXKG01LM as it is a different device from the Aqara WXKG11LM. Blueprint will need to be redownloaded and setup again.
 
@@ -193,6 +197,34 @@
 
 </details>
 
+### ikea_e2001_e2002_e2313
+
+- **Title:** Controller - IKEA E2001/E2002/E2313 STYRBAR Remote control
+- **Librarians:** yarafie, EPMatt
+- **Library Maintainers:** EPMatt, yarafie
+- **Latest Version:** 2026.02.18 (**🚨 Breaking Change**)
+- **Tags:** zigbee, button, remote, 4-button
+<details>
+<summary>Versions</summary>
+
+| Library | Release  | Version    | Breaking               |
+| ------- | -------- | ---------- | ---------------------- |
+| yarafie | anything | 2025.01.06 | no                     |
+| yarafie | anything | 2025.04.19 | no                     |
+| EPMatt  | awesome  | 2025.11.16 | **🚨 Breaking Change** |
+
+**Breaking change reasons:**
+
+- Blueprint was refactored to add back `helper_last_controller_event` in order to fix Long Press/Release Logic for both hooks and custom actions. This will close ([EPMatt-issue#949](https://github.com/EPMatt/awesome-ha-blueprints/issues/949)). See note at top regarding **Helper - Last Controller Event** input. ([@yarafie](https://github.com/yarafie))
+
+| EPMatt | awesome | 2026.02.18 | **🚨 Breaking Change** |
+
+**Breaking change reasons:**
+
+- [Update] Added the IKEA Styrbar Model E2313. If you download this version of the blueprint you may need to and set up your automations again.
+
+</details>
+
 ### ikea_e2123
 
 - **Title:** Controller - IKEA E2123 SYMFONISK sound remote, gen 2
@@ -214,7 +246,7 @@
 - **Title:** Controller - IKEA E2201 RODRET Dimmer
 - **Librarians:** yarafie, EPMatt
 - **Library Maintainers:** EPMatt, yarafie
-- **Latest Version:** 2025.10.01
+- **Latest Version:** 2026.02.17
 - **Tags:** zigbee, dimmer, light
 <details>
 <summary>Versions</summary>
@@ -222,6 +254,8 @@
 | Library | Release | Version    | Breaking |
 | ------- | ------- | ---------- | -------- |
 | EPMatt  | awesome | 2025.10.01 | no       |
+| EPMatt  | awesome | 2026.01.28 | no       |
+| EPMatt  | awesome | 2026.02.17 | no       |
 
 </details>
 
@@ -305,6 +339,22 @@
 
 </details>
 
+### philips_8719514440937_8719514440999
+
+- **Title:** Controller - Philips 8719514440937/8719514440999 Hue Tap dial switch
+- **Librarians:** yarafie, Nicolai-
+- **Library Maintainers:** Nicolai-, yarafie
+- **Latest Version:** 2026.02.09
+- **Tags:** zigbee, button, remote, rotary, 4-button
+<details>
+<summary>Versions</summary>
+
+| Library  | Release | Version    | Breaking |
+| -------- | ------- | ---------- | -------- |
+| Nicolai- | awesome | 2026.02.09 | no       |
+
+</details>
+
 ### philips_929002398602
 
 - **Title:** Controller - Philips 929002398602 Hue Dimmer switch v2
@@ -385,12 +435,28 @@
 
 </details>
 
+### sonoff_snzb01p
+
+- **Title:** Controller - SONOFF SNZB-01P Wireless Button
+- **Librarians:** yarafie, EPMatt
+- **Library Maintainers:** EPMatt, yarafie
+- **Latest Version:** 2026.02.20
+- **Tags:** zigbee, button
+<details>
+<summary>Versions</summary>
+
+| Library | Release | Version    | Breaking |
+| ------- | ------- | ---------- | -------- |
+| EPMatt  | awesome | 2026.02.20 | no       |
+
+</details>
+
 ### tuya_ers_10tzbvk_aa
 
 - **Title:** Controller - Tuya ERS-10TZBVK-AA Smart knob
 - **Librarians:** yarafie, EPMatt
 - **Library Maintainers:** EPMatt, yarafie
-- **Latest Version:** 2025.03.29
+- **Latest Version:** 2026.02.17
 - **Tags:** zigbee, knob, rotary
 <details>
 <summary>Versions</summary>
@@ -398,6 +464,7 @@
 | Library | Release | Version    | Breaking |
 | ------- | ------- | ---------- | -------- |
 | EPMatt  | awesome | 2025.03.29 | no       |
+| EPMatt  | awesome | 2026.02.17 | no       |
 
 </details>
 
@@ -558,7 +625,7 @@
 - **Title:** Hook - Cover
 - **Librarians:** yarafie, EPMatt
 - **Library Maintainers:** EPMatt, yarafie
-- **Latest Version:** 2025.12.22 (**🚨 Breaking Change**)
+- **Latest Version:** 2026.02.20
 - **Tags:** close, garage, open, stop
 <details>
 <summary>Versions</summary>
@@ -571,6 +638,8 @@
 
 - Device Name and Model was corrected for both Aqara WXKG11LM and Xiaomi WXKG01LM. Blueprints integrated with these two devices will need to be redownloaded and setup again.
 
+| EPMatt | awesome | 2026.02.20 | no |
+
 </details>
 
 ### light
@@ -578,7 +647,7 @@
 - **Title:** Hook - Light
 - **Librarians:** yarafie, EPMatt
 - **Library Maintainers:** EPMatt, yarafie
-- **Latest Version:** 2025.12.22 (**🚨 Breaking Change**)
+- **Latest Version:** 2026.02.20
 - **Tags:** brightness, color, dim, hue, light, off, on
 <details>
 <summary>Versions</summary>
@@ -591,6 +660,9 @@
 
 - Device Name and Model was corrected for both Aqara WXKG11LM and Xiaomi WXKG01LM. Blueprints integrated with these two devices will need to be redownloaded and setup again.
 
+| EPMatt | awesome | 2026.02.09 | no |
+| EPMatt | awesome | 2026.02.20 | no |
+
 </details>
 
 ### media_player
@@ -598,7 +670,7 @@
 - **Title:** Hook - Media Player
 - **Librarians:** yarafie, EPMatt
 - **Library Maintainers:** EPMatt, yarafie
-- **Latest Version:** 2025.12.22 (**🚨 Breaking Change**)
+- **Latest Version:** 2026.02.20
 - **Tags:** forward, mute, next, pause, play, previous, reverse, stop, volume
 <details>
 <summary>Versions</summary>
@@ -610,5 +682,8 @@
 **Breaking change reasons:**
 
 - Device Name and Model was corrected for both Aqara WXKG11LM and Xiaomi WXKG01LM. Blueprints integrated with these two devices will need to be redownloaded and setup again.
+
+| EPMatt | awesome | 2026.02.17 | no |
+| EPMatt | awesome | 2026.02.20 | no |
 
 </details>

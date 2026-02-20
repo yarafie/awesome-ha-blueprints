@@ -25,6 +25,8 @@ Reliable, customizable, fully tested by the community.
 
 Welcome to **yarafie's Fork** of awesome-ha-blueprints.
 
+**12 October, 2025**
+
 I wasn't planning to come back to this fork, but I've had some time on my hands.
 I've updated this fork, cleaned it up (No Security Vulnerabilities at least according to the github tab on top, which you probably don't see anyways :100: )
 
@@ -36,7 +38,19 @@ Please note, that many of the blueprints will be trying to use new techniques, s
 
 For now, just enjoy.
 
-**12 October, 2025**
+**14 January, 2026**
+
+Awesome HA Library 1.0 was released.
+
+A new look for the corresponding repo website was done. Browse through it.
+
+You will immediatly see a new format where I have created Libraries for each controller device.
+
+Under each library are releases and under each release are versions.
+
+All of EPMatt's original blueprints are still present under a library I called EPMatt and Release called awesome.
+
+Feedback is welcomed, for now Just Enjoy.
 
 ## Introduction
 
