@@ -1,0 +1,22 @@
+{
+  "version": "2026.02.22",
+  "date": "2026-02-22",
+  "blueprint_id": "light",
+  "library_id": "EPMatt",
+  "release_id": "awesome",
+  "category": "hooks",
+  "title": "Hook - Light",
+  "description": "This Hook blueprint allows to build a controller-based automation to control a light. Supports brightness and color control both for white temperature and rgb lights.",
+  "maintainers": [
+    {
+      "id": "yarafie",
+      "name": "yarafie"
+    },
+    {
+      "id": "EPMatt",
+      "name": "EPMatt"
+    }
+  ],
+  "blueprint_file": "light.yaml",
+  "status": "active"
+}

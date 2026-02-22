@@ -15,8 +15,8 @@
     }
   ],
   "description": "This Hook blueprint allows to build a controller-based automation to control a light. Supports brightness and color control both for white temperature and rgb lights.",
-  "versions": ["2025.12.22", "2026.02.09", "2026.02.20"],
-  "latest_version": "2026.02.20",
+  "versions": ["2025.12.22", "2026.02.09", "2026.02.20", "2026.02.22"],
+  "latest_version": "2026.02.22",
   "status": "active",
   "supported_controllers": {
     "controllers": [
@@ -32,6 +32,7 @@
       "ikea_e2123",
       "ikea_e2201",
       "ikea_e2213",
+      "ikea_e2489",
       "ikea_ictc_g_1",
       "osram_ac025xx00nj",
       "philips_324131092621",
@@ -50,6 +51,6 @@
       "xiaomi_wxcjkg13lm",
       "xiaomi_wxkg01lm"
     ],
-    "count": 29
+    "count": 30
   }
 }

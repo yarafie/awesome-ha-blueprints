@@ -1,0 +1,29 @@
+{
+  "category": "controllers",
+  "blueprint_id": "ikea_e2489",
+  "manufacturer": "IKEA",
+  "model": "E2489",
+  "name": "Controller - IKEA E2489 BILRESA remote control with buttons",
+  "model_name": "IKEA E2489 BILRESA remote control with buttons",
+  "description": "Controller automation for executing any kind of action triggered by the provided IKEA E2489 BILRESA remote control with buttons.",
+  "external_references": [
+    {
+      "label": "Zigbee2MQTT",
+      "url": "https://www.zigbee2mqtt.io/devices/E2489.html"
+    }
+  ],
+  "librarians": [
+    {
+      "id": "yarafie",
+      "name": "yarafie"
+    },
+    {
+      "id": "EPMatt",
+      "name": "EPMatt"
+    }
+  ],
+  "images": ["ikea_e2489.png"],
+  "manual_files": ["ikea_e2489.pdf"],
+  "tags": ["zigbee", "dimmer", "light"],
+  "status": "active"
+}

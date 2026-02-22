@@ -1,0 +1,18 @@
+{
+  "version": "2026.02.22",
+  "date": "2026-02-22",
+  "blueprint_id": "ikea_e2489",
+  "library_id": "EPMatt",
+  "release_id": "awesome",
+  "category": "controllers",
+  "title": "Controller - IKEA E2489 BILRESA remote control with buttons",
+  "description": "Controller automation for executing any kind of action triggered by the provided IKEA E2489 BILRESA remote control with buttons.",
+  "maintainers": [
+    {
+      "id": "yarafie",
+      "name": "yarafie"
+    }
+  ],
+  "blueprint_file": "ikea_e2489.yaml",
+  "status": "active"
+}

@@ -1,0 +1,210 @@
+{
+  "controller": "ikea_e2489",
+  "library_id": "EPMatt",
+  "release_id": "awesome",
+  "hooks": [
+    {
+      "hook": "cover",
+      "label": "Cover",
+      "mapping_options": [
+        {
+          "id": "default",
+          "label": "Default",
+          "mappings": [
+            {
+              "event": "button_up_short",
+              "event_label": "Up button short press",
+              "action": "open_cover",
+              "action_label": "Open cover",
+              "mode": "single"
+            },
+            {
+              "event": "button_up_long",
+              "event_label": "Up button long press",
+              "action": "open_cover_tilt",
+              "action_label": "Open the cover tilt",
+              "mode": "single"
+            },
+            {
+              "event": "button_down_short",
+              "event_label": "Down button short press",
+              "action": "close_cover",
+              "action_label": "Close cover",
+              "mode": "single"
+            },
+            {
+              "event": "button_down_long",
+              "event_label": "Down button long press",
+              "action": "close_cover_tilt",
+              "action_label": "Close the cover tilt",
+              "mode": "single"
+            },
+            {
+              "event": "button_down_double",
+              "event_label": "Down button double press",
+              "action": "stop_cover_all",
+              "action_label": "Stop cover and cover tilt",
+              "mode": "single"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "hook": "light",
+      "label": "Light",
+      "mapping_options": [
+        {
+          "id": "default",
+          "label": "Default",
+          "mappings": [
+            {
+              "event": "button_up_short",
+              "event_label": "Up button short press",
+              "action": "turn_on",
+              "action_label": "Turn on",
+              "mode": "single"
+            },
+            {
+              "event": "button_up_long",
+              "event_label": "Up button long press",
+              "action": "brightness_up_repeat",
+              "action_label": "Brightness up (continuous, until release)",
+              "mode": "continuous"
+            },
+            {
+              "event": "button_up_double",
+              "event_label": "Up button double press",
+              "action": "color_up",
+              "action_label": "Color up",
+              "mode": "single"
+            },
+            {
+              "event": "button_down_short",
+              "event_label": "Down button short press",
+              "action": "turn_off",
+              "action_label": "Turn off",
+              "mode": "single"
+            },
+            {
+              "event": "button_down_long",
+              "event_label": "Down button long press",
+              "action": "brightness_down_repeat",
+              "action_label": "Brightness down (continuous, until release)",
+              "mode": "continuous"
+            },
+            {
+              "event": "button_down_double",
+              "event_label": "Down button double press",
+              "action": "color_down",
+              "action_label": "Color down",
+              "mode": "single"
+            }
+          ]
+        },
+        {
+          "id": "option_1",
+          "label": "Option 1",
+          "mappings": [
+            {
+              "event": "button_up_short",
+              "event_label": "Up button short press",
+              "action": "brightness_up",
+              "action_label": "Brightness up",
+              "mode": "single"
+            },
+            {
+              "event": "button_up_long",
+              "event_label": "Up button long press",
+              "action": "brightness_up_repeat",
+              "action_label": "Brightness up (continuous, until release)",
+              "mode": "continuous"
+            },
+            {
+              "event": "button_up_double",
+              "event_label": "Up button double press",
+              "action": "turn_on",
+              "action_label": "Turn on",
+              "mode": "single"
+            },
+            {
+              "event": "button_down_short",
+              "event_label": "Down button short press",
+              "action": "brightness_down",
+              "action_label": "Brightness down",
+              "mode": "single"
+            },
+            {
+              "event": "button_down_long",
+              "event_label": "Down button long press",
+              "action": "brightness_down_repeat",
+              "action_label": "Brightness down (continuous, until release)",
+              "mode": "continuous"
+            },
+            {
+              "event": "button_down_double",
+              "event_label": "Down button double press",
+              "action": "turn_off",
+              "action_label": "Turn off",
+              "mode": "single"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "hook": "media_player",
+      "label": "Media Player",
+      "mapping_options": [
+        {
+          "id": "default",
+          "label": "Default",
+          "mappings": [
+            {
+              "event": "button_up_short",
+              "event_label": "Up button short press",
+              "action": "volume_up",
+              "action_label": "Volume up",
+              "mode": "single"
+            },
+            {
+              "event": "button_up_long",
+              "event_label": "Up button long press",
+              "action": "volume_up_repeat",
+              "action_label": "Volume up (continuous, until release)",
+              "mode": "continuous"
+            },
+            {
+              "event": "button_up_double",
+              "event_label": "Up button double press",
+              "action": "next_track",
+              "action_label": "Next track",
+              "mode": "single"
+            },
+            {
+              "event": "button_down_short",
+              "event_label": "Down button short press",
+              "action": "volume_down",
+              "action_label": "Volume down",
+              "mode": "single"
+            },
+            {
+              "event": "button_down_long",
+              "event_label": "Down button long press",
+              "action": "volume_down_repeat",
+              "action_label": "Volume down (continuous, until release)",
+              "mode": "continuous"
+            },
+            {
+              "event": "button_down_double",
+              "event_label": "Down button double press",
+              "action": "play_pause",
+              "action_label": "Play/Pause",
+              "mode": "single"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

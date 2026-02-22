@@ -1,12 +1,12 @@
 # Awesome HA Blueprints – Library Report
 
-## _Generated on 2026-02-20_
+## _Generated on 2026-02-22_
 
 ## Summary
 
-- **Controllers:** 30 blueprints, 37 versions
+- **Controllers:** 31 blueprints, 38 versions
 - **Automations:** 4 blueprints, 4 versions
-- **Hooks:** 3 blueprints, 8 versions
+- **Hooks:** 3 blueprints, 11 versions
 - **Breaking versions:** 9
 
 ---
@@ -271,6 +271,22 @@
 | Library | Release | Version    | Breaking |
 | ------- | ------- | ---------- | -------- |
 | EPMatt  | awesome | 2025.05.08 | no       |
+
+</details>
+
+### ikea_e2489
+
+- **Title:** Controller - IKEA E2489 BILRESA remote control with buttons
+- **Librarians:** yarafie, EPMatt
+- **Library Maintainers:** EPMatt, yarafie
+- **Latest Version:** 2026.02.22
+- **Tags:** zigbee, dimmer, light
+<details>
+<summary>Versions</summary>
+
+| Library | Release | Version    | Breaking |
+| ------- | ------- | ---------- | -------- |
+| EPMatt  | awesome | 2026.02.22 | no       |
 
 </details>
 
@@ -624,7 +640,7 @@
 - **Title:** Hook - Cover
 - **Librarians:** yarafie, EPMatt
 - **Library Maintainers:** EPMatt, yarafie
-- **Latest Version:** 2026.02.20
+- **Latest Version:** 2026.02.22
 - **Tags:** close, garage, open, stop
 <details>
 <summary>Versions</summary>
@@ -638,6 +654,7 @@
 - Device Name and Model was corrected for both Aqara WXKG11LM and Xiaomi WXKG01LM. Blueprints integrated with these two devices will need to be redownloaded and setup again.
 
 | EPMatt | awesome | 2026.02.20 | no |
+| EPMatt | awesome | 2026.02.22 | no |
 
 </details>
 
@@ -646,7 +663,7 @@
 - **Title:** Hook - Light
 - **Librarians:** yarafie, EPMatt
 - **Library Maintainers:** EPMatt, yarafie
-- **Latest Version:** 2026.02.20
+- **Latest Version:** 2026.02.22
 - **Tags:** brightness, color, dim, hue, light, off, on
 <details>
 <summary>Versions</summary>
@@ -661,6 +678,7 @@
 
 | EPMatt | awesome | 2026.02.09 | no |
 | EPMatt | awesome | 2026.02.20 | no |
+| EPMatt | awesome | 2026.02.22 | no |
 
 </details>
 
@@ -669,7 +687,7 @@
 - **Title:** Hook - Media Player
 - **Librarians:** yarafie, EPMatt
 - **Library Maintainers:** EPMatt, yarafie
-- **Latest Version:** 2026.02.20
+- **Latest Version:** 2026.02.22
 - **Tags:** forward, mute, next, pause, play, previous, reverse, stop, volume
 <details>
 <summary>Versions</summary>
@@ -684,5 +702,6 @@
 
 | EPMatt | awesome | 2026.02.17 | no |
 | EPMatt | awesome | 2026.02.20 | no |
+| EPMatt | awesome | 2026.02.22 | no |
 
 </details>

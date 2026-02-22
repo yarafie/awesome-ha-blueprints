@@ -383,5 +383,15 @@
         "breaking": false
       }
     ]
+  },
+  {
+    "date": "2026.02.22",
+    "changes": [
+      {
+        "author": "@yarafie",
+        "description": "Added support for IKEA E2489 BILRESA remote control with buttons.",
+        "breaking": false
+      }
+    ]
   }
 ]
