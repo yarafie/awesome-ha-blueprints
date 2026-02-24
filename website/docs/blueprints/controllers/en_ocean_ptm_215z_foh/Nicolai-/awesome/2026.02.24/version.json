@@ -1,0 +1,22 @@
+{
+  "version": "2026.02.24",
+  "date": "2026-02-24",
+  "blueprint_id": "en_ocean_ptm_215z_foh",
+  "library_id": "Nicolai-",
+  "release_id": "awesome",
+  "category": "controllers",
+  "title": "Controller - EnOcean PTM 215Z (Friends Of Hue)",
+  "description": "Controller automation for executing any kind of action triggered by EnOcean PTM 215Z (Friends Of Hue) wall switches.",
+  "maintainers": [
+    {
+      "id": "yarafie",
+      "name": "yarafie"
+    },
+    {
+      "id": "Nicolai-",
+      "name": "Nicolai-"
+    }
+  ],
+  "blueprint_file": "en_ocean_ptm_215z_foh.yaml",
+  "status": "active"
+}

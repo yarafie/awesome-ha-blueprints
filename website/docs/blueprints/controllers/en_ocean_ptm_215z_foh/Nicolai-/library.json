@@ -1,0 +1,20 @@
+{
+  "library_id": "Nicolai-",
+  "blueprint_id": "en_ocean_ptm_215z_foh",
+  "title": "Nicolai- controller library",
+  "description": "Controller blueprint library for EnOcean PTM 215Z (Friends Of Hue), maintained by Nicolai-.",
+  "maintainers": [
+    {
+      "id": "yarafie",
+      "name": "yarafie"
+    },
+    {
+      "id": "Nicolai-",
+      "name": "Nicolai-"
+    }
+  ],
+  "releases": ["awesome"],
+  "category": "controllers",
+  "status": "active",
+  "supported_integrations": ["Zigbee2MQTT"]
+}
