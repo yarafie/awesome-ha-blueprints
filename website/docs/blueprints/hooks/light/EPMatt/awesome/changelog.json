@@ -393,5 +393,15 @@
         "breaking": false
       }
     ]
+  },
+  {
+    "date": "2026.02.24",
+    "changes": [
+      {
+        "author": "@Nicolai-",
+        "description": "Added support for EnOcean PTM 215Z (Friends Of Hue).",
+        "breaking": false
+      }
+    ]
   }
 ]

@@ -1,0 +1,239 @@
+{
+  "controller": "en_ocean_ptm_215z_foh",
+  "library_id": "Nicolai-",
+  "release_id": "awesome",
+  "hooks": [
+    {
+      "hook": "light",
+      "label": "Light",
+      "mapping_options": [
+        {
+          "id": "default",
+          "label": "Horizontal - Top Buttons",
+          "mappings": [
+            {
+              "event": "button_top_left_short",
+              "event_label": "Top left button short press",
+              "action": "turn_on",
+              "action_label": "Turn on",
+              "mode": "single"
+            },
+            {
+              "event": "button_top_left_long",
+              "event_label": "Top left button long press",
+              "action": "brightness_up_repeat",
+              "action_label": "Brightness up (continuous, until release)",
+              "mode": "continuous"
+            },
+            {
+              "event": "button_top_right_short",
+              "event_label": "Top right button short press",
+              "action": "turn_off",
+              "action_label": "Turn off",
+              "mode": "single"
+            },
+            {
+              "event": "button_top_right_long",
+              "event_label": "Top right button long press",
+              "action": "brightness_down_repeat",
+              "action_label": "Brightness down (continuous, until release)",
+              "mode": "continuous"
+            },
+            {
+              "event": "button_bottom_left_short",
+              "event_label": "Bottom left button short press",
+              "action": "color_up",
+              "action_label": "Color up",
+              "mode": "single"
+            },
+            {
+              "event": "button_bottom_right_short",
+              "event_label": "Bottom right button short press",
+              "action": "color_down",
+              "action_label": "Color down",
+              "mode": "single"
+            }
+          ]
+        },
+        {
+          "id": "option_1",
+          "label": "Horizontal - Bottom Buttons",
+          "mappings": [
+            {
+              "event": "button_bottom_left_short",
+              "event_label": "Bottom left button short press",
+              "action": "turn_on",
+              "action_label": "Turn on",
+              "mode": "single"
+            },
+            {
+              "event": "button_bottom_left_long",
+              "event_label": "Bottom left button long press",
+              "action": "brightness_up_repeat",
+              "action_label": "Brightness up (continuous, until release)",
+              "mode": "continuous"
+            },
+            {
+              "event": "button_bottom_right_short",
+              "event_label": "Bottom right button short press",
+              "action": "turn_off",
+              "action_label": "Turn off",
+              "mode": "single"
+            },
+            {
+              "event": "button_bottom_right_long",
+              "event_label": "Bottom right button long press",
+              "action": "brightness_down_repeat",
+              "action_label": "Brightness down (continuous, until release)",
+              "mode": "continuous"
+            },
+            {
+              "event": "button_top_left_short",
+              "event_label": "Top left button short press",
+              "action": "color_up",
+              "action_label": "Color up",
+              "mode": "single"
+            },
+            {
+              "event": "button_top_right_short",
+              "event_label": "Top right button short press",
+              "action": "color_down",
+              "action_label": "Color down",
+              "mode": "single"
+            }
+          ]
+        },
+        {
+          "id": "option_2",
+          "label": "Horizontal - Top - On/Off/Dimm - Bottom - Color Up/Down",
+          "mappings": [
+            {
+              "event": "button_top_left_short",
+              "event_label": "Top left button short press",
+              "action": "turn_on",
+              "action_label": "Turn on",
+              "mode": "single"
+            },
+            {
+              "event": "button_top_left_long",
+              "event_label": "Top left button long press",
+              "action": "brightness_up_repeat",
+              "action_label": "Brightness up (continuous, until release)",
+              "mode": "continuous"
+            },
+            {
+              "event": "button_top_right_short",
+              "event_label": "Top right button short press",
+              "action": "turn_off",
+              "action_label": "Turn off",
+              "mode": "single"
+            },
+            {
+              "event": "button_top_right_long",
+              "event_label": "Top right button long press",
+              "action": "brightness_down_repeat",
+              "action_label": "Brightness down (continuous, until release)",
+              "mode": "continuous"
+            },
+            {
+              "event": "button_bottom_left_short",
+              "event_label": "Bottom left button short press",
+              "action": "color_up",
+              "action_label": "Color up",
+              "mode": "single"
+            },
+            {
+              "event": "button_bottom_left_long",
+              "event_label": "Bottom left button long press",
+              "action": "color_up_repeat",
+              "action_label": "Color up (continuous, until release)",
+              "mode": "continuous"
+            },
+            {
+              "event": "button_bottom_right_short",
+              "event_label": "Bottom right button short press",
+              "action": "color_down",
+              "action_label": "Color down",
+              "mode": "single"
+            },
+            {
+              "event": "button_bottom_right_long",
+              "event_label": "Bottom right button long press",
+              "action": "color_down_repeat",
+              "action_label": "Color down (continuous, until release)",
+              "mode": "continuous"
+            }
+          ]
+        },
+        {
+          "id": "option_3",
+          "label": "Vertical - Left Buttons",
+          "mappings": [
+            {
+              "event": "button_top_left_short",
+              "event_label": "Top left button short press",
+              "action": "turn_on",
+              "action_label": "Turn on",
+              "mode": "single"
+            },
+            {
+              "event": "button_top_left_long",
+              "event_label": "Top left button long press",
+              "action": "brightness_up_repeat",
+              "action_label": "Brightness up (continuous, until release)",
+              "mode": "continuous"
+            },
+            {
+              "event": "button_bottom_left_short",
+              "event_label": "Bottom left button short press",
+              "action": "turn_off",
+              "action_label": "Turn off",
+              "mode": "single"
+            },
+            {
+              "event": "button_bottom_left_long",
+              "event_label": "Bottom left button long press",
+              "action": "brightness_down_repeat",
+              "action_label": "Brightness down (continuous, until release)",
+              "mode": "continuous"
+            }
+          ]
+        },
+        {
+          "id": "option_4",
+          "label": "Vertical - Right Buttons",
+          "mappings": [
+            {
+              "event": "button_top_right_short",
+              "event_label": "Top right button short press",
+              "action": "turn_on",
+              "action_label": "Turn on",
+              "mode": "single"
+            },
+            {
+              "event": "button_top_right_long",
+              "event_label": "Top right button long press",
+              "action": "brightness_up_repeat",
+              "action_label": "Brightness up (continuous, until release)",
+              "mode": "continuous"
+            },
+            {
+              "event": "button_bottom_right_short",
+              "event_label": "Bottom right button short press",
+              "action": "turn_off",
+              "action_label": "Turn off",
+              "mode": "single"
+            },
+            {
+              "event": "button_bottom_right_long",
+              "event_label": "Bottom right button long press",
+              "action": "brightness_down_repeat",
+              "action_label": "Brightness down (continuous, until release)",
+              "mode": "continuous"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

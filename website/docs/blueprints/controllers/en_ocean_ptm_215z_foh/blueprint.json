@@ -1,0 +1,28 @@
+{
+  "name": "Controller - EnOcean PTM 215Z (Friends Of Hue)",
+  "external_references": [
+    {
+      "label": "Zigbee2MQTT PTM 215Z",
+      "url": "https://www.zigbee2mqtt.io/devices/PTM_215Z.html"
+    }
+  ],
+  "category": "controllers",
+  "blueprint_id": "en_ocean_ptm_215z_foh",
+  "model_name": "EnOcean PTM 215Z (Friends Of Hue)",
+  "description": "Controller automation for executing any kind of action triggered by EnOcean PTM 215Z (Friends Of Hue) wall switches.",
+  "librarians": [
+    {
+      "id": "yarafie",
+      "name": "yarafie"
+    },
+    {
+      "id": "Nicolai-",
+      "name": "Nicolai-"
+    }
+  ],
+  "model": "PTM 215Z",
+  "tags": ["zigbee", "button", "remote", "switch", "4-button"],
+  "images": ["en_ocean_ptm_215z_foh.png"],
+  "status": "active",
+  "manufacturer": "EnOcean"
+}

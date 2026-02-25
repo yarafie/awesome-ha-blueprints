@@ -1,0 +1,81 @@
+---
+title: Controller - EnOcean PTM 215Z (Friends Of Hue)
+description: Controller automation for executing any kind of action triggered by EnOcean PTM 215Z (Friends Of Hue) wall switches.
+manufacturer: EnOcean
+model: PTM 215Z
+model_name: EnOcean PTM 215Z (Friends Of Hue)
+integrations: [Zigbee2MQTT]
+---
+
+import {
+  BlueprintImportCard,
+  Inputs,
+  Requirement,
+  Changelog,
+  SupportedHooks,
+} from '/src/components/library_docs'
+
+<BlueprintImportCard
+  category='controllers'
+  id='en_ocean_ptm_215z_foh'
+  library='Nicolai-'
+  release='awesome'
+/>
+
+<br />
+
+::::tip
+This blueprint is part of the **Controllers-Hooks Ecosystem**. You can read more about this topic [here](/docs/controllers-hooks-ecosystem).
+::::
+
+## Description
+
+This blueprint provides support for running custom actions whenever any of the four rocker buttons are used on EnOcean PTM 215Z (Friends Of Hue) compatible switches. It supports Zigbee2MQTT and emits semantic `ahb_controller_event` actions that can be consumed by Hooks.
+
+Long-press actions can be looped until the corresponding release is received, allowing smooth dimming and continuous color adjustments in linked Hooks.
+
+::::tip
+Automations created with this blueprint can be connected with one or more [Hooks](/docs/blueprints/hooks) supported by this controller.
+Hooks allow you to quickly build controller-based automations for lights, media players, covers and more. See the list of [Hooks available for this controller](#available-hooks) for additional details.
+::::
+
+## Requirements
+
+<Requirement id='zigbee2mqtt' />
+
+## Inputs
+
+<Inputs
+  category='controllers'
+  id='en_ocean_ptm_215z_foh'
+  library='Nicolai-'
+  release='awesome'
+/>
+
+## Available Hooks
+
+### Light
+
+This Hook blueprint allows you to control a light including brightness and color adjustments using PTM 215Z button presses.
+
+<SupportedHooks
+  category='controllers'
+  id='en_ocean_ptm_215z_foh'
+  library='Nicolai-'
+  release='awesome'
+  hook='light'
+/>
+
+## Additional Notes
+
+- The switch reports `press_*` and `release_*` events; this blueprint translates those into semantic short/long/release actions.
+- `hold_delay` controls when a press is treated as a long press.
+
+## Changelog
+
+<Changelog
+  category='controllers'
+  id='en_ocean_ptm_215z_foh'
+  library='Nicolai-'
+  release='awesome'
+/>
