@@ -1,12 +1,12 @@
 # Awesome HA Blueprints – Library Report
 
-## _Generated on 2026-02-22_
+## _Generated on 2026-02-26_
 
 ## Summary
 
-- **Controllers:** 31 blueprints, 38 versions
+- **Controllers:** 32 blueprints, 39 versions
 - **Automations:** 4 blueprints, 4 versions
-- **Hooks:** 3 blueprints, 11 versions
+- **Hooks:** 3 blueprints, 12 versions
 - **Breaking versions:** 9
 
 ---
@@ -88,6 +88,22 @@
 | Library | Release | Version    | Breaking |
 | ------- | ------- | ---------- | -------- |
 | EPMatt  | awesome | 2025.04.12 | no       |
+
+</details>
+
+### en_ocean_ptm_215z_foh
+
+- **Title:** Controller - EnOcean PTM 215Z (Friends Of Hue)
+- **Librarians:** yarafie, Nicolai-
+- **Library Maintainers:** Nicolai-, yarafie
+- **Latest Version:** 2026.02.24
+- **Tags:** zigbee, button, remote, switch, 4-button
+<details>
+<summary>Versions</summary>
+
+| Library  | Release | Version    | Breaking |
+| -------- | ------- | ---------- | -------- |
+| Nicolai- | awesome | 2026.02.24 | no       |
 
 </details>
 
@@ -663,7 +679,7 @@
 - **Title:** Hook - Light
 - **Librarians:** yarafie, EPMatt
 - **Library Maintainers:** EPMatt, yarafie
-- **Latest Version:** 2026.02.22
+- **Latest Version:** 2026.02.24
 - **Tags:** brightness, color, dim, hue, light, off, on
 <details>
 <summary>Versions</summary>
@@ -679,6 +695,7 @@
 | EPMatt | awesome | 2026.02.09 | no |
 | EPMatt | awesome | 2026.02.20 | no |
 | EPMatt | awesome | 2026.02.22 | no |
+| EPMatt | awesome | 2026.02.24 | no |
 
 </details>
 
