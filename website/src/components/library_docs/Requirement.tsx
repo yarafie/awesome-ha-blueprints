@@ -23,6 +23,7 @@ import Zigbee2MQTTRequirement from './requirements/controllers/Zigbee2MQTTRequir
 import ZHARequirement from './requirements/controllers/ZHARequirement'
 import DeCONZRequirement from './requirements/controllers/DeCONZRequirement'
 import ShellyRequirement from './requirements/controllers/ShellyRequirement'
+import MatterRequirement from './requirements/controllers/MatterRequirement'
 import ControllerRequirement from './requirements/hooks/ControllerRequirement'
 import CustomRequirement from './requirements/CustomRequirement'
 
@@ -31,6 +32,7 @@ const requirements: Record<string, React.FC<any>> = {
   zha: ZHARequirement,
   deconz: DeCONZRequirement,
   shelly: ShellyRequirement,
+  matter: MatterRequirement,
   controller: ControllerRequirement,
 }
 

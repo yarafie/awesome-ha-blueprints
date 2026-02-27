@@ -6,11 +6,12 @@ import { ArrowRight } from 'react-bootstrap-icons'
 /* Integration colors (shared with BlueprintPage)     */
 /* -------------------------------------------------- */
 const INTEGRATION_COLORS: Record<string, string> = {
-  zha: '#2563eb', // blue
-  zigbee2mqtt: '#16a34a', // green
-  z2m: '#16a34a', // green (alias)
-  deconz: '#ea580c', // orange
-  shelly: '#dc2626', // red
+  zha: '#2563eb', // Blue 600
+  zigbee2mqtt: '#16a34a', // Green 600
+  z2m: '#16a34a', // Green 600
+  deconz: '#ea580c', // Orange 600
+  shelly: '#dc2626', // Red 600
+  matter: '#1e293b', // Slate 800 (Official Black/White branding style)
 }
 
 /* Normalize integration names → color keys */
@@ -21,6 +22,7 @@ const normalizeIntegrationKey = (raw: string): string => {
   if (k === 'zha') return 'zha'
   if (k === 'deconz') return 'deconz'
   if (k === 'shelly') return 'shelly'
+  if (k === 'matter') return 'matter'
   return k
 }
 

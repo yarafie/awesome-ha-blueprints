@@ -7,11 +7,12 @@ import { Search } from 'react-bootstrap-icons'
 /* Integration colors + normalization                 */
 /* -------------------------------------------------- */
 const INTEGRATION_COLORS: Record<string, string> = {
-  zha: '#2563eb',
-  zigbee2mqtt: '#16a34a',
-  z2m: '#16a34a',
-  deconz: '#ea580c',
-  shelly: '#dc2626',
+  zha: '#2563eb', // Blue 600
+  zigbee2mqtt: '#16a34a', // Green 600
+  z2m: '#16a34a', // Green 600
+  deconz: '#ea580c', // Orange 600
+  shelly: '#dc2626', // Red 600
+  matter: '#1e293b', // Slate 800 (Official Black/White branding style)
 }
 
 const normalizeIntegrationKey = (raw: string): string => {
@@ -21,6 +22,7 @@ const normalizeIntegrationKey = (raw: string): string => {
   if (k === 'zha') return 'zha'
   if (k === 'deconz') return 'deconz'
   if (k === 'shelly') return 'shelly'
+  if (k === 'matter') return 'matter'
   return k
 }
 
