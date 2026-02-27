@@ -1,0 +1,23 @@
+{
+  "release_id": "awesome",
+  "library_id": "EPMatt",
+  "blueprint_id": "ikea_e2490",
+  "category": "controllers",
+  "title": "Controller - IKEA E2490 BILRESA remote control with scroll wheel",
+  "maintainers": [
+    {
+      "id": "yarafie",
+      "name": "yarafie"
+    },
+    {
+      "id": "EPMatt",
+      "name": "EPMatt"
+    }
+  ],
+  "description": "Controller automation for executing any kind of action triggered by the provided IKEA E2490 BILRESA remote control with scroll wheel.",
+  "versions": ["2026.02.28"],
+  "latest_version": "2026.02.28",
+  "status": "active",
+  "supported_hooks": ["cover", "light", "media_player"],
+  "supported_integrations": ["Zigbee2MQTT"]
+}

@@ -1,0 +1,121 @@
+---
+title: Controller - IKEA E2490 BILRESA remote control with scroll wheel
+description: Controller automation for executing any kind of action triggered by the provided IKEA E2490 BILRESA remote control with scroll wheel.
+manufacturer: IKEA
+model: E2490
+model_name: IKEA E2490 BILRESA remote control with scroll wheel
+integrations: [Zigbee2MQTT]
+---
+
+import {
+  BlueprintImportCard,
+  Inputs,
+  Requirement,
+  Changelog,
+  SupportedHooks,
+} from '/src/components/library_docs'
+
+<BlueprintImportCard
+  category='controllers'
+  id='ikea_e2490'
+  library='EPMatt'
+  release='awesome'
+/>
+
+<br />
+
+:::tip
+This blueprint is part of the **Controllers-Hooks Ecosystem**. You can read more about this topic [here](/docs/controllers-hooks-ecosystem).
+:::
+
+## Description
+
+This blueprint provides universal support for running any custom action when a button is pressed on the provided IKEA E2490 BILRESA remote control with scroll wheel. Supports controllers integrated with Zigbee2MQTT. The blueprint will automagically detect the integration type and take care of all the rest.
+
+This blueprint is currently only utilizing the top/on and bottom/off buttons, neither the wheel nor the edge buttons are used.
+
+:::tip
+Automations created with this blueprint can be connected with one or more [Hooks](/docs/blueprints/hooks) supported by this controller.
+Hooks allow to easily create controller-based automations for interacting with media players, lights, covers and more. See the list of [Hooks available for this controller](#available-hooks) for additional details.
+:::
+
+## Requirements
+
+<Requirement id='zigbee2mqtt' />
+
+## Inputs
+
+<Inputs
+  category='controllers'
+  id='ikea_e2490'
+  library='EPMatt'
+  release='awesome'
+/>
+
+## Available Hooks
+
+### Light
+
+This Hook blueprint allows to build a controller-based automation to control a light. Supports brightness and color control both for white temperature and rgb lights.
+
+<SupportedHooks
+  category='controllers'
+  id='ikea_e2490'
+  library='EPMatt'
+  release='awesome'
+  hook='light'
+/>
+
+### Media Player
+
+This Hook blueprint allows to build a controller-based automation to control a media player. Supports volume setting, play/pause and track selection.
+
+<SupportedHooks
+  category='controllers'
+  id='ikea_e2490'
+  library='EPMatt'
+  release='awesome'
+  hook='media_player'
+/>
+
+### Cover
+
+This Hook blueprint allows to build a controller-based automation to control a cover. Supports opening, closing and tilting the cover.
+
+<SupportedHooks
+  category='controllers'
+  id='ikea_e2490'
+  library='EPMatt'
+  release='awesome'
+  hook='cover'
+/>
+
+## Additional Notes
+
+### Pairing
+
+You must go through this sequence to pair the remote with `zigbee2mqtt`:
+
+1. Take off the faceplate / battery cover to find the pair button (middle)
+2. **Hold the pair button for ~10s to factory reset the remote.** Red LED blinks while you hold.
+   Release when amber LED pulsates. Remote is now in Thread pairing mode
+3. Move the remote away from other devices.
+   **Press the pair button 4 times to activate Touchlink.** Amber LED quickly blinks.
+   Remote is now trying to bind to nearby devices
+4. **Press the pair button 8 times.** LEDs stay off!
+   Remote is now in Zigbee pairing mode
+
+It's important to pair this device through the coordinator!
+
+Pairing through 'bad' routers (e.g. Telink Tuya, AwoX) might cause buttons not working.
+
+A modern and updated coordinator may be required.
+
+## Changelog
+
+<Changelog
+  category='controllers'
+  id='ikea_e2490'
+  library='EPMatt'
+  release='awesome'
+/>

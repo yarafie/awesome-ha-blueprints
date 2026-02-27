@@ -1,0 +1,896 @@
+# Blueprint metadata
+blueprint:
+  name: Hook - Light
+  description: |
+    # Hook - Light
+
+    ℹ️ Version 2026.02.28
+
+    Hook automation which allows to control a light. Supports brightness and color control both for white temperature and rgb lights. Features may vary depending on the selected Controller.
+
+    An automation created with this blueprint must be linked to a [Controller](https://yarafie.github.io/awesome-ha-blueprints/blueprints/controllers) automation.
+    Controllers are blueprints which allow to easily integrate a wide range of controllers (wall switches, remotes, dimmers, etc.) and use them to run a set of actions when interacting with them.
+    They expose an abstract interface used by Hooks to create controller-based automations.
+
+    A list of controllers supported by this hook is available [here](https://yarafie.github.io/awesome-ha-blueprints/docs/blueprints/hooks/light/EPMatt/awesome/2026.02.28#supported-controllers).
+
+    ## More Info
+
+    📝 [Changelog](https://yarafie.github.io/awesome-ha-blueprints/docs/blueprints/hooks/light/EPMatt/awesome/2026.02.28#changelog)
+    📕 Full documentation regarding this blueprint is available [here](https://yarafie.github.io/awesome-ha-blueprints/docs/blueprints/hooks/light).
+
+    🚀 This blueprint is part of the **[Awesome HA Blueprints](https://yarafie.github.io/awesome-ha-blueprints) project**. Please consider **[leaving a star on GitHub](https://github.com/yarafie/awesome-ha-blueprints)**! 🌟
+
+  source_url: https://github.com/yarafie/awesome-ha-blueprints/blob/main/blueprints/hooks/light/EPMatt/awesome/2026.02.28/light.yaml
+  domain: automation
+  input:
+    controller_devices:
+      name: (Required) Controller Devices
+      description: >-
+        The controller device(s) which will control the Light.
+        Choose one or more values only if the integration used to connect the
+        controllers to Home Assistant exposes them as Devices.
+        Selected devices should match the ones specified in corresponding
+        Controller automations and should use the same controller model selected
+        below.
+      default: []
+      selector:
+        device:
+          multiple: true
+    controller_device:
+      name: (Legacy) Controller Device
+      description: >-
+        For new automations, prefer "Controller Devices" above.
+        This will be **removed** in a future release.
+        This value should match the one specified in the corresponding
+        Controller automation.
+      default: ''
+      selector:
+        device:
+    controller_model:
+      name: (Required) Controller model
+      description: The model for the controller used in this automation. Choose a value from the list of supported controllers.
+      selector:
+        select:
+          options:
+            - Aqara WXKG11LM Wireless Mini Switch
+            - Aqara WXKG13LM Wireless Mini Switch T1
+            - EnOcean PTM 215Z (Friends Of Hue) (Horizontal - Top Buttons)
+            - EnOcean PTM 215Z (Friends Of Hue) (Horizontal - Bottom Buttons)
+            - EnOcean PTM 215Z (Friends Of Hue) (Horizontal - Top - On/Off/Dimm - Bottom - Color Up/Down)
+            - EnOcean PTM 215Z (Friends Of Hue) (Vertical - Left Buttons)
+            - EnOcean PTM 215Z (Friends Of Hue) (Vertical - Right Buttons)
+            - IKEA E1524/E1810 TRÅDFRI Wireless 5-Button Remote
+            - IKEA E1743 TRÅDFRI On/Off Switch & Dimmer
+            - IKEA E1743 TRÅDFRI On/Off Switch & Dimmer (Option 1)
+            - IKEA E1744 SYMFONISK Rotary Remote
+            - IKEA E1766 TRÅDFRI Open/Close Remote
+            - IKEA E1766 TRÅDFRI Open/Close Remote (Option 1)
+            - IKEA E1812 TRÅDFRI Shortcut button
+            - IKEA E2001/E2002 STYRBAR Remote control
+            - IKEA E2001/E2002 STYRBAR Remote control (Option 1)
+            - IKEA E2123 SYMFONISK sound remote, gen 2
+            - IKEA E2201 RODRET Dimmer
+            - IKEA E2201 RODRET Dimmer (Option 1)
+            - IKEA E2213 SOMRIG shortcut button
+            - IKEA E2213 SOMRIG shortcut button (Option 1)
+            - IKEA E2489 BILRESA remote control with buttons
+            - IKEA E2489 BILRESA remote control with buttons (Option 1)
+            - IKEA E2490 BILRESA remote control with scroll wheel
+            - IKEA E2490 BILRESA remote control with scroll wheel (Option 1)
+            - IKEA ICTC-G-1 TRÅDFRI wireless dimmer
+            - OSRAM AC025XX00NJ SMART+ Switch Mini
+            - Philips 324131092621 Hue Dimmer switch
+            - Philips 8718699693985 Hue Smart Button
+            - Philips 8719514440937/8719514440999 Hue Tap Dial Switch
+            - Philips 929002398602 Hue Dimmer switch v2
+            - Shelly Button 1
+            - Shelly SNSN-0024x Plus i4 with Wall switch 4
+            - Shelly SNSN-0024x Plus i4 with Wall switch 4 (Option 1)
+            - Smarthjemmet.dk QUAD-ZIG-SW 4 button remote
+            - Smarthjemmet.dk QUAD-ZIG-SW 4 button remote (Option 1)
+            - SONOFF SNZB-01 Wireless Switch
+            - SONOFF SNZB-01P Wireless Button
+            - Tuya ERS-10TZBVK-AA Smart knob
+            - Tuya ZG-101Z/D Smart knob
+            - Xiaomi WXCJKG11LM Aqara Opple 2 button remote
+            - Xiaomi WXCJKG12LM Aqara Opple 4 button remote
+            - Xiaomi WXCJKG12LM Aqara Opple 4 button remote (Option 1)
+            - Xiaomi WXCJKG13LM Aqara Opple 6 button remote
+            - Xiaomi WXCJKG13LM Aqara Opple 6 button remote (Option 1)
+            - Xiaomi WXCJKG13LM Aqara Opple 6 button remote (Option 2)
+            - Xiaomi WXKG01LM Mi Wireless Switch
+    light:
+      name: (Required) Light
+      description: Light which will be controlled with this automation.
+      selector:
+        entity:
+          domain: light
+    light_color_mode:
+      name: (Optional) Light color mode
+      description: Specify how the controller will set the light color. Choose "Color Temperature" and "Hue - Saturation" depending on the features supported by your light. If you are not sure you can select "Auto". "None" will disable color control features.
+      default: Auto
+      selector:
+        select:
+          options:
+            - Auto
+            - Color Temperature
+            - Hue - Saturation
+            - None
+    light_transition:
+      name: (Optional) Light Transition
+      description: Number that represents the time (in milliseconds) the light should take turn on or off, if the light supports it.
+      default: 250
+      selector:
+        number:
+          min: 0
+          max: 60000
+          step: 1
+          unit_of_measurement: milliseconds
+          mode: box
+    min_brightness:
+      name: (Optional) Light minimum brightness
+      description: The minimum brightness the light can be set with this automation.
+      default: 1
+      selector:
+        number:
+          min: 1
+          max: 255
+          step: 1
+          unit_of_measurement: brightness
+          mode: slider
+    max_brightness:
+      name: (Optional) Light maximum brightness
+      description: The maximum brightness the light can be set with this automation.
+      default: 255
+      selector:
+        number:
+          min: 0
+          max: 255
+          step: 1
+          unit_of_measurement: brightness
+          mode: slider
+    brightness_steps_short:
+      name: (Optional) Light brightness steps - short actions
+      description: Number of steps from min to max brightness when controlling brightness with short actions (eg. button press).
+      default: 10
+      selector:
+        number:
+          min: 1
+          max: 255
+          step: 1
+          unit_of_measurement: steps
+          mode: box
+    brightness_steps_long:
+      name: (Optional) Light brightness steps - long actions
+      description: Number of steps from min to max brightness when controlling brightness with long actions (eg. button hold or controller rotation).
+      default: 10
+      selector:
+        number:
+          min: 1
+          max: 255
+          step: 1
+          unit_of_measurement: steps
+          mode: box
+    force_brightness:
+      name: (Optional) Force brightness value at turn on
+      description: Force brightness to the "On brightness" input value, when the light is being turned on.
+      default: false
+      selector:
+        boolean:
+    on_brightness:
+      name: (Optional) On brightness
+      description: Brightness value to force when turning on the light
+      default: 1
+      selector:
+        number:
+          min: 0
+          max: 255
+          step: 1
+          unit_of_measurement: brightness
+          mode: slider
+    force_color_temperature:
+      name: (Optional) Force Color Temperature at turn on
+      description: |
+        Force color temperature to the "On Color Temperature" input value when the light
+        is being turned on.
+      default: false
+      selector:
+        boolean: {}
+    on_color_temperature:
+      name: (Optional) On Color Temperature
+      description: The color temperature setting for the light when it is turned on.
+      default: 2200
+      selector:
+        number:
+          min: 2000.0
+          max: 8000.0
+          step: 100.0
+          unit_of_measurement: kelvin
+          mode: slider
+    smooth_power_on:
+      name: (Optional) Smooth power on
+      description: Force the light to turn on at minimum brightness when a brightness up command (single or continuous) is triggered and light is off.
+      default: true
+      selector:
+        boolean:
+    smooth_power_off:
+      name: (Optional) Smooth power off
+      description: Allow a brightness down command (single or continuous) to turn off the light when at minimum brightness. Disabling this will prevent the light from being turned off by brightness down commands.
+      default: true
+      selector:
+        boolean:
+# Automation schema
+variables:
+  # convert blueprint inputs into variables to be used in templates
+  controller_model: !input controller_model
+  controller_device_legacy: !input controller_device
+  controller_devices: !input controller_devices
+  # supported controllers and mappings
+  controller_mapping:
+    EnOcean PTM 215Z (Friends Of Hue) (Horizontal - Top Buttons):
+      turn_on: button_top_left_short
+      brightness_up_repeat: button_top_left_long
+      turn_off: button_top_right_short
+      brightness_down_repeat: button_top_right_long
+      color_up: button_bottom_left_short
+      color_down: button_bottom_right_short
+    EnOcean PTM 215Z (Friends Of Hue) (Horizontal - Bottom Buttons):
+      turn_on: button_bottom_left_short
+      brightness_up_repeat: button_bottom_left_long
+      turn_off: button_bottom_right_short
+      brightness_down_repeat: button_bottom_right_long
+      color_up: button_top_left_short
+      color_down: button_top_right_short
+    EnOcean PTM 215Z (Friends Of Hue) (Horizontal - Top - On/Off/Dimm - Bottom - Color Up/Down):
+      turn_on: button_top_left_short
+      brightness_up_repeat: button_top_left_long
+      turn_off: button_top_right_short
+      brightness_down_repeat: button_top_right_long
+      color_up: button_bottom_left_short
+      color_up_repeat: button_bottom_left_long
+      color_down: button_bottom_right_short
+      color_down_repeat: button_bottom_right_long
+    EnOcean PTM 215Z (Friends Of Hue) (Vertical - Left Buttons):
+      turn_on: button_top_left_short
+      brightness_up_repeat: button_top_left_long
+      turn_off: button_bottom_left_short
+      brightness_down_repeat: button_bottom_left_long
+    EnOcean PTM 215Z (Friends Of Hue) (Vertical - Right Buttons):
+      turn_on: button_top_right_short
+      brightness_up_repeat: button_top_right_long
+      turn_off: button_bottom_right_short
+      brightness_down_repeat: button_bottom_right_long
+    Aqara WXKG11LM Wireless Mini Switch:
+      toggle: button_short
+      color_up: button_double
+    Aqara WXKG13LM Wireless Mini Switch T1:
+      toggle: button_short
+      brightness_up: button_double
+      brightness_down: button_triple
+      brightness_up_repeat: button_long
+    IKEA E1524/E1810 TRÅDFRI Wireless 5-Button Remote:
+      brightness_up: button_up_short
+      brightness_up_repeat: button_up_long
+      brightness_down: button_down_short
+      brightness_down_repeat: button_down_long
+      color_down: button_left_short
+      color_down_repeat: button_left_long
+      color_up: button_right_short
+      color_up_repeat: button_right_long
+      toggle: button_center_short
+    IKEA E1743 TRÅDFRI On/Off Switch & Dimmer:
+      turn_on: button_up_short
+      brightness_up_repeat: button_up_long
+      color_up: button_up_double
+      turn_off: button_down_short
+      brightness_down_repeat: button_down_long
+      color_down: button_down_double
+    IKEA E1743 TRÅDFRI On/Off Switch & Dimmer (Option 1):
+      brightness_up: button_up_short
+      brightness_up_repeat: button_up_long
+      turn_on: button_up_double
+      brightness_down: button_down_short
+      brightness_down_repeat: button_down_long
+      turn_off: button_down_double
+    IKEA E1744 SYMFONISK Rotary Remote:
+      brightness_down_repeat: rotate_left
+      brightness_up_repeat: rotate_right
+      toggle: click_short
+      color_up: click_double
+      color_down: click_triple
+    IKEA E1766 TRÅDFRI Open/Close Remote:
+      brightness_up: button_up_short
+      turn_on: button_up_double
+      brightness_down: button_down_short
+      turn_off: button_down_double
+    IKEA E1766 TRÅDFRI Open/Close Remote (Option 1):
+      brightness_up: button_up_short
+      color_up: button_up_double
+      brightness_down: button_down_short
+      color_down: button_down_double
+    IKEA E1812 TRÅDFRI Shortcut button:
+      toggle: button_short
+      color_up: button_double
+    IKEA E2001/E2002 STYRBAR Remote control:
+      turn_on: button_up_short
+      brightness_up_repeat: button_up_long
+      turn_off: button_down_short
+      brightness_down_repeat: button_down_long
+      color_down: button_left_short
+      color_down_repeat: button_left_long
+      color_up: button_right_short
+      color_up_repeat: button_right_long
+    IKEA E2001/E2002 STYRBAR Remote control (Option 1):
+      brightness_up: button_up_short
+      brightness_up_repeat: button_up_long
+      turn_on: button_up_double
+      brightness_down: button_down_short
+      brightness_down_repeat: button_down_long
+      turn_off: button_down_double
+      color_down: button_left_short
+      color_down_repeat: button_left_long
+      color_up: button_right_short
+      color_up_repeat: button_right_long
+    IKEA E2123 SYMFONISK sound remote, gen 2:
+      toggle: button_center_short
+      brightness_up: button_up_short
+      brightness_up_repeat: button_up_long
+      brightness_down: button_down_short
+      brightness_down_repeat: button_down_long
+      color_up: button_right_short
+      color_down: button_left_short
+      turn_off: button_dots1_short
+      turn_on: button_dots2_short
+      color_down_repeat: button_dots1_long
+      color_up_repeat: button_dots2_long
+    IKEA E2201 RODRET Dimmer:
+      turn_on: button_up_short
+      brightness_up_repeat: button_up_long
+      color_up: button_up_double
+      turn_off: button_down_short
+      brightness_down_repeat: button_down_long
+      color_down: button_down_double
+    IKEA E2201 RODRET Dimmer (Option 1):
+      brightness_up: button_up_short
+      brightness_up_repeat: button_up_long
+      turn_on: button_up_double
+      brightness_down: button_down_short
+      brightness_down_repeat: button_down_long
+      turn_off: button_down_double
+    IKEA E2213 SOMRIG shortcut button:
+      turn_on: button_dots1_short
+      brightness_up_repeat: button_dots1_long
+      color_up: button_dots1_double
+      turn_off: button_dots2_short
+      brightness_down_repeat: button_dots2_long
+      color_down: button_dots2_double
+    IKEA E2213 SOMRIG shortcut button (Option 1):
+      brightness_up: button_dots1_short
+      brightness_up_repeat: button_dots1_long
+      turn_on: button_dots1_double
+      brightness_down: button_dots2_short
+      brightness_down_repeat: button_dots2_long
+      turn_off: button_dots2_double
+    IKEA E2489 BILRESA remote control with buttons:
+      turn_on: button_up_short
+      brightness_up_repeat: button_up_long
+      color_up: button_up_double
+      turn_off: button_down_short
+      brightness_down_repeat: button_down_long
+      color_down: button_down_double
+    IKEA E2489 BILRESA remote control with buttons (Option 1):
+      brightness_up: button_up_short
+      brightness_up_repeat: button_up_long
+      turn_on: button_up_double
+      brightness_down: button_down_short
+      brightness_down_repeat: button_down_long
+      turn_off: button_down_double
+    IKEA E2490 BILRESA remote control with scroll wheel:
+      brightness_up: button_up_short
+      turn_on: button_up_double
+      brightness_down: button_down_short
+      turn_off: button_down_double
+    IKEA E2490 BILRESA remote control with scroll wheel (Option 1):
+      brightness_up: button_up_short
+      color_up: button_up_double
+      brightness_down: button_down_short
+      color_down: button_down_double
+    IKEA ICTC-G-1 TRÅDFRI wireless dimmer:
+      brightness_down_repeat: rotate_left
+      brightness_up_repeat: rotate_right
+    OSRAM AC025XX00NJ SMART+ Switch Mini:
+      brightness_up: button_up_short
+      brightness_up_repeat: button_up_long
+      color_up: button_up_double
+      brightness_down: button_down_short
+      brightness_down_repeat: button_down_long
+      color_down: button_down_double
+      toggle: button_center_short
+    Philips 324131092621 Hue Dimmer switch:
+      turn_on: button_on_short
+      color_up_repeat: button_on_long
+      turn_off: button_off_short
+      color_down_repeat: button_off_long
+      brightness_up: button_up_short
+      brightness_up_repeat: button_up_long
+      brightness_down: button_down_short
+      brightness_down_repeat: button_down_long
+    Philips 8718699693985 Hue Smart Button:
+      toggle: button_short
+    Philips 8719514440937/8719514440999 Hue Tap Dial Switch:
+      toggle: button_1_short
+      color_up: button_2_short
+      color_up_repeat: button_2_long
+      color_down: button_4_short
+      color_down_repeat: button_4_long
+      brightness_up: brightness_up
+      brightness_down: brightness_down
+    Philips 929002398602 Hue Dimmer switch v2:
+      turn_on: button_on_short
+      color_up_repeat: button_on_long
+      turn_off: button_off_short
+      color_down_repeat: button_off_long
+      brightness_up: button_up_short
+      brightness_up_repeat: button_up_long
+      brightness_down: button_down_short
+      brightness_down_repeat: button_down_long
+    Shelly Button 1:
+      toggle: button_button_short
+      brightness_up_repeat: button_button_long
+      brightness_up: button_button_double
+      brightness_down: button_button_triple
+    Shelly SNSN-0024x Plus i4 with Wall switch 4:
+      turn_on: button_button1_short
+      brightness_up_repeat: button_button1_long
+      color_up: button_button1_double
+      turn_off: button_button2_short
+      brightness_down_repeat: button_button2_long
+      color_down: button_button2_double
+    Shelly SNSN-0024x Plus i4 with Wall switch 4 (Option 1):
+      turn_on: button_button3_short
+      brightness_up_repeat: button_button3_long
+      color_up: button_button3_double
+      turn_off: button_button4_short
+      brightness_down_repeat: button_button4_long
+      color_down: button_button4_double
+    Smarthjemmet.dk QUAD-ZIG-SW 4 button remote:
+      turn_on: button_1_short
+      brightness_up_repeat: button_1_long
+      color_up: button_1_double
+      turn_off: button_2_short
+      brightness_down_repeat: button_2_long
+      color_down: button_2_double
+    Smarthjemmet.dk QUAD-ZIG-SW 4 button remote (Option 1):
+      turn_on: button_3_short
+      brightness_up_repeat: button_3_long
+      color_up: button_3_double
+      turn_off: button_4_short
+      brightness_down_repeat: button_4_long
+      color_down: button_4_double
+    SONOFF SNZB-01 Wireless Switch:
+      toggle: button_short
+      color_up: button_double
+    SONOFF SNZB-01P Wireless Button:
+      toggle: button_short
+      color_up: button_double
+    Tuya ERS-10TZBVK-AA Smart knob:
+      brightness_down: rotate_left
+      brightness_up: rotate_right
+      toggle: click_short
+      color_down: rotate_left_withpress
+      color_up: rotate_right_withpress
+    Tuya ZG-101Z/D Smart knob:
+      brightness_down: rotate_left
+      brightness_up: rotate_right
+      toggle: click_short
+      color_down: rotate_left_withpress
+      color_up: rotate_right_withpress
+    Xiaomi WXCJKG11LM Aqara Opple 2 button remote:
+      turn_on: button_1_short
+      brightness_up_repeat: button_1_long
+      color_up: button_1_double
+      turn_off: button_2_short
+      brightness_down_repeat: button_2_long
+      color_down: button_2_double
+    Xiaomi WXCJKG12LM Aqara Opple 4 button remote:
+      turn_on: button_1_short
+      brightness_up_repeat: button_1_long
+      color_up: button_1_double
+      turn_off: button_2_short
+      brightness_down_repeat: button_2_long
+      color_down: button_2_double
+    Xiaomi WXCJKG12LM Aqara Opple 4 button remote (Option 1):
+      turn_on: button_3_short
+      brightness_up_repeat: button_3_long
+      color_up: button_3_double
+      turn_off: button_4_short
+      brightness_down_repeat: button_4_long
+      color_down: button_4_double
+    Xiaomi WXCJKG13LM Aqara Opple 6 button remote:
+      turn_on: button_1_short
+      brightness_up_repeat: button_1_long
+      color_up: button_1_double
+      turn_off: button_2_short
+      brightness_down_repeat: button_2_long
+      color_down: button_2_double
+    Xiaomi WXCJKG13LM Aqara Opple 6 button remote (Option 1):
+      turn_on: button_3_short
+      brightness_up_repeat: button_3_long
+      color_up: button_3_double
+      turn_off: button_4_short
+      brightness_down_repeat: button_4_long
+      color_down: button_4_double
+    Xiaomi WXCJKG13LM Aqara Opple 6 button remote (Option 2):
+      turn_on: button_5_short
+      brightness_up_repeat: button_5_long
+      color_up: button_5_double
+      turn_off: button_6_short
+      brightness_down_repeat: button_6_long
+      color_down: button_6_double
+    Xiaomi WXKG01LM Mi Wireless Switch:
+      toggle: button_short
+      color_up: button_double
+  # pre-choose actions for buttons based on configured controller
+  # no need to perform this task at automation runtime
+  brightness_up: '{{ controller_mapping[controller_model]["brightness_up"] | default(None) }}'
+  brightness_up_repeat: '{{ controller_mapping[controller_model]["brightness_up_repeat"] | default(None) }}'
+  brightness_down: '{{ controller_mapping[controller_model]["brightness_down"] | default(None) }}'
+  brightness_down_repeat: '{{ controller_mapping[controller_model]["brightness_down_repeat"] | default(None) }}'
+  color_up: '{{ controller_mapping[controller_model]["color_up"] | default(None) }}'
+  color_up_repeat: '{{ controller_mapping[controller_model]["color_up_repeat"] | default(None) }}'
+  color_down: '{{ controller_mapping[controller_model]["color_down"] | default(None) }}'
+  color_down_repeat: '{{ controller_mapping[controller_model]["color_down_repeat"] | default(None) }}'
+  toggle: '{{ controller_mapping[controller_model]["toggle"] | default(None) }}'
+  turn_on: '{{ controller_mapping[controller_model]["turn_on"] | default(None) }}'
+  turn_off: '{{ controller_mapping[controller_model]["turn_off"] | default(None) }}'
+  light_color_mode: !input light_color_mode
+  light: !input light
+  light_transition: !input light_transition
+  min_brightness: !input min_brightness
+  max_brightness: !input max_brightness
+  brightness_steps_short: !input brightness_steps_short
+  brightness_steps_long: !input brightness_steps_long
+  force_brightness: !input force_brightness
+  on_brightness: !input on_brightness
+  force_color_temperature: !input force_color_temperature
+  on_color_temperature: !input on_color_temperature
+  smooth_power_on: !input smooth_power_on
+  smooth_power_off: !input smooth_power_off
+  color_modes:
+    Auto: auto
+    Color Temperature: color_temp
+    Hue - Saturation: hs_color
+    None: none
+  # extract light color mode id
+  light_color_mode_id: >-
+    {%- if light_color_mode == "Auto" -%} {% set supported_color_modes = state_attr(light, "supported_color_modes") -%} {%- if "hs" in supported_color_modes or "xy" in supported_color_modes or "rgbw" in supported_color_modes or "rgbww" in supported_color_modes -%} {{
+    color_modes["Hue - Saturation"] }} {%- elif "color_temp" in supported_color_modes -%} {{ color_modes["Color Temperature"] }} {%- else -%} {{ color_modes["None"] }} {%- endif -%} {%- else -%} {{ color_modes[light_color_mode] }} {%- endif -%}
+  step_short: '{{ (max_brightness-min_brightness)/brightness_steps_short }}'
+  step_long: '{{ (max_brightness-min_brightness)/brightness_steps_long }}'
+mode: restart
+max_exceeded: silent
+triggers:
+  - trigger: event
+    event_type: ahb_controller_event
+condition:
+  - condition: template
+    value_template: >-
+      {%- set devices = controller_devices if controller_devices is iterable and controller_devices is not string else [] -%}
+      {{
+        ((devices | length) > 0 and trigger.event.data.controller in devices)
+        or
+        ((devices | length) == 0 and controller_device_legacy != '' and trigger.event.data.controller == controller_device_legacy)
+      }}
+actions:
+  - variables:
+      action: '{{ trigger.event.data.action }}'
+  - choose:
+      - conditions: '{{ action == toggle }}'
+        sequence:
+          - choose:
+              - conditions: '{{ force_brightness and force_color_temperature }}'
+                sequence:
+                  - action: light.toggle
+                    entity_id: !input light
+                    data:
+                      brightness: !input on_brightness
+                      color_temp_kelvin: '{{ on_color_temperature }}'
+                      transition: '{{ light_transition / 1000 }}'
+              - conditions: '{{ force_brightness and not force_color_temperature }}'
+                sequence:
+                  - action: light.toggle
+                    entity_id: !input light
+                    data:
+                      brightness: !input on_brightness
+                      transition: '{{ light_transition / 1000 }}'
+              - conditions: '{{ force_color_temperature and not force_brightness }}'
+                sequence:
+                  - action: light.toggle
+                    entity_id: !input light
+                    data:
+                      color_temp_kelvin: '{{ on_color_temperature }}'
+                      transition: '{{ light_transition / 1000 }}'
+            default:
+              - action: light.toggle
+                entity_id: !input light
+                data:
+                  transition: '{{ light_transition / 1000 }}'
+      - conditions: '{{ action == turn_on }}'
+        sequence:
+          - choose:
+              - conditions: '{{ force_brightness and force_color_temperature }}'
+                sequence:
+                  - action: light.turn_on
+                    entity_id: !input light
+                    data:
+                      brightness: !input on_brightness
+                      color_temp_kelvin: '{{ on_color_temperature }}'
+                      transition: '{{ light_transition / 1000 }}'
+              - conditions: '{{ force_brightness and not force_color_temperature }}'
+                sequence:
+                  - action: light.turn_on
+                    entity_id: !input light
+                    data:
+                      brightness: !input on_brightness
+                      transition: '{{ light_transition / 1000 }}'
+              - conditions: '{{ force_color_temperature and not force_brightness }}'
+                sequence:
+                  - action: light.turn_on
+                    entity_id: !input light
+                    data:
+                      color_temp_kelvin: '{{ on_color_temperature }}'
+                      transition: '{{ light_transition / 1000 }}'
+            default:
+              - action: light.turn_on
+                entity_id: !input light
+                data:
+                  transition: '{{ light_transition / 1000 }}'
+      - conditions: '{{ action == turn_off }}'
+        sequence:
+          - action: light.turn_off
+            entity_id: !input light
+            data:
+              transition: '{{ light_transition / 1000 }}'
+      - conditions: '{{ action == brightness_up }}'
+        sequence:
+          - choose:
+              # if light is off and smooth power on is disabled, turn it on at the previously saved brightness
+              - conditions: '{{ states(light) == "off" and not smooth_power_on}}'
+                sequence:
+                  - choose:
+                      - conditions: '{{ force_color_temperature }}'
+                        sequence:
+                          - action: light.turn_on
+                            data:
+                              color_temp_kelvin: '{{ on_color_temperature }}'
+                              transition: '{{ light_transition / 1000 }}'
+                              entity_id: !input light
+                    default:
+                      - action: light.turn_on
+                        data:
+                          transition: '{{ light_transition / 1000 }}'
+                          entity_id: !input light
+              # if light is off and smooth power on is enabled, turn it on at minimum brightness
+              - conditions: '{{ states(light) == "off" and smooth_power_on}}'
+                sequence:
+                  - choose:
+                      - conditions: '{{ force_color_temperature }}'
+                        sequence:
+                          - action: light.turn_on
+                            data:
+                              brightness: '{{ min_brightness }}'
+                              color_temp_kelvin: '{{ on_color_temperature }}'
+                              transition: '{{ light_transition / 1000 }}'
+                              entity_id: !input light
+                    default:
+                      - action: light.turn_on
+                        data:
+                          brightness: '{{ min_brightness }}'
+                          transition: '{{ light_transition / 1000 }}'
+                          entity_id: !input light
+            # else the light is on, hence increase its brightness
+            default:
+              - action: light.turn_on
+                data:
+                  brightness: '{{ [ [state_attr(light,"brightness")+step_short, min_brightness] | max, max_brightness] | min }}'
+                  transition: 0.25
+                  entity_id: !input light
+      - conditions: '{{ action == brightness_down and states(light) == "on" }}'
+        sequence:
+          - choose:
+              - conditions: '{{ smooth_power_off and state_attr(light,"brightness") == min_brightness }}'
+                sequence:
+                  - action: light.turn_off
+                    data:
+                      transition: '{{ light_transition / 1000 }}'
+                      entity_id: !input light
+            default:
+              - action: light.turn_on
+                data:
+                  brightness: '{{ [ [state_attr(light,"brightness")-step_short, min_brightness] | max, max_brightness] | min }}'
+                  transition: 0.25
+                  entity_id: !input light
+      - conditions: '{{ action == brightness_up_repeat }}'
+        sequence:
+          # first step for the smooth power on feature: subsequent steps can skip this check since light will be already on
+          - choose:
+              # if light is off and smooth power on is disabled, turn it on at the previously saved brightness
+              - conditions: '{{ states(light) == "off" and not smooth_power_on}}'
+                sequence:
+                  - choose:
+                      - conditions: '{{ force_color_temperature }}'
+                        sequence:
+                          - action: light.turn_on
+                            data:
+                              color_temp_kelvin: '{{ on_color_temperature }}'
+                              transition: '{{ light_transition / 1000 }}'
+                              entity_id: !input light
+                    default:
+                      - action: light.turn_on
+                        data:
+                          transition: '{{ light_transition / 1000 }}'
+                          entity_id: !input light
+                  - delay:
+                      milliseconds: !input light_transition
+              # if light is off and smooth power on is enabled, turn it on at minimum brightness
+              - conditions: '{{ states(light) == "off" and smooth_power_on}}'
+                sequence:
+                  - choose:
+                      - conditions: '{{ force_color_temperature }}'
+                        sequence:
+                          - action: light.turn_on
+                            data:
+                              brightness: '{{ min_brightness }}'
+                              color_temp_kelvin: '{{ on_color_temperature }}'
+                              transition: '{{ light_transition / 1000 }}'
+                              entity_id: !input light
+                    default:
+                      - action: light.turn_on
+                        data:
+                          brightness: '{{ min_brightness }}'
+                          transition: '{{ light_transition / 1000 }}'
+                          entity_id: !input light
+                  - delay:
+                      milliseconds: !input light_transition
+          # else move on to the loop for increasing the light brightness until the maximum brightness is reached
+          - repeat:
+              while: '{{ state_attr(light,"brightness") < max_brightness }}'
+              sequence:
+                - action: light.turn_on
+                  data:
+                    brightness: '{{ [ [state_attr(light,"brightness")+step_long, min_brightness] | max, max_brightness] | min }}'
+                    transition: 0.25
+                    entity_id: !input light
+                - delay:
+                    milliseconds: 250
+      - conditions: '{{ action == brightness_down_repeat and states(light) == "on"  }}'
+        sequence:
+          - choose:
+              # using a separate sequence for the smooth power off feature to not perform unnecessary checks at every iteration when the feature is disabled
+              - conditions: '{{ smooth_power_off }}'
+                sequence:
+                  - repeat:
+                      # continue lowering brightness until the light turns off
+                      while: '{{ states(light) != "off" }}'
+                      sequence:
+                        - choose:
+                            # if the light is at minimum brightness, turn it off
+                            - conditions: '{{ state_attr(light,"brightness") == min_brightness }}'
+                              sequence:
+                                - action: light.turn_off
+                                  data:
+                                    transition: '{{ light_transition / 1000 }}'
+                                    entity_id: !input light
+                                - delay:
+                                    milliseconds: !input light_transition
+                          # else lower the light's brightness
+                          default:
+                            - action: light.turn_on
+                              data:
+                                brightness: '{{ [ [state_attr(light,"brightness")-step_long, min_brightness] | max, max_brightness] | min }}'
+                                transition: 0.25
+                                entity_id: !input light
+                            - delay:
+                                milliseconds: 250
+            default:
+              - repeat:
+                  # continue lowering brightness until the light hits the minimum brightness
+                  while: '{{ state_attr(light,"brightness") > min_brightness }}'
+                  sequence:
+                    # lower the light's brightness. since smooth power off is disabled, never let the brightness move below the user-provided minimum
+                    - action: light.turn_on
+                      data:
+                        brightness: '{{ [ [state_attr(light,"brightness")-step_long, min_brightness] | max, max_brightness] | min }}'
+                        transition: 0.25
+                        entity_id: !input light
+                    - delay:
+                        milliseconds: 250
+      - conditions: '{{ action == color_up and light_color_mode_id != "none" }}'
+        sequence:
+          choose:
+            - conditions: '{{ light_color_mode_id == "color_temp" }}'
+              sequence:
+                - action: light.turn_on
+                  data:
+                    color_temp: '{{ state_attr(light,"color_temp")|int(0) + 50 }}'
+                    transition: 0.25
+                  entity_id: !input light
+            - conditions: '{{ light_color_mode_id == "hs_color" }}'
+              sequence:
+                - action: light.turn_on
+                  data:
+                    hs_color: '{{ [((state_attr(light,"hs_color")[0] or 0) + 15) % 360, 100] }}'
+                    transition: 0.25
+                  entity_id: !input light
+      - conditions: '{{ action == color_down and light_color_mode_id != "none" }}'
+        sequence:
+          choose:
+            - conditions: '{{ light_color_mode_id == "color_temp" }}'
+              sequence:
+                - action: light.turn_on
+                  data:
+                    color_temp: '{{ [state_attr(light,"color_temp")|int(0) - 50, 1]|max }}'
+                    transition: 0.25
+                  entity_id: !input light
+            - conditions: '{{ light_color_mode_id == "hs_color" }}'
+              sequence:
+                - action: light.turn_on
+                  data:
+                    hs_color: '{{ [((state_attr(light,"hs_color")[0] or 0) - 15) % 360, 100] }}'
+                    transition: 0.25
+                  entity_id: !input light
+      - conditions: '{{ action == color_up_repeat and light_color_mode_id != "none" }}'
+        sequence:
+          choose:
+            - conditions: '{{ light_color_mode_id == "color_temp" }}'
+              sequence:
+                - repeat:
+                    while: '{{ true }}'
+                    sequence:
+                      - action: light.turn_on
+                        data:
+                          color_temp: '{{ state_attr(light,"color_temp")|int(0) + 50 }}'
+                          transition: 0.25
+                        entity_id: !input light
+                      - delay:
+                          milliseconds: 250
+            - conditions: '{{ light_color_mode_id == "hs_color" }}'
+              sequence:
+                - repeat:
+                    while: '{{ true }}'
+                    sequence:
+                      - action: light.turn_on
+                        data:
+                          hs_color: '{{ [((state_attr(light,"hs_color")[0] or 0) + 15) % 360, 100] }}'
+                          transition: 0.25
+                        entity_id: !input light
+                      - delay:
+                          milliseconds: 250
+      - conditions: '{{ action == color_down_repeat and light_color_mode_id != "none" }}'
+        sequence:
+          choose:
+            - conditions: '{{ light_color_mode_id == "color_temp" }}'
+              sequence:
+                - repeat:
+                    while: '{{ true }}'
+                    sequence:
+                      - action: light.turn_on
+                        data:
+                          color_temp: '{{ [state_attr(light,"color_temp")|int(0) - 50, 1]|max }}'
+                          transition: 0.25
+                        entity_id: !input light
+                      - delay:
+                          milliseconds: 250
+            - conditions: '{{ light_color_mode_id == "hs_color" }}'
+              sequence:
+                - repeat:
+                    while: '{{ true }}'
+                    sequence:
+                      - action: light.turn_on
+                        data:
+                          hs_color: '{{ [((state_attr(light,"hs_color")[0] or 0) - 15) % 360, 100] }}'
+                          transition: 0.25
+                        entity_id: !input light
+                      - delay:
+                          milliseconds: 250

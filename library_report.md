@@ -1,12 +1,12 @@
 # Awesome HA Blueprints – Library Report
 
-## _Generated on 2026-02-26_
+## _Generated on 2026-02-28_
 
 ## Summary
 
-- **Controllers:** 32 blueprints, 39 versions
+- **Controllers:** 33 blueprints, 40 versions
 - **Automations:** 4 blueprints, 4 versions
-- **Hooks:** 3 blueprints, 12 versions
+- **Hooks:** 3 blueprints, 15 versions
 - **Breaking versions:** 9
 
 ---
@@ -303,6 +303,22 @@
 | Library | Release | Version    | Breaking |
 | ------- | ------- | ---------- | -------- |
 | EPMatt  | awesome | 2026.02.22 | no       |
+
+</details>
+
+### ikea_e2490
+
+- **Title:** Controller - IKEA E2490 BILRESA remote control with scroll wheel
+- **Librarians:** yarafie, EPMatt
+- **Library Maintainers:** EPMatt, yarafie
+- **Latest Version:** 2026.02.28
+- **Tags:** zigbee, dimmer, light
+<details>
+<summary>Versions</summary>
+
+| Library | Release | Version    | Breaking |
+| ------- | ------- | ---------- | -------- |
+| EPMatt  | awesome | 2026.02.28 | no       |
 
 </details>
 
@@ -656,7 +672,7 @@
 - **Title:** Hook - Cover
 - **Librarians:** yarafie, EPMatt
 - **Library Maintainers:** EPMatt, yarafie
-- **Latest Version:** 2026.02.22
+- **Latest Version:** 2026.02.28
 - **Tags:** close, garage, open, stop
 <details>
 <summary>Versions</summary>
@@ -671,6 +687,7 @@
 
 | EPMatt | awesome | 2026.02.20 | no |
 | EPMatt | awesome | 2026.02.22 | no |
+| EPMatt | awesome | 2026.02.28 | no |
 
 </details>
 
@@ -679,7 +696,7 @@
 - **Title:** Hook - Light
 - **Librarians:** yarafie, EPMatt
 - **Library Maintainers:** EPMatt, yarafie
-- **Latest Version:** 2026.02.24
+- **Latest Version:** 2026.02.28
 - **Tags:** brightness, color, dim, hue, light, off, on
 <details>
 <summary>Versions</summary>
@@ -696,6 +713,7 @@
 | EPMatt | awesome | 2026.02.20 | no |
 | EPMatt | awesome | 2026.02.22 | no |
 | EPMatt | awesome | 2026.02.24 | no |
+| EPMatt | awesome | 2026.02.28 | no |
 
 </details>
 
@@ -704,7 +722,7 @@
 - **Title:** Hook - Media Player
 - **Librarians:** yarafie, EPMatt
 - **Library Maintainers:** EPMatt, yarafie
-- **Latest Version:** 2026.02.22
+- **Latest Version:** 2026.02.28
 - **Tags:** forward, mute, next, pause, play, previous, reverse, stop, volume
 <details>
 <summary>Versions</summary>
@@ -720,5 +738,6 @@
 | EPMatt | awesome | 2026.02.17 | no |
 | EPMatt | awesome | 2026.02.20 | no |
 | EPMatt | awesome | 2026.02.22 | no |
+| EPMatt | awesome | 2026.02.28 | no |
 
 </details>

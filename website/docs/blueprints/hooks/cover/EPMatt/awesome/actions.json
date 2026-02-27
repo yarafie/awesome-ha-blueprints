@@ -13,7 +13,6 @@
       "mode": "single",
       "group": "Movement"
     },
-
     {
       "id": "open_cover_tilt",
       "label": "Open the cover tilt",
@@ -26,8 +25,12 @@
       "mode": "single",
       "group": "Tilt"
     },
-
-    { "id": "stop", "label": "Stop", "mode": "single", "group": "Stop" },
+    {
+      "id": "stop",
+      "label": "Stop",
+      "mode": "single",
+      "group": "Stop"
+    },
     {
       "id": "stop_cover_all",
       "label": "Stop cover and cover tilt",

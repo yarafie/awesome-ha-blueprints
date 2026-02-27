@@ -7,14 +7,18 @@
       "mode": "single",
       "group": "Playback"
     },
-    { "id": "stop", "label": "Stop", "mode": "single", "group": "Playback" },
+    {
+      "id": "stop",
+      "label": "Stop",
+      "mode": "single",
+      "group": "Playback"
+    },
     {
       "id": "toggle",
       "label": "Toggle",
       "mode": "single",
       "group": "Playback"
     },
-
     {
       "id": "next_track",
       "label": "Next track",
@@ -27,7 +31,6 @@
       "mode": "single",
       "group": "Navigation"
     },
-
     {
       "id": "volume_up",
       "label": "Volume up",

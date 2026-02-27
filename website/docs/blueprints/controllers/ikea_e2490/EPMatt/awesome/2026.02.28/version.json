@@ -1,0 +1,18 @@
+{
+  "version": "2026.02.28",
+  "date": "2026-02-28",
+  "blueprint_id": "ikea_e2490",
+  "library_id": "EPMatt",
+  "release_id": "awesome",
+  "category": "controllers",
+  "title": "Controller - IKEA E2490 BILRESA remote control with scroll wheel",
+  "description": "Controller automation for executing any kind of action triggered by the provided IKEA E2490 BILRESA remote control with scroll wheel.",
+  "maintainers": [
+    {
+      "id": "yarafie",
+      "name": "yarafie"
+    }
+  ],
+  "blueprint_file": "ikea_e2490.yaml",
+  "status": "active"
+}

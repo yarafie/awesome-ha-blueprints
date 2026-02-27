@@ -1,0 +1,20 @@
+{
+  "library_id": "EPMatt",
+  "blueprint_id": "ikea_e2490",
+  "title": "EPMatt controller library",
+  "description": "Controller blueprint library for ikea_e2490 maintained by EPMatt.",
+  "maintainers": [
+    {
+      "id": "yarafie",
+      "name": "yarafie"
+    },
+    {
+      "id": "EPMatt",
+      "name": "EPMatt"
+    }
+  ],
+  "releases": ["awesome"],
+  "category": "controllers",
+  "status": "active",
+  "supported_integrations": ["Zigbee2MQTT"]
+}

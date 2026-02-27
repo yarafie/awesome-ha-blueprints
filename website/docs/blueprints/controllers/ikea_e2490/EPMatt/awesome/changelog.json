@@ -1,0 +1,12 @@
+[
+  {
+    "date": "2026.02.28",
+    "changes": [
+      {
+        "author": "@yarafie",
+        "description": "Initial blueprint version 🎉.",
+        "breaking": false
+      }
+    ]
+  }
+]

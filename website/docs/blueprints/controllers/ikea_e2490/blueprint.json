@@ -1,0 +1,29 @@
+{
+  "category": "controllers",
+  "blueprint_id": "ikea_e2490",
+  "manufacturer": "IKEA",
+  "model": "E2490",
+  "name": "Controller - IKEA E2490 BILRESA remote control with scroll wheel",
+  "model_name": "IKEA E2490 BILRESA remote control with scroll wheel",
+  "description": "Controller automation for executing any kind of action triggered by the provided IKEA E2490 BILRESA remote control with scroll wheel.",
+  "external_references": [
+    {
+      "label": "Zigbee2MQTT",
+      "url": "https://www.zigbee2mqtt.io/devices/E2490.html"
+    }
+  ],
+  "librarians": [
+    {
+      "id": "yarafie",
+      "name": "yarafie"
+    },
+    {
+      "id": "EPMatt",
+      "name": "EPMatt"
+    }
+  ],
+  "images": ["ikea_e2490.png"],
+  "manual_files": ["ikea_e2490.pdf"],
+  "tags": ["zigbee", "dimmer", "light"],
+  "status": "active"
+}

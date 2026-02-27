@@ -198,5 +198,15 @@
         "breaking": false
       }
     ]
+  },
+  {
+    "date": "2026.02.28",
+    "changes": [
+      {
+        "author": "@yarafie",
+        "description": "Added support for IKEA E2490 BILRESA remote control with scroll wheel.",
+        "breaking": false
+      }
+    ]
   }
 ]

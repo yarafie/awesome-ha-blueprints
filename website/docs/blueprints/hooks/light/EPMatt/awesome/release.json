@@ -20,9 +20,10 @@
     "2026.02.09",
     "2026.02.20",
     "2026.02.22",
-    "2026.02.24"
+    "2026.02.24",
+    "2026.02.28"
   ],
-  "latest_version": "2026.02.24",
+  "latest_version": "2026.02.28",
   "status": "active",
   "supported_controllers": {
     "controllers": [
@@ -39,6 +40,7 @@
       "ikea_e2201",
       "ikea_e2213",
       "ikea_e2489",
+      "ikea_e2490",
       "ikea_ictc_g_1",
       "en_ocean_ptm_215z_foh",
       "osram_ac025xx00nj",
@@ -58,6 +60,6 @@
       "xiaomi_wxcjkg13lm",
       "xiaomi_wxkg01lm"
     ],
-    "count": 31
+    "count": 32
   }
 }

@@ -1,15 +1,24 @@
 {
   "hook": "light",
   "actions": [
-    { "id": "turn_on", "label": "Turn on", "mode": "single", "group": "Power" },
+    {
+      "id": "turn_on",
+      "label": "Turn on",
+      "mode": "single",
+      "group": "Power"
+    },
     {
       "id": "turn_off",
       "label": "Turn off",
       "mode": "single",
       "group": "Power"
     },
-    { "id": "toggle", "label": "Toggle", "mode": "single", "group": "Power" },
-
+    {
+      "id": "toggle",
+      "label": "Toggle",
+      "mode": "single",
+      "group": "Power"
+    },
     {
       "id": "brightness_up",
       "label": "Brightness up",
@@ -34,7 +43,6 @@
       "mode": "continuous",
       "group": "Brightness"
     },
-
     {
       "id": "color_up",
       "label": "Color up",
