@@ -413,5 +413,15 @@
         "breaking": false
       }
     ]
+  },
+  {
+    "date": "2026.03.07",
+    "changes": [
+      {
+        "author": "@yarafie",
+        "description": "[Bug Fix] Potential Breaking Change. state color_temp was deprecated in HA 2026.3 replaced with color_temp_kelvin. You may need to update any automations using the light hook abd reconfigure.",
+        "breaking": true
+      }
+    ]
   }
 ]

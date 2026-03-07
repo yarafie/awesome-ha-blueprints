@@ -21,9 +21,10 @@
     "2026.02.20",
     "2026.02.22",
     "2026.02.24",
-    "2026.02.28"
+    "2026.02.28",
+    "2026.03.07"
   ],
-  "latest_version": "2026.02.28",
+  "latest_version": "2026.03.07",
   "status": "active",
   "supported_controllers": {
     "controllers": [

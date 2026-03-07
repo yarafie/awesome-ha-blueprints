@@ -1,13 +1,13 @@
 # Awesome HA Blueprints – Library Report
 
-## _Generated on 2026-02-28_
+## _Generated on 2026-03-07_
 
 ## Summary
 
 - **Controllers:** 33 blueprints, 40 versions
 - **Automations:** 4 blueprints, 4 versions
-- **Hooks:** 3 blueprints, 15 versions
-- **Breaking versions:** 9
+- **Hooks:** 3 blueprints, 16 versions
+- **Breaking versions:** 10
 
 ---
 
@@ -34,6 +34,8 @@
   - Device Name and Model was corrected for both Aqara WXKG11LM and Xiaomi WXKG01LM. Blueprints integrated with these two devices will need to be redownloaded and setup again.
 - **light** – EPMatt / awesome / 2025.12.22
   - Device Name and Model was corrected for both Aqara WXKG11LM and Xiaomi WXKG01LM. Blueprints integrated with these two devices will need to be redownloaded and setup again.
+- **light** – EPMatt / awesome / 2026.03.07
+  - [Bug Fix] Potential Breaking Chanhe. state color_temp was deprecated in HA 2026.3 replaced with color_temp_kelvin. You may need to update any automations using the light hook abd reconfigure.
 - **media_player** – EPMatt / awesome / 2025.12.22
   - Device Name and Model was corrected for both Aqara WXKG11LM and Xiaomi WXKG01LM. Blueprints integrated with these two devices will need to be redownloaded and setup again.
 
@@ -696,7 +698,7 @@
 - **Title:** Hook - Light
 - **Librarians:** yarafie, EPMatt
 - **Library Maintainers:** EPMatt, yarafie
-- **Latest Version:** 2026.02.28
+- **Latest Version:** 2026.03.07 (**🚨 Breaking Change**)
 - **Tags:** brightness, color, dim, hue, light, off, on
 <details>
 <summary>Versions</summary>
@@ -714,6 +716,11 @@
 | EPMatt | awesome | 2026.02.22 | no |
 | EPMatt | awesome | 2026.02.24 | no |
 | EPMatt | awesome | 2026.02.28 | no |
+| EPMatt | awesome | 2026.03.07 | **🚨 Breaking Change** |
+
+**Breaking change reasons:**
+
+- [Bug Fix] Potential Breaking Chanhe. state color_temp was deprecated in HA 2026.3 replaced with color_temp_kelvin. You may need to update any automations using the light hook abd reconfigure.
 
 </details>
 
