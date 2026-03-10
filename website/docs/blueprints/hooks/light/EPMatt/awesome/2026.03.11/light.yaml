@@ -841,7 +841,7 @@ actions:
               sequence:
                 - action: light.turn_on
                   data:
-                    color_temp_kelvin: '{{ [state_attr(light,"color_temp")|int + color_temp_kelvin_step_short, color_temp_kelvin_max]|min }}'
+                    color_temp_kelvin: '{{ [state_attr(light,"color_temp_kelvin")|int(2700) + color_temp_kelvin_step_short, color_temp_kelvin_max]|min }}'
                     transition: 0.25
                   entity_id: !input light
             - conditions: '{{ light_color_mode_id == "hs_color" }}'
@@ -858,7 +858,7 @@ actions:
               sequence:
                 - action: light.turn_on
                   data:
-                    color_temp_kelvin: '{{ [state_attr(light,"color_temp")|int - color_temp_kelvin_step_short, color_temp_kelvin_min]|max }}'
+                    color_temp_kelvin: '{{ [state_attr(light,"color_temp_kelvin")|int(2700) - color_temp_kelvin_step_short, color_temp_kelvin_min]|max }}'
                     transition: 0.25
                   entity_id: !input light
             - conditions: '{{ light_color_mode_id == "hs_color" }}'
@@ -878,7 +878,7 @@ actions:
                     sequence:
                       - action: light.turn_on
                         data:
-                          color_temp_kelvin: '{{ [state_attr(light,"color_temp")|int - color_temp_kelvin_step_long, color_temp_kelvin_max]|min }}'
+                          color_temp_kelvin: '{{ [state_attr(light,"color_temp_kelvin")|int(2700) - color_temp_kelvin_step_long, color_temp_kelvin_max]|min }}'
                           transition: 0.25
                         entity_id: !input light
                       - delay:
@@ -905,7 +905,7 @@ actions:
                     sequence:
                       - action: light.turn_on
                         data:
-                          color_temp_kelvin: '{{ [state_attr(light,"color_temp")|int - color_temp_kelvin_step_long, color_temp_kelvin_min]|max }}'
+                          color_temp_kelvin: '{{ [state_attr(light,"color_temp_kelvin")|int(2700) - color_temp_kelvin_step_long, color_temp_kelvin_min]|max }}'
                           transition: 0.25
                         entity_id: !input light
                       - delay:
