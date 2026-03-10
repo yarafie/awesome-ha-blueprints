@@ -433,5 +433,15 @@
         "breaking": true
       }
     ]
+  },
+  {
+    "date": "2026.03.11",
+    "changes": [
+      {
+        "author": "@yarafie",
+        "description": "[Enhancement] Potential Breaking Change if updating from a version before v2026.03.07. Added the Color Temperature Steps for both long and short presses. Setting boundaries for min_color_temp_kelvin and max_color_temp_kelvin attributes from device as a guard.",
+        "breaking": true
+      }
+    ]
   }
 ]
