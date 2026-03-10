@@ -419,7 +419,17 @@
     "changes": [
       {
         "author": "@yarafie",
-        "description": "[Bug Fix] Potential Breaking Change. state color_temp was deprecated in HA 2026.3 replaced with color_temp_kelvin. You may need to update any automations using the light hook abd reconfigure.",
+        "description": "[Bug Fix] Potential Breaking Change. state color_temp was deprecated in HA 2026.3 replaced with color_temp_kelvin. You may need to update any automations using the light hook and reconfigure.",
+        "breaking": true
+      }
+    ]
+  },
+  {
+    "date": "2026.03.10",
+    "changes": [
+      {
+        "author": "@yarafie",
+        "description": "[Bug Fix] Potential Breaking Change. Changed the increase/decrease steps for color_temp_kelvin from 50 to 250 to be more inline with the kelvin scale 1000 to 10,000.",
         "breaking": true
       }
     ]
