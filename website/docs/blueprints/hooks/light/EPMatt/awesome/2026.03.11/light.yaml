@@ -878,7 +878,7 @@ actions:
                     sequence:
                       - action: light.turn_on
                         data:
-                          color_temp_kelvin: '{{ [state_attr(light,"color_temp_kelvin")|int( color_temp_kelvin_min ) - color_temp_kelvin_step_long, color_temp_kelvin_max]|min }}'
+                          color_temp_kelvin: '{{ [state_attr(light,"color_temp_kelvin")|int( color_temp_kelvin_min ) + color_temp_kelvin_step_long, color_temp_kelvin_max]|min }}'
                           transition: 0.25
                         entity_id: !input light
                       - delay:
