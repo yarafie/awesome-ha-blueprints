@@ -43,7 +43,7 @@ jobs:
 
       - name: Setup pnpm
         if: steps.library_changes.outputs.has_library_changes == 'true'
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@v5
         with:
           version: 10.26.0
 
