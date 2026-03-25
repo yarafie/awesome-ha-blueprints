@@ -35,7 +35,7 @@
     "react-bootstrap-icons": "^1.11.6",
     "react-cookie-consent": "^10.0.1",
     "react-dom": "^19.2.4",
-    "react-ga4": "^2.1.0",
+    "react-ga4": "^3.0.1",
     "react-json-view-lite": "^2.5.0",
     "react-markdown": "^10.1.0",
     "react-select": "^5.10.2",
