@@ -1,0 +1,12 @@
+[
+  {
+    "date": "2026.04.06",
+    "changes": [
+      {
+        "author": "@wobondar",
+        "description": "First blueprint version, based on the IKEA STYRBAR (E2001/E2002) blueprint by [@yarafie](https://github.com/yarafie). ([@wobondar](https://github.com/wobondar))",
+        "breaking": false
+      }
+    ]
+  }
+]

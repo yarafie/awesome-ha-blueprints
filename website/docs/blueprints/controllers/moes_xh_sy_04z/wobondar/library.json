@@ -1,0 +1,16 @@
+{
+  "library_id": "wobondar",
+  "blueprint_id": "moes_xh_sy_04z",
+  "title": "wobondar controller library",
+  "description": "Controller blueprint library for moes_xh_sy_04z maintained by wobondar.",
+  "maintainers": [
+    {
+      "id": "wobondar",
+      "name": "wobondar"
+    }
+  ],
+  "releases": ["anything"],
+  "category": "controllers",
+  "status": "active",
+  "supported_integrations": ["Zigbee2MQTT"]
+}

@@ -1,0 +1,385 @@
+# ==========================================================
+# -------------------------------------------
+# Moes 4 button portable remote control (XH-SY-04Z)
+# -------------------------------------------
+# Button -> action mapping
+#  ---------------------------------------------------------
+# | Button | Action  | Exposed Action                      |
+# |---------------------------------------------------------|
+# | 1      | single  | 1_single                            |
+# | 1      | double  | 1_double                            |
+# | 1      | hold    | 1_hold                              |
+# |---------------------------------------------------------|
+# | 2      | single  | 2_single                            |
+# | 2      | double  | 2_double                            |
+# | 2      | hold    | 2_hold                              |
+# |---------------------------------------------------------|
+# | 3      | single  | 3_single                            |
+# | 3      | double  | 3_double                            |
+# | 3      | hold    | 3_hold                              |
+# |---------------------------------------------------------|
+# | 4      | single  | 4_single                            |
+# | 4      | double  | 4_double                            |
+# | 4      | hold    | 4_hold                              |
+#  ---------------------------------------------------------
+# Action (enum)
+# The possible values are:
+#  1. 1_single
+#  2. 1_double
+#  3. 1_hold
+#  4. 2_single
+#  5. 2_double
+#  6. 2_hold
+#  7. 3_single
+#  8. 3_double
+#  9. 3_hold
+# 10. 4_single
+# 11. 4_double
+# 12. 4_hold
+# ==========================================================
+# Blueprint Metadata
+blueprint:
+  name: z2m - Moes 4 button portable remote control (XH-SY-04Z)
+  author: wobondar
+  domain: automation
+  description: |
+    # z2m - Moes 4 button portable remote control (XH-SY-04Z)
+
+    Version 2026.04.06
+
+    This blueprint is for the Moes XH-SY-04Z 4 button portable remote control when used with zigbee2mqtt.
+    It is for general use so all buttons can be connected to any action of your choice.
+    Each button natively supports single press, double press, and hold events.
+
+    Based on the IKEA STYRBAR (E2001/E2002) blueprint by [@yarafie](https://github.com/yarafie).
+
+  homeassistant:
+    min_version: 2024.10.0
+  source_url: https://raw.githubusercontent.com/yarafie/awesome-ha-blueprints/refs/heads/main/website/docs/blueprints/controllers/moes_xh_sy_04z/wobondar/anything/2026.04.06/moes_xh_sy_04z.yaml
+  #
+  # Define UI and default values
+  input:
+    # Device Selector
+    remote_device:
+      name: (Required) Moes XH-SY-04Z Remote Control
+      description: Select Moes XH-SY-04Z Remote Control **Version 2026.04.06**
+      default: []
+      selector:
+        device:
+          filter:
+            # source: https://www.zigbee2mqtt.io/devices/XH-SY-04Z.html
+            - integration: mqtt
+              manufacturer: Moes
+              model: 4 button portable remote control
+            # For backwards compatability with z2m 1.x. model_id is added to end of model rather than a seperate attribute in z2m 2.x
+            - integration: mqtt
+              manufacturer: Moes
+              model: 4 button portable remote control (XH-SY-04Z)
+          multiple: false
+    # Inputs for custom actions
+    # Button 1
+    button_1_single:
+      name: Button 1 - single press
+      description: Action to run when SINGLE press on Button 1
+      default: []
+      selector:
+        action: {}
+    button_1_double:
+      name: Button 1 - double press
+      description: Action to run when DOUBLE press on Button 1
+      default: []
+      selector:
+        action: {}
+    button_1_hold:
+      name: Button 1 - hold
+      description: Action to run when HOLD on Button 1
+      default: []
+      selector:
+        action: {}
+    # Button 2
+    button_2_single:
+      name: Button 2 - single press
+      description: Action to run when SINGLE press on Button 2
+      default: []
+      selector:
+        action: {}
+    button_2_double:
+      name: Button 2 - double press
+      description: Action to run when DOUBLE press on Button 2
+      default: []
+      selector:
+        action: {}
+    button_2_hold:
+      name: Button 2 - hold
+      description: Action to run when HOLD on Button 2
+      default: []
+      selector:
+        action: {}
+    # Button 3
+    button_3_single:
+      name: Button 3 - single press
+      description: Action to run when SINGLE press on Button 3
+      default: []
+      selector:
+        action: {}
+    button_3_double:
+      name: Button 3 - double press
+      description: Action to run when DOUBLE press on Button 3
+      default: []
+      selector:
+        action: {}
+    button_3_hold:
+      name: Button 3 - hold
+      description: Action to run when HOLD on Button 3
+      default: []
+      selector:
+        action: {}
+    # Button 4
+    button_4_single:
+      name: Button 4 - single press
+      description: Action to run when SINGLE press on Button 4
+      default: []
+      selector:
+        action: {}
+    button_4_double:
+      name: Button 4 - double press
+      description: Action to run when DOUBLE press on Button 4
+      default: []
+      selector:
+        action: {}
+    button_4_hold:
+      name: Button 4 - hold
+      description: Action to run when HOLD on Button 4
+      default: []
+      selector:
+        action: {}
+#
+# Define mode for automation
+mode: single
+max_exceeded: silent
+#
+# Automation schema
+variables:
+  # Remote ID
+  remote_device: !input remote_device
+  # integration id used to select items in the action mapping
+  # integration type is set from trigger.id
+  integration_id: '{{ trigger.id.split("-")[0] }}'
+#
+# Define Triggers for automation
+triggers:
+  # BUTTON 1
+  - trigger: device
+    id: z2m-button-1-single
+    domain: mqtt
+    device_id: !input remote_device
+    type: action
+    subtype: 1_single
+  - trigger: device
+    id: z2m-button-1-double
+    domain: mqtt
+    device_id: !input remote_device
+    type: action
+    subtype: 1_double
+  - trigger: device
+    id: z2m-button-1-hold
+    domain: mqtt
+    device_id: !input remote_device
+    type: action
+    subtype: 1_hold
+  # BUTTON 2
+  - trigger: device
+    id: z2m-button-2-single
+    domain: mqtt
+    device_id: !input remote_device
+    type: action
+    subtype: 2_single
+  - trigger: device
+    id: z2m-button-2-double
+    domain: mqtt
+    device_id: !input remote_device
+    type: action
+    subtype: 2_double
+  - trigger: device
+    id: z2m-button-2-hold
+    domain: mqtt
+    device_id: !input remote_device
+    type: action
+    subtype: 2_hold
+  # BUTTON 3
+  - trigger: device
+    id: z2m-button-3-single
+    domain: mqtt
+    device_id: !input remote_device
+    type: action
+    subtype: 3_single
+  - trigger: device
+    id: z2m-button-3-double
+    domain: mqtt
+    device_id: !input remote_device
+    type: action
+    subtype: 3_double
+  - trigger: device
+    id: z2m-button-3-hold
+    domain: mqtt
+    device_id: !input remote_device
+    type: action
+    subtype: 3_hold
+  # BUTTON 4
+  - trigger: device
+    id: z2m-button-4-single
+    domain: mqtt
+    device_id: !input remote_device
+    type: action
+    subtype: 4_single
+  - trigger: device
+    id: z2m-button-4-double
+    domain: mqtt
+    device_id: !input remote_device
+    type: action
+    subtype: 4_double
+  - trigger: device
+    id: z2m-button-4-hold
+    domain: mqtt
+    device_id: !input remote_device
+    type: action
+    subtype: 4_hold
+#
+# Conditions Block
+conditions:
+  - condition: and
+    conditions:
+      # check that the button event is not empty
+      - >-
+        {%- set trigger_action -%}
+        {%- if integration_id == "z2m" -%}
+        {{ trigger.payload }}
+        {%- endif -%}
+        {%- endset -%}
+        {{ trigger_action not in ["","None","unknown"] }}
+#
+# Actions Block
+actions:
+  #
+  # choose the sequence to run based on the received button event
+  - choose:
+      #
+      # Actions for Button 1 Single Press
+      - conditions:
+          - condition: trigger
+            id:
+              - z2m-button-1-single
+        sequence:
+          - choose:
+              - conditions: []
+                sequence: !input button_1_single
+      #
+      # Actions for Button 1 Double Press
+      - conditions:
+          - condition: trigger
+            id:
+              - z2m-button-1-double
+        sequence:
+          - choose:
+              - conditions: []
+                sequence: !input button_1_double
+      #
+      # Actions for Button 1 Hold
+      - conditions:
+          - condition: trigger
+            id:
+              - z2m-button-1-hold
+        sequence:
+          - choose:
+              - conditions: []
+                sequence: !input button_1_hold
+      #
+      # Actions for Button 2 Single Press
+      - conditions:
+          - condition: trigger
+            id:
+              - z2m-button-2-single
+        sequence:
+          - choose:
+              - conditions: []
+                sequence: !input button_2_single
+      #
+      # Actions for Button 2 Double Press
+      - conditions:
+          - condition: trigger
+            id:
+              - z2m-button-2-double
+        sequence:
+          - choose:
+              - conditions: []
+                sequence: !input button_2_double
+      #
+      # Actions for Button 2 Hold
+      - conditions:
+          - condition: trigger
+            id:
+              - z2m-button-2-hold
+        sequence:
+          - choose:
+              - conditions: []
+                sequence: !input button_2_hold
+      #
+      # Actions for Button 3 Single Press
+      - conditions:
+          - condition: trigger
+            id:
+              - z2m-button-3-single
+        sequence:
+          - choose:
+              - conditions: []
+                sequence: !input button_3_single
+      #
+      # Actions for Button 3 Double Press
+      - conditions:
+          - condition: trigger
+            id:
+              - z2m-button-3-double
+        sequence:
+          - choose:
+              - conditions: []
+                sequence: !input button_3_double
+      #
+      # Actions for Button 3 Hold
+      - conditions:
+          - condition: trigger
+            id:
+              - z2m-button-3-hold
+        sequence:
+          - choose:
+              - conditions: []
+                sequence: !input button_3_hold
+      #
+      # Actions for Button 4 Single Press
+      - conditions:
+          - condition: trigger
+            id:
+              - z2m-button-4-single
+        sequence:
+          - choose:
+              - conditions: []
+                sequence: !input button_4_single
+      #
+      # Actions for Button 4 Double Press
+      - conditions:
+          - condition: trigger
+            id:
+              - z2m-button-4-double
+        sequence:
+          - choose:
+              - conditions: []
+                sequence: !input button_4_double
+      #
+      # Actions for Button 4 Hold
+      - conditions:
+          - condition: trigger
+            id:
+              - z2m-button-4-hold
+        sequence:
+          - choose:
+              - conditions: []
+                sequence: !input button_4_hold

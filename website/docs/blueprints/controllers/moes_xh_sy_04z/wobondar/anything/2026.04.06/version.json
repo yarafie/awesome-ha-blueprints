@@ -1,0 +1,18 @@
+{
+  "version": "2026.04.06",
+  "date": "2026-04-06",
+  "blueprint_id": "moes_xh_sy_04z",
+  "library_id": "wobondar",
+  "release_id": "anything",
+  "category": "controllers",
+  "title": "Controller - Moes XH-SY-04Z 4 button portable remote control",
+  "description": "Controller automation for executing any kind of action triggered by the provided Moes XH-SY-04Z 4 button portable remote control.",
+  "maintainers": [
+    {
+      "id": "wobondar",
+      "name": "wobondar"
+    }
+  ],
+  "blueprint_file": "moes_xh_sy_04z.yaml",
+  "status": "active"
+}
