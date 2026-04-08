@@ -4,14 +4,22 @@
     {
       "label": "Zigbee2MQTT",
       "url": "https://www.zigbee2mqtt.io/devices/XH-SY-04Z.html"
+    },
+    {
+      "label": "Moes",
+      "url": "https://moeshouse.com/products/zigbee-smart-scene-switch-portable-wireless-12-scenario-remote-control?variant=49603582689595"
     }
   ],
-  "manual_files": [],
+  "manual_files": ["moes_xh_sy_04z.pdf"],
   "category": "controllers",
   "blueprint_id": "moes_xh_sy_04z",
   "model_name": "Moes XH-SY-04Z 4 button portable remote control",
   "description": "Controller automation for executing any kind of action triggered by the provided Moes XH-SY-04Z 4 button portable remote control.",
   "librarians": [
+    {
+      "id": "yarafie",
+      "name": "yarafie"
+    },
     {
       "id": "wobondar",
       "name": "wobondar"
@@ -19,7 +27,7 @@
   ],
   "model": "XH-SY-04Z",
   "tags": ["zigbee", "button", "remote", "4-button"],
-  "images": [],
+  "images": ["moes_xh_sy_04z.png"],
   "status": "active",
   "manufacturer": "Moes"
 }
