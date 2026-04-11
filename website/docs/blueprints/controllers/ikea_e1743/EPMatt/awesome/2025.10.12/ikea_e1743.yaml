@@ -653,7 +653,7 @@ actions:
                                       event_type: zha_event
                                       event_data:
                                         device_id: !input controller_device
-                                        command: stop
+                                        command: stop_with_on_off
                                         cluster_id: 8
                                         endpoint_id: 1
                                     - trigger: event
