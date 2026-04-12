@@ -1,12 +1,12 @@
 # Awesome HA Blueprints – Library Report
 
-## _Generated on 2026-04-08_
+## _Generated on 2026-04-12_
 
 ## Summary
 
-- **Controllers:** 33 blueprints, 43 versions
+- **Controllers:** 35 blueprints, 46 versions
 - **Automations:** 4 blueprints, 4 versions
-- **Hooks:** 3 blueprints, 18 versions
+- **Hooks:** 3 blueprints, 19 versions
 - **Breaking versions:** 12
 
 ---
@@ -135,7 +135,7 @@
 - **Title:** Controller - IKEA E1743 TRÅDFRI On/Off Switch & Dimmer
 - **Librarians:** yarafie, EPMatt
 - **Library Maintainers:** EPMatt, yarafie
-- **Latest Version:** 2025.10.12
+- **Latest Version:** 2026.04.12
 - **Tags:** zigbee, dimmer, light
 <details>
 <summary>Versions</summary>
@@ -143,6 +143,7 @@
 | Library | Release | Version    | Breaking |
 | ------- | ------- | ---------- | -------- |
 | EPMatt  | awesome | 2025.10.12 | no       |
+| EPMatt  | awesome | 2026.04.12 | no       |
 
 </details>
 
@@ -346,6 +347,22 @@
 
 </details>
 
+### moes_xh_sy_04z
+
+- **Title:** Controller - Moes XH-SY-04Z 4 button portable remote control
+- **Librarians:** yarafie, wobondar
+- **Library Maintainers:** wobondar
+- **Latest Version:** 2026.04.06
+- **Tags:** zigbee, button, remote, 4-button
+<details>
+<summary>Versions</summary>
+
+| Library  | Release  | Version    | Breaking |
+| -------- | -------- | ---------- | -------- |
+| wobondar | anything | 2026.04.06 | no       |
+
+</details>
+
 ### osram_ac025xx00nj
 
 - **Title:** Controller - OSRAM AC025XX00NJ SMART+ Switch Mini
@@ -522,6 +539,22 @@
 | EPMatt  | awesome | 2025.03.29 | no       |
 | EPMatt  | awesome | 2026.02.17 | no       |
 | EPMatt  | awesome | 2026.03.29 | no       |
+
+</details>
+
+### tuya_ts0046
+
+- **Title:** Controller - Tuya TS0046 Wireless switch with 6 buttons
+- **Librarians:** yarafie, wobondar
+- **Library Maintainers:** wobondar
+- **Latest Version:** 2026.04.09
+- **Tags:** zigbee, button, remote, 6-button
+<details>
+<summary>Versions</summary>
+
+| Library  | Release  | Version    | Breaking |
+| -------- | -------- | ---------- | -------- |
+| wobondar | anything | 2026.04.09 | no       |
 
 </details>
 
@@ -706,7 +739,7 @@
 - **Title:** Hook - Light
 - **Librarians:** yarafie, EPMatt
 - **Library Maintainers:** EPMatt, yarafie
-- **Latest Version:** 2026.03.11 (**🚨 Breaking Change**)
+- **Latest Version:** 2026.04.12
 - **Tags:** brightness, color, dim, hue, light, off, on
 <details>
 <summary>Versions</summary>
@@ -741,6 +774,8 @@
 **Breaking change reasons:**
 
 - [Enhancement] Potential Breaking Change if updating from a version before v2026.03.07. Added the Color Temperature Steps for both long and short presses. Setting boundaries for min_color_temp_kelvin and max_color_temp_kelvin attributes from device as a guard.
+
+| EPMatt | awesome | 2026.04.12 | no |
 
 </details>
 

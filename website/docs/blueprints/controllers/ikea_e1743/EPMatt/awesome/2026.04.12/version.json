@@ -1,0 +1,22 @@
+{
+  "version": "2026.04.12",
+  "date": "2026-04-12",
+  "blueprint_id": "ikea_e1743",
+  "library_id": "EPMatt",
+  "release_id": "awesome",
+  "category": "controllers",
+  "title": "Controller - IKEA E1743 TRÅDFRI On/Off Switch & Dimmer",
+  "description": "Controller automation for executing any kind of action triggered by the provided IKEA E1743 TRÅDFRI On/Off Switch & Dimmer.",
+  "maintainers": [
+    {
+      "id": "yarafie",
+      "name": "yarafie"
+    },
+    {
+      "id": "@Calychas",
+      "name": "Kacper Leśniara"
+    }
+  ],
+  "blueprint_file": "ikea_e1743.yaml",
+  "status": "active"
+}

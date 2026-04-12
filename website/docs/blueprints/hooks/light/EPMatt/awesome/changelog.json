@@ -443,5 +443,15 @@
         "breaking": true
       }
     ]
+  },
+  {
+    "date": "2026.04.12",
+    "changes": [
+      {
+        "author": "@yarafie",
+        "description": "[Bug Fix] Fixed the template for Setting boundaries for min_color_temp_kelvin and max_color_temp_kelvin attributes.",
+        "breaking": false
+      }
+    ]
   }
 ]

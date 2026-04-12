@@ -1,0 +1,66 @@
+---
+title: Hook - Light
+description: This Hook blueprint allows to build a controller-based automation to control a light. Supports brightness and color control both for white temperature and rgb lights.
+---
+
+import {
+  BlueprintImportCard,
+  Inputs,
+  Requirement,
+  Changelog,
+  SupportedControllers,
+} from '/src/components/library_docs'
+
+<BlueprintImportCard
+  category='hooks'
+  id='light'
+  library='EPMatt'
+  release='awesome'
+/>
+
+<br />
+
+:::tip
+This blueprint is part of the **Controllers-Hooks Ecosystem**. You can read more about this topic [here](/docs/controllers-hooks-ecosystem).
+:::
+
+## Description
+
+This Hook blueprint allows to build a controller-based automation to control a light. Supports brightness and color control both for white temperature and rgb lights.
+:::info
+An automation created with this blueprint must be linked to a [Controller](/docs/blueprints/controllers) automation. Controllers are blueprints which allow to easily integrate a wide range of controllers and use them to run a set of actions when interacting with them. They expose an abstract interface used by Hooks to create controller-based automations.
+
+See the list of [Controllers supported by this Hook](#supported-controllers) for additional details.
+:::
+
+## Requirements
+
+<Requirement id='controller' required/>
+<Requirement name='Light Integration' required>
+
+This integration provides the entity which represents a light in Home Assistant. It should be activated by default so unless you tweaked the default configuration you're good to go.
+
+[Light Integration Docs](https://www.home-assistant.io/integrations/light/)
+
+</Requirement>
+
+## Inputs
+
+<Inputs category='hooks' id='light' library='EPMatt' release='awesome' />
+
+## Supported Controllers
+
+<SupportedControllers
+  category='hooks'
+  id='light'
+  library='EPMatt'
+  release='awesome'
+/>
+
+## Additional Notes
+
+If you want to link multiple lights to the same controller you can either use [Light Groups](https://www.home-assistant.io/integrations/light.group/) or build multiple Hooks linked to the same Controller.
+
+## Changelog
+
+<Changelog category='hooks' id='light' library='EPMatt' release='awesome' />

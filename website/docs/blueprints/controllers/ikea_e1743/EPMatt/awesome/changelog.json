@@ -248,5 +248,15 @@
         "breaking": false
       }
     ]
+  },
+  {
+    "date": "2026.04.12",
+    "changes": [
+      {
+        "author": "@Calychas",
+        "description": "[Bug Fix] For ZHA captured both events stop and stop_with_on_off when either On or Off buttons are released just in case. Initial ([PR#513](https://github.com/yarafie/awesome-ha-blueprints/pull/513)) fix by ([@Calychas](https://github.com/Calychas))",
+        "breaking": false
+      }
+    ]
   }
 ]
