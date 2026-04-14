@@ -14,14 +14,7 @@ maintainers:
   - id: 'EPMatt'
     name: 'EPMatt'
 supported_integrations:
-  - 'ZHA'
   - 'Zigbee2MQTT'
-  - 'deCONZ'
-  - 'input_text'
-supported_hooks:
-  - 'cover'
-  - 'light'
-  - 'media_player'
 tags:
   - 'zigbee'
   - 'button'
@@ -38,3 +31,17 @@ external_references:
     url: 'https://github.com/dresden-elektronik/deconz-rest-plugin/blob/master/devices/ikea/styrbar_remote_control.json'
 has_long_press_loop: true
 has_virtual_double_press: true
+releases:
+  awesome:
+    supported_integrations:
+      - 'Zigbee2MQTT'
+      - 'ZHA'
+      - 'deCONZ'
+      - 'input_text'
+    supported_hooks:
+      - 'light'
+      - 'cover'
+      - 'media_player'
+  anything:
+    supported_hooks:
+      - 'none'

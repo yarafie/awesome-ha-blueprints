@@ -339,10 +339,18 @@ function generateLibraryJson(
     status: manifest.status || 'active',
   }
 
-  if (manifest.supported_integrations) {
-    result.supported_integrations = getActualIntegrations(
-      manifest.supported_integrations,
-    )
+  // Aggregate integrations from all releases in this library
+  const allIntegrations = new Set()
+  for (const rid of releaseIds) {
+    const rc = getReleaseConfig(manifest, rid)
+    if (rc.supported_integrations) {
+      for (const i of getActualIntegrations(rc.supported_integrations)) {
+        allIntegrations.add(i)
+      }
+    }
+  }
+  if (allIntegrations.size > 0) {
+    result.supported_integrations = [...allIntegrations]
   }
 
   return result
