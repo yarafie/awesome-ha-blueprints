@@ -103,5 +103,15 @@
         "breaking": false
       }
     ]
+  },
+  {
+    "date": "2026.04.19",
+    "changes": [
+      {
+        "author": "@yarafie",
+        "description": "[Bug Fix] Added additional device name/model for mqtt philips gen2. ([EPMatt-issue#1007](https://github.com/EPMatt/awesome-ha-blueprints/issues/1007)) ([@marcolefo](https://github.com/marcolefo)) ([@yarafie](https://github.com/yarafie))",
+        "breaking": false
+      }
+    ]
   }
 ]
