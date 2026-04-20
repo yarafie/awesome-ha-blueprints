@@ -68,7 +68,7 @@
     "globals": "^17.5.0",
     "prettier": "^3.8.2",
     "typescript": "^6.0.2",
-    "typescript-eslint": "^8.58.1",
+    "typescript-eslint": "^8.58.2",
     "yaml": "^2.8.3"
   }
 }
