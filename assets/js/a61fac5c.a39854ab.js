@@ -1,0 +1,1 @@
+"use strict";(globalThis.webpackChunkawesome_ha_library_website=globalThis.webpackChunkawesome_ha_library_website||[]).push([[559],{59225(e){e.exports=JSON.parse('{"metadata":{"permalink":"/awesome-ha-blueprints/blog","page":1,"postsPerPage":10,"totalPages":1,"totalCount":0,"blogDescription":"Blog","blogTitle":"Blog"}}')}}]);
