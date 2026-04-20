@@ -233,9 +233,10 @@
 <details>
 <summary>Versions</summary>
 
-| Library | Release | Version    | Breaking               |
-| ------- | ------- | ---------- | ---------------------- |
-| EPMatt  | awesome | 2025.11.16 | **🚨 Breaking Change** |
+| Library | Release  | Version    | Breaking               |
+| ------- | -------- | ---------- | ---------------------- |
+| EPMatt  | zhae2002 | 2025.04.20 | no                     |
+| EPMatt  | awesome  | 2025.11.16 | **🚨 Breaking Change** |
 
 **Breaking change reasons:**
 
