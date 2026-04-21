@@ -38,5 +38,15 @@
         "breaking": false
       }
     ]
+  },
+  {
+    "date": "2026.04.21",
+    "changes": [
+      {
+        "author": "@yarafie",
+        "description": "[Update] Added additional manufacturer SONOFF.",
+        "breaking": false
+      }
+    ]
   }
 ]
