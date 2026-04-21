@@ -8,21 +8,26 @@
  *      1. Moved utils.ts to utils/contexts.ts
  *      2. Added variant and versions for controllers
  *   - Updated 2026.01.11 (@yarafie):
- *      3. Migrated from variant to library / release / version
- *      4. Aligned with libraryContexts + librarySupabase (DB strict)
+ *      1. Migrated from variant to library / release / version
+ *      2. Aligned with libraryContexts + librarySupabase (DB strict)
  *   - Updated 2026.01.12 (@yarafie):
- *      5. Filter versions by physical YAML existence
- *      6. Guarantee download recording before navigation
+ *      1. Filter versions by physical YAML existence
+ *      2. Guarantee download recording before navigation
+ *   - Updated 2026.04.21 (@yarafie):
+ *      1. Removed dependance on .yaml and used .json
+ *      2. Updated the initial block to show controller image left and release metadata+download count right
  * ────────────────────────────────────────────────────────────────
  */
 import Link from '@docusaurus/Link'
 import { useEffect, useState } from 'react'
 import { getBlueprintDownloads } from '@src/services/supabase/librarySupabase'
+
 import {
   changelogsContext,
   blueprintsContext,
+  jsonContext,
 } from '@src/utils/libraryContexts'
-import yaml from 'yaml'
+
 import Select from 'react-select'
 import type { StylesConfig } from 'react-select'
 
@@ -108,42 +113,67 @@ const styles = {
     flexDirection: 'column' as const,
     gap: '1.5rem',
   },
-  maintainersContainer: {
+  metadataRow: {
+    alignItems: 'center',
+  },
+  imageBlock: {
     display: 'flex',
-    flexDirection: 'column' as const,
-    gap: '0.75rem',
+    justifyContent: 'center',
+    alignItems: 'center',
     height: '100%',
   },
-  maintainersLabel: {
+  controllerImage: {
+    maxWidth: '180px',
+    maxHeight: '180px',
+    width: '100%',
+    height: 'auto',
+    objectFit: 'contain' as const,
+  },
+  metadataBlock: {
+    display: 'flex',
+    flexDirection: 'column' as const,
+    gap: '0.5rem',
+    height: '100%',
+    justifyContent: 'center',
+  },
+  metadataLabel: {
     fontSize: '0.875rem',
     fontWeight: 500,
     color: 'var(--ifm-color-emphasis-700)',
   },
-  maintainersList: {
+  metadataTitle: {
+    fontSize: '1rem',
+    fontWeight: 700,
+    color: 'var(--ifm-color-emphasis-900)',
+    margin: 0,
+    lineHeight: 1.3,
+  },
+  metadataText: {
+    margin: 0,
+    color: 'var(--ifm-color-emphasis-700)',
+    fontSize: '0.9375rem',
+    lineHeight: 1.5,
+  },
+  metadataInlineRow: {
     display: 'flex',
     flexWrap: 'wrap' as const,
-    gap: '0.75rem',
+    gap: '0.5rem 0.75rem',
     alignItems: 'center',
   },
-  maintainerItem: {
-    display: 'flex',
+  maintainerChip: {
+    display: 'inline-flex',
     alignItems: 'center',
-    gap: '0.5rem',
-  },
-  maintainerAvatar: {
-    width: '32px',
-    height: '32px',
-    borderRadius: '50%',
-    objectFit: 'cover' as const,
-  },
-  maintainerLink: {
-    fontSize: '0.875rem',
+    gap: '0.4rem',
+    padding: '0.2rem 0.55rem',
+    borderRadius: '999px',
+    background: 'var(--ifm-color-emphasis-100)',
     color: 'var(--ifm-color-primary)',
     textDecoration: 'none',
+    fontSize: '0.8125rem',
     fontWeight: 500,
-    transition: 'opacity 0.2s ease',
   },
 }
+
 interface BlueprintImportCardProps {
   category: string
   id: string
@@ -163,11 +193,48 @@ function formatDownloads(num: number | null): string {
   }
   return num.toString()
 }
-/**
- * Generates a GitHub avatar URL for a GitHub username
- */
-function getGitHubAvatarUrl(username: string): string {
-  return `https://github.com/${username}.png`
+
+interface ReleaseMaintainer {
+  id: string
+  name: string
+  url?: string
+}
+
+interface ReleaseMetadata {
+  title?: string
+  description?: string
+  maintainers?: ReleaseMaintainer[]
+  status?: string
+}
+
+function loadReleaseMetadata(
+  category: string,
+  id: string,
+  library: string,
+  release: string,
+): ReleaseMetadata | null {
+  try {
+    const parsed = jsonContext(
+      `./${category}/${id}/${library}/${release}/release.json`,
+    ) as unknown as ReleaseMetadata
+    return parsed ?? null
+  } catch {
+    return null
+  }
+}
+function loadControllerImageSrc(category: string, id: string): string | null {
+  try {
+    const blueprint = jsonContext(`./${category}/${id}/blueprint.json`) as {
+      images?: string[]
+    }
+
+    const image = blueprint?.images?.[0]
+    if (!image) return null
+
+    return `/awesome-ha-blueprints/img/${category}/${image}`
+  } catch {
+    return null
+  }
 }
 /**
  * Validate that a physical YAML exists for this version
@@ -186,34 +253,6 @@ function hasBlueprintYaml(
     return true
   } catch {
     return false
-  }
-}
-/**
- * Loads and extracts maintainers from blueprint YAML
- */
-function loadBlueprintMaintainers(
-  category: string,
-  id: string,
-  library: string,
-  release: string,
-  version: string,
-): string[] {
-  try {
-    const content = blueprintsContext(
-      `./${category}/${id}/${library}/${release}/${version}/${id}.yaml`,
-    )
-    const parsed = yaml.parse(content) as {
-      variables?: { ahb_maintainers?: string[] }
-    }
-    if (
-      parsed?.variables?.ahb_maintainers &&
-      Array.isArray(parsed.variables.ahb_maintainers)
-    ) {
-      return parsed.variables.ahb_maintainers
-    }
-    return []
-  } catch {
-    return []
   }
 }
 /**
@@ -304,9 +343,13 @@ function BlueprintImportCard({
   const [versions, setVersions] = useState<string[]>([])
   const [selectedVersion, setSelectedVersion] = useState<string>('latest')
   const [isLoadingVersions, setIsLoadingVersions] = useState<boolean>(true)
-  const [maintainers, setMaintainers] = useState<string[]>([])
-  const [isLoadingMaintainers, setIsLoadingMaintainers] =
-    useState<boolean>(true)
+
+  const [releaseMetadata, setReleaseMetadata] =
+    useState<ReleaseMetadata | null>(null)
+  const [controllerImageSrc, setControllerImageSrc] = useState<string | null>(
+    null,
+  )
+
   const [changelogEntries, setChangelogEntries] = useState<ChangelogEntry[]>([])
   useEffect(() => {
     let isMounted = true
@@ -335,30 +378,12 @@ function BlueprintImportCard({
       isMounted = false
     }
   }, [category, id, library, release])
+
   useEffect(() => {
-    let isMounted = true
-    if (!selectedVersion || selectedVersion === 'latest') {
-      if (!isMounted) return
-      setMaintainers([])
-      setIsLoadingMaintainers(false)
-      return () => {
-        isMounted = false
-      }
-    }
-    const maintainersList = loadBlueprintMaintainers(
-      category,
-      id,
-      library,
-      release,
-      selectedVersion,
-    )
-    if (!isMounted) return
-    setMaintainers(maintainersList)
-    setIsLoadingMaintainers(false)
-    return () => {
-      isMounted = false
-    }
-  }, [category, id, library, release, selectedVersion])
+    setReleaseMetadata(loadReleaseMetadata(category, id, library, release))
+    setControllerImageSrc(loadControllerImageSrc(category, id))
+  }, [category, id, library, release])
+
   useEffect(() => {
     let isCancelled = false
     setIsLoading(true)
@@ -485,68 +510,99 @@ function BlueprintImportCard({
           }
         }
       `}</style>
+
       <div className='container'>
-        <div className='row'>
-          {/* Maintainers */}
-          {isLoadingMaintainers ? (
-            <div
-              className='col col--6 margin-bottom--md'
-              style={styles.maintainersContainer}
-            >
-              <span style={styles.maintainersLabel}>Maintainers</span>
-              <p style={{ margin: 0, color: 'var(--ifm-color-emphasis-600)' }}>
-                Loading maintainers…
-              </p>
-            </div>
-          ) : maintainers.length > 0 ? (
-            <div
-              className='col col--6 margin-bottom--md'
-              style={styles.maintainersContainer}
-            >
-              <span style={styles.maintainersLabel}>Maintainers</span>
-              <div style={styles.maintainersList}>
-                {maintainers.map((username) => (
-                  <div key={username} style={styles.maintainerItem}>
-                    <img
-                      src={getGitHubAvatarUrl(username)}
-                      alt={`${username} avatar`}
-                      style={styles.maintainerAvatar}
-                    />
+        {/* Image+Metadata */}
+        <div className='row margin-bottom--md' style={styles.metadataRow}>
+          {/* Controller Image */}
+          <div className='col col--4' style={styles.imageBlock}>
+            {controllerImageSrc ? (
+              <img
+                src={controllerImageSrc}
+                alt={`${id} controller`}
+                style={styles.controllerImage}
+              />
+            ) : null}
+          </div>
+
+          {/* Condensed Release Metadata + Downloads */}
+          <div className='col col--8' style={styles.metadataBlock}>
+            <span style={styles.metadataLabel}>
+              Release
+              <span
+                style={{
+                  color: 'var(--ifm-color-success)',
+                  fontWeight: 600,
+                  marginLeft: 6,
+                }}
+              >
+                [ {release} ]
+              </span>
+            </span>
+
+            {releaseMetadata?.description ? (
+              <p style={styles.metadataText}>{releaseMetadata.description}</p>
+            ) : null}
+
+            {releaseMetadata?.maintainers &&
+            releaseMetadata.maintainers.length > 0 ? (
+              <div style={styles.metadataInlineRow}>
+                <span style={styles.metadataLabel}>Maintainers</span>
+
+                {releaseMetadata.maintainers.map((maintainer) => {
+                  const username = maintainer.id.replace(/^@/, '').trim()
+                  const displayName = maintainer.name?.trim() || username
+                  const profileUrl =
+                    maintainer.url || `https://github.com/${username}`
+
+                  if (!username) return null
+
+                  return (
                     <a
-                      href={`https://github.com/${username}`}
+                      key={username}
+                      href={profileUrl}
                       target='_blank'
                       rel='noopener noreferrer'
-                      style={styles.maintainerLink}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.opacity = '0.8'
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.opacity = '1'
-                      }}
+                      style={styles.maintainerChip}
                     >
-                      {username}
+                      <img
+                        src={`https://github.com/${username}.png`}
+                        alt={displayName}
+                        style={{
+                          width: 18,
+                          height: 18,
+                          borderRadius: '50%',
+                          objectFit: 'cover',
+                        }}
+                      />
+                      @{displayName}
                     </a>
-                  </div>
-                ))}
+                  )
+                })}
               </div>
-            </div>
-          ) : (
-            <div className='col col--6 margin-bottom--md'></div>
-          )}
-          {/* Total Downloads */}
-          <div
-            className='col col--6 margin-bottom--md'
-            style={styles.downloadCountBox}
-          >
-            <span style={styles.downloadCountLabel}>Total Downloads</span>
-            <div
-              className='blueprint-download-value'
-              style={styles.downloadCountValue}
-            >
-              {isLoading ? '…' : formatDownloads(downloadCount)}
+            ) : null}
+
+            {releaseMetadata?.status ? (
+              <div style={styles.metadataInlineRow}>
+                <span style={styles.metadataLabel}>Status</span>
+                <span style={styles.metadataText}>
+                  {releaseMetadata.status}
+                </span>
+              </div>
+            ) : null}
+
+            <div style={styles.metadataInlineRow}>
+              <span style={styles.downloadCountLabel}>Total Downloads</span>
+              <span
+                className='blueprint-download-value'
+                style={styles.downloadCountValue}
+              >
+                {isLoading ? '…' : formatDownloads(downloadCount)}
+              </span>
             </div>
           </div>
         </div>
+
         {/* Version Selector and Import Button */}
         {isLoadingVersions ? (
           <div className='row'>
@@ -554,7 +610,7 @@ function BlueprintImportCard({
               className='col col--6 margin-bottom--md'
               style={styles.versionSelector}
             >
-              <label htmlFor='version-select' style={styles.maintainersLabel}>
+              <label htmlFor='version-select' style={styles.metadataLabel}>
                 Versions
               </label>
               <p style={{ margin: 0, color: 'var(--ifm-color-emphasis-600)' }}>
@@ -571,7 +627,7 @@ function BlueprintImportCard({
               className='col col--6 margin-bottom--md'
               style={styles.versionSelector}
             >
-              <label htmlFor='version-select' style={styles.maintainersLabel}>
+              <label htmlFor='version-select' style={styles.metadataLabel}>
                 Download
               </label>
               <Select
@@ -759,7 +815,16 @@ function BlueprintImportCard({
                         >
                           {author !== '—' ? (
                             (() => {
-                              const username = author.replace('@', '')
+                              const authorText =
+                                typeof author === 'string'
+                                  ? author
+                                  : String(author ?? '')
+                              const username = authorText
+                                .replace(/^@/, '')
+                                .trim()
+
+                              if (!username) return <span>—</span>
+
                               return (
                                 <a
                                   href={`https://github.com/${username}`}
