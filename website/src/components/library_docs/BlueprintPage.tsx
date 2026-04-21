@@ -597,7 +597,7 @@ const BlueprintPage: React.FC<BlueprintPageProps> = ({
                       {/* Release Id */}
                       <strong
                         style={{
-                          color: 'var(--ifm-color-primary)',
+                          color: 'var(--ifm-color-success)',
                           fontWeight: 700,
                         }}
                       >
