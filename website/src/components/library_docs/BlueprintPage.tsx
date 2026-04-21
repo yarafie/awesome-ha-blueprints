@@ -594,7 +594,7 @@ const BlueprintPage: React.FC<BlueprintPageProps> = ({
                   >
                     {/* Left Column: Info Content */}
                     <div style={{ flex: 1 }}>
-                      <strong>- {rel.releaseId}</strong>
+                      <strong>[ {rel.releaseId} ]</strong>
                       {/* Supported hooks pills */}
                       {supportedHooks.length > 0 && (
                         <div
