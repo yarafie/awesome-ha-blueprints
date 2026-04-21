@@ -59,8 +59,14 @@ blueprint:
             - integration: zha
               manufacturer: eWeLink
               model: WB01
+            - integration: zha
+              manufacturer: SONOFF
+              model: WB01
             - integration: deconz
               manufacturer: eWeLink
+              model: WB01
+            - integration: deconz
+              manufacturer: SONOFF
               model: WB01
           multiple: false
     helper_last_controller_event:
