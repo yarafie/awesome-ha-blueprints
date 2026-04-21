@@ -594,7 +594,15 @@ const BlueprintPage: React.FC<BlueprintPageProps> = ({
                   >
                     {/* Left Column: Info Content */}
                     <div style={{ flex: 1 }}>
-                      <strong>[ {rel.releaseId} ]</strong>
+                      {/* Release Id */}
+                      <strong
+                        style={{
+                          color: 'var(--ifm-color-primary)',
+                          fontWeight: 700,
+                        }}
+                      >
+                        [ {rel.releaseId} ]
+                      </strong>
                       {/* Supported hooks pills */}
                       {supportedHooks.length > 0 && (
                         <div
