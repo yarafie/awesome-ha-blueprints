@@ -3,11 +3,14 @@
 /**
  * Migration script: extract manifest.yaml + docs.mdx from existing blueprint files.
  *
+ * New manifest shape:
+ * blueprint -> libraries -> releases
+ *
  * For each blueprint, reads the existing JSON/MDX files and produces:
  * 1. manifest.yaml — single source of truth for metadata
- * 2. docs.mdx — custom version page body (only if content differs from default template)
+ * 2. docs.mdx — release-level custom docs body (only if content differs from default template)
  *
- * Usage: node scripts/migrate-to-manifest.mjs [--dry-run]
+ * Usage: node scripts/migrate-to-manifest.mjs [--dry-run] [--force]
  */
 
 import fs from 'node:fs'
@@ -18,8 +21,7 @@ import YAML from 'yaml'
 const BLUEPRINTS_DIR = path.resolve(import.meta.dirname, '../docs/blueprints')
 
 const DRY_RUN = process.argv.includes('--dry-run')
-
-// ── Helpers ─────────────────────────────────────────────────────────────────
+const FORCE = process.argv.includes('--force')
 
 function readJson(filePath) {
   return JSON.parse(fs.readFileSync(filePath, 'utf-8'))
@@ -31,64 +33,59 @@ function subdirs(dir) {
     .readdirSync(dir, { withFileTypes: true })
     .filter((d) => d.isDirectory())
     .map((d) => d.name)
+    .filter((name) => !name.startsWith('.') && name !== 'node_modules')
 }
 
 function isVersionDir(name) {
   return /^\d{4}\.\d{2}\.\d{2}$/.test(name)
 }
 
-// ── Extract manifest from existing files ────────────────────────────────────
+function uniqueById(items) {
+  const map = new Map()
+  for (const item of items || []) {
+    if (!item || !item.id) continue
+    map.set(item.id, item)
+  }
+  return [...map.values()]
+}
+
+function sortObjectKeys(obj) {
+  return Object.fromEntries(
+    Object.entries(obj).sort(([a], [b]) => a.localeCompare(b)),
+  )
+}
+
+function pickReleaseFields(category, releaseJson, libraryJson) {
+  const result = {}
+
+  const releaseIntegrations = releaseJson.supported_integrations || []
+  const libraryIntegrations = libraryJson?.supported_integrations || []
+  if (
+    releaseIntegrations.length > 0 &&
+    JSON.stringify(releaseIntegrations) !== JSON.stringify(libraryIntegrations)
+  ) {
+    result.supported_integrations = releaseIntegrations
+  }
+
+  if (category === 'controllers' && (releaseJson.supported_hooks || []).length > 0) {
+    result.supported_hooks = releaseJson.supported_hooks
+  }
+
+  if (category === 'hooks' && releaseJson.supported_controllers) {
+    result.supported_controllers = releaseJson.supported_controllers
+  }
+
+  return result
+}
 
 function extractManifest(blueprintDir, category) {
   const blueprintJson = readJson(path.join(blueprintDir, 'blueprint.json'))
 
-  // Find the first library to get maintainer and integration info
-  const libraryIds = subdirs(blueprintDir).filter(
-    (d) => !d.startsWith('.') && d !== 'node_modules',
-  )
-
-  let maintainers = []
-  let supportedIntegrations = []
-  let supportedHooks = []
-  let supportedControllers = null
-
-  if (libraryIds.length > 0) {
-    const firstLibId = libraryIds[0]
-    const libraryJsonPath = path.join(blueprintDir, firstLibId, 'library.json')
-    if (fs.existsSync(libraryJsonPath)) {
-      const libraryJson = readJson(libraryJsonPath)
-      maintainers = libraryJson.maintainers || []
-      supportedIntegrations = libraryJson.supported_integrations || []
-    }
-
-    // Find first release for hooks/controllers info
-    const releaseIds = subdirs(path.join(blueprintDir, firstLibId))
-    if (releaseIds.length > 0) {
-      const releaseJsonPath = path.join(
-        blueprintDir,
-        firstLibId,
-        releaseIds[0],
-        'release.json',
-      )
-      if (fs.existsSync(releaseJsonPath)) {
-        const releaseJson = readJson(releaseJsonPath)
-        supportedHooks = releaseJson.supported_hooks || []
-        supportedControllers = releaseJson.supported_controllers || null
-        // Use release maintainers if library didn't have them
-        if (maintainers.length === 0) {
-          maintainers = releaseJson.maintainers || []
-        }
-        // Use release integrations if library didn't have them
-        if (supportedIntegrations.length === 0) {
-          supportedIntegrations = releaseJson.supported_integrations || []
-        }
-      }
-    }
-  }
-
   const manifest = {
     name: blueprintJson.name,
     description: blueprintJson.description,
+    librarians: blueprintJson.librarians,
+    libraries: {},
   }
 
   if (category === 'controllers') {
@@ -97,29 +94,11 @@ function extractManifest(blueprintDir, category) {
     manifest.model_name = blueprintJson.model_name
   }
 
-  manifest.librarians = blueprintJson.librarians
-  manifest.maintainers = maintainers
-
-  if (supportedIntegrations.length > 0) {
-    manifest.supported_integrations = supportedIntegrations
-  }
-
-  if (category === 'controllers' && supportedHooks.length > 0) {
-    manifest.supported_hooks = supportedHooks
-  }
-
-  if (category === 'hooks' && supportedControllers) {
-    manifest.supported_controllers = supportedControllers
-  }
-
-  if (blueprintJson.tags && blueprintJson.tags.length > 0) {
+  if (blueprintJson.tags?.length) {
     manifest.tags = blueprintJson.tags
   }
 
-  if (
-    blueprintJson.external_references &&
-    blueprintJson.external_references.length > 0
-  ) {
+  if (blueprintJson.external_references?.length) {
     manifest.external_references = blueprintJson.external_references
   }
 
@@ -127,42 +106,72 @@ function extractManifest(blueprintDir, category) {
     manifest.status = blueprintJson.status
   }
 
+  const libraryIds = subdirs(blueprintDir)
+
+  for (const libraryId of libraryIds) {
+    const libraryDir = path.join(blueprintDir, libraryId)
+    const libraryJsonPath = path.join(libraryDir, 'library.json')
+    const libraryJson = fs.existsSync(libraryJsonPath)
+      ? readJson(libraryJsonPath)
+      : {}
+
+    const releaseIds = subdirs(libraryDir)
+    const libraryNode = {
+      maintainers: uniqueById(libraryJson.maintainers || []),
+      releases: {},
+    }
+
+    if ((libraryJson.supported_integrations || []).length > 0) {
+      libraryNode.supported_integrations = libraryJson.supported_integrations
+    }
+
+    for (const releaseId of releaseIds) {
+      const releaseDir = path.join(libraryDir, releaseId)
+      const versions = subdirs(releaseDir).filter(isVersionDir)
+      if (versions.length === 0) continue
+
+      const releaseJsonPath = path.join(releaseDir, 'release.json')
+      const releaseJson = fs.existsSync(releaseJsonPath)
+        ? readJson(releaseJsonPath)
+        : {}
+
+      if (libraryNode.maintainers.length === 0 && releaseJson.maintainers?.length) {
+        libraryNode.maintainers = uniqueById(releaseJson.maintainers)
+      }
+
+      const releaseNode = pickReleaseFields(category, releaseJson, libraryJson)
+      libraryNode.releases[releaseId] = releaseNode
+    }
+
+    libraryNode.releases = sortObjectKeys(libraryNode.releases)
+    manifest.libraries[libraryId] = libraryNode
+  }
+
+  manifest.libraries = sortObjectKeys(manifest.libraries)
   return manifest
 }
-
-// ── Extract docs.mdx from existing version MDX ─────────────────────────────
 
 function extractDocsMdx(blueprintDir, libraryId, releaseId) {
   const releaseDir = path.join(blueprintDir, libraryId, releaseId)
   const versions = subdirs(releaseDir).filter(isVersionDir)
   if (versions.length === 0) return null
 
-  // Use the latest version's MDX as the template (they're all identical)
   const latestVersion = versions.sort().reverse()[0]
   const mdxPath = path.join(releaseDir, latestVersion, `${latestVersion}.mdx`)
   if (!fs.existsSync(mdxPath)) return null
 
   const content = fs.readFileSync(mdxPath, 'utf-8')
+  const firstFence = content.indexOf('---')
+  const secondFence = content.indexOf('---', firstFence + 3)
+  if (firstFence !== 0 || secondFence === -1) return content
 
-  // Strip frontmatter (everything between the first --- and second ---)
-  const fmEnd = content.indexOf('---', content.indexOf('---') + 3)
-  if (fmEnd === -1) return content
-
-  // Body starts after the closing ---
-  const body = content.slice(fmEnd + 3)
-
-  return body
+  return content.slice(secondFence + 3).trimStart()
 }
-
-// ── Main migration ──────────────────────────────────────────────────────────
 
 function migrateBlueprint(blueprintDir, category, blueprintId) {
   console.log(`  ${category}/${blueprintId}`)
 
-  // 1. Extract manifest
   const manifest = extractManifest(blueprintDir, category)
-
-  // 2. Write manifest.yaml
   const manifestPath = path.join(blueprintDir, 'manifest.yaml')
   const yamlContent = YAML.stringify(manifest, {
     lineWidth: 0,
@@ -171,26 +180,20 @@ function migrateBlueprint(blueprintDir, category, blueprintId) {
   })
 
   if (DRY_RUN) {
-    console.log(`    Would write: manifest.yaml`)
+    console.log('    Would write: manifest.yaml')
   } else {
     fs.writeFileSync(manifestPath, yamlContent)
+    console.log('    Wrote: manifest.yaml')
   }
 
-  // 3. Extract and write docs.mdx for each library/release
-  const libraryIds = subdirs(blueprintDir).filter(
-    (d) => !d.startsWith('.') && d !== 'node_modules',
-  )
-
-  for (const libraryId of libraryIds) {
+  for (const libraryId of Object.keys(manifest.libraries)) {
     const libraryDir = path.join(blueprintDir, libraryId)
-    const releaseIds = subdirs(libraryDir)
 
-    for (const releaseId of releaseIds) {
+    for (const releaseId of Object.keys(manifest.libraries[libraryId].releases)) {
       const body = extractDocsMdx(blueprintDir, libraryId, releaseId)
       if (!body) continue
 
       const docsPath = path.join(libraryDir, releaseId, 'docs.mdx')
-
       if (DRY_RUN) {
         console.log(`    Would write: ${libraryId}/${releaseId}/docs.mdx`)
       } else {
@@ -215,23 +218,17 @@ function main() {
     const categoryDir = path.join(BLUEPRINTS_DIR, category)
     if (!fs.existsSync(categoryDir)) continue
 
-    const blueprintIds = subdirs(categoryDir)
-    for (const blueprintId of blueprintIds) {
+    for (const blueprintId of subdirs(categoryDir)) {
       const blueprintDir = path.join(categoryDir, blueprintId)
+      const manifestPath = path.join(blueprintDir, 'manifest.yaml')
 
-      // Skip if manifest.yaml already exists
-      if (fs.existsSync(path.join(blueprintDir, 'manifest.yaml'))) {
-        console.log(
-          `  ${category}/${blueprintId} — skipping (manifest.yaml already exists)`,
-        )
+      if (!FORCE && fs.existsSync(manifestPath)) {
+        console.log(`  ${category}/${blueprintId} — skipping (manifest.yaml already exists)`)
         continue
       }
 
-      // Skip if no blueprint.json exists
       if (!fs.existsSync(path.join(blueprintDir, 'blueprint.json'))) {
-        console.log(
-          `  ${category}/${blueprintId} — skipping (no blueprint.json)`,
-        )
+        console.log(`  ${category}/${blueprintId} — skipping (no blueprint.json)`)
         continue
       }
 
@@ -240,9 +237,7 @@ function main() {
     }
   }
 
-  console.log(
-    `\nDone! Migrated ${count} blueprint(s).${DRY_RUN ? ' (dry run)' : ''}`,
-  )
+  console.log(`\nDone! Migrated ${count} blueprint(s).${DRY_RUN ? ' (dry run)' : ''}`)
 }
 
 main()

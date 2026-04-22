@@ -2,88 +2,100 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://yarafie.github.io/awesome-ha-blueprints/schemas/manifest.schema.json",
   "title": "Awesome HA Library – Blueprint Manifest Schema",
-  "description": "Single source of truth for blueprint metadata. All other JSON/MDX files are generated from this manifest at build time.",
+  "description": "Single source of truth for blueprint metadata. Libraries are first-class and releases live under libraries.",
   "type": "object",
-  "required": ["name", "description", "librarians", "maintainers"],
+  "required": ["name", "description", "librarians", "libraries"],
   "properties": {
     "name": {
       "type": "string",
       "minLength": 1,
-      "description": "Human-readable blueprint name (e.g. 'Controller - Tuya TS0046 Wireless switch with 6 buttons')."
+      "description": "Human-readable blueprint name."
     },
-
     "description": {
       "type": "string",
       "minLength": 1,
       "description": "Blueprint description for listings and metadata."
     },
-
     "manufacturer": {
       "type": "string",
       "minLength": 1,
       "description": "Device manufacturer (required for controllers)."
     },
-
     "model": {
       "type": "string",
       "minLength": 1,
       "description": "Device model identifier (required for controllers)."
     },
-
     "model_name": {
       "type": "string",
       "minLength": 1,
       "description": "Human-readable device model name (required for controllers)."
     },
-
     "librarians": {
       "type": "array",
       "minItems": 1,
       "description": "Curators responsible for defining this blueprint.",
-      "items": {
-        "type": "object",
-        "required": ["id", "name"],
-        "additionalProperties": false,
-        "properties": {
-          "id": { "type": "string" },
-          "name": { "type": "string" },
-          "url": { "type": "string", "format": "uri" }
-        }
-      }
+      "items": { "$ref": "#/$defs/personRef" }
     },
-
-    "maintainers": {
+    "tags": {
       "type": "array",
-      "minItems": 1,
-      "description": "Library maintainers for this blueprint.",
-      "items": {
-        "type": "object",
-        "required": ["id", "name"],
-        "additionalProperties": false,
-        "properties": {
-          "id": { "type": "string" },
-          "name": { "type": "string" },
-          "url": { "type": "string", "format": "uri" }
-        }
-      }
-    },
-
-    "supported_integrations": {
-      "type": "array",
-      "description": "Integrations supported by this blueprint (e.g. Zigbee2MQTT, ZHA, deCONZ).",
+      "description": "Searchable tags.",
       "items": { "type": "string" }
     },
-
-    "supported_hooks": {
+    "external_references": {
       "type": "array",
-      "description": "Hook types supported by this controller (e.g. ['light', 'cover', 'media_player'] or ['none']).",
-      "items": { "type": "string" }
+      "description": "External reference links.",
+      "items": { "$ref": "#/$defs/externalReference" }
     },
-
-    "supported_controllers": {
+    "status": {
+      "type": "string",
+      "enum": ["active", "testing", "development", "retired", "deprecated"],
+      "default": "active",
+      "description": "Lifecycle status. Defaults to 'active'."
+    },
+    "has_long_press_loop": {
+      "type": "boolean",
+      "description": "Whether the controller supports looping long press actions while a button is held."
+    },
+    "has_virtual_double_press": {
+      "type": "boolean",
+      "description": "Whether the controller provides virtual double press events not natively supported by the device."
+    },
+    "libraries": {
       "type": "object",
-      "description": "Controllers supported by this hook.",
+      "minProperties": 1,
+      "description": "Libraries for this blueprint, keyed by library ID. Releases are nested under each library.",
+      "propertyNames": {
+        "type": "string",
+        "minLength": 1
+      },
+      "additionalProperties": { "$ref": "#/$defs/library" }
+    }
+  },
+  "$defs": {
+    "personRef": {
+      "type": "object",
+      "required": ["id", "name"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "name": { "type": "string", "minLength": 1 },
+        "url": { "type": "string", "format": "uri" }
+      }
+    },
+    "externalReference": {
+      "type": "object",
+      "required": ["label", "url"],
+      "additionalProperties": false,
+      "properties": {
+        "label": { "type": "string", "minLength": 1 },
+        "url": { "type": "string", "format": "uri" }
+      }
+    },
+    "supportedControllers": {
+      "type": "object",
       "required": ["controllers", "count"],
+      "additionalProperties": false,
       "properties": {
         "controllers": {
           "type": "array",
@@ -95,77 +107,66 @@
         }
       }
     },
-
-    "tags": {
-      "type": "array",
-      "description": "Searchable tags.",
-      "items": { "type": "string" }
-    },
-
-    "external_references": {
-      "type": "array",
-      "description": "External reference links.",
-      "items": {
-        "type": "object",
-        "required": ["label", "url"],
-        "additionalProperties": false,
-        "properties": {
-          "label": { "type": "string", "minLength": 1 },
-          "url": { "type": "string", "format": "uri" }
+    "release": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "supported_hooks": {
+          "type": "array",
+          "description": "Hook types supported by this controller release.",
+          "items": { "type": "string" }
+        },
+        "supported_integrations": {
+          "type": "array",
+          "description": "Integrations supported by this release.",
+          "items": { "type": "string" }
+        },
+        "supported_controllers": {
+          "$ref": "#/$defs/supportedControllers"
         }
       }
     },
-
-    "status": {
-      "type": "string",
-      "enum": ["active", "testing", "development", "retired", "deprecated"],
-      "default": "active",
-      "description": "Lifecycle status. Defaults to 'active'."
-    },
-
-    "has_long_press_loop": {
-      "type": "boolean",
-      "description": "Whether the controller supports looping long press actions while a button is held."
-    },
-
-    "has_virtual_double_press": {
-      "type": "boolean",
-      "description": "Whether the controller provides virtual double press events not natively supported by the device."
-    },
-
-    "releases": {
+    "library": {
       "type": "object",
-      "description": "Per-release configuration overrides, keyed by release ID.",
-      "additionalProperties": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "supported_hooks": {
-            "type": "array",
-            "items": { "type": "string" }
+      "required": ["maintainers", "releases"],
+      "additionalProperties": false,
+      "properties": {
+        "maintainers": {
+          "type": "array",
+          "minItems": 1,
+          "description": "Maintainers of this library.",
+          "items": { "$ref": "#/$defs/personRef" }
+        },
+        "supported_integrations": {
+          "type": "array",
+          "description": "Optional library-level default integrations, inherited by releases unless overridden.",
+          "items": { "type": "string" }
+        },
+        "releases": {
+          "type": "object",
+          "minProperties": 1,
+          "description": "Releases for this library, keyed by release ID.",
+          "propertyNames": {
+            "type": "string",
+            "minLength": 1
           },
-          "supported_integrations": {
-            "type": "array",
-            "items": { "type": "string" }
-          },
-          "supported_controllers": {
-            "type": "object",
-            "required": ["controllers", "count"],
-            "properties": {
-              "controllers": {
-                "type": "array",
-                "items": { "type": "string" }
-              },
-              "count": {
-                "type": "integer",
-                "minimum": 0
-              }
-            }
-          }
+          "additionalProperties": { "$ref": "#/$defs/release" }
         }
       }
     }
   },
-
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "manufacturer": { "type": "string" },
+          "model": { "type": "string" },
+          "model_name": { "type": "string" }
+        },
+        "required": ["manufacturer", "model", "model_name"]
+      },
+      "then": true
+    }
+  ],
   "additionalProperties": false
 }

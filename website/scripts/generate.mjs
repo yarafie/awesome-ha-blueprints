@@ -142,8 +142,7 @@ function parseNoteSections(content) {
 }
 
 /** Build the complete Additional Notes section from manifest flags + notes.md. */
-function buildAdditionalNotesSection(manifest, releaseDir) {
-  const integrations = manifest.supported_integrations || []
+function buildAdditionalNotesSection(manifest, releaseDir, integrations) {
   const hasIT = hasInputText(integrations)
   const hasVDP = manifest.has_virtual_double_press || false
 
@@ -226,20 +225,33 @@ function sortVersionsDesc(versions) {
   return [...versions].sort((a, b) => b.localeCompare(a))
 }
 
-/** Get release-specific config, falling back to manifest-level defaults. */
-function getReleaseConfig(manifest, releaseId) {
-  const releaseOverride = manifest.releases?.[releaseId] || {}
+/** Get library-specific configuration from the manifest. */
+function getLibraryConfig(manifest, libraryId) {
+  return manifest.libraries?.[libraryId] || null
+}
+
+/** Get release-specific config, inheriting from library-level defaults. */
+function getReleaseConfig(manifest, libraryId, releaseId) {
+  const libraryConfig = getLibraryConfig(manifest, libraryId)
+  if (!libraryConfig) {
+    return {
+      maintainers: [],
+      supported_hooks: [],
+      supported_integrations: [],
+      supported_controllers: null,
+    }
+  }
+
+  const releaseOverride = libraryConfig.releases?.[releaseId] || {}
+
   return {
-    supported_hooks:
-      releaseOverride.supported_hooks || manifest.supported_hooks || [],
+    maintainers: libraryConfig.maintainers || [],
+    supported_hooks: releaseOverride.supported_hooks || [],
     supported_integrations:
       releaseOverride.supported_integrations ||
-      manifest.supported_integrations ||
+      libraryConfig.supported_integrations ||
       [],
-    supported_controllers:
-      releaseOverride.supported_controllers ||
-      manifest.supported_controllers ||
-      null,
+    supported_controllers: releaseOverride.supported_controllers || null,
   }
 }
 
@@ -312,6 +324,7 @@ function generateLibraryJson(
   blueprintId,
   libraryId,
   releaseIds,
+  libraryConfig,
 ) {
   const singular =
     category === 'controllers'
@@ -333,7 +346,7 @@ function generateLibraryJson(
     blueprint_id: blueprintId,
     title,
     description: `${capitalSingular} blueprint library for ${blueprintId} maintained by ${libraryId}.`,
-    maintainers: manifest.maintainers,
+    maintainers: libraryConfig.maintainers || [],
     releases: releaseIds,
     category,
     status: manifest.status || 'active',
@@ -342,7 +355,7 @@ function generateLibraryJson(
   // Aggregate integrations from all releases in this library
   const allIntegrations = new Set()
   for (const rid of releaseIds) {
-    const rc = getReleaseConfig(manifest, rid)
+    const rc = getReleaseConfig(manifest, libraryId, rid)
     if (rc.supported_integrations) {
       for (const i of getActualIntegrations(rc.supported_integrations)) {
         allIntegrations.add(i)
@@ -374,7 +387,7 @@ function generateReleaseJson(
     blueprint_id: blueprintId,
     category,
     title: manifest.name,
-    maintainers: manifest.maintainers,
+    maintainers: releaseConfig.maintainers || [],
     description: manifest.description,
     versions,
     latest_version: latestVersion,
@@ -402,6 +415,7 @@ function generateVersionJson(
   libraryId,
   releaseId,
   version,
+  maintainers,
 ) {
   return {
     version,
@@ -412,7 +426,7 @@ function generateVersionJson(
     category,
     title: manifest.name,
     description: manifest.description,
-    maintainers: manifest.maintainers,
+    maintainers,
     blueprint_file: `${blueprintId}.yaml`,
     status: manifest.status || 'active',
   }
@@ -420,7 +434,7 @@ function generateVersionJson(
 
 // ── Version MDX generation ──────────────────────────────────────────────────
 
-function buildVersionFrontmatter(manifest, category) {
+function buildVersionFrontmatter(manifest, category, integrations) {
   const fields = {
     title: manifest.name,
     description: manifest.description,
@@ -430,9 +444,7 @@ function buildVersionFrontmatter(manifest, category) {
     fields.manufacturer = manifest.manufacturer
     fields.model = manifest.model
     fields.model_name = manifest.model_name
-    const actualIntegrations = getActualIntegrations(
-      manifest.supported_integrations,
-    )
+    const actualIntegrations = getActualIntegrations(integrations)
     fields.integrations = `[${actualIntegrations.join(', ')}]`
   }
 
@@ -490,7 +502,7 @@ function generateDefaultVersionMdx(
 ) {
   const hooks = releaseConfig.supported_hooks
   const hasHooks = hooks && hooks.length > 0 && hooks[0] !== 'none'
-  const integrations = manifest.supported_integrations || []
+  const integrations = releaseConfig.supported_integrations || []
   const actualIntegrations = getActualIntegrations(integrations)
 
   // Build flag-driven description extra paragraphs
@@ -503,7 +515,7 @@ function generateDefaultVersionMdx(
   }
 
   const vars = {
-    frontmatter: buildVersionFrontmatter(manifest, category),
+    frontmatter: buildVersionFrontmatter(manifest, category, integrations),
     id: blueprintId,
     library: libraryId,
     release: releaseId,
@@ -529,7 +541,11 @@ function generateDefaultVersionMdx(
       manifest.has_virtual_double_press && hasHooks
         ? STANDARD_VDP_HOOKS_NOTE + '\n\n'
         : '',
-    additional_notes_section: buildAdditionalNotesSection(manifest, releaseDir),
+    additional_notes_section: buildAdditionalNotesSection({ 
+      ...manifest, 
+      supported_integrations: integrations }, 
+      releaseDir
+      ),
   }
 
   if (category === 'controllers') {
@@ -572,6 +588,11 @@ function processBlueprint(manifestPath) {
   // 3. Walk library/release/version structure
   for (const libraryId of subdirs(blueprintDir)) {
     const libraryDir = path.join(blueprintDir, libraryId)
+    const libraryConfig = getLibraryConfig(manifest, libraryId)
+
+    // Skip directories that are not declared libraries in manifest.yaml
+    if (!libraryConfig) continue
+
     const releaseIds = subdirs(libraryDir)
 
     // Generate library.json
@@ -581,6 +602,7 @@ function processBlueprint(manifestPath) {
       blueprintId,
       libraryId,
       releaseIds,
+      libraryConfig,
     )
     writeJson(path.join(libraryDir, 'library.json'), libraryJson)
 
@@ -598,8 +620,8 @@ function processBlueprint(manifestPath) {
         hooksData = readJson(hooksPath)
       }
 
-      // Resolve per-release config (with fallback to manifest defaults)
-      const releaseConfig = getReleaseConfig(manifest, releaseId)
+      // Resolve per-release config (with library inheritance)
+      const releaseConfig = getReleaseConfig(manifest, libraryId, releaseId)
 
       // Generate release.json
       const releaseJson = generateReleaseJson(
@@ -621,7 +643,11 @@ function processBlueprint(manifestPath) {
       let versionMdxContent
       if (hasDocsOverride) {
         const docsBody = fs.readFileSync(docsOverridePath, 'utf-8')
-        const frontmatter = buildVersionFrontmatter(manifest, category)
+        const frontmatter = buildVersionFrontmatter(
+          manifest,
+          category,
+          releaseConfig.supported_integrations,
+        )
         versionMdxContent = `---\n${frontmatter}\n---\n${docsBody}`
       } else {
         versionMdxContent = generateDefaultVersionMdx(
@@ -647,6 +673,7 @@ function processBlueprint(manifestPath) {
           libraryId,
           releaseId,
           version,
+          releaseConfig.maintainers,
         )
         writeJson(path.join(versionDir, 'version.json'), versionJson)
 
