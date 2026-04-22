@@ -1,10 +1,10 @@
 # Awesome HA Blueprints – Library Report
 
-## _Generated on 2026-04-20_
+## _Generated on 2026-04-22_
 
 ## Summary
 
-- **Controllers:** 35 blueprints, 48 versions
+- **Controllers:** 35 blueprints, 49 versions
 - **Automations:** 4 blueprints, 4 versions
 - **Hooks:** 3 blueprints, 19 versions
 - **Breaking versions:** 12
@@ -233,10 +233,9 @@
 <details>
 <summary>Versions</summary>
 
-| Library | Release  | Version    | Breaking               |
-| ------- | -------- | ---------- | ---------------------- |
-| EPMatt  | zhae2002 | 2026.04.20 | no                     |
-| EPMatt  | awesome  | 2025.11.16 | **🚨 Breaking Change** |
+| Library | Release | Version    | Breaking               |
+| ------- | ------- | ---------- | ---------------------- |
+| EPMatt  | awesome | 2025.11.16 | **🚨 Breaking Change** |
 
 **Breaking change reasons:**
 
@@ -501,7 +500,7 @@
 - **Title:** Controller - SONOFF SNZB-01 Wireless Switch
 - **Librarians:** yarafie, EPMatt
 - **Library Maintainers:** EPMatt, yarafie
-- **Latest Version:** 2025.04.19
+- **Latest Version:** 2026.04.21
 - **Tags:** zigbee, button
 <details>
 <summary>Versions</summary>
@@ -509,6 +508,7 @@
 | Library | Release | Version    | Breaking |
 | ------- | ------- | ---------- | -------- |
 | EPMatt  | awesome | 2025.04.19 | no       |
+| EPMatt  | awesome | 2026.04.21 | no       |
 
 </details>
 
