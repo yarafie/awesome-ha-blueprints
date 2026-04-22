@@ -53,14 +53,6 @@
       "default": "active",
       "description": "Lifecycle status. Defaults to 'active'."
     },
-    "has_long_press_loop": {
-      "type": "boolean",
-      "description": "Whether the controller supports looping long press actions while a button is held."
-    },
-    "has_virtual_double_press": {
-      "type": "boolean",
-      "description": "Whether the controller provides virtual double press events not natively supported by the device."
-    },
     "libraries": {
       "type": "object",
       "minProperties": 1,
@@ -137,6 +129,18 @@
           "description": "Maintainers of this library.",
           "items": { "$ref": "#/$defs/personRef" }
         },
+        "requires_helper": {
+          "type": "boolean",
+          "description": "Whether this library requires the Helper - Last Controller Event input."
+        },
+        "has_long_press_loop": {
+          "type": "boolean",
+          "description": "Whether this library supports looping long press actions while a button is held."
+        },
+        "has_virtual_double_press": {
+          "type": "boolean",
+          "description": "Whether this library provides virtual double press events not natively supported by the device."
+        },
         "supported_integrations": {
           "type": "array",
           "description": "Optional library-level default integrations, inherited by releases unless overridden.",
@@ -155,18 +159,5 @@
       }
     }
   },
-  "allOf": [
-    {
-      "if": {
-        "properties": {
-          "manufacturer": { "type": "string" },
-          "model": { "type": "string" },
-          "model_name": { "type": "string" }
-        },
-        "required": ["manufacturer", "model", "model_name"]
-      },
-      "then": true
-    }
-  ],
   "additionalProperties": false
 }

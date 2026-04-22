@@ -83,11 +83,11 @@ Some of the following mappings might include actions for virtual double press ev
 If you are using a hook mapping which provides an action for a virtual double press event, please make sure to enable support for virtual double press on the corresponding buttons with the corresponding blueprint input.
 :::`
 
-const STANDARD_INPUT_TEXT_REQUIREMENT = `<Requirement name='Input Text Integration' required>
+const STANDARD_HELPER_TEXT_REQUIREMENT = `<Requirement name='Helper (Last Controller Event)' required>
 
-This integration provides the entity which must be provided to the blueprint in the **Helper - Last Controller Event** input. Learn more about this helper by reading the dedicated section in the [Additional Notes](#helper---last-controller-event).
+This helper provides the entity that must be supplied to the blueprint in the **Helper - Last Controller Event** input. Learn more about this helper by reading the dedicated section in the [Additional Notes](#helper---last-controller-event).
 
-[Input Text Integration Docs](https://www.home-assistant.io/integrations/input_text/)
+[Helper Setup Docs](https://www.home-assistant.io/integrations/input_text/)
 
 </Requirement>`
 
@@ -99,11 +99,9 @@ const STANDARD_VDP_ADDITIONAL_NOTE =
 
 // ── Integration helpers ────────────────────────────────────────────────────
 
-/** Filter out 'input_text' and sort in canonical order. */
+/** Sort integrations in canonical order. */
 function getActualIntegrations(integrations) {
-  const actual = (integrations || []).filter(
-    (i) => i.toLowerCase() !== 'input_text',
-  )
+  const actual = [...(integrations || [])]
   return actual.sort((a, b) => {
     const aIdx = CANONICAL_INTEGRATION_ORDER.indexOf(a)
     const bIdx = CANONICAL_INTEGRATION_ORDER.indexOf(b)
@@ -112,11 +110,6 @@ function getActualIntegrations(integrations) {
     if (bIdx === -1) return -1
     return aIdx - bIdx
   })
-}
-
-/** Check if 'input_text' is in the integrations list. */
-function hasInputText(integrations) {
-  return (integrations || []).some((i) => i.toLowerCase() === 'input_text')
 }
 
 // ── Notes.md parsing ───────────────────────────────────────────────────────
@@ -142,9 +135,9 @@ function parseNoteSections(content) {
 }
 
 /** Build the complete Additional Notes section from manifest flags + notes.md. */
-function buildAdditionalNotesSection(manifest, releaseDir, integrations) {
-  const hasIT = hasInputText(integrations)
-  const hasVDP = manifest.has_virtual_double_press || false
+function buildAdditionalNotesSection(releaseConfig, releaseDir) {
+  const hasHelper = releaseConfig.requires_helper === true
+  const hasVDP = releaseConfig.has_virtual_double_press === true
 
   const notesPath = path.join(releaseDir, 'notes.md')
   let notesContent = ''
@@ -154,12 +147,12 @@ function buildAdditionalNotesSection(manifest, releaseDir, integrations) {
 
   const noteSections = parseNoteSections(notesContent)
 
-  if (!hasIT && !hasVDP && noteSections.length === 0) return ''
+  if (!hasHelper && !hasVDP && noteSections.length === 0) return ''
 
   let section = '## Additional Notes\n\n'
 
-  // Helper subsection (from input_text flag)
-  if (hasIT) {
+  // Helper subsection (from requires_helper flag)
+  if (hasHelper) {
     section += '### Helper - Last Controller Event\n\n'
     section += STANDARD_HELPER_PARAGRAPH + '\n\n'
   }
@@ -233,9 +226,13 @@ function getLibraryConfig(manifest, libraryId) {
 /** Get release-specific config, inheriting from library-level defaults. */
 function getReleaseConfig(manifest, libraryId, releaseId) {
   const libraryConfig = getLibraryConfig(manifest, libraryId)
+
   if (!libraryConfig) {
     return {
       maintainers: [],
+      requires_helper: false,
+      has_long_press_loop: false,
+      has_virtual_double_press: false,
       supported_hooks: [],
       supported_integrations: [],
       supported_controllers: null,
@@ -246,6 +243,9 @@ function getReleaseConfig(manifest, libraryId, releaseId) {
 
   return {
     maintainers: libraryConfig.maintainers || [],
+    requires_helper: libraryConfig.requires_helper === true,
+    has_long_press_loop: libraryConfig.has_long_press_loop === true,
+    has_virtual_double_press: libraryConfig.has_virtual_double_press === true,
     supported_hooks: releaseOverride.supported_hooks || [],
     supported_integrations:
       releaseOverride.supported_integrations ||
@@ -507,10 +507,10 @@ function generateDefaultVersionMdx(
 
   // Build flag-driven description extra paragraphs
   let descriptionExtra = ''
-  if (manifest.has_long_press_loop) {
+  if (releaseConfig.has_long_press_loop === true) {
     descriptionExtra += '\n' + STANDARD_LONG_PRESS_PARAGRAPH + '\n'
   }
-  if (manifest.has_virtual_double_press) {
+  if (releaseConfig.has_virtual_double_press === true) {
     descriptionExtra += '\n' + STANDARD_VDP_DESCRIPTION_PARAGRAPH + '\n'
   }
 
@@ -534,18 +534,17 @@ function generateDefaultVersionMdx(
       releaseId,
     ),
     description_extra: descriptionExtra,
-    input_text_requirement: hasInputText(integrations)
-      ? '\n' + STANDARD_INPUT_TEXT_REQUIREMENT
+    helper_text_requirement: releaseConfig.requires_helper === true
+      ? '\n' + STANDARD_HELPER_TEXT_REQUIREMENT
       : '',
     virtual_double_press_note:
-      manifest.has_virtual_double_press && hasHooks
+      releaseConfig.has_virtual_double_press === true && hasHooks
         ? STANDARD_VDP_HOOKS_NOTE + '\n\n'
         : '',
-    additional_notes_section: buildAdditionalNotesSection({ 
-      ...manifest, 
-      supported_integrations: integrations }, 
-      releaseDir
-      ),
+    additional_notes_section: buildAdditionalNotesSection(
+      releaseConfig,
+      releaseDir,
+    ),
   }
 
   if (category === 'controllers') {

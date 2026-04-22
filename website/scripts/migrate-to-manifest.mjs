@@ -8,7 +8,7 @@
  *
  * For each blueprint, reads the existing JSON/MDX files and produces:
  * 1. manifest.yaml — single source of truth for metadata
- * 2. docs.mdx — release-level custom docs body (only if content differs from default template)
+ * 2. docs.mdx — release-level docs body extracted from the latest version MDX
  *
  * Usage: node scripts/migrate-to-manifest.mjs [--dry-run] [--force]
  */
@@ -58,8 +58,13 @@ function sortObjectKeys(obj) {
 function pickReleaseFields(category, releaseJson, libraryJson) {
   const result = {}
 
-  const releaseIntegrations = releaseJson.supported_integrations || []
-  const libraryIntegrations = libraryJson?.supported_integrations || []
+  const releaseIntegrations = normalizeIntegrations(
+    releaseJson.supported_integrations || [],
+  )
+  const libraryIntegrations = normalizeIntegrations(
+    libraryJson?.supported_integrations || [],
+  )
+
   if (
     releaseIntegrations.length > 0 &&
     JSON.stringify(releaseIntegrations) !== JSON.stringify(libraryIntegrations)
@@ -121,8 +126,15 @@ function extractManifest(blueprintDir, category) {
       releases: {},
     }
 
-    if ((libraryJson.supported_integrations || []).length > 0) {
-      libraryNode.supported_integrations = libraryJson.supported_integrations
+    let libraryRequiresHelper = false
+
+    const libraryIntegrations = libraryJson.supported_integrations || []
+    if (hasLegacyHelperIntegration(libraryIntegrations)) {
+      libraryRequiresHelper = true
+    }
+    const normalizedLibraryIntegrations = normalizeIntegrations(libraryIntegrations)
+    if (normalizedLibraryIntegrations.length > 0) {
+      libraryNode.supported_integrations = normalizedLibraryIntegrations
     }
 
     for (const releaseId of releaseIds) {
@@ -139,15 +151,25 @@ function extractManifest(blueprintDir, category) {
         libraryNode.maintainers = uniqueById(releaseJson.maintainers)
       }
 
+      if (hasLegacyHelperIntegration(releaseJson.supported_integrations || [])) {
+        libraryRequiresHelper = true
+      }
+
       const releaseNode = pickReleaseFields(category, releaseJson, libraryJson)
       libraryNode.releases[releaseId] = releaseNode
     }
 
     libraryNode.releases = sortObjectKeys(libraryNode.releases)
+
+    if (libraryRequiresHelper) {
+      libraryNode.requires_helper = true
+    }
+
     manifest.libraries[libraryId] = libraryNode
   }
 
   manifest.libraries = sortObjectKeys(manifest.libraries)
+
   return manifest
 }
 
@@ -202,6 +224,14 @@ function migrateBlueprint(blueprintDir, category, blueprintId) {
       }
     }
   }
+}
+
+function hasLegacyHelperIntegration(integrations) {
+  return (integrations || []).some((i) => i.toLowerCase() === 'input_text')
+}
+
+function normalizeIntegrations(integrations) {
+  return (integrations || []).filter((i) => i.toLowerCase() !== 'input_text')
 }
 
 function main() {
