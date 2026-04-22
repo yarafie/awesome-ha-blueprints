@@ -1,27 +1,32 @@
 name: 'Controller - SONOFF SNZB-01P Wireless Button'
 description: 'Controller automation for executing any kind of action triggered by the provided SONOFF SNZB-01P Wireless Button.'
-manufacturer: 'SONOFF'
-model: 'SNZB-01P'
-model_name: 'SONOFF SNZB-01P Wireless Button'
 librarians:
   - id: 'yarafie'
     name: 'yarafie'
   - id: 'EPMatt'
     name: 'EPMatt'
-maintainers:
-  - id: 'yarafie'
-    name: 'yarafie'
-  - id: 'EPMatt'
-    name: 'EPMatt'
-supported_integrations:
-  - 'ZHA'
-  - 'Zigbee2MQTT'
-  - 'deCONZ'
-  - 'input_text'
-supported_hooks:
-  - 'cover'
-  - 'light'
-  - 'media_player'
+libraries:
+  EPMatt:
+    maintainers:
+      - id: 'yarafie'
+        name: 'yarafie'
+      - id: 'EPMatt'
+        name: 'EPMatt'
+    releases:
+      awesome:
+        supported_hooks:
+          - 'light'
+          - 'media_player'
+          - 'cover'
+    requires_helper: true
+    has_virtual_double_press: true
+    supported_integrations:
+      - 'Zigbee2MQTT'
+      - 'ZHA'
+      - 'deCONZ'
+manufacturer: 'SONOFF'
+model: 'SNZB-01P'
+model_name: 'SONOFF SNZB-01P Wireless Button'
 tags:
   - 'zigbee'
   - 'button'

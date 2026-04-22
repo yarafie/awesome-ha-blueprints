@@ -1,24 +1,30 @@
 name: 'Controller - Shelly SNSN-0024x Plus i4 with Wall switch 4'
 description: 'Controller automation for executing any kind of action triggered by the provided Shelly SNSN-0024x Plus i4 with Wall switch 4.'
-manufacturer: 'Shelly'
-model: 'SNSN-0024x'
-model_name: 'Shelly SNSN-0024x Plus i4 with Wall switch 4'
 librarians:
   - id: 'yarafie'
     name: 'yarafie'
   - id: 'EPMatt'
     name: 'EPMatt'
-maintainers:
-  - id: 'yarafie'
-    name: 'yarafie'
-  - id: 'EPMatt'
-    name: 'EPMatt'
-supported_integrations:
-  - 'Shelly'
-supported_hooks:
-  - 'cover'
-  - 'light'
-  - 'media_player'
+libraries:
+  EPMatt:
+    maintainers:
+      - id: 'yarafie'
+        name: 'yarafie'
+      - id: 'EPMatt'
+        name: 'EPMatt'
+    releases:
+      awesome:
+        supported_hooks:
+          - 'light'
+          - 'media_player'
+          - 'cover'
+    has_long_press_loop: true
+    has_virtual_double_press: true
+    supported_integrations:
+      - 'Shelly'
+manufacturer: 'Shelly'
+model: 'SNSN-0024x'
+model_name: 'Shelly SNSN-0024x Plus i4 with Wall switch 4'
 tags:
   - 'wifi'
   - 'wall-switch'
@@ -26,4 +32,3 @@ tags:
 external_references:
   - label: 'External'
     url: 'https://www.home-assistant.io/integrations/shelly'
-has_long_press_loop: true

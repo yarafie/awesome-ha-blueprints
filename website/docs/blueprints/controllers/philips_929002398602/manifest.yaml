@@ -1,24 +1,31 @@
 name: 'Controller - Philips 929002398602 Hue Dimmer switch v2'
 description: 'Controller automation for executing any kind of action triggered by the provided Philips 929002398602 Hue Dimmer switch v2.'
-manufacturer: 'Philips'
-model: '929002398602'
-model_name: 'Philips 929002398602 Hue Dimmer switch v2'
 librarians:
   - id: 'yarafie'
     name: 'yarafie'
   - id: 'EPMatt'
     name: 'EPMatt'
-maintainers:
-  - id: 'yarafie'
-    name: 'yarafie'
-  - id: 'EPMatt'
-    name: 'EPMatt'
-supported_integrations:
-  - 'ZHA'
-  - 'Zigbee2MQTT'
-supported_hooks:
-  - 'light'
-  - 'media_player'
+libraries:
+  EPMatt:
+    maintainers:
+      - id: 'yarafie'
+        name: 'yarafie'
+      - id: 'EPMatt'
+        name: 'EPMatt'
+    releases:
+      awesome:
+        supported_hooks:
+          - 'light'
+          - 'media_player'
+    has_long_press_loop: true
+    has_virtual_double_press: true
+    supported_integrations:
+      - 'Zigbee2MQTT'
+      - 'ZHA'
+      - 'deCONZ'
+manufacturer: 'Philips'
+model: '929002398602'
+model_name: 'Philips 929002398602 Hue Dimmer switch v2'
 tags:
   - 'zigbee'
   - 'dimmer'
@@ -30,5 +37,3 @@ external_references:
     url: 'https://www.zigbee2mqtt.io/devices/929002398602.html#philips-929002398602'
   - label: 'ZHA Quirk'
     url: 'https://github.com/zigpy/zha-device-handlers/blob/dev/zhaquirks/'
-has_long_press_loop: true
-has_virtual_double_press: true

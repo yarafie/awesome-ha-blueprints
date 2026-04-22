@@ -1,27 +1,33 @@
 name: 'Controller - Xiaomi WXCJKG13LM Aqara Opple 6 button remote'
 description: 'Controller automation for executing any kind of action triggered by the provided Xiaomi WXCJKG13LM Aqara Opple 6 button remote.'
-manufacturer: 'Xiaomi'
-model: 'WXCJKG13LM'
-model_name: 'Xiaomi WXCJKG13LM Aqara Opple 6 button remote'
 librarians:
   - id: 'yarafie'
     name: 'yarafie'
   - id: 'EPMatt'
     name: 'EPMatt'
-maintainers:
-  - id: 'yarafie'
-    name: 'yarafie'
-  - id: 'EPMatt'
-    name: 'EPMatt'
-supported_integrations:
-  - 'ZHA'
-  - 'Zigbee2MQTT'
-  - 'deCONZ'
-  - 'input_text'
-supported_hooks:
-  - 'cover'
-  - 'light'
-  - 'media_player'
+libraries:
+  EPMatt:
+    maintainers:
+      - id: 'yarafie'
+        name: 'yarafie'
+      - id: 'EPMatt'
+        name: 'EPMatt'
+    releases:
+      awesome:
+        supported_hooks:
+          - 'light'
+          - 'media_player'
+          - 'cover'
+    requires_helper: true
+    has_long_press_loop: true
+    has_virtual_double_press: true
+    supported_integrations:
+      - 'Zigbee2MQTT'
+      - 'ZHA'
+      - 'deCONZ'
+manufacturer: 'Xiaomi'
+model: 'WXCJKG13LM'
+model_name: 'Xiaomi WXCJKG13LM Aqara Opple 6 button remote'
 tags:
   - 'zigbee'
   - 'button'
@@ -32,4 +38,3 @@ external_references:
     url: 'https://www.zigbee2mqtt.io/devices/WXCJKG13LM.html#aqara-wxcjkg13lm'
   - label: 'deCONZ Device'
     url: 'https://github.com/dresden-elektronik/deconz-rest-plugin/wiki/Supported-Devices'
-has_long_press_loop: true

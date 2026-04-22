@@ -1,22 +1,28 @@
 name: 'Controller - EnOcean PTM 215Z (Friends Of Hue)'
 description: 'Controller automation for executing any kind of action triggered by EnOcean PTM 215Z (Friends Of Hue) wall switches.'
-manufacturer: 'EnOcean'
-model: 'PTM 215Z'
-model_name: 'EnOcean PTM 215Z (Friends Of Hue)'
 librarians:
   - id: 'yarafie'
     name: 'yarafie'
   - id: 'Nicolai-'
     name: 'Nicolai-'
-maintainers:
-  - id: 'yarafie'
-    name: 'yarafie'
-  - id: 'Nicolai-'
-    name: 'Nicolai-'
-supported_integrations:
-  - 'Zigbee2MQTT'
-supported_hooks:
-  - 'light'
+libraries:
+  Nicolai-:
+    maintainers:
+      - id: 'yarafie'
+        name: 'yarafie'
+      - id: 'Nicolai-'
+        name: 'Nicolai-'
+    releases:
+      awesome:
+        supported_hooks:
+          - 'light'
+    requires_helper: true
+    has_long_press_loop: true
+    supported_integrations:
+      - 'Zigbee2MQTT'
+manufacturer: 'EnOcean'
+model: 'PTM 215Z'
+model_name: 'EnOcean PTM 215Z (Friends Of Hue)'
 tags:
   - 'zigbee'
   - 'button'

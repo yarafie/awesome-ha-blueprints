@@ -1,26 +1,32 @@
 name: 'Controller - IKEA E2123 SYMFONISK sound remote, gen 2'
 description: 'Controller automation for executing any kind of action triggered by the provided IKEA E2123 SYMFONISK sound remote, gen 2. Supports Zigbee2MQTT, ZHA, deCONZ.'
-manufacturer: 'IKEA'
-model: 'E2123'
-model_name: 'IKEA E2123 SYMFONISK sound remote, gen 2'
 librarians:
   - id: 'yarafie'
     name: 'yarafie'
   - id: 'EPMatt'
     name: 'EPMatt'
-maintainers:
-  - id: 'yarafie'
-    name: 'yarafie'
-  - id: 'EPMatt'
-    name: 'EPMatt'
-supported_integrations:
-  - 'ZHA'
-  - 'Zigbee2MQTT'
-  - 'deCONZ'
-supported_hooks:
-  - 'cover'
-  - 'light'
-  - 'media_player'
+libraries:
+  EPMatt:
+    maintainers:
+      - id: 'yarafie'
+        name: 'yarafie'
+      - id: 'EPMatt'
+        name: 'EPMatt'
+    releases:
+      awesome:
+        supported_hooks:
+          - 'light'
+          - 'media_player'
+          - 'cover'
+    has_long_press_loop: true
+    has_virtual_double_press: true
+    supported_integrations:
+      - 'Zigbee2MQTT'
+      - 'ZHA'
+      - 'deCONZ'
+manufacturer: 'IKEA'
+model: 'E2123'
+model_name: 'IKEA E2123 SYMFONISK sound remote, gen 2'
 tags:
   - 'zigbee'
   - 'remote'

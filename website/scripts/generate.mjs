@@ -534,9 +534,10 @@ function generateDefaultVersionMdx(
       releaseId,
     ),
     description_extra: descriptionExtra,
-    helper_text_requirement: releaseConfig.requires_helper === true
-      ? '\n' + STANDARD_HELPER_TEXT_REQUIREMENT
-      : '',
+    helper_text_requirement:
+      releaseConfig.requires_helper === true
+        ? '\n' + STANDARD_HELPER_TEXT_REQUIREMENT
+        : '',
     virtual_double_press_note:
       releaseConfig.has_virtual_double_press === true && hasHooks
         ? STANDARD_VDP_HOOKS_NOTE + '\n\n'

@@ -1,28 +1,33 @@
 name: 'Controller - Shelly Button 1'
 description: 'Controller automation for executing any kind of action triggered by the provided Shelly Button 1.'
-manufacturer: 'Shelly'
-model: 'SHBTN-2'
-model_name: 'Shelly Button 1'
 librarians:
   - id: 'yarafie'
     name: 'yarafie'
   - id: 'EPMatt'
     name: 'EPMatt'
-maintainers:
-  - id: 'yarafie'
-    name: 'yarafie'
-  - id: 'EPMatt'
-    name: 'EPMatt'
-supported_integrations:
-  - 'Shelly'
-supported_hooks:
-  - 'cover'
-  - 'light'
-  - 'media_player'
+libraries:
+  EPMatt:
+    maintainers:
+      - id: 'yarafie'
+        name: 'yarafie'
+      - id: 'EPMatt'
+        name: 'EPMatt'
+    releases:
+      awesome:
+        supported_hooks:
+          - 'light'
+          - 'media_player'
+          - 'cover'
+    has_long_press_loop: true
+    has_virtual_double_press: true
+    supported_integrations:
+      - 'Shelly'
+manufacturer: 'Shelly'
+model: 'SHBTN-2'
+model_name: 'Shelly Button 1'
 tags:
   - 'wifi'
   - 'button'
 external_references:
   - label: 'External'
     url: 'https://www.home-assistant.io/integrations/shelly'
-has_long_press_loop: true

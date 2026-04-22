@@ -41,12 +41,7 @@ const BLUEPRINT_FILTER =
   blueprintArgIndex !== -1 ? process.argv[blueprintArgIndex + 1] : null
 
 const VERSION_DIR_RE = /^\d{4}\.\d{2}\.\d{2}$/
-const INTEGRATION_LABELS = {
-  mqtt: 'Zigbee2MQTT',
-  zha: 'ZHA',
-  deconz: 'deCONZ',
-  shelly: 'Shelly',
-}
+
 const CANONICAL_INTEGRATION_ORDER = ['Zigbee2MQTT', 'ZHA', 'deCONZ', 'Shelly']
 const CANONICAL_HOOK_ORDER = ['light', 'media_player', 'cover']
 
@@ -154,19 +149,69 @@ function collectYamlFilesForRelease(releaseDir) {
   return files.sort()
 }
 
-function extractIntegrationsFromYaml(rawYaml) {
+function extractSelectorIntegrationsFromControllerYaml(rawYaml) {
   const found = []
 
-  if (/zigbee2mqtt/i.test(rawYaml) || /\bmqtt\b/i.test(rawYaml)) {
+  const mapping = {
+    mqtt: 'Zigbee2MQTT',
+    zha: 'ZHA',
+    deconz: 'deCONZ',
+    shelly: 'Shelly',
+  }
+
+  for (const match of rawYaml.matchAll(
+    /^\s*-\s*integration:\s*([A-Za-z0-9_.-]+)\s*$/gm,
+  )) {
+    const key = match[1].toLowerCase()
+    if (mapping[key]) {
+      found.push(mapping[key])
+    }
+  }
+
+  return sortUniqueStrings(found, CANONICAL_INTEGRATION_ORDER)
+}
+
+function extractTriggerIntegrationsFromControllerYaml(rawYaml) {
+  const found = []
+
+  // Zigbee2MQTT
+  if (
+    /^\s*-\s*trigger:\s*device\b[\s\S]{0,500}?^\s*domain:\s*mqtt\s*$/gim.test(
+      rawYaml,
+    )
+  ) {
     found.push('Zigbee2MQTT')
   }
-  if (/\bzha\b/i.test(rawYaml)) {
+
+  // ZHA
+  if (
+    /^\s*-\s*trigger:\s*event\b[\s\S]{0,500}?^\s*event_type:\s*zha_event\s*$/gim.test(
+      rawYaml,
+    ) ||
+    /^\s*event_type:\s*$[\s\S]{0,160}?^\s*-\s*zha_event\s*$/gim.test(rawYaml)
+  ) {
     found.push('ZHA')
   }
-  if (/deconz/i.test(rawYaml)) {
+
+  // deCONZ
+  if (
+    /^\s*-\s*trigger:\s*event\b[\s\S]{0,500}?^\s*event_type:\s*deconz_event\s*$/gim.test(
+      rawYaml,
+    ) ||
+    /^\s*event_type:\s*$[\s\S]{0,160}?^\s*-\s*deconz_event\s*$/gim.test(rawYaml)
+  ) {
     found.push('deCONZ')
   }
-  if (/\bshelly\b/i.test(rawYaml)) {
+
+  // Shelly
+  if (
+    /^\s*-\s*trigger:\s*event\b[\s\S]{0,500}?^\s*event_type:\s*shelly\.click\s*$/gim.test(
+      rawYaml,
+    ) ||
+    /^\s*event_type:\s*$[\s\S]{0,160}?^\s*-\s*shelly\.click\s*$/gim.test(
+      rawYaml,
+    )
+  ) {
     found.push('Shelly')
   }
 
@@ -212,9 +257,18 @@ function inferReleaseBehavior(yamlFiles) {
   for (const yamlFile of yamlFiles) {
     const rawYaml = readText(yamlFile)
 
-    release.supported_integrations.push(
-      ...extractIntegrationsFromYaml(rawYaml),
-    )
+    const selectorIntegrations =
+      extractSelectorIntegrationsFromControllerYaml(rawYaml)
+    const triggerIntegrations =
+      extractTriggerIntegrationsFromControllerYaml(rawYaml)
+
+    const finalIntegrations =
+      selectorIntegrations.length > 0
+        ? selectorIntegrations
+        : triggerIntegrations
+
+    release.supported_integrations.push(...finalIntegrations)
+
     if (inferRequiresHelper(rawYaml)) release.requires_helper = true
     if (inferHasLongPressLoop(rawYaml)) release.has_long_press_loop = true
     if (inferHasVirtualDoublePress(rawYaml)) {
@@ -236,7 +290,11 @@ function readReleaseChangelog(releaseDir) {
   return readJson(changelogPath)
 }
 
-function validateReleaseHasVersionCoverage(releaseId, versions, changelogEntries) {
+function validateReleaseHasVersionCoverage(
+  releaseId,
+  versions,
+  changelogEntries,
+) {
   if (versions.length === 0) {
     throw new Error(`Release '${releaseId}' has no version directories.`)
   }
@@ -331,14 +389,23 @@ function deriveLibraryNode({
       resolvedMaintainers = maintainers
     }
 
-    const yamlFiles = collectYamlFilesForRelease(releaseDir)
-    const inferred = inferReleaseBehavior(yamlFiles)
-
     const releaseNode = {}
 
     if (category === 'controllers') {
+      const yamlFiles = collectYamlFilesForRelease(releaseDir)
+      const inferred = inferReleaseBehavior(yamlFiles)
+
       releaseNode.supported_hooks =
         readSupportedHooksForControllerRelease(releaseDir)
+
+      releaseIntegrationSets.push({
+        releaseId,
+        integrations: inferred.supported_integrations,
+      })
+
+      if (inferred.requires_helper) libraryRequiresHelper = true
+      if (inferred.has_long_press_loop) libraryHasLongPressLoop = true
+      if (inferred.has_virtual_double_press) libraryHasVirtualDoublePress = true
     }
 
     if (category === 'hooks') {
@@ -349,20 +416,12 @@ function deriveLibraryNode({
       }
     }
 
-    releaseIntegrationSets.push({
-      releaseId,
-      integrations: inferred.supported_integrations,
-    })
-
-    if (inferred.requires_helper) libraryRequiresHelper = true
-    if (inferred.has_long_press_loop) libraryHasLongPressLoop = true
-    if (inferred.has_virtual_double_press) libraryHasVirtualDoublePress = true
-
     libraryNode.releases[releaseId] = releaseNode
   }
 
-  libraryNode.maintainers =
-    resolvedMaintainers || [{ id: libraryId, name: libraryId }]
+  libraryNode.maintainers = resolvedMaintainers || [
+    { id: libraryId, name: libraryId },
+  ]
 
   if (libraryRequiresHelper) libraryNode.requires_helper = true
   if (libraryHasLongPressLoop) libraryNode.has_long_press_loop = true
@@ -449,7 +508,11 @@ function main() {
         continue
       }
 
-      const manifest = buildManifest(blueprintDir, category, hookControllerIndex)
+      const manifest = buildManifest(
+        blueprintDir,
+        category,
+        hookControllerIndex,
+      )
       console.log(`  ${category}/${blueprintId}`)
 
       if (DRY_RUN) {

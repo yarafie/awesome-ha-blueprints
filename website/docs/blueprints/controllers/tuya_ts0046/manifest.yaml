@@ -1,26 +1,32 @@
 name: 'Controller - Tuya TS0046 Wireless switch with 6 buttons'
 description: 'Controller automation for executing any kind of action triggered by the provided Tuya TS0046 Wireless switch with 6 buttons.'
-
-manufacturer: Tuya
-model: TS0046
-model_name: 'Tuya TS0046 Wireless switch with 6 buttons'
-
 librarians:
-  - id: yarafie
-    name: yarafie
-  - id: wobondar
-    name: wobondar
-
-maintainers:
-  - id: wobondar
-    name: wobondar
-
-supported_integrations: [Zigbee2MQTT]
-supported_hooks: [none]
-
-tags: [zigbee, button, remote, 6-button]
+  - id: 'yarafie'
+    name: 'yarafie'
+  - id: 'wobondar'
+    name: 'wobondar'
+libraries:
+  wobondar:
+    maintainers:
+      - id: 'wobondar'
+        name: 'wobondar'
+    releases:
+      anything:
+        supported_hooks:
+          - 'none'
+    has_virtual_double_press: true
+    supported_integrations:
+      - 'Zigbee2MQTT'
+manufacturer: 'Tuya'
+model: 'TS0046'
+model_name: 'Tuya TS0046 Wireless switch with 6 buttons'
+tags:
+  - 'zigbee'
+  - 'button'
+  - 'remote'
+  - '6-button'
 external_references:
-  - label: Zigbee2MQTT
-    url: https://www.zigbee2mqtt.io/devices/TS0046.html
-  - label: LoraTap
-    url: https://www.loratap.com/products/ss9600zb
+  - label: 'Zigbee2MQTT'
+    url: 'https://www.zigbee2mqtt.io/devices/TS0046.html'
+  - label: 'LoraTap'
+    url: 'https://www.loratap.com/products/ss9600zb'

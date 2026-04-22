@@ -1,24 +1,30 @@
 name: 'Controller - Tuya ZG-101Z/D Smart knob'
 description: 'Controller automation for executing any kind of action triggered by the provided Tuya ZG-101Z/D Smart knob.'
-manufacturer: 'Tuya'
-model: 'ZG-101Z/D'
-model_name: 'Tuya ZG-101Z/D Smart knob'
 librarians:
   - id: 'yarafie'
     name: 'yarafie'
   - id: 'EPMatt'
     name: 'EPMatt'
-maintainers:
-  - id: 'yarafie'
-    name: 'yarafie'
-  - id: 'EPMatt'
-    name: 'EPMatt'
-supported_integrations:
-  - 'ZHA'
-  - 'Zigbee2MQTT'
-supported_hooks:
-  - 'light'
-  - 'media_player'
+libraries:
+  EPMatt:
+    maintainers:
+      - id: 'yarafie'
+        name: 'yarafie'
+      - id: 'EPMatt'
+        name: 'EPMatt'
+    releases:
+      awesome:
+        supported_hooks:
+          - 'light'
+          - 'media_player'
+    has_long_press_loop: true
+    has_virtual_double_press: true
+    supported_integrations:
+      - 'Zigbee2MQTT'
+      - 'ZHA'
+manufacturer: 'Tuya'
+model: 'ZG-101Z/D'
+model_name: 'Tuya ZG-101Z/D Smart knob'
 tags:
   - 'zigbee'
   - 'knob'
@@ -28,5 +34,3 @@ external_references:
     url: 'https://www.zigbee2mqtt.io/devices/ZG-101Z_D.html'
   - label: 'Zigbee2MQTT'
     url: 'https://www.zigbee2mqtt.io/devices/ZG-101Z_D_1.html'
-has_long_press_loop: true
-has_virtual_double_press: true

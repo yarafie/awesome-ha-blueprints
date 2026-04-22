@@ -1,24 +1,30 @@
 name: 'Controller - Tuya ERS-10TZBVK-AA Smart knob'
 description: 'Controller automation for executing any kind of action triggered by the provided Tuya ERS-10TZBVK-AA Smart knob.'
-manufacturer: 'Tuya'
-model: 'ERS-10TZBVK-AA'
-model_name: 'Tuya ERS-10TZBVK-AA Smart knob'
 librarians:
   - id: 'yarafie'
     name: 'yarafie'
   - id: 'EPMatt'
     name: 'EPMatt'
-maintainers:
-  - id: 'yarafie'
-    name: 'yarafie'
-  - id: 'EPMatt'
-    name: 'EPMatt'
-supported_integrations:
-  - 'ZHA'
-  - 'Zigbee2MQTT'
-supported_hooks:
-  - 'light'
-  - 'media_player'
+libraries:
+  EPMatt:
+    maintainers:
+      - id: 'yarafie'
+        name: 'yarafie'
+      - id: 'EPMatt'
+        name: 'EPMatt'
+    releases:
+      awesome:
+        supported_hooks:
+          - 'light'
+          - 'media_player'
+    has_long_press_loop: true
+    has_virtual_double_press: true
+    supported_integrations:
+      - 'Zigbee2MQTT'
+      - 'ZHA'
+manufacturer: 'Tuya'
+model: 'ERS-10TZBVK-AA'
+model_name: 'Tuya ERS-10TZBVK-AA Smart knob'
 tags:
   - 'zigbee'
   - 'knob'
@@ -36,5 +42,3 @@ external_references:
     url: 'https://de.aliexpress.com/item/1005007575864175.html'
   - label: 'Immax'
     url: 'https://www.immax.eu/immax-neo-smart-rotary-knob-change-cct-dimming-scene-zigbee-tuya-p17656/'
-has_long_press_loop: true
-has_virtual_double_press: true

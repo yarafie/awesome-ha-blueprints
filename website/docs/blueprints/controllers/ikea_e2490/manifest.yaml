@@ -1,24 +1,30 @@
 name: 'Controller - IKEA E2490 BILRESA remote control with scroll wheel'
 description: 'Controller automation for executing any kind of action triggered by the provided IKEA E2490 BILRESA remote control with scroll wheel.'
-manufacturer: 'IKEA'
-model: 'E2490'
-model_name: 'IKEA E2490 BILRESA remote control with scroll wheel'
 librarians:
   - id: 'yarafie'
     name: 'yarafie'
   - id: 'EPMatt'
     name: 'EPMatt'
-maintainers:
-  - id: 'yarafie'
-    name: 'yarafie'
-  - id: 'EPMatt'
-    name: 'EPMatt'
-supported_integrations:
-  - 'Zigbee2MQTT'
-supported_hooks:
-  - 'cover'
-  - 'light'
-  - 'media_player'
+libraries:
+  EPMatt:
+    maintainers:
+      - id: 'yarafie'
+        name: 'yarafie'
+      - id: 'EPMatt'
+        name: 'EPMatt'
+    releases:
+      awesome:
+        supported_hooks:
+          - 'light'
+          - 'media_player'
+          - 'cover'
+    has_long_press_loop: true
+    has_virtual_double_press: true
+    supported_integrations:
+      - 'Zigbee2MQTT'
+manufacturer: 'IKEA'
+model: 'E2490'
+model_name: 'IKEA E2490 BILRESA remote control with scroll wheel'
 tags:
   - 'zigbee'
   - 'dimmer'

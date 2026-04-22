@@ -1,22 +1,27 @@
 name: 'Controller - Philips 8719514440937/8719514440999 Hue Tap dial switch'
 description: 'Controller automation for executing any kind of action triggered by the provided Philips 8719514440937/8719514440999 Hue Tap dial switch.'
-manufacturer: 'Philips'
-model: '8719514440937/8719514440999'
-model_name: 'Philips 8719514440937/8719514440999 Hue Tap dial switch'
 librarians:
   - id: 'yarafie'
     name: 'yarafie'
   - id: 'Nicolai-'
     name: 'Nicolai-'
-maintainers:
-  - id: 'yarafie'
-    name: 'yarafie'
-  - id: 'Nicolai-'
-    name: 'Nicolai-'
-supported_integrations:
-  - 'Zigbee2MQTT'
-supported_hooks:
-  - 'light'
+libraries:
+  Nicolai-:
+    maintainers:
+      - id: 'yarafie'
+        name: 'yarafie'
+      - id: 'Nicolai-'
+        name: 'Nicolai-'
+    releases:
+      awesome:
+        supported_hooks:
+          - 'light'
+    has_long_press_loop: true
+    supported_integrations:
+      - 'Zigbee2MQTT'
+manufacturer: 'Philips'
+model: '8719514440937/8719514440999'
+model_name: 'Philips 8719514440937/8719514440999 Hue Tap dial switch'
 tags:
   - 'zigbee'
   - 'button'

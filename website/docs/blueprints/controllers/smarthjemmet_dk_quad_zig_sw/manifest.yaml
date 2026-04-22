@@ -1,22 +1,28 @@
 name: 'Controller - Smarthjemmet.dk QUAD-ZIG-SW 4 button remote'
 description: 'Controller automation for executing any kind of action triggered by the provided Smarthjemmet.dk QUAD-ZIG-SW 4 button remote.'
-manufacturer: 'Smarthjemmet.dk'
-model: 'QUAD-ZIG-SW'
-model_name: 'Smarthjemmet.dk QUAD-ZIG-SW 4 button remote'
 librarians:
   - id: 'yarafie'
     name: 'yarafie'
   - id: 'EPMatt'
     name: 'EPMatt'
-maintainers:
-  - id: 'yarafie'
-    name: 'yarafie'
-  - id: 'EPMatt'
-    name: 'EPMatt'
-supported_integrations:
-  - 'Zigbee2MQTT'
-supported_hooks:
-  - 'light'
+libraries:
+  EPMatt:
+    maintainers:
+      - id: 'yarafie'
+        name: 'yarafie'
+      - id: 'EPMatt'
+        name: 'EPMatt'
+    releases:
+      awesome:
+        supported_hooks:
+          - 'light'
+    has_long_press_loop: true
+    has_virtual_double_press: true
+    supported_integrations:
+      - 'Zigbee2MQTT'
+manufacturer: 'Smarthjemmet.dk'
+model: 'QUAD-ZIG-SW'
+model_name: 'Smarthjemmet.dk QUAD-ZIG-SW 4 button remote'
 tags:
   - 'zigbee'
   - 'button'
@@ -25,4 +31,3 @@ tags:
 external_references:
   - label: 'Zigbee2MQTT'
     url: 'https://www.zigbee2mqtt.io/devices/QUAD-ZIG-SW.html'
-has_long_press_loop: true

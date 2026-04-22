@@ -1,26 +1,32 @@
 name: 'Controller - IKEA E1812 TRÅDFRI Shortcut button'
 description: 'Controller automation for executing any kind of action triggered by the provided IKEA E1812 TRÅDFRI Shortcut button.'
-manufacturer: 'IKEA'
-model: 'E1812'
-model_name: 'IKEA E1812 TRÅDFRI Shortcut button'
 librarians:
   - id: 'yarafie'
     name: 'yarafie'
   - id: 'EPMatt'
     name: 'EPMatt'
-maintainers:
-  - id: 'yarafie'
-    name: 'yarafie'
-  - id: 'EPMatt'
-    name: 'EPMatt'
-supported_integrations:
-  - 'ZHA'
-  - 'Zigbee2MQTT'
-  - 'deCONZ'
-supported_hooks:
-  - 'cover'
-  - 'light'
-  - 'media_player'
+libraries:
+  EPMatt:
+    maintainers:
+      - id: 'yarafie'
+        name: 'yarafie'
+      - id: 'EPMatt'
+        name: 'EPMatt'
+    releases:
+      awesome:
+        supported_hooks:
+          - 'light'
+          - 'media_player'
+          - 'cover'
+    has_long_press_loop: true
+    has_virtual_double_press: true
+    supported_integrations:
+      - 'Zigbee2MQTT'
+      - 'ZHA'
+      - 'deCONZ'
+manufacturer: 'IKEA'
+model: 'E1812'
+model_name: 'IKEA E1812 TRÅDFRI Shortcut button'
 tags:
   - 'zigbee'
   - 'button'
@@ -32,4 +38,3 @@ external_references:
     url: 'https://github.com/zigpy/zha-device-handlers/blob/dev/zhaquirks/ikea/shortcutbtn.py'
   - label: 'deCONZ Device'
     url: 'https://github.com/dresden-elektronik/deconz-rest-plugin/wiki/Supported-Devices'
-has_long_press_loop: true
