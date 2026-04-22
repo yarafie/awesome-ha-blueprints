@@ -21,10 +21,10 @@
  * - generated MDX
  *
  * Usage:
- *   node scripts/generate-manifest-from-fixed-sources.mjs [--dry-run] [--force]
+ *   node scripts/generate-manifest.mjs [--dry-run] [--force]
  *
  * Optional:
- *   node scripts/generate-manifest-from-fixed-sources.mjs --force --blueprint controllers/ikea_e2001_e2002
+ *   node scripts/generate-manifest.mjs --force --blueprint controllers/ikea_e2001_e2002
  */
 
 import fs from 'node:fs'
