@@ -228,21 +228,15 @@ function inferRequiresHelper(rawYaml) {
 function inferHasVirtualDoublePress(rawYaml) {
   return (
     /virtual double/i.test(rawYaml) ||
-    /double press options/i.test(rawYaml) ||
-    /enable .*double press event/i.test(rawYaml) ||
-    /button_[a-z_]+_double\s*:/i.test(rawYaml) ||
-    /\bDOUBLE press\b/i.test(rawYaml)
+    /virtual .*double press/i.test(rawYaml) ||
+    /double press.*virtual/i.test(rawYaml)
   )
 }
 
 function inferHasLongPressLoop(rawYaml) {
   return (
-    /loop an action on a button long press/i.test(rawYaml) ||
-    /enable looping until release/i.test(rawYaml) ||
-    /maximum loop repeats/i.test(rawYaml) ||
-    /long press options/i.test(rawYaml) ||
-    /until it receives a release action/i.test(rawYaml) ||
-    /(brightness|volume|color)_[a-z_]*repeat/i.test(rawYaml)
+    /_max_loop_repeats\s*:/i.test(rawYaml) ||
+    /maximum loop repeats/i.test(rawYaml)
   )
 }
 

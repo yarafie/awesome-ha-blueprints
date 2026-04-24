@@ -14,7 +14,6 @@ libraries:
       anything:
         supported_hooks:
           - 'none'
-    has_virtual_double_press: true
     supported_integrations:
       - 'Zigbee2MQTT'
 manufacturer: 'Tuya'

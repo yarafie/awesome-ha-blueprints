@@ -18,8 +18,6 @@ libraries:
           - 'light'
           - 'media_player'
           - 'cover'
-    has_long_press_loop: true
-    has_virtual_double_press: true
     supported_integrations:
       - 'Zigbee2MQTT'
 manufacturer: 'IKEA'
