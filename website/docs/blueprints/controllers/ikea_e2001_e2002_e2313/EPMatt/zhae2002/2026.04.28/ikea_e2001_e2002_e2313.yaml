@@ -517,7 +517,7 @@ triggers:
     type: remote_button_long_press
     subtype: dim_up
     id: zha-button-up-long
-  #- trigger: event
+  # - trigger: event
   #  id: zha-button-up-long
   #  event_type: zha_event
   #  event_data:
@@ -532,7 +532,7 @@ triggers:
     type: remote_button_long_release
     subtype: dim_up
     id: zha-button-up-release
-  #- trigger: event
+  # - trigger: event
   #  id: zha-button-up-release
   #  event_type: zha_event
   #  event_data:
@@ -548,7 +548,7 @@ triggers:
     type: remote_button_short_press
     subtype: turn_off
     id: zha-button-down-short
-  #- trigger: event
+  # - trigger: event
   #  id: zha-button-down-short
   #  event_type: zha_event
   #  event_data:
@@ -562,7 +562,7 @@ triggers:
     type: remote_button_long_press
     subtype: dim_down
     id: zha-button-down-long
-  #- trigger: event
+  # - trigger: event
   #  id: zha-button-down-long
   #  event_type: zha_event
   #  event_data:
@@ -577,7 +577,7 @@ triggers:
     type: remote_button_long_release
     subtype: dim_down
     id: zha-button-down-release
-  #- trigger: event
+  # - trigger: event
   #  id: zha-button-down-release
   #  event_type: zha_event
   #  event_data:
@@ -593,7 +593,7 @@ triggers:
     type: remote_button_short_press
     subtype: left
     id: zha-button-left-short
-  #- trigger: event
+  # - trigger: event
   #  id: zha-button-left-short
   #  event_type: zha_event
   #  event_data:
@@ -608,7 +608,7 @@ triggers:
     type: remote_button_long_press
     subtype: left
     id: zha-button-left-long
-  #- trigger: event
+  # - trigger: event
   #  id: zha-button-left-long
   #  event_type: zha_event
   #  event_data:
@@ -625,7 +625,7 @@ triggers:
     type: remote_button_short_press
     subtype: right
     id: zha-button-right-short
-  #- trigger: event
+  # - trigger: event
   #  id: zha-button-right-short
   #  event_type: zha_event
   #  event_data:
@@ -640,7 +640,7 @@ triggers:
     type: remote_button_long_press
     subtype: right
     id: zha-button-right-long
-  #- trigger: event
+  # - trigger: event
   #  id: zha-button-right-long
   #  event_type: zha_event
   #  event_data:
