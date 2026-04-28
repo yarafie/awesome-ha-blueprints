@@ -133,5 +133,15 @@
         "breaking": false
       }
     ]
+  },
+  {
+    "date": "2026.04.28",
+    "changes": [
+      {
+        "author": "@yarafie",
+        "description": "[Bug Fix] Specific release for IKEA e2002 ZHA changed most triggers to rely on device trigger rather on event trigger.",
+        "breaking": false
+      }
+    ]
   }
 ]

@@ -1,10 +1,10 @@
 # Awesome HA Blueprints – Library Report
 
-## _Generated on 2026-04-22_
+## _Generated on 2026-04-28_
 
 ## Summary
 
-- **Controllers:** 35 blueprints, 49 versions
+- **Controllers:** 35 blueprints, 50 versions
 - **Automations:** 4 blueprints, 4 versions
 - **Hooks:** 3 blueprints, 19 versions
 - **Breaking versions:** 12
@@ -228,7 +228,7 @@
 - **Title:** Controller - IKEA E2001/E2002/E2313 STYRBAR Remote control
 - **Librarians:** yarafie, EPMatt
 - **Library Maintainers:** EPMatt, yarafie
-- **Latest Version:** 2026.04.20
+- **Latest Version:** 2026.04.28
 - **Tags:** zigbee, button, remote, 4-button
 <details>
 <summary>Versions</summary>
@@ -248,6 +248,7 @@
 - [Update] Added the IKEA Styrbar Model E2313. If you download this version of the blueprint you may need to and set up your automations again.
 
 | EPMatt | zhae2002 | 2026.04.20 | no |
+| EPMatt | zhae2002 | 2026.04.28 | no |
 
 </details>
 
