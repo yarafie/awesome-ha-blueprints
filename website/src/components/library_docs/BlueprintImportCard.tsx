@@ -36,6 +36,11 @@ import { marked, Renderer } from 'marked'
 import { emojiMap } from '@src/utils/emojiMap'
 
 type VersionOption = { value: string; label: string }
+
+interface VersionMetadata {
+  status?: string
+}
+
 interface ChangelogEntry {
   date: string
   changes: Array<{
@@ -207,6 +212,40 @@ interface ReleaseMetadata {
   status?: string
 }
 
+function getStatusBadgeStyle(status?: string) {
+  const normalized = status?.trim().toLowerCase()
+
+  const colors: Record<string, { background: string; color: string }> = {
+    active: {
+      background: 'var(--ifm-color-success-lightest)',
+      color: 'var(--ifm-color-success-darkest)',
+    },
+    testing: {
+      background: 'var(--ifm-color-warning-lightest)',
+      color: 'var(--ifm-color-warning-darkest)',
+    },
+    development: {
+      background: 'var(--ifm-color-info-lightest)',
+      color: 'var(--ifm-color-info-darkest)',
+    },
+    retired: {
+      background: 'var(--ifm-color-emphasis-200)',
+      color: 'var(--ifm-color-emphasis-800)',
+    },
+    deprecated: {
+      background: 'var(--ifm-color-danger-lightest)',
+      color: 'var(--ifm-color-danger-darkest)',
+    },
+  }
+
+  return (
+    colors[normalized ?? ''] ?? {
+      background: 'var(--ifm-color-emphasis-200)',
+      color: 'var(--ifm-color-emphasis-700)',
+    }
+  )
+}
+
 function loadReleaseMetadata(
   category: string,
   id: string,
@@ -222,6 +261,23 @@ function loadReleaseMetadata(
     return null
   }
 }
+function loadVersionMetadata(
+  category: string,
+  id: string,
+  library: string,
+  release: string,
+  version: string,
+): VersionMetadata | null {
+  try {
+    const parsed = jsonContext(
+      `./${category}/${id}/${library}/${release}/${version}/version.json`,
+    ) as unknown as VersionMetadata
+    return parsed ?? null
+  } catch {
+    return null
+  }
+}
+
 function loadControllerImageSrc(category: string, id: string): string | null {
   try {
     const blueprint = jsonContext(`./${category}/${id}/blueprint.json`) as {
@@ -285,6 +341,27 @@ function loadReleaseVersions(
     return null
   }
 }
+function loadVersionStatuses(
+  category: string,
+  id: string,
+  library: string,
+  release: string,
+  versions: string[],
+): Record<string, string> {
+  return versions.reduce<Record<string, string>>((acc, version) => {
+    const status = loadVersionMetadata(
+      category,
+      id,
+      library,
+      release,
+      version,
+    )?.status?.trim()
+
+    if (status) acc[version] = status
+    return acc
+  }, {})
+}
+
 function loadReleaseChangelogEntries(
   category: string,
   id: string,
@@ -351,6 +428,9 @@ function BlueprintImportCard({
   )
 
   const [changelogEntries, setChangelogEntries] = useState<ChangelogEntry[]>([])
+  const [versionStatuses, setVersionStatuses] = useState<
+    Record<string, string>
+  >({})
   useEffect(() => {
     let isMounted = true
     const urlVersion =
@@ -368,10 +448,14 @@ function BlueprintImportCard({
       setVersions(result.versions)
       setSelectedVersion(effectiveVersion)
       setChangelogEntries(entries)
+      setVersionStatuses(
+        loadVersionStatuses(category, id, library, release, result.versions),
+      )
     } else {
       setVersions([])
       setSelectedVersion('latest')
       setChangelogEntries([])
+      setVersionStatuses({})
     }
     setIsLoadingVersions(false)
     return () => {
@@ -585,7 +669,19 @@ function BlueprintImportCard({
             {releaseMetadata?.status ? (
               <div style={styles.metadataInlineRow}>
                 <span style={styles.metadataLabel}>Status</span>
-                <span style={styles.metadataText}>
+                <span
+                  style={{
+                    ...styles.metadataText,
+                    ...getStatusBadgeStyle(releaseMetadata.status),
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    padding: '0.15rem 0.5rem',
+                    borderRadius: '999px',
+                    fontSize: '0.75rem',
+                    fontWeight: 600,
+                    lineHeight: 1.3,
+                  }}
+                >
                   {releaseMetadata.status}
                 </span>
               </div>
@@ -789,6 +885,7 @@ function BlueprintImportCard({
                     const isBreaking = entry
                       ? entry.changes.some((c) => c.breaking)
                       : false
+                    const versionStatus = versionStatuses[version]
                     return (
                       <tr key={version}>
                         {/* Version */}
@@ -871,13 +968,28 @@ function BlueprintImportCard({
                             whiteSpace: 'nowrap',
                           }}
                         >
+                          {versionStatus ? (
+                            <span
+                              style={{
+                                ...getStatusBadgeStyle(versionStatus),
+                                fontSize: '0.7rem',
+                                padding: '0.15rem 0.45rem',
+                                borderRadius: '999px',
+                                fontWeight: 600,
+                                marginRight: '0.35rem',
+                                verticalAlign: 'middle',
+                              }}
+                            >
+                              {versionStatus}
+                            </span>
+                          ) : null}
                           {isLatest && (
                             <span
                               style={{
                                 fontSize: '0.7rem',
                                 padding: '0.15rem 0.45rem',
                                 borderRadius: '999px',
-                                background: 'var(--ifm-color-emphasis-200)',
+                                background: 'var(--ifm-color-emphasis-100)',
                                 color: 'var(--ifm-color-emphasis-700)',
                                 fontWeight: 500,
                                 marginRight: '0.35rem',
@@ -895,6 +1007,13 @@ function BlueprintImportCard({
                               🚨
                             </span>
                           )}
+                          {!versionStatus && !isLatest && !isBreaking ? (
+                            <span
+                              style={{ color: 'var(--ifm-color-emphasis-500)' }}
+                            >
+                              —
+                            </span>
+                          ) : null}
                         </td>
                         {/* Summary */}
                         <td
