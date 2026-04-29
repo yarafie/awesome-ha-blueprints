@@ -6,6 +6,11 @@
         "author": "@yarafie",
         "description": "Initial blueprint version 🎉.",
         "breaking": false
+      },
+      {
+        "author": "@yarafie",
+        "description": "[Bug Fix] Fixed incorrect mapping of on action. [Issue#539](https://github.com/yarafie/awesome-ha-blueprints/issues/539). Reported by [@DuffyTheDisneyBear](https://github.com/DuffyTheDisneyBear).",
+        "breaking": false
       }
     ]
   }
