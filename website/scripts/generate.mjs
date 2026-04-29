@@ -218,6 +218,14 @@ function sortVersionsDesc(versions) {
   return [...versions].sort((a, b) => b.localeCompare(a))
 }
 
+/** Resolve lifecycle status by walking from most-specific to least-specific. */
+function resolveStatus(...levels) {
+  for (const level of levels) {
+    if (level) return level
+  }
+  return 'active'
+}
+
 /** Get library-specific configuration from the manifest. */
 function getLibraryConfig(manifest, libraryId) {
   return manifest.libraries?.[libraryId] || null
@@ -236,6 +244,8 @@ function getReleaseConfig(manifest, libraryId, releaseId) {
       supported_hooks: [],
       supported_integrations: [],
       supported_controllers: null,
+      status: resolveStatus(manifest.status),
+      version_overrides: {},
     }
   }
 
@@ -243,15 +253,30 @@ function getReleaseConfig(manifest, libraryId, releaseId) {
 
   return {
     maintainers: libraryConfig.maintainers || [],
-    requires_helper: libraryConfig.requires_helper === true,
-    has_long_press_loop: libraryConfig.has_long_press_loop === true,
-    has_virtual_double_press: libraryConfig.has_virtual_double_press === true,
+    requires_helper:
+      releaseOverride.requires_helper ??
+      libraryConfig.requires_helper ??
+      false,
+    has_long_press_loop:
+      releaseOverride.has_long_press_loop ??
+      libraryConfig.has_long_press_loop ??
+      false,
+    has_virtual_double_press:
+      releaseOverride.has_virtual_double_press ??
+      libraryConfig.has_virtual_double_press ??
+      false,
     supported_hooks: releaseOverride.supported_hooks || [],
     supported_integrations:
-      releaseOverride.supported_integrations ||
-      libraryConfig.supported_integrations ||
+      releaseOverride.supported_integrations ??
+      libraryConfig.supported_integrations ??
       [],
     supported_controllers: releaseOverride.supported_controllers || null,
+    status: resolveStatus(
+      releaseOverride.status,
+      libraryConfig.status,
+      manifest.status,
+    ),
+    version_overrides: releaseOverride.versions || {},
   }
 }
 
@@ -268,7 +293,7 @@ function generateBlueprintJson(manifest, category, blueprintId, blueprintDir) {
     description: manifest.description,
     librarians: manifest.librarians,
     images: hasImage ? [`${blueprintId}.png`] : [],
-    status: manifest.status || 'active',
+    status: resolveStatus(manifest.status),
   }
 
   // Controller-specific fields
@@ -349,7 +374,7 @@ function generateLibraryJson(
     maintainers: libraryConfig.maintainers || [],
     releases: releaseIds,
     category,
-    status: manifest.status || 'active',
+    status: resolveStatus(libraryConfig.status, manifest.status),
   }
 
   // Aggregate integrations from all releases in this library
@@ -363,7 +388,7 @@ function generateLibraryJson(
     }
   }
   if (allIntegrations.size > 0) {
-    result.supported_integrations = [...allIntegrations]
+    result.supported_integrations = getActualIntegrations([...allIntegrations])
   }
 
   return result
@@ -391,7 +416,7 @@ function generateReleaseJson(
     description: manifest.description,
     versions,
     latest_version: latestVersion,
-    status: manifest.status || 'active',
+    status: releaseConfig.status,
   }
 
   if (category === 'controllers' && releaseConfig.supported_hooks) {
@@ -416,7 +441,11 @@ function generateVersionJson(
   releaseId,
   version,
   maintainers,
+  releaseConfig,
+  libraryConfig,
 ) {
+  const versionOverride = releaseConfig.version_overrides?.[version] || {}
+
   return {
     version,
     date: versionToDate(version),
@@ -428,7 +457,12 @@ function generateVersionJson(
     description: manifest.description,
     maintainers,
     blueprint_file: `${blueprintId}.yaml`,
-    status: manifest.status || 'active',
+    status: resolveStatus(
+      versionOverride.status,
+      releaseConfig.status,
+      libraryConfig?.status,
+      manifest.status,
+    ),
   }
 }
 
@@ -534,10 +568,9 @@ function generateDefaultVersionMdx(
       releaseId,
     ),
     description_extra: descriptionExtra,
-    helper_text_requirement:
-      releaseConfig.requires_helper === true
-        ? '\n' + STANDARD_HELPER_TEXT_REQUIREMENT
-        : '',
+    helper_text_requirement: releaseConfig.requires_helper === true
+      ? '\n' + STANDARD_HELPER_TEXT_REQUIREMENT
+      : '',
     virtual_double_press_note:
       releaseConfig.has_virtual_double_press === true && hasHooks
         ? STANDARD_VDP_HOOKS_NOTE + '\n\n'
@@ -674,6 +707,8 @@ function processBlueprint(manifestPath) {
           releaseId,
           version,
           releaseConfig.maintainers,
+          releaseConfig,
+          libraryConfig,
         )
         writeJson(path.join(versionDir, 'version.json'), versionJson)
 

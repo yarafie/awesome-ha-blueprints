@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://yarafie.github.io/awesome-ha-blueprints/schemas/manifest.schema.json",
-  "title": "Awesome HA Library – Blueprint Manifest Schema",
+  "title": "Awesome HA Library \u2013 Blueprint Manifest Schema",
   "description": "Single source of truth for blueprint metadata. Libraries are first-class and releases live under libraries.",
   "type": "object",
   "required": ["name", "description", "librarians", "libraries"],
@@ -35,17 +35,23 @@
       "type": "array",
       "minItems": 1,
       "description": "Curators responsible for defining this blueprint.",
-      "items": { "$ref": "#/$defs/personRef" }
+      "items": {
+        "$ref": "#/$defs/personRef"
+      }
     },
     "tags": {
       "type": "array",
       "description": "Searchable tags.",
-      "items": { "type": "string" }
+      "items": {
+        "type": "string"
+      }
     },
     "external_references": {
       "type": "array",
       "description": "External reference links.",
-      "items": { "$ref": "#/$defs/externalReference" }
+      "items": {
+        "$ref": "#/$defs/externalReference"
+      }
     },
     "status": {
       "type": "string",
@@ -61,7 +67,9 @@
         "type": "string",
         "minLength": 1
       },
-      "additionalProperties": { "$ref": "#/$defs/library" }
+      "additionalProperties": {
+        "$ref": "#/$defs/library"
+      }
     }
   },
   "$defs": {
@@ -70,9 +78,18 @@
       "required": ["id", "name"],
       "additionalProperties": false,
       "properties": {
-        "id": { "type": "string", "minLength": 1 },
-        "name": { "type": "string", "minLength": 1 },
-        "url": { "type": "string", "format": "uri" }
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "url": {
+          "type": "string",
+          "format": "uri"
+        }
       }
     },
     "externalReference": {
@@ -80,8 +97,14 @@
       "required": ["label", "url"],
       "additionalProperties": false,
       "properties": {
-        "label": { "type": "string", "minLength": 1 },
-        "url": { "type": "string", "format": "uri" }
+        "label": {
+          "type": "string",
+          "minLength": 1
+        },
+        "url": {
+          "type": "string",
+          "format": "uri"
+        }
       }
     },
     "supportedControllers": {
@@ -91,7 +114,9 @@
       "properties": {
         "controllers": {
           "type": "array",
-          "items": { "type": "string" }
+          "items": {
+            "type": "string"
+          }
         },
         "count": {
           "type": "integer",
@@ -106,15 +131,48 @@
         "supported_hooks": {
           "type": "array",
           "description": "Hook types supported by this controller release.",
-          "items": { "type": "string" }
+          "items": {
+            "type": "string"
+          }
         },
         "supported_integrations": {
           "type": "array",
           "description": "Integrations supported by this release.",
-          "items": { "type": "string" }
+          "items": {
+            "type": "string"
+          }
         },
         "supported_controllers": {
           "$ref": "#/$defs/supportedControllers"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["active", "testing", "development", "retired", "deprecated"],
+          "default": "active",
+          "description": "Lifecycle status override. Inherits from the parent level when omitted."
+        },
+        "requires_helper": {
+          "type": "boolean",
+          "description": "Whether this library requires the Helper - Last Controller Event input."
+        },
+        "has_long_press_loop": {
+          "type": "boolean",
+          "description": "Whether this library supports looping long press actions while a button is held."
+        },
+        "has_virtual_double_press": {
+          "type": "boolean",
+          "description": "Whether this library provides virtual double press events not natively supported by the device."
+        },
+        "versions": {
+          "type": "object",
+          "description": "Optional per-version overrides, keyed by version ID.",
+          "propertyNames": {
+            "type": "string",
+            "pattern": "^\\d{4}\\.\\d{2}\\.\\d{2}$"
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/versionOverride"
+          }
         }
       }
     },
@@ -127,7 +185,9 @@
           "type": "array",
           "minItems": 1,
           "description": "Maintainers of this library.",
-          "items": { "$ref": "#/$defs/personRef" }
+          "items": {
+            "$ref": "#/$defs/personRef"
+          }
         },
         "requires_helper": {
           "type": "boolean",
@@ -144,7 +204,9 @@
         "supported_integrations": {
           "type": "array",
           "description": "Optional library-level default integrations, inherited by releases unless overridden.",
-          "items": { "type": "string" }
+          "items": {
+            "type": "string"
+          }
         },
         "releases": {
           "type": "object",
@@ -154,7 +216,27 @@
             "type": "string",
             "minLength": 1
           },
-          "additionalProperties": { "$ref": "#/$defs/release" }
+          "additionalProperties": {
+            "$ref": "#/$defs/release"
+          }
+        },
+        "status": {
+          "type": "string",
+          "enum": ["active", "testing", "development", "retired", "deprecated"],
+          "default": "active",
+          "description": "Lifecycle status override. Inherits from the parent level when omitted."
+        }
+      }
+    },
+    "versionOverride": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["active", "testing", "development", "retired", "deprecated"],
+          "default": "active",
+          "description": "Lifecycle status override. Inherits from the parent level when omitted."
         }
       }
     }

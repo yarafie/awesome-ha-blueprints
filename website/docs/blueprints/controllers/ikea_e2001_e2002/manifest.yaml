@@ -33,6 +33,9 @@ libraries:
       anything:
         supported_hooks:
           - 'none'
+        versions:
+          '2025.01.06':
+            status: 'deprecated'
     has_long_press_loop: true
     has_virtual_double_press: true
     supported_integrations:
