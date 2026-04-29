@@ -254,9 +254,7 @@ function getReleaseConfig(manifest, libraryId, releaseId) {
   return {
     maintainers: libraryConfig.maintainers || [],
     requires_helper:
-      releaseOverride.requires_helper ??
-      libraryConfig.requires_helper ??
-      false,
+      releaseOverride.requires_helper ?? libraryConfig.requires_helper ?? false,
     has_long_press_loop:
       releaseOverride.has_long_press_loop ??
       libraryConfig.has_long_press_loop ??
@@ -568,9 +566,10 @@ function generateDefaultVersionMdx(
       releaseId,
     ),
     description_extra: descriptionExtra,
-    helper_text_requirement: releaseConfig.requires_helper === true
-      ? '\n' + STANDARD_HELPER_TEXT_REQUIREMENT
-      : '',
+    helper_text_requirement:
+      releaseConfig.requires_helper === true
+        ? '\n' + STANDARD_HELPER_TEXT_REQUIREMENT
+        : '',
     virtual_double_press_note:
       releaseConfig.has_virtual_double_press === true && hasHooks
         ? STANDARD_VDP_HOOKS_NOTE + '\n\n'
