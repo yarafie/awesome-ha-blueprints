@@ -6,6 +6,11 @@
         "author": "@yarafie",
         "description": "Initial blueprint version 🎉.",
         "breaking": false
+      },
+      {
+        "author": "@yarafie",
+        "description": "[Bug Fix] Fixed incorrect mapping of up double action",
+        "breaking": false
       }
     ]
   }

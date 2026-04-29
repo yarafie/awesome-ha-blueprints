@@ -382,7 +382,7 @@ actions:
       - conditions:
           - condition: trigger
             id:
-              - z2m-button-dots1-double
+              - z2m-button-up-double
         sequence:
           # fire the ahb hook event
           - event: ahb_controller_event
