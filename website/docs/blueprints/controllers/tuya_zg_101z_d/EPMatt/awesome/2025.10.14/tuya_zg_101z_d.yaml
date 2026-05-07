@@ -46,6 +46,9 @@ blueprint:
             - integration: mqtt
               manufacturer: Tuya
               model: Smart knob (ZG-101Z/D)
+            - integration: mqtt
+              manufacturer: Moes
+              model: Smart knob
             # source: <Not Found Below will be left in case it works>
             - integration: zha
               manufacturer: _TZ3000_gwkzibhs
