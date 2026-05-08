@@ -46,6 +46,14 @@ blueprint:
             - integration: mqtt
               manufacturer: Tuya
               model: Smart knob (ZG-101Z/D)
+            #
+            - integration: mqtt
+              manufacturer: Moes
+              model: Smart knob
+            # For backwards compatibility with z2m 1.x. model_id is added to end of model rather than a seperate attribute in z2m 2.x
+            - integration: mqtt
+              manufacturer: Moes
+              model: Smart knob (ZG-101ZD)
             # source: <Not Found Below will be left in case it works>
             - integration: zha
               manufacturer: _TZ3000_gwkzibhs

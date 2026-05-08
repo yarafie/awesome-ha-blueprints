@@ -6,6 +6,11 @@
         "author": "@yarafie",
         "description": "Initial release. ([@yarafie](https://github.com/yarafie)) :tada:",
         "breaking": false
+      },
+      {
+        "author": "@yarafie",
+        "description": "Added Moes/ZG-101ZD as additional Manufacturer/Model",
+        "breaking": false
       }
     ]
   }
