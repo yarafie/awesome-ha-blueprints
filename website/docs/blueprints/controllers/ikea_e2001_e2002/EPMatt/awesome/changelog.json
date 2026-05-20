@@ -113,5 +113,15 @@
         "breaking": true
       }
     ]
+  },
+  {
+    "date": "2026.05.20",
+    "changes": [
+      {
+        "author": "@yarafie",
+        "description": "[Enhancement] Refactored controller integration handling to use normalized generic event triggers for ZHA, Zigbee2MQTT, and deCONZ, removing direct MQTT trigger dependencies and reducing trigger complexity. This will close ([EPMatt-issue#1010](https://github.com/EPMatt/awesome-ha-blueprints/issues/1010)).",
+        "breaking": true
+      }
+    ]
   }
 ]
