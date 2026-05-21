@@ -1,6 +1,6 @@
 # Awesome HA Blueprints – Library Report
 
-## _Generated on 2026-05-20_
+## _Generated on 2026-05-21_
 
 ## Summary
 
@@ -21,7 +21,7 @@
   - Add native double press triggers and refactor the blueprint to use triggers and trigger IDs. The integration selector input is removed, and `helper_last_controller_event` is no longer required. Re-download the blueprint and reconfigure existing automations to apply the changes. (Thanks [@yarafie](https://github.com/yarafie))
 - **ikea_e2001_e2002** – EPMatt / awesome / 2025.11.16 (active)
   - Blueprint was refactored to add back `helper_last_controller_event` in order to fix Long Press/Release Logic for both hooks and custom actions. This will close ([EPMatt-issue#949](https://github.com/EPMatt/awesome-ha-blueprints/issues/949)). See note at top regarding **Helper - Last Controller Event** input. ([@yarafie](https://github.com/yarafie))
-- **ikea_e2001_e2002** – EPMatt / awesome / 2026.05.20 (active)
+- **ikea_e2001_e2002** – EPMatt / awesome / 2026.05.20 (testing)
   - [Enhancement] Refactored controller integration handling to use normalized generic event triggers for ZHA, Zigbee2MQTT, and deCONZ, removing direct MQTT trigger dependencies and reducing trigger complexity. This will close ([EPMatt-issue#1010](https://github.com/EPMatt/awesome-ha-blueprints/issues/1010)).
 - **ikea_e2001_e2002_e2313** – EPMatt / awesome / 2025.11.16 (active)
   - Blueprint was refactored to add back `helper_last_controller_event` in order to fix Long Press/Release Logic for both hooks and custom actions. This will close ([EPMatt-issue#949](https://github.com/EPMatt/awesome-ha-blueprints/issues/949)). See note at top regarding **Helper - Last Controller Event** input. ([@yarafie](https://github.com/yarafie))
@@ -219,7 +219,7 @@
 | yarafie | anything | 2025.01.06 | deprecated | no                     |
 | yarafie | anything | 2025.04.19 | active     | no                     |
 | EPMatt  | awesome  | 2025.11.16 | active     | **🚨 Breaking Change** |
-| EPMatt  | awesome  | 2026.05.20 | active     | **🚨 Breaking Change** |
+| EPMatt  | awesome  | 2026.05.20 | testing    | **🚨 Breaking Change** |
 
 **Breaking change reasons:**
 
