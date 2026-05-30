@@ -27,7 +27,7 @@
     "diff": "^9.0.0",
     "dotenv": "^17.4.2",
     "glob": "^13.0.6",
-    "js-cookie": "^3.0.7",
+    "js-cookie": "^3.0.8",
     "js-yaml": "^4.1.1",
     "marked": "^18.0.4",
     "prism-react-renderer": "^2.4.1",
