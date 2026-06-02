@@ -4,7 +4,7 @@ blueprint:
   description: |
     # Controller - IKEA E2001/E2002 STYRBAR Remote control
 
-    ℹ️ Version 2025.11.16
+    ℹ️ Version 2026.05.20
 
     Controller automation for executing any kind of action triggered by the provided IKEA E2001/E2002 STYRBAR Remote control.
     Allows to optionally loop an action on a button long press.
@@ -13,16 +13,16 @@ blueprint:
 
     Automations created with this blueprint can be connected with one or more [Hooks](https://yarafie.github.io/awesome-ha-blueprints/docs/blueprints/hooks) supported by this controller.
     Hooks allow to easily create controller-based automations for interacting with lights, covers, media players, and potentially more.
-    See the list of [Hooks available for this controller](https://yarafie.github.io/awesome-ha-blueprints/docs/blueprints/controllers/ikea_e2001_e2002/EPMatt/awesome/2025.11.16#available-hooks) for additional details.
+    See the list of [Hooks available for this controller](https://yarafie.github.io/awesome-ha-blueprints/docs/blueprints/controllers/ikea_e2001_e2002/EPMatt/awesome/2026.05.20#available-hooks) for additional details.
 
     ## More Info
 
-    📝 [Changelog](https://yarafie.github.io/awesome-ha-blueprints/docs/blueprints/controllers/ikea_e2001_e2002/EPMatt/awesome/2025.11.16#changelog)
+    📝 [Changelog](https://yarafie.github.io/awesome-ha-blueprints/docs/blueprints/controllers/ikea_e2001_e2002/EPMatt/awesome/2026.05.20#changelog)
     📕 Full documentation regarding this blueprint is available [here](https://yarafie.github.io/awesome-ha-blueprints/docs/blueprints/controllers/ikea_e2001_e2002).
 
     🚀 This blueprint is part of the **[Awesome HA Blueprints](https://yarafie.github.io/awesome-ha-blueprints) project**. Please consider **[leaving a star on GitHub](https://github.com/yarafie/awesome-ha-blueprints)**! 🌟
 
-  source_url: https://raw.githubusercontent.com/yarafie/awesome-ha-blueprints/main/blueprints/controllers/ikea_e2001_e2002/EPMatt/awesome/2025.11.16/ikea_e2001_e2002.yaml
+  source_url: https://raw.githubusercontent.com/yarafie/awesome-ha-blueprints/main/blueprints/controllers/ikea_e2001_e2002/EPMatt/awesome/2026.05.20/ikea_e2001_e2002.yaml
   domain: automation
   homeassistant:
     min_version: 2024.10.0
@@ -316,18 +316,17 @@ blueprint:
               step: 10
 #
 # Automation schema
+trigger_variables:
+  controller_id: !input controller_device
+  controller_entities: '{{ device_entities(controller_id) }}'
 variables:
   # Controller ID
   controller_id: !input controller_device
-  # Zigbee2MQTT state action, read from the selected device's changed entity.
+  # Zigbee2MQTT state action, read only from entities belonging to the selected controller device.
   # This avoids MQTT device triggers so the blueprint can load when MQTT is not installed.
   z2m_action: >-
-    {%- if trigger.id == 'z2m-action'
-          and trigger.event.data.entity_id in device_entities(controller_id)
-          and trigger.event.data.new_state is not none
-          and trigger.event.data.old_state is not none
-          and trigger.event.data.new_state.state != trigger.event.data.old_state.state -%}
-    {{ trigger.event.data.new_state.state }}
+    {%- if trigger.id == 'z2m-action' and trigger.to_state is not none -%}
+    {{ trigger.to_state.state }}
     {%- else -%}
     {{ '' }}
     {%- endif -%}
@@ -552,11 +551,12 @@ max_exceeded: silent
 #
 # Triggers Block
 triggers:
-  # Generic trigger for Zigbee2MQTT. Uses Home Assistant's state_changed event
-  # instead of MQTT device triggers, so MQTT does not need to be installed for ZHA/deCONZ users.
-  - trigger: event
+  # Generic trigger for Zigbee2MQTT. Uses a state trigger limited to entities belonging
+  # to the selected controller device instead of MQTT device triggers, so MQTT does not need
+  # to be installed for ZHA/deCONZ users and unrelated state changes do not wake this automation.
+  - trigger: state
     id: z2m-action
-    event_type: state_changed
+    entity_id: '{{ controller_entities }}'
   # Generic trigger for ZHA. Specific controller actions are normalized in variables.
   - trigger: event
     id: zha-action
