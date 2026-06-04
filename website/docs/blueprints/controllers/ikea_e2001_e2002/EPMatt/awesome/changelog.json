@@ -123,5 +123,15 @@
         "breaking": true
       }
     ]
+  },
+  {
+    "date": "2026.06.04",
+    "changes": [
+      {
+        "author": "@yarafie",
+        "description": "[Enhancement] Based on version 2025.11.16, Added a trigger variable to check if mqtt integration is installed by checking for mqtt entities, and enable associated triggers.",
+        "breaking": true
+      }
+    ]
   }
 ]

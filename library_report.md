@@ -1,13 +1,13 @@
 # Awesome HA Blueprints – Library Report
 
-## _Generated on 2026-06-02_
+## _Generated on 2026-06-04_
 
 ## Summary
 
-- **Controllers:** 35 blueprints, 51 versions
+- **Controllers:** 35 blueprints, 52 versions
 - **Automations:** 4 blueprints, 4 versions
 - **Hooks:** 3 blueprints, 19 versions
-- **Breaking versions:** 13
+- **Breaking versions:** 14
 
 ---
 
@@ -23,6 +23,8 @@
   - Blueprint was refactored to add back `helper_last_controller_event` in order to fix Long Press/Release Logic for both hooks and custom actions. This will close ([EPMatt-issue#949](https://github.com/EPMatt/awesome-ha-blueprints/issues/949)). See note at top regarding **Helper - Last Controller Event** input. ([@yarafie](https://github.com/yarafie))
 - **ikea_e2001_e2002** – EPMatt / awesome / 2026.05.20 (testing)
   - [Enhancement] Refactored controller integration handling to use normalized generic event triggers for ZHA, Zigbee2MQTT, and deCONZ, removing direct MQTT trigger dependencies and reducing trigger complexity. This will close ([EPMatt-issue#1010](https://github.com/EPMatt/awesome-ha-blueprints/issues/1010)).
+- **ikea_e2001_e2002** – EPMatt / awesome / 2026.06.04 (testing)
+  - [Enhancement] Based on version 2025.11.16, Added a trigger variable to check if mqtt integration is installed by checking for mqtt entities, and enable associated triggers.
 - **ikea_e2001_e2002_e2313** – EPMatt / awesome / 2025.11.16 (active)
   - Blueprint was refactored to add back `helper_last_controller_event` in order to fix Long Press/Release Logic for both hooks and custom actions. This will close ([EPMatt-issue#949](https://github.com/EPMatt/awesome-ha-blueprints/issues/949)). See note at top regarding **Helper - Last Controller Event** input. ([@yarafie](https://github.com/yarafie))
 - **ikea_e2001_e2002_e2313** – EPMatt / awesome / 2026.02.18 (active)
@@ -209,7 +211,7 @@
 - **Title:** Controller - IKEA E2001/E2002 STYRBAR Remote control
 - **Librarians:** yarafie, EPMatt
 - **Library Maintainers:** EPMatt, yarafie
-- **Latest Version:** 2026.05.20 (**🚨 Breaking Change**)
+- **Latest Version:** 2026.06.04 (**🚨 Breaking Change**)
 - **Tags:** zigbee, button, remote, 4-button
 <details>
 <summary>Versions</summary>
@@ -220,6 +222,7 @@
 | yarafie | anything | 2025.04.19 | active     | no                     |
 | EPMatt  | awesome  | 2025.11.16 | active     | **🚨 Breaking Change** |
 | EPMatt  | awesome  | 2026.05.20 | testing    | **🚨 Breaking Change** |
+| EPMatt  | awesome  | 2026.06.04 | testing    | **🚨 Breaking Change** |
 
 **Breaking change reasons:**
 
@@ -227,6 +230,8 @@
   - Blueprint was refactored to add back `helper_last_controller_event` in order to fix Long Press/Release Logic for both hooks and custom actions. This will close ([EPMatt-issue#949](https://github.com/EPMatt/awesome-ha-blueprints/issues/949)). See note at top regarding **Helper - Last Controller Event** input. ([@yarafie](https://github.com/yarafie))
 - **EPMatt / awesome / 2026.05.20**
   - [Enhancement] Refactored controller integration handling to use normalized generic event triggers for ZHA, Zigbee2MQTT, and deCONZ, removing direct MQTT trigger dependencies and reducing trigger complexity. This will close ([EPMatt-issue#1010](https://github.com/EPMatt/awesome-ha-blueprints/issues/1010)).
+- **EPMatt / awesome / 2026.06.04**
+  - [Enhancement] Based on version 2025.11.16, Added a trigger variable to check if mqtt integration is installed by checking for mqtt entities, and enable associated triggers.
 
 </details>
 
