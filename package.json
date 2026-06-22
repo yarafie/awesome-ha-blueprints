@@ -14,7 +14,7 @@
     "ajv": "^8.20.0",
     "husky": "^9.1.7",
     "js-yaml": "^4.2.0",
-    "lint-staged": "^17.0.7",
+    "lint-staged": "^17.0.8",
     "prettier": "^3.8.4",
     "turbo": "^2.9.18"
   },
