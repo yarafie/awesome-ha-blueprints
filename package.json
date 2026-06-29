@@ -15,7 +15,7 @@
     "husky": "^9.1.7",
     "js-yaml": "^5.2.0",
     "lint-staged": "^17.0.8",
-    "prettier": "^3.8.4",
+    "prettier": "^3.9.3",
     "turbo": "^2.10.0"
   },
   "dependencies": {
