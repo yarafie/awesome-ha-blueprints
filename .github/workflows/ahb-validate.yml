@@ -49,7 +49,7 @@ jobs:
 
       - name: Setup Node
         if: steps.library_changes.outputs.has_library_changes == 'true'
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v7
         with:
           node-version: 22
           cache: pnpm
