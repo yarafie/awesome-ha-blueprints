@@ -16,7 +16,7 @@
     "js-yaml": "^5.2.1",
     "lint-staged": "^17.1.1",
     "prettier": "^3.8.4",
-    "turbo": "^2.10.5"
+    "turbo": "^2.10.6"
   },
   "dependencies": {
     "gray-matter": "^4.0.3"
