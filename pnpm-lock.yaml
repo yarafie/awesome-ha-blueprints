@@ -88,8 +88,8 @@ importers:
         specifier: ^1.11.6
         version: 1.11.6(react@19.2.8)
       react-cookie-consent:
-        specifier: ^10.0.1
-        version: 10.0.1(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        specifier: ^10.0.2
+        version: 10.0.2(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       react-dom:
         specifier: ^19.2.8
         version: 19.2.8(react@19.2.8)
@@ -5047,8 +5047,8 @@ packages:
     peerDependencies:
       react: '>=16.8.6'
 
-  react-cookie-consent@10.0.1:
-    resolution: {integrity: sha512-qgU7Kr+x9/feKZxaIJbMT+R/xD1lnAQy9MzD4yLooVrkhoUR7XFc8Xv8M+GDQYcjoYh6uszslLGo1k+eU2VLtw==}
+  react-cookie-consent@10.0.2:
+    resolution: {integrity: sha512-YNmtbRHVmSxXnPjKadXyKP60UN/2UF6gvAlmzQLyQX13kGr2j+FmIFEnlx58yQeRYkAW/DNod23sz0c17gpPFw==}
     engines: {node: '>=20.16'}
     peerDependencies:
       react: '>=18'
@@ -12465,7 +12465,7 @@ snapshots:
       prop-types: 15.8.1
       react: 19.2.8
 
-  react-cookie-consent@10.0.1(react-dom@19.2.8(react@19.2.8))(react@19.2.8):
+  react-cookie-consent@10.0.2(react-dom@19.2.8(react@19.2.8))(react@19.2.8):
     dependencies:
       js-cookie: 3.0.8
       react: 19.2.8
