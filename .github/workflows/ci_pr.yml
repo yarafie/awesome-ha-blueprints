@@ -42,7 +42,7 @@ jobs:
 
       - id: eslint
         name: ESLint
-        uses: reviewdog/action-eslint@v1.34
+        uses: reviewdog/action-eslint@v1.35
         with:
           github_token: ${{ secrets.github_token }}
           reporter: github-pr-check
