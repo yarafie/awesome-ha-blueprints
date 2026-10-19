@@ -61,8 +61,8 @@ importers:
         specifier: ^9.0.0
         version: 9.0.0
       dotenv:
-        specifier: ^18.0.7
-        version: 18.0.7
+        specifier: ^18.0.8
+        version: 18.0.8
       glob:
         specifier: ^13.0.6
         version: 13.0.6
@@ -2927,8 +2927,8 @@ packages:
     resolution: {integrity: sha512-tE7ztYzXHIeyvc7N+hR3oi7FIbf/NIjVP9hmAt3yMXzrQ072/fpjGLx2GxNxGxUl5V73MEqYzioOMoVhGMJ5cA==}
     engines: {node: '>=10'}
 
-  dotenv@18.0.7:
-    resolution: {integrity: sha512-QEvMEF8ca3GNZJJnAbOgxpj5ULhBvnMcURp+XKrtvqFNPgjBvYoswQ0Jl2cO7JzCjxZjJhr9ZuIEhlrRxMft/Q==}
+  dotenv@18.0.8:
+    resolution: {integrity: sha512-2KDeoFoK/zRtcnbunCDlLG5VWVMcyqeQc6iK65o231nfNAcuGrKoqUQfJFUtBI+QlShk5HKIHxwebBtUl3rEfA==}
     engines: {node: '>=12'}
     hasBin: true
 
@@ -9913,7 +9913,7 @@ snapshots:
     dependencies:
       is-obj: 2.0.0
 
-  dotenv@18.0.7: {}
+  dotenv@18.0.8: {}
 
   dunder-proto@1.0.1:
     dependencies:
