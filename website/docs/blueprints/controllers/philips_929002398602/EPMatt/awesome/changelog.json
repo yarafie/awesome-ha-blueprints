@@ -113,5 +113,15 @@
         "breaking": false
       }
     ]
+  },
+  {
+    "date": "2026.11.01",
+    "changes": [
+      {
+        "author": "@yarafie",
+        "description": "[Bug Fix] Changed short button presses for zha to use _short_release. ([yarafie-issue#653](https://github.com/yarafie/awesome-ha-blueprints/issues/653)) ([@SebastianSchildt](https://github.com/SebastianSchildt)) ([@yarafie](https://github.com/yarafie))",
+        "breaking": false
+      }
+    ]
   }
 ]
