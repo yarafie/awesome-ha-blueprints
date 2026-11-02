@@ -55,7 +55,7 @@ blueprint:
 
   homeassistant:
     min_version: 2024.10.0
-  source_url: https://raw.githubusercontent.com/yarafie/awesome-ha-blueprints/refs/heads/main/website/docs/blueprints/controllers/moes_xh_sy_04z/wobondar/anything/2026.04.06/moes_xh_sy_04z.yaml
+  source_url: https://github.com/yarafie/awesome-ha-blueprints/blob/main/website/docs/blueprints/controllers/moes_xh_sy_04z/wobondar/anything/2026.04.06/moes_xh_sy_04z.yaml
   #
   # Define UI and default values
   input:

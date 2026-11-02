@@ -69,7 +69,7 @@ blueprint:
 
   homeassistant:
     min_version: 2024.10.0
-  source_url: https://raw.githubusercontent.com/yarafie/awesome-ha-blueprints/refs/heads/main/website/docs/blueprints/controllers/tuya_ts0046/wobondar/anything/2026.04.09/tuya_ts0046.yaml
+  source_url: https://github.com/yarafie/awesome-ha-blueprints/blob/main/website/docs/blueprints/controllers/tuya_ts0046/wobondar/anything/2026.04.09/tuya_ts0046.yaml
   #
   # Define UI and default values
   input:
