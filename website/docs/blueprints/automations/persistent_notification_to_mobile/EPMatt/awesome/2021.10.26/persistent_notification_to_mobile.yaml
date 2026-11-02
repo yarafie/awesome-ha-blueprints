@@ -12,7 +12,7 @@ blueprint:
 
     🚀 This blueprint is part of the **[Awesome HA Blueprints](https://yarafie.github.io/awesome-ha-blueprints) project**.
 
-  source_url: https://github.com/yarafie/awesome-ha-blueprints/blob/main/blueprints/automation/persistent_notification_to_mobile/EPMatt/awesome/2021.10.26/persistent_notification_to_mobile.yaml
+  source_url: https://github.com/yarafie/awesome-ha-blueprints/blob/main/website/docs/blueprints/automation/persistent_notification_to_mobile/EPMatt/awesome/2021.10.26/persistent_notification_to_mobile.yaml
   domain: automation
   input:
     notification_id:

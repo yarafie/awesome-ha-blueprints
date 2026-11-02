@@ -12,7 +12,7 @@ blueprint:
 
     🚀 This blueprint is part of the **[Awesome HA Blueprints](https://yarafie.github.io/awesome-ha-blueprints) project**.
 
-  source_url: https://github.com/yarafie/awesome-ha-blueprints/blob/main/blueprints/automation/on_off_schedule_state_persistence/EPMatt/awesome/2021.10.26/on_off_schedule_state_persistence.yaml
+  source_url: https://github.com/yarafie/awesome-ha-blueprints/blob/main/website/docs/blueprints/automation/on_off_schedule_state_persistence/EPMatt/awesome/2021.10.26/on_off_schedule_state_persistence.yaml
   domain: automation
   input:
     automation_target:

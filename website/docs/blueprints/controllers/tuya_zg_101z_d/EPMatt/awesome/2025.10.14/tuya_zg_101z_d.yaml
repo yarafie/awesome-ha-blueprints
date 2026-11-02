@@ -24,7 +24,7 @@ blueprint:
 
     🚀 This blueprint is part of the **[Awesome HA Blueprints](https://yarafie.github.io/awesome-ha-blueprints) project**. Please consider **[leaving a star on GitHub](https://github.com/yarafie/awesome-ha-blueprints)**! 🌟
 
-  source_url: https://github.com/yarafie/awesome-ha-blueprints/blob/main/blueprints/controllers/tuya_zg_101z_d/EPMatt/awesome/2025.10.14/tuya_zg_101z_d.yaml
+  source_url: https://github.com/yarafie/awesome-ha-blueprints/blob/main/website/docs/blueprints/controllers/tuya_zg_101z_d/EPMatt/awesome/2025.10.14/tuya_zg_101z_d.yaml
   domain: automation
   homeassistant:
     min_version: 2024.10.0

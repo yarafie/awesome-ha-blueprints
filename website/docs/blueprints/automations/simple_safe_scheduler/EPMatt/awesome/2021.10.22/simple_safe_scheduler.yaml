@@ -36,7 +36,7 @@ blueprint:
 
     🚀 This blueprint is part of the **[Awesome HA Blueprints](https://yarafie.github.io/awesome-ha-blueprints) project**.
 
-  source_url: https://github.com/yarafie/awesome-ha-blueprints/blob/main/blueprints/automation/simple_safe_scheduler/EPMatt/awesome/2021.10.22/simple_safe_scheduler.yaml
+  source_url: https://github.com/yarafie/awesome-ha-blueprints/blob/main/website/docs/blueprints/automation/simple_safe_scheduler/EPMatt/awesome/2021.10.22/simple_safe_scheduler.yaml
   domain: automation
   input:
     action:

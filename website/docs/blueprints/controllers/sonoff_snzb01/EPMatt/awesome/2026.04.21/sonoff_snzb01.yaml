@@ -20,7 +20,7 @@ blueprint:
 
     🚀 This blueprint is part of the **[Awesome HA Blueprints](https://yarafie.github.io/awesome-ha-blueprints) project**. Please consider **[leaving a star on GitHub](https://github.com/yarafie/awesome-ha-blueprints)**! 🌟
 
-  source_url: https://github.com/yarafie/awesome-ha-blueprints/blob/main/blueprints/controllers/sonoff_snzb01/EPMatt/awesome/2026.04.21/sonoff_snzb01.yaml
+  source_url: https://github.com/yarafie/awesome-ha-blueprints/blob/main/website/docs/blueprints/controllers/sonoff_snzb01/EPMatt/awesome/2026.04.21/sonoff_snzb01.yaml
   domain: automation
   homeassistant:
     min_version: 2024.10.0
