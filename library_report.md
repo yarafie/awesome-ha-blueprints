@@ -1,10 +1,10 @@
 # Awesome HA Blueprints – Library Report
 
-## _Generated on 2026-07-22_
+## _Generated on 2026-11-03_
 
 ## Summary
 
-- **Controllers:** 35 blueprints, 52 versions
+- **Controllers:** 35 blueprints, 54 versions
 - **Automations:** 4 blueprints, 4 versions
 - **Hooks:** 3 blueprints, 19 versions
 - **Breaking versions:** 14
@@ -282,7 +282,7 @@
 - **Title:** Controller - IKEA E2201 RODRET Dimmer
 - **Librarians:** yarafie, EPMatt
 - **Library Maintainers:** EPMatt, yarafie
-- **Latest Version:** 2026.02.17
+- **Latest Version:** 2026.08.09
 - **Tags:** zigbee, dimmer, light
 <details>
 <summary>Versions</summary>
@@ -292,6 +292,7 @@
 | EPMatt  | awesome | 2025.10.01 | active | no       |
 | EPMatt  | awesome | 2026.01.28 | active | no       |
 | EPMatt  | awesome | 2026.02.17 | active | no       |
+| EPMatt  | awesome | 2026.08.09 | active | no       |
 
 </details>
 
@@ -445,7 +446,7 @@
 - **Title:** Controller - Philips 929002398602 Hue Dimmer switch v2
 - **Librarians:** yarafie, EPMatt
 - **Library Maintainers:** EPMatt, yarafie
-- **Latest Version:** 2026.04.19
+- **Latest Version:** 2026.11.01
 - **Tags:** zigbee, dimmer, light
 <details>
 <summary>Versions</summary>
@@ -454,6 +455,7 @@
 | ------- | ------- | ---------- | ------ | -------- |
 | EPMatt  | awesome | 2025.10.16 | active | no       |
 | EPMatt  | awesome | 2026.04.19 | active | no       |
+| EPMatt  | awesome | 2026.11.01 | active | no       |
 
 </details>
 
