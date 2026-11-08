@@ -22,7 +22,7 @@
     "@supabase/supabase-js": "^2.118.0",
     "@types/js-cookie": "^3.0.6",
     "clsx": "^2.1.1",
-    "d3-scale": "^4.0.2",
+    "d3-scale": "^4.0.3",
     "d3-scale-chromatic": "^3.1.0",
     "diff": "^9.0.0",
     "dotenv": "^18.0.9",
