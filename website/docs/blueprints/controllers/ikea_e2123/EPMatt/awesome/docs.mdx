@@ -91,6 +91,12 @@ This Hook blueprint allows to build a controller-based automation to control a c
 The blueprint handles double button press events natively for the dots1/dots2 buttons as it is supported by the controller device itself.
 Long and Double press events can be enabled/disabled for each of the dots1/dots2 buttons to get extra speed in recognizing single press events.
 
+### Using custom actions and Hooks together
+
+The blueprint fires the hook event (`ahb_controller_event`) before running the custom action for the same button. If a Hook maps a button that also has a custom action, both run at the same time and may conflict. For example, the Media Player Hook maps the Dots1/Dots2 short press to stop/toggle, which clashes with a custom action that starts a playlist on the same press.
+
+To avoid this, select those buttons in the **Hooks options** section (**Buttons that do not fire hook events**). Selected buttons only run their custom action, while all other buttons keep working with the Hook. Leaving the selection empty keeps the default behaviour.
+
 ### Firmware compatability
 
 This blueprint is only compatible with firmwares 1.0.32 (20221219) and 1.0.35 (20230308) of the IKEA E2123 SYMFONISK sound remote, gen 2.

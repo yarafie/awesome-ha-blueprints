@@ -4,7 +4,7 @@ blueprint:
   description: |
     # Controller - IKEA E2123 SYMFONISK sound remote, gen 2
 
-    ℹ️ Version 2025.03.28
+    ℹ️ Version 2026.11.13
 
     Controller automation for executing any kind of action triggered by the provided IKEA E2123 SYMFONISK sound remote, gen 2.
 
@@ -15,20 +15,21 @@ blueprint:
 
     Automations created with this blueprint can be connected with one or more [Hooks](https://yarafie.github.io/awesome-ha-blueprints/docs/blueprints/hooks) supported by this controller.
     Hooks allow to easily create controller-based automations for interacting with lights, covers, media players, and potentially more.
-    See the list of [Hooks available for this controller](https://yarafie.github.io/awesome-ha-blueprints/docs/blueprints/controllers/ikea_e2123/EPMatt/awesome/2025.03.28#available-hooks) for additional details.
+    See the list of [Hooks available for this controller](https://yarafie.github.io/awesome-ha-blueprints/docs/blueprints/controllers/ikea_e2123/EPMatt/awesome/2026.11.13#available-hooks) for additional details.
 
     This blueprint is only compatible with firmwares 1.0.32 (20221219) and 1.0.35 (20230308) of the IKEA E2123 SYMFONISK sound remote, gen 2.
 
     A small note, avoid using both custom actions and Hooks in the same blueprint, otherwise strange things may occur.
+    If you do need both, use the **Hooks options** section to stop selected buttons from firing hook events, so those buttons only run their custom action.
 
     ## More Info
 
-    📝 [Changelog](https://yarafie.github.io/awesome-ha-blueprints/docs/blueprints/controllers/ikea_e2123/EPMatt/awesome/2025.03.28#changelog)
+    📝 [Changelog](https://yarafie.github.io/awesome-ha-blueprints/docs/blueprints/controllers/ikea_e2123/EPMatt/awesome/2026.11.13#changelog)
     📕 Full documentation regarding this blueprint is available [here](https://yarafie.github.io/awesome-ha-blueprints/docs/blueprints/controllers/ikea_e2123).
 
     🚀 This blueprint is part of the **[Awesome HA Blueprints](https://yarafie.github.io/awesome-ha-blueprints) project**. Please consider **[leaving a star on GitHub](https://github.com/yarafie/awesome-ha-blueprints)**! 🌟
 
-  source_url: https://github.com/yarafie/awesome-ha-blueprints/blob/main/website/docs/blueprints/controllers/ikea_e2123/EPMatt/awesome/2025.03.28/ikea_e2123.yaml
+  source_url: https://github.com/yarafie/awesome-ha-blueprints/blob/main/website/docs/blueprints/controllers/ikea_e2123/EPMatt/awesome/2026.11.13/ikea_e2123.yaml
   domain: automation
   homeassistant:
     min_version: 2024.10.0
@@ -311,6 +312,53 @@ blueprint:
               unit_of_measurement: milliseconds
               mode: box
               step: 10.0
+    # inputs for stopping selected buttons from firing hook events
+    hooks_options_section:
+      name: Hooks options
+      icon: mdi:hook
+      collapsed: true
+      input:
+        hook_excluded_buttons:
+          name: (Optional) Buttons that do not fire hook events
+          description: >-
+            Selected buttons will not send their event to the Hooks connected to this controller, so they only run their custom action (if any).
+            Use this when a button has a custom action and a Hook also maps that button, e.g. the Media Player Hook maps Dots1/Dots2 short press to stop/toggle.
+            Leave empty to keep the default behaviour, where every button fires its hook event.
+          default: []
+          selector:
+            select:
+              multiple: true
+              options:
+                - label: Up button short press
+                  value: button_up_short
+                - label: Up button long press
+                  value: button_up_long
+                - label: Down button short press
+                  value: button_down_short
+                - label: Down button long press
+                  value: button_down_long
+                - label: Right button short press
+                  value: button_right_short
+                - label: Left button short press
+                  value: button_left_short
+                - label: Center button short press
+                  value: button_center_short
+                - label: Dots1 button short press
+                  value: button_dots1_short
+                - label: Dots1 button long press
+                  value: button_dots1_long
+                - label: Dots1 button release
+                  value: button_dots1_release
+                - label: Dots1 button double press
+                  value: button_dots1_double
+                - label: Dots2 button short press
+                  value: button_dots2_short
+                - label: Dots2 button long press
+                  value: button_dots2_long
+                - label: Dots2 button release
+                  value: button_dots2_release
+                - label: Dots2 button double press
+                  value: button_dots2_double
 #
 # Automation schema
 variables:
@@ -337,6 +385,8 @@ variables:
   button_dots2_long_loop: !input button_dots2_long_loop
   button_dots2_long_max_loop_repeats: !input button_dots2_long_max_loop_repeats
   helper_long_press_delay: !input helper_long_press_delay
+  # buttons whose ahb_controller_event is not fired, so hooks ignore them
+  hook_excluded_buttons: !input hook_excluded_buttons
   # mapping between actions and integrations
   actions_mapping:
     z2m:
@@ -826,10 +876,13 @@ actions:
               - z2m-button-center-playpause
         sequence:
           # fire the ahb hook event
-          - event: ahb_controller_event
-            event_data:
-              controller: '{{ controller_id }}'
-              action: button_center_short
+          - if:
+              - '{{ "button_center_short" not in hook_excluded_buttons }}'
+            then:
+              - event: ahb_controller_event
+                event_data:
+                  controller: '{{ controller_id }}'
+                  action: button_center_short
           # run the custom action
           - choose:
               - conditions: []
@@ -848,10 +901,13 @@ actions:
               - dcz-button-dots1-initial
         sequence:
           # fire the ahb hook event
-          - event: ahb_controller_event
-            event_data:
-              controller: '{{ controller_id }}'
-              action: button_dots1_short
+          - if:
+              - '{{ "button_dots1_short" not in hook_excluded_buttons }}'
+            then:
+              - event: ahb_controller_event
+                event_data:
+                  controller: '{{ controller_id }}'
+                  action: button_dots1_short
           # run the custom action
           - choose:
               - conditions: []
@@ -867,10 +923,13 @@ actions:
               - dcz-button-dots2-initial
         sequence:
           # fire the ahb hook event
-          - event: ahb_controller_event
-            event_data:
-              controller: '{{ controller_id }}'
-              action: button_dots2_short
+          - if:
+              - '{{ "button_dots2_short" not in hook_excluded_buttons }}'
+            then:
+              - event: ahb_controller_event
+                event_data:
+                  controller: '{{ controller_id }}'
+                  action: button_dots2_short
           # run the custom action
           - choose:
               - conditions: []
@@ -888,10 +947,13 @@ actions:
               - dcz-button-up-short
         sequence:
           # fire the ahb hook event
-          - event: ahb_controller_event
-            event_data:
-              controller: '{{ controller_id }}'
-              action: button_up_short
+          - if:
+              - '{{ "button_up_short" not in hook_excluded_buttons }}'
+            then:
+              - event: ahb_controller_event
+                event_data:
+                  controller: '{{ controller_id }}'
+                  action: button_up_short
           # run the custom action
           - choose:
               - conditions: []
@@ -906,10 +968,13 @@ actions:
               - dcz-button-up-long
         sequence:
           # fire the ahb hook event only once before looping the action
-          - event: ahb_controller_event
-            event_data:
-              controller: '{{ controller_id }}'
-              action: button_up_long
+          - if:
+              - '{{ "button_up_long" not in hook_excluded_buttons }}'
+            then:
+              - event: ahb_controller_event
+                event_data:
+                  controller: '{{ controller_id }}'
+                  action: button_up_long
           - choose:
               # if looping is enabled, loop the custom action for a finite number of iterations
               - conditions: '{{ button_up_long_loop }}'
@@ -929,10 +994,13 @@ actions:
               - dcz-button-down-short
         sequence:
           # fire the ahb hook event
-          - event: ahb_controller_event
-            event_data:
-              controller: '{{ controller_id }}'
-              action: button_down_short
+          - if:
+              - '{{ "button_down_short" not in hook_excluded_buttons }}'
+            then:
+              - event: ahb_controller_event
+                event_data:
+                  controller: '{{ controller_id }}'
+                  action: button_down_short
           # run the custom action
           - choose:
               - conditions: []
@@ -947,10 +1015,13 @@ actions:
               - dcz-button-down-long
         sequence:
           # fire the ahb hook event only once before looping the action
-          - event: ahb_controller_event
-            event_data:
-              controller: '{{ controller_id }}'
-              action: button_down_long
+          - if:
+              - '{{ "button_down_long" not in hook_excluded_buttons }}'
+            then:
+              - event: ahb_controller_event
+                event_data:
+                  controller: '{{ controller_id }}'
+                  action: button_down_long
           - choose:
               # if looping is enabled, loop the custom action for a finite number of iterations
               - conditions: '{{ button_down_long_loop }}'
@@ -970,10 +1041,13 @@ actions:
               - dcz-button-right-short
         sequence:
           # fire the ahb hook event
-          - event: ahb_controller_event
-            event_data:
-              controller: '{{ controller_id }}'
-              action: button_right_short
+          - if:
+              - '{{ "button_right_short" not in hook_excluded_buttons }}'
+            then:
+              - event: ahb_controller_event
+                event_data:
+                  controller: '{{ controller_id }}'
+                  action: button_right_short
           # run the custom action
           - choose:
               - conditions: []
@@ -988,10 +1062,13 @@ actions:
               - dcz-button-left-short
         sequence:
           # fire the ahb hook event
-          - event: ahb_controller_event
-            event_data:
-              controller: '{{ controller_id }}'
-              action: button_left_short
+          - if:
+              - '{{ "button_left_short" not in hook_excluded_buttons }}'
+            then:
+              - event: ahb_controller_event
+                event_data:
+                  controller: '{{ controller_id }}'
+                  action: button_left_short
           # run the custom action
           - choose:
               - conditions: []
@@ -1006,10 +1083,13 @@ actions:
               - dcz-button-center-short
         sequence:
           # fire the ahb hook event
-          - event: ahb_controller_event
-            event_data:
-              controller: '{{ controller_id }}'
-              action: button_center_short
+          - if:
+              - '{{ "button_center_short" not in hook_excluded_buttons }}'
+            then:
+              - event: ahb_controller_event
+                event_data:
+                  controller: '{{ controller_id }}'
+                  action: button_center_short
           # run the custom action
           - choose:
               - conditions: []
@@ -1025,10 +1105,13 @@ actions:
               - dcz-button-dots1-short
         sequence:
           # fire the ahb hook event
-          - event: ahb_controller_event
-            event_data:
-              controller: '{{ controller_id }}'
-              action: button_dots1_short
+          - if:
+              - '{{ "button_dots1_short" not in hook_excluded_buttons }}'
+            then:
+              - event: ahb_controller_event
+                event_data:
+                  controller: '{{ controller_id }}'
+                  action: button_dots1_short
           # run the custom action
           - choose:
               - conditions: []
@@ -1044,10 +1127,13 @@ actions:
               - dcz-button-dots1-long
         sequence:
           # fire the ahb event only once, the ahb hook will take care of looping
-          - event: ahb_controller_event
-            event_data:
-              controller: '{{ controller_id }}'
-              action: button_dots1_long
+          - if:
+              - '{{ "button_dots1_long" not in hook_excluded_buttons }}'
+            then:
+              - event: ahb_controller_event
+                event_data:
+                  controller: '{{ controller_id }}'
+                  action: button_dots1_long
           # run the custom action only once before entering repeat
           - choose:
               - conditions: []
@@ -1096,10 +1182,13 @@ actions:
                                               value_template: '{{ wait.trigger.idx is defined }}'
                                           then:
                                             # fire the event
-                                            - event: ahb_controller_event
-                                              event_data:
-                                                controller: '{{ controller_id }}'
-                                                action: button_dots1_release
+                                            - if:
+                                                - '{{ "button_dots1_release" not in hook_excluded_buttons }}'
+                                              then:
+                                                - event: ahb_controller_event
+                                                  event_data:
+                                                    controller: '{{ controller_id }}'
+                                                    action: button_dots1_release
                                             # run the custom action
                                             - choose:
                                                 - conditions: []
@@ -1116,10 +1205,13 @@ actions:
               - dcz-button-dots1-release
         sequence:
           # fire the ahb hook event
-          - event: ahb_controller_event
-            event_data:
-              controller: '{{ controller_id }}'
-              action: button_dots1_release
+          - if:
+              - '{{ "button_dots1_release" not in hook_excluded_buttons }}'
+            then:
+              - event: ahb_controller_event
+                event_data:
+                  controller: '{{ controller_id }}'
+                  action: button_dots1_release
           # run the custom action
           - choose:
               - conditions: []
@@ -1135,10 +1227,13 @@ actions:
               - dcz-button-dots1-double
         sequence:
           # fire the ahb hook event
-          - event: ahb_controller_event
-            event_data:
-              controller: '{{ controller_id }}'
-              action: button_dots1_double
+          - if:
+              - '{{ "button_dots1_double" not in hook_excluded_buttons }}'
+            then:
+              - event: ahb_controller_event
+                event_data:
+                  controller: '{{ controller_id }}'
+                  action: button_dots1_double
           # run the custom action
           - choose:
               - conditions: []
@@ -1154,10 +1249,13 @@ actions:
               - dcz-button-dots2-short
         sequence:
           # fire the ahb hook event
-          - event: ahb_controller_event
-            event_data:
-              controller: '{{ controller_id }}'
-              action: button_dots2_short
+          - if:
+              - '{{ "button_dots2_short" not in hook_excluded_buttons }}'
+            then:
+              - event: ahb_controller_event
+                event_data:
+                  controller: '{{ controller_id }}'
+                  action: button_dots2_short
           # run the custom action
           - choose:
               - conditions: []
@@ -1173,10 +1271,13 @@ actions:
               - dcz-button-dots2-long
         sequence:
           # fire the ahb event only once, the ahb hook will take care of looping
-          - event: ahb_controller_event
-            event_data:
-              controller: '{{ controller_id }}'
-              action: button_dots2_long
+          - if:
+              - '{{ "button_dots2_long" not in hook_excluded_buttons }}'
+            then:
+              - event: ahb_controller_event
+                event_data:
+                  controller: '{{ controller_id }}'
+                  action: button_dots2_long
           # run the custom action only once before entering repeat
           - choose:
               - conditions: []
@@ -1225,10 +1326,13 @@ actions:
                                               value_template: '{{ wait.trigger.idx is defined }}'
                                           then:
                                             # fire the event
-                                            - event: ahb_controller_event
-                                              event_data:
-                                                controller: '{{ controller_id }}'
-                                                action: button_dots2_release
+                                            - if:
+                                                - '{{ "button_dots2_release" not in hook_excluded_buttons }}'
+                                              then:
+                                                - event: ahb_controller_event
+                                                  event_data:
+                                                    controller: '{{ controller_id }}'
+                                                    action: button_dots2_release
                                             # run the custom action
                                             - choose:
                                                 - conditions: []
@@ -1245,10 +1349,13 @@ actions:
               - dcz-button-dots2-release
         sequence:
           # fire the ahb hook event
-          - event: ahb_controller_event
-            event_data:
-              controller: '{{ controller_id }}'
-              action: button_dots2_release
+          - if:
+              - '{{ "button_dots2_release" not in hook_excluded_buttons }}'
+            then:
+              - event: ahb_controller_event
+                event_data:
+                  controller: '{{ controller_id }}'
+                  action: button_dots2_release
           # run the custom action
           - choose:
               - conditions: []
@@ -1264,10 +1371,13 @@ actions:
               - dcz-button-dots2-double
         sequence:
           # fire the ahb hook event
-          - event: ahb_controller_event
-            event_data:
-              controller: '{{ controller_id }}'
-              action: button_dots2_double
+          - if:
+              - '{{ "button_dots2_double" not in hook_excluded_buttons }}'
+            then:
+              - event: ahb_controller_event
+                event_data:
+                  controller: '{{ controller_id }}'
+                  action: button_dots2_double
           # run the custom action
           - choose:
               - conditions: []
