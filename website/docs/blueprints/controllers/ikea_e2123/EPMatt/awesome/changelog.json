@@ -8,5 +8,15 @@
         "breaking": false
       }
     ]
+  },
+  {
+    "date": "2026.11.13",
+    "changes": [
+      {
+        "author": "@Nicolai-",
+        "description": "[Enhancement] Added the **Hooks options** section with a `hook_excluded_buttons` input. Selected buttons no longer fire `ahb_controller_event`, so a custom action on a button is not raced by a Hook mapped to the same button (e.g. the Media Player Hook maps Dots1/Dots2 short press to stop/toggle). Default is empty, which keeps the previous behaviour. ([@Nicolai-](https://github.com/Nicolai-))",
+        "breaking": false
+      }
+    ]
   }
 ]
