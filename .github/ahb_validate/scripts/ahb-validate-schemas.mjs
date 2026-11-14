@@ -3,7 +3,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import Ajv2020 from 'ajv/dist/2020.js'
 import matter from 'gray-matter'
-import yaml from 'js-yaml'
+import { load } from 'js-yaml'
 
 /* =========================================================
    Setup (JSON Schema draft 2020-12)
@@ -134,7 +134,7 @@ for (const file of changedFiles) {
   if (file.endsWith('.yaml') && base === 'manifest.yaml') {
     const schemaFile = YAML_SCHEMAS[base]
     if (schemaFile) {
-      const yamlData = yaml.load(fs.readFileSync(file, 'utf8'))
+      const yamlData = load(fs.readFileSync(file, 'utf8'))
       const schema = compiled[schemaFile]
 
       const valid = ajv.validate(schema.$id, yamlData)
