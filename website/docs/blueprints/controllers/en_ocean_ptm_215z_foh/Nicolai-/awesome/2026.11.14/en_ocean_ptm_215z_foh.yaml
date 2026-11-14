@@ -10,14 +10,14 @@ blueprint:
 
     Automations created with this blueprint can be connected with one or more [Hooks](https://yarafie.github.io/awesome-ha-blueprints/docs/blueprints/hooks) supported by this controller.
     Hooks allow to easily create controller-based automations for interacting with media players, lights, covers and more.
-    See the list of [Hooks available for this controller](https://yarafie.github.io/awesome-ha-blueprints/docs/blueprints/controllers/en_ocean_ptm_215z_foh/Nicolai-/awesome/2026.02.24#available-hooks) for additional details.
+    See the list of [Hooks available for this controller](https://yarafie.github.io/awesome-ha-blueprints/docs/blueprints/controllers/en_ocean_ptm_215z_foh/Nicolai-/awesome/2026.11.14#available-hooks) for additional details.
 
     📕 Full documentation regarding this blueprint is available [here](https://yarafie.github.io/awesome-ha-blueprints/docs/blueprints/controllers/en_ocean_ptm_215z_foh).
 
     🚀 This blueprint is part of the **[Awesome HA Blueprints](https://yarafie.github.io/awesome-ha-blueprints) project**.
 
-    ℹ️ Version 2026.02.24
-  source_url: https://github.com/yarafie/awesome-ha-blueprints/blob/main/website/docs/blueprints/controllers/en_ocean_ptm_215z_foh/Nicolai-/awesome/2026.02.24/en_ocean_ptm_215z_foh.yaml
+    ℹ️ Version 2026.11.14
+  source_url: https://github.com/yarafie/awesome-ha-blueprints/blob/main/website/docs/blueprints/controllers/en_ocean_ptm_215z_foh/Nicolai-/awesome/2026.11.14/en_ocean_ptm_215z_foh.yaml
   domain: automation
   input:
     controller_device:
@@ -196,22 +196,6 @@ blueprint:
           max: 5000
           mode: slider
           step: 1
-    # helpers used to properly recognize the remote button events
-    helper_debounce_delay:
-      name: (Optional) Helper - Debounce delay
-      description: |
-        Delay used for debouncing RAW controller events, by default set to 0.
-        A value of 0 disables the debouncing feature.
-        Increase this value if you notice custom actions or linked Hooks running multiple times when interacting with the device.
-        When the controller needs to be debounced, usually a value of 100 is enough to remove all duplicate events.
-      default: 0
-      selector:
-        number:
-          min: 0
-          max: 1000
-          unit_of_measurement: milliseconds
-          mode: box
-          step: 10
 # Automation schema
 variables:
   # convert input tags to variables, to be used in templates
@@ -228,7 +212,6 @@ variables:
   button_bottom_right_long_loop: !input button_bottom_right_long_loop
   button_bottom_right_long_max_loop_repeats: !input button_bottom_right_long_max_loop_repeats
   helper_last_controller_event: !input helper_last_controller_event
-  helper_debounce_delay: !input helper_debounce_delay
   # mapping between integration triggers and raw events
   actions_mapping:
     z2m:
@@ -241,11 +224,6 @@ variables:
         z2m-button-top-right-release: release_3
         z2m-button-bottom-right-press: press_4
         z2m-button-bottom-right-release: release_4
-      release_to_press_actions:
-        z2m-button-top-left-release: press_1
-        z2m-button-bottom-left-release: press_2
-        z2m-button-top-right-release: press_3
-        z2m-button-bottom-right-release: press_4
 mode: restart
 max_exceeded: silent
 triggers:
@@ -300,53 +278,59 @@ triggers:
     subtype: release_4
 condition: []
 action:
-  # debouncing - when automation is triggered multiple times, the last automation run is the one which completes execution, due to mode restart
-  # therefore previous runs must wait for the debounce delay before executing any other action
-  # if the delay expires and the automation is still running it means it's the last run and execution can continue
-  - delay:
-      milliseconds: !input helper_debounce_delay
-  # extract timing helpers used to classify short vs long release
+  # classify the event against the last one stored in the helper
+  # the helper holds the state of the last used button N:
+  #   press_N   - the button is held
+  #   release_N - a release came without its press; the press may still arrive (Zigbee2MQTT can deliver the two out of order)
+  #   short_N   - press and release were paired as a short press
+  #   held_N    - press and release were paired as a long press
+  # a repeated press restarts the hold, a repeated release finds short_N or held_N and is ignored
   - variables:
       trigger_action: '{{ actions_mapping[integration_id]["trigger_actions"].get(trigger.id, "") }}'
-      expected_press_action: '{{ actions_mapping[integration_id]["release_to_press_actions"].get(trigger.id, "") }}'
+      trigger_kind: "{{ trigger_action.split('_') | first }}"
+      trigger_button: "{{ trigger_action.split('_') | last }}"
       previous_event: '{{ (states(helper_last_controller_event) | from_json(default={})) if helper_last_controller_event != "" and (states(helper_last_controller_event) | regex_match("^\{\s*?((\"a\":\s*?\".*\"|\"t\":\s*?\d+\.\d+)(,\s*?)?){2}\s*?\}$")) else {} }}'
       previous_action: "{{ previous_event.a | default('') }}"
       previous_time: '{{ previous_event.t | float(0) }}'
-      trigger_elapsed: >-
-        {%- if expected_press_action != "" and previous_action == expected_press_action -%}
-          {{ (as_timestamp(now()) - previous_time) * 1000 }}
+      # milliseconds since the helper was written
+      previous_age: '{{ (as_timestamp(now()) - previous_time) * 1000 }}'
+      # short: short press, hold: start the long press, long_release: end of a long press, orphan and duplicate: ignored
+      outcome: >-
+        {%- set age = previous_age | float(0) -%}
+        {%- if trigger_kind == 'press' -%}
+          {#- a release of this button just before its press: the press arrived late -#}
+          {{ 'short' if previous_action == 'release_' ~ trigger_button and age <= hold_delay else 'hold' }}
+        {%- elif previous_action == 'press_' ~ trigger_button -%}
+          {{ 'short' if age <= hold_delay else 'long_release' }}
+        {%- elif previous_action in ['short_' ~ trigger_button, 'held_' ~ trigger_button] and age <= hold_delay -%}
+          duplicate
+        {%- else -%}
+          orphan
         {%- endif -%}
-  # update helper only on press events to preserve elapsed source for release evaluation
-  - choose:
-      - conditions:
-          - condition: trigger
-            id:
-              - z2m-button-top-left-press
-              - z2m-button-bottom-left-press
-              - z2m-button-top-right-press
-              - z2m-button-bottom-right-press
-        sequence:
-          - action: input_text.set_value
-            data:
-              entity_id: !input helper_last_controller_event
-              value: '{{ {"a":trigger_action,"t":as_timestamp(now())} | to_json }}'
+      next_action: >-
+        {{ {'hold': 'press_', 'short': 'short_', 'long_release': 'held_', 'orphan': 'release_'}.get(outcome, '') ~ trigger_button }}
+  # store the event first, so the next event is classified against it
+  - if:
+      - condition: template
+        value_template: "{{ outcome != 'duplicate' }}"
+    then:
+      - action: input_text.set_value
+        data:
+          entity_id: !input helper_last_controller_event
+          value: '{{ {"a":next_action,"t":as_timestamp(now())} | to_json }}'
   # choose the sequence to run based on the received button event
   - choose:
       # Short button press group
+      # usually run by the release, or by the press when its release arrived first
       - conditions:
-          - condition: trigger
-            id:
-              - z2m-button-top-left-release
-              - z2m-button-bottom-left-release
-              - z2m-button-top-right-release
-              - z2m-button-bottom-right-release
           - condition: template
-            value_template: '{{ trigger_elapsed | int <= hold_delay }}'
+            value_template: "{{ outcome == 'short' }}"
         sequence:
           - choose:
               - conditions:
                   - condition: trigger
                     id:
+                      - z2m-button-top-left-press
                       - z2m-button-top-left-release
                 sequence:
                   # fire the event
@@ -361,6 +345,7 @@ action:
               - conditions:
                   - condition: trigger
                     id:
+                      - z2m-button-bottom-left-press
                       - z2m-button-bottom-left-release
                 sequence:
                   # fire the event
@@ -375,6 +360,7 @@ action:
               - conditions:
                   - condition: trigger
                     id:
+                      - z2m-button-top-right-press
                       - z2m-button-top-right-release
                 sequence:
                   # fire the event
@@ -389,6 +375,7 @@ action:
               - conditions:
                   - condition: trigger
                     id:
+                      - z2m-button-bottom-right-press
                       - z2m-button-bottom-right-release
                 sequence:
                   # fire the event
@@ -402,12 +389,8 @@ action:
                         sequence: !input action_button_bottom_right_short
       # Long button press group
       - conditions:
-          - condition: trigger
-            id:
-              - z2m-button-top-left-press
-              - z2m-button-bottom-left-press
-              - z2m-button-top-right-press
-              - z2m-button-bottom-right-press
+          - condition: template
+            value_template: "{{ outcome == 'hold' }}"
         sequence:
           - delay:
               milliseconds: !input hold_delay
@@ -490,14 +473,8 @@ action:
                     default: !input action_button_bottom_right_long
       # Release button press group
       - conditions:
-          - condition: trigger
-            id:
-              - z2m-button-top-left-release
-              - z2m-button-bottom-left-release
-              - z2m-button-top-right-release
-              - z2m-button-bottom-right-release
           - condition: template
-            value_template: '{{ trigger_elapsed | int > hold_delay }}'
+            value_template: "{{ outcome == 'long_release' }}"
         sequence:
           - choose:
               - conditions:
