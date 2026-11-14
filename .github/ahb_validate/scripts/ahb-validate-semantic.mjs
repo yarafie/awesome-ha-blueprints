@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import fs from 'node:fs'
 import path from 'node:path'
-import * as yaml from 'js-yaml'
+import { load, YAML11_SCHEMA, defineScalarTag } from 'js-yaml'
 
 /* =========================================================
    Home Assistant YAML tags
@@ -12,22 +12,21 @@ import * as yaml from 'js-yaml'
    ========================================================= */
 
 function makeTaggedScalar(tagName) {
-  return new yaml.Type(tagName, {
-    kind: 'scalar',
-    resolve: (data) => data !== null && data !== undefined,
-    construct: (data) => ({
+  return defineScalarTag(tagName, {
+    resolve: (data) => ({
       __ahb_tag: tagName.replace(/^!/, ''),
       value: data,
     }),
+    identify: () => false,
   })
 }
 
 // Minimal set needed for HA blueprints (extend if you start using more)
-const AHB_YAML_SCHEMA = yaml.DEFAULT_SCHEMA.extend([
+const AHB_YAML_SCHEMA = YAML11_SCHEMA.withTags(
   makeTaggedScalar('!input'),
   makeTaggedScalar('!secret'),
   makeTaggedScalar('!include'),
-])
+)
 
 /* =========================================================
    Error collection
@@ -54,7 +53,7 @@ function finalize() {
 const exists = (f) => fs.existsSync(f)
 const readJson = (f) => JSON.parse(fs.readFileSync(f, 'utf8'))
 const readYaml = (f) =>
-  yaml.load(fs.readFileSync(f, 'utf8'), { schema: AHB_YAML_SCHEMA }) || {}
+  load(fs.readFileSync(f, 'utf8'), { schema: AHB_YAML_SCHEMA }) || {}
 
 function isVersionDirName(v) {
   return /^\d{4}\.\d{2}\.\d{2}$/.test(v)
