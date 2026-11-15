@@ -453,5 +453,15 @@
         "breaking": false
       }
     ]
+  },
+  {
+    "date": "2026.11.14",
+    "changes": [
+      {
+        "author": "@Nicolai-",
+        "description": "[Bug Fix] A long press of brightness up on a light that is off now waits up to 5 seconds for the light to report its brightness before raising it, so lights that report late (e.g. Zigbee2MQTT groups) no longer stay at their turn-on brightness. The brightness actions also no longer log a `NoneType` error when the light is off or unavailable.",
+        "breaking": false
+      }
+    ]
   }
 ]
