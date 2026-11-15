@@ -8,5 +8,15 @@
         "breaking": false
       }
     ]
+  },
+  {
+    "date": "2026.11.14",
+    "changes": [
+      {
+        "author": "@Nicolai-",
+        "description": "[Bug Fix] Presses and releases are now paired in any order, so a quick tap no longer runs as a long press when Zigbee2MQTT delivers the release first. Repeated events are now caught from the helper, so the debounce delay input is removed; automations that still set it keep working.",
+        "breaking": false
+      }
+    ]
   }
 ]
