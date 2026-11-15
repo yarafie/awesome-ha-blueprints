@@ -3,13 +3,12 @@ description: 'Controller automation for executing any kind of action triggered b
 librarians:
   - id: 'yarafie'
     name: 'yarafie'
-  - id: 'EPMatt'
-    name: 'EPMatt'
 libraries:
   EPMatt:
     maintainers:
       - id: 'yarafie'
         name: 'yarafie'
+    original_authors:
       - id: 'EPMatt'
         name: 'EPMatt'
     releases:
@@ -32,6 +31,9 @@ libraries:
       - 'deCONZ'
   yarafie:
     maintainers:
+      - id: 'yarafie'
+        name: 'yarafie'
+    original_authors:
       - id: 'yarafie'
         name: 'yarafie'
     releases:

@@ -12,6 +12,9 @@ libraries:
         name: 'yarafie'
       - id: 'Nicolai-'
         name: 'Nicolai-'
+    original_authors:
+      - id: 'Nicolai-'
+        name: 'Nicolai-'
     releases:
       awesome:
         supported_hooks:

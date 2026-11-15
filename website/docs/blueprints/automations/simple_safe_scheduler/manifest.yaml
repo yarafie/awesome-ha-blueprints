@@ -3,13 +3,12 @@ description: 'A simple scheduler which executes a certain action at a given time
 librarians:
   - id: 'yarafie'
     name: 'yarafie'
-  - id: 'EPMatt'
-    name: 'EPMatt'
 libraries:
   EPMatt:
     maintainers:
       - id: 'yarafie'
         name: 'yarafie'
+    original_authors:
       - id: 'EPMatt'
         name: 'EPMatt'
     releases:

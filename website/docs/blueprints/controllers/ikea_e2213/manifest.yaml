@@ -3,15 +3,14 @@ description: 'Controller automation for executing any kind of action triggered b
 librarians:
   - id: 'yarafie'
     name: 'yarafie'
-  - id: 'EPMatt'
-    name: 'EPMatt'
 libraries:
   EPMatt:
     maintainers:
       - id: 'yarafie'
         name: 'yarafie'
-      - id: 'EPMatt'
-        name: 'EPMatt'
+    original_authors:
+      - id: 'yarafie'
+        name: 'yarafie'
     releases:
       awesome:
         supported_hooks:

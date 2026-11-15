@@ -8,6 +8,11 @@ librarians:
 libraries:
   wobondar:
     maintainers:
+      - id: 'yarafie'
+        name: 'yarafie'
+      - id: 'wobondar'
+        name: 'wobondar'
+    original_authors:
       - id: 'wobondar'
         name: 'wobondar'
     releases:

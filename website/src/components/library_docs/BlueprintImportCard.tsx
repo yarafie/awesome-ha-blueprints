@@ -209,6 +209,7 @@ interface ReleaseMetadata {
   title?: string
   description?: string
   maintainers?: ReleaseMaintainer[]
+  original_authors?: ReleaseMaintainer[]
   status?: string
 }
 
@@ -638,6 +639,48 @@ function BlueprintImportCard({
                   const displayName = maintainer.name?.trim() || username
                   const profileUrl =
                     maintainer.url || `https://github.com/${username}`
+
+                  if (!username) return null
+
+                  return (
+                    <a
+                      key={username}
+                      href={profileUrl}
+                      target='_blank'
+                      rel='noopener noreferrer'
+                      style={styles.maintainerChip}
+                    >
+                      <img
+                        src={`https://github.com/${username}.png`}
+                        alt={displayName}
+                        style={{
+                          width: 18,
+                          height: 18,
+                          borderRadius: '50%',
+                          objectFit: 'cover',
+                        }}
+                      />
+                      @{displayName}
+                    </a>
+                  )
+                })}
+              </div>
+            ) : null}
+
+            {releaseMetadata?.original_authors &&
+            releaseMetadata.original_authors.length > 0 ? (
+              <div style={styles.metadataInlineRow}>
+                <span style={styles.metadataLabel}>
+                  {releaseMetadata.original_authors.length > 1
+                    ? 'Original authors'
+                    : 'Original author'}
+                </span>
+
+                {releaseMetadata.original_authors.map((author) => {
+                  const username = author.id.replace(/^@/, '').trim()
+                  const displayName = author.name?.trim() || username
+                  const profileUrl =
+                    author.url || `https://github.com/${username}`
 
                   if (!username) return null
 

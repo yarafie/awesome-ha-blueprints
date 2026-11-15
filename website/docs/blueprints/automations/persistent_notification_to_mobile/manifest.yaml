@@ -3,13 +3,12 @@ description: 'Send Web UI persistent notifications with the provided ID to the s
 librarians:
   - id: 'yarafie'
     name: 'yarafie'
-  - id: 'EPMatt'
-    name: 'EPMatt'
 libraries:
   EPMatt:
     maintainers:
       - id: 'yarafie'
         name: 'yarafie'
+    original_authors:
       - id: 'EPMatt'
         name: 'EPMatt'
     releases:

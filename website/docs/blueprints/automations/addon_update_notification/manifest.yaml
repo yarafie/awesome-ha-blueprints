@@ -3,13 +3,12 @@ description: 'Send a notification to the provided mobile devices whenever an upd
 librarians:
   - id: 'yarafie'
     name: 'yarafie'
-  - id: 'EPMatt'
-    name: 'EPMatt'
 libraries:
   EPMatt:
     maintainers:
       - id: 'yarafie'
         name: 'yarafie'
+    original_authors:
       - id: 'EPMatt'
         name: 'EPMatt'
     releases:

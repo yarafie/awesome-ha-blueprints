@@ -253,6 +253,7 @@ function getReleaseConfig(manifest, libraryId, releaseId) {
 
   return {
     maintainers: libraryConfig.maintainers || [],
+    original_authors: libraryConfig.original_authors || [],
     requires_helper:
       releaseOverride.requires_helper ?? libraryConfig.requires_helper ?? false,
     has_long_press_loop:
@@ -375,6 +376,10 @@ function generateLibraryJson(
     status: resolveStatus(libraryConfig.status, manifest.status),
   }
 
+  if (libraryConfig.original_authors?.length) {
+    result.original_authors = libraryConfig.original_authors
+  }
+
   // Aggregate integrations from all releases in this library
   const allIntegrations = new Set()
   for (const rid of releaseIds) {
@@ -415,6 +420,10 @@ function generateReleaseJson(
     versions,
     latest_version: latestVersion,
     status: releaseConfig.status,
+  }
+
+  if (releaseConfig.original_authors?.length) {
+    result.original_authors = releaseConfig.original_authors
   }
 
   if (category === 'controllers' && releaseConfig.supported_hooks) {
