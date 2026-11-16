@@ -514,7 +514,12 @@ const BlueprintPage: React.FC<BlueprintPageProps> = ({
               </div>
               {lib.releases.map((rel) => {
                 const key = `${lib.libraryId}:${rel.releaseId}`
-                const latestEntry = rel.changelog?.[rel.changelog.length - 1]
+                // The changelog entry of the version shown as "Latest"
+                // (the newest ACTIVE version), not simply the newest entry.
+                const latestEntry =
+                  rel.changelog?.find(
+                    (entry) => entry.date === rel.release.latest_version,
+                  ) ?? rel.changelog?.[rel.changelog.length - 1]
                 const hasBreakingChange =
                   latestEntry?.changes.some((c) => c.breaking) ?? false
                 const supportedHooks =
