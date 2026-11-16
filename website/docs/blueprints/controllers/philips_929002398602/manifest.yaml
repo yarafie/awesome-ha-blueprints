@@ -21,7 +21,6 @@ libraries:
     supported_integrations:
       - 'Zigbee2MQTT'
       - 'ZHA'
-      - 'deCONZ'
 manufacturer: 'Philips'
 model: '929002398602'
 model_name: 'Philips 929002398602 Hue Dimmer switch v2'

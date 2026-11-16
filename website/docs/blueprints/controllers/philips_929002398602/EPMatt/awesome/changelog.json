@@ -123,5 +123,15 @@
         "breaking": false
       }
     ]
+  },
+  {
+    "date": "2026.11.16",
+    "changes": [
+      {
+        "author": "@yarafie",
+        "description": "[Clean Up] Removed leftover deCONZ wording and device filters. This controller supports Zigbee2MQTT and ZHA only. ([@yarafie](https://github.com/yarafie))",
+        "breaking": false
+      }
+    ]
   }
 ]
