@@ -15,11 +15,10 @@
  * ────────────────────────────────────────────────────────────────
  */
 import React, { useEffect, useState } from 'react'
-import { marked, Renderer } from 'marked'
+import { markdownToHtml } from '@src/utils/safeMarkdown'
 import { changelogsContext } from '@src/utils/libraryContexts' //1. Moved utils.ts to utils/contexts.ts
 // 2. Added emoji replacement to support :emoji_codes:
 // Import the full emoji map
-import { emojiMap } from '@src/utils/emojiMap'
 
 interface ChangelogExternalReference {
   label: string
@@ -86,41 +85,6 @@ const styles = {
     borderRadius: '50%',
     objectFit: 'cover',
   } as React.CSSProperties,
-}
-
-// 2. Migrated to Marked v17 configuration with custom Renderer.
-// ─────────────────────────────────────────────
-// Marked v17 configuration
-// ─────────────────────────────────────────────
-// Configure marked for inline markdown parsing
-// Customize link renderer to open links in new tab
-const renderer = new Renderer()
-renderer.link = ({ href, title, text }) => {
-  const titleAttr = title ? ` title="${title}"` : ''
-  return `<a href="${href}" target="_blank" rel="noopener noreferrer"${titleAttr}>${text}</a>`
-}
-
-marked.setOptions({
-  breaks: true, // Convert line breaks to <br>
-  gfm: true, // GitHub Flavored Markdown
-  async: false, // required for synchronous parse() marked 17
-  renderer,
-})
-
-// 3. Added emoji replacement to support :emoji_codes:
-// ─────────────────────────────────────────────
-// Emoji replacement — uses imported emojiMap
-// ─────────────────────────────────────────────
-const replaceEmojiCodes = (text: string): string =>
-  text.replace(/:([a-zA-Z0-9_+-]+):/g, (match) => emojiMap[match] || match)
-
-// ─────────────────────────────────────────────
-// Markdown → HTML (inline safe)
-// ─────────────────────────────────────────────
-const markdownToHtml = (markdown: string): string => {
-  let html = marked.parse(replaceEmojiCodes(markdown)) as string
-  html = html.replace(/^<p>/, '').replace(/<\/p>\s*$/, '')
-  return html.trim()
 }
 
 const renderDescription = (description: string) => (

@@ -32,8 +32,7 @@ import Select from 'react-select'
 import type { StylesConfig } from 'react-select'
 
 // Markdown rendering (same as Changelog.tsx)
-import { marked, Renderer } from 'marked'
-import { emojiMap } from '@src/utils/emojiMap'
+import { markdownToHtml } from '@src/utils/safeMarkdown'
 
 type VersionOption = { value: string; label: string }
 
@@ -50,30 +49,6 @@ interface ChangelogEntry {
   }>
 }
 
-// Markdown rendering (same as Changelog.tsx)
-// ─────────────────────────────────────────────
-// Marked v17 configuration
-// ─────────────────────────────────────────────
-const renderer = new Renderer()
-renderer.link = ({ href, title, text }) => {
-  const titleAttr = title ? ` title="${title}"` : ''
-  return `<a href="${href}" target="_blank" rel="noopener noreferrer"${titleAttr}>${text}</a>`
-}
-marked.setOptions({
-  breaks: true, // Convert line breaks to <br>
-  gfm: true, // GitHub Flavored Markdown
-  async: false, // required for synchronous parse() marked 17
-  renderer,
-})
-// Emoji replacement — uses imported emojiMap
-const replaceEmojiCodes = (text: string): string =>
-  text.replace(/:([a-zA-Z0-9_+-]+):/g, (match) => emojiMap[match] || match)
-// Markdown → HTML (inline safe)
-const markdownToHtml = (markdown: string): string => {
-  let html = marked.parse(replaceEmojiCodes(markdown)) as string
-  html = html.replace(/^<p>/, '').replace(/<\/p>\s*$/, '')
-  return html.trim()
-}
 const renderDescription = (description: string) => (
   <span dangerouslySetInnerHTML={{ __html: markdownToHtml(description) }} />
 )

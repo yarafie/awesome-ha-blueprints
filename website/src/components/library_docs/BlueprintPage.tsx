@@ -28,8 +28,7 @@ import {
   pdfContext,
 } from '@src/utils/libraryContexts'
 // MARKDOWN SUPPORT
-import { marked, Renderer } from 'marked'
-import { emojiMap } from '@src/utils/emojiMap'
+import { markdownToHtml } from '@src/utils/safeMarkdown'
 // DOWNLOAD METRICS
 import { getBlueprintDownloads } from '@src/services/supabase/librarySupabase'
 /* ------------------------------------------------------------------ */
@@ -147,33 +146,6 @@ const humanizeHookLabel = (hookId: string): string =>
     .filter(Boolean)
     .map((p) => p.charAt(0).toUpperCase() + p.slice(1))
     .join(' ')
-/* ------------------------------------------------------------------ */
-/* Markdown helpers (copied verbatim from Changelog.tsx)               */
-/* ------------------------------------------------------------------ */
-// MARKDOWN SUPPORT (surgical)
-const renderer = new Renderer()
-renderer.link = ({ href, title, text }) => {
-  const titleAttr = title ? ` title="${title}"` : ''
-  return `<a href="${href}" target="_blank" rel="noopener noreferrer"${titleAttr}>${text}</a>`
-}
-marked.setOptions({
-  breaks: true,
-  gfm: true,
-  async: false,
-  renderer,
-})
-const replaceEmojiCodes = (text: string): string => {
-  return text.replace(
-    /:([a-zA-Z0-9_+-]+):/g,
-    (match) => emojiMap[match] || match,
-  )
-}
-const markdownToHtml = (markdown: string): string => {
-  const withEmojis = replaceEmojiCodes(markdown)
-  let html = marked.parse(withEmojis) as string
-  html = html.replace(/^<p>/, '').replace(/<\/p>\s*$/, '')
-  return html.trim()
-}
 /* ------------------------------------------------------------------ */
 /* Component                                                          */
 /* ------------------------------------------------------------------ */
