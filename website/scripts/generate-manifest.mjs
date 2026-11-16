@@ -36,6 +36,25 @@ const BLUEPRINTS_DIR = path.resolve(import.meta.dirname, '../docs/blueprints')
 const DRY_RUN = process.argv.includes('--dry-run')
 const FORCE = process.argv.includes('--force')
 
+// DISABLED BY DEFAULT.
+// This was the one-time migration tool that created manifest.yaml from the
+// old blueprint.json files. manifest.yaml is now the hand-maintained source
+// of truth: this script does not know about original_authors or per-version
+// statuses, and blueprint.json is now generated FROM the manifest.
+// Running it with --force would overwrite manifests and lose that data.
+const ALLOW_FLAG = '--i-understand-this-overwrites-manifests'
+if (!process.argv.includes(ALLOW_FLAG)) {
+  console.error(
+    [
+      'generate-manifest.mjs is disabled.',
+      'manifest.yaml is the source of truth and is edited by hand.',
+      'To build the site, use: node scripts/generate.mjs',
+      `To run this migration tool anyway, add: ${ALLOW_FLAG}`,
+    ].join('\n'),
+  )
+  process.exit(1)
+}
+
 const blueprintArgIndex = process.argv.indexOf('--blueprint')
 const BLUEPRINT_FILTER =
   blueprintArgIndex !== -1 ? process.argv[blueprintArgIndex + 1] : null

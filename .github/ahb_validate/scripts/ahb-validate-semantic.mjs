@@ -355,24 +355,46 @@ function validateManifestYaml(identity, file) {
   file: ${file}`,
       )
     }
-    if (
-      !manifest.supported_integrations ||
-      manifest.supported_integrations.length === 0
-    ) {
-      record(
-        `manifest.yaml missing supported_integrations (required for controllers):
-  file: ${file}`,
-      )
+    // supported_integrations lives on the library and may be overridden by
+    // a release. Every release must end up with at least one integration.
+    for (const [libraryId, library] of Object.entries(
+      manifest.libraries || {},
+    )) {
+      const releases = Object.entries(library?.releases || {})
+      const scopes = releases.length ? releases : [[null, {}]]
+      for (const [releaseId, release] of scopes) {
+        const integrations =
+          release?.supported_integrations ?? library?.supported_integrations
+        if (!Array.isArray(integrations) || integrations.length === 0) {
+          record(
+            `manifest.yaml missing supported_integrations (required for controllers):
+  file: ${file}
+  library: ${libraryId}
+  release: ${releaseId ?? '(none defined)'}`,
+          )
+        }
+      }
     }
   }
 
   // Hooks must have supported_controllers
   if (identity.category === 'hooks') {
-    if (!manifest.supported_controllers) {
-      record(
-        `manifest.yaml missing supported_controllers (required for hooks):
-  file: ${file}`,
-      )
+    // supported_controllers lives on each release.
+    for (const [libraryId, library] of Object.entries(
+      manifest.libraries || {},
+    )) {
+      for (const [releaseId, release] of Object.entries(
+        library?.releases || {},
+      )) {
+        if (!release?.supported_controllers) {
+          record(
+            `manifest.yaml missing supported_controllers (required for hooks):
+  file: ${file}
+  library: ${libraryId}
+  release: ${releaseId}`,
+          )
+        }
+      }
     }
   }
 }

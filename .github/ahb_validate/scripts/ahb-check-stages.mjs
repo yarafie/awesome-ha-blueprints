@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import fs from 'node:fs'
 import path from 'node:path'
+import { load } from 'js-yaml'
 
 /* =========================================================
    Constants
@@ -114,8 +115,35 @@ const vars = {
    ========================================================= */
 const missing = {}
 
+/*
+  A controller release that declares `supported_hooks: ['none']` in
+  manifest.yaml has no hooks, so it has no hooks.json either.
+*/
+function releaseDeclaresNoHooks() {
+  if (category !== 'controllers') return false
+  try {
+    const manifest =
+      load(
+        fs.readFileSync(
+          path.join(BLUEPRINT_ROOT, category, blueprint_id, 'manifest.yaml'),
+          'utf8',
+        ),
+      ) || {}
+    const hooks =
+      manifest.libraries?.[library_id]?.releases?.[release_id]?.supported_hooks
+    return Array.isArray(hooks) && hooks.length === 1 && hooks[0] === 'none'
+  } catch {
+    return false
+  }
+}
+
+const noHooks = releaseDeclaresNoHooks()
+
 for (const [stage, files] of Object.entries(rules)) {
-  const absent = files.map((f) => expand(f, vars)).filter((f) => !exists(f))
+  const absent = files
+    .map((f) => expand(f, vars))
+    .filter((f) => !exists(f))
+    .filter((f) => !(noHooks && f.endsWith('/hooks.json')))
 
   if (absent.length) {
     missing[stage] = absent
