@@ -568,6 +568,23 @@ function generateDefaultVersionMdx(
     descriptionExtra += '\n' + STANDARD_VDP_DESCRIPTION_PARAGRAPH + '\n'
   }
 
+  // A controller blueprint without an `integration` input detects the
+  // integration on its own. Read that from the newest version's YAML.
+  let autoDetectsIntegration = false
+  if (category === 'controllers') {
+    const versionDirs = subdirs(releaseDir).sort()
+    const newestYaml = path.join(
+      releaseDir,
+      versionDirs[versionDirs.length - 1] || '',
+      `${blueprintId}.yaml`,
+    )
+    if (fs.existsSync(newestYaml)) {
+      autoDetectsIntegration = !/^\s+integration:\s*$/m.test(
+        fs.readFileSync(newestYaml, 'utf-8'),
+      )
+    }
+  }
+
   const vars = {
     frontmatter: buildVersionFrontmatter(manifest, category, integrations),
     id: blueprintId,
@@ -577,9 +594,11 @@ function generateDefaultVersionMdx(
     model_name: manifest.model_name || '',
     integrations_csv: actualIntegrations.join(', '),
     multi_integration_note:
-      hasHooks && actualIntegrations.length > 1
-        ? ' Just specify the integration used to connect the remote to Home Assistant when setting up the automation, and the blueprint will take care of all the rest.'
-        : '',
+      actualIntegrations.length > 1 && autoDetectsIntegration
+        ? ' The blueprint will automagically detect the integration type and take care of all the rest.'
+        : hasHooks && actualIntegrations.length > 1
+          ? ' Just specify the integration used to connect the remote to Home Assistant when setting up the automation, and the blueprint will take care of all the rest.'
+          : '',
     requirements: buildRequirements(actualIntegrations),
     hooks_sections: buildHooksSections(
       hooksData,
