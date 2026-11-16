@@ -27,19 +27,27 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ github.event_name == 'issue_comment' && github.actor != 'github-actions[bot]' }}
     steps:
-      - uses: actions/checkout@v7
-      - uses: actions-ecosystem/action-remove-labels@v1
+      - name: Remove the 'status - waiting for feedback' label
         if: ${{ contains(github.event.issue.labels.*.name, 'status - waiting for feedback') }}
-        with:
-          labels: 'status - waiting for feedback'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          NUMBER: ${{ github.event.issue.number || github.event.pull_request.number }}
+        run: |
+          gh api --method DELETE \
+            "repos/${GITHUB_REPOSITORY}/issues/${NUMBER}/labels/status%20-%20waiting%20for%20feedback" \
+            || echo "The label could not be removed (it may already be gone)."
 
   # Remove 'status: waiting for feedback' label once an issue or a PR are closed
   remove_feedback_label_closed:
     runs-on: ubuntu-latest
     if: ${{ github.event_name == 'issues' || github.event_name == 'pull_request' }}
     steps:
-      - uses: actions/checkout@v7
-      - uses: actions-ecosystem/action-remove-labels@v1
+      - name: Remove the 'status - waiting for feedback' label
         if: ${{ github.event_name == 'issues' && contains(github.event.issue.labels.*.name, 'status - waiting for feedback') || github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'status - waiting for feedback') }}
-        with:
-          labels: 'status - waiting for feedback'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          NUMBER: ${{ github.event.issue.number || github.event.pull_request.number }}
+        run: |
+          gh api --method DELETE \
+            "repos/${GITHUB_REPOSITORY}/issues/${NUMBER}/labels/status%20-%20waiting%20for%20feedback" \
+            || echo "The label could not be removed (it may already be gone)."
