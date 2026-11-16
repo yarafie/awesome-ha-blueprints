@@ -1,8 +1,18 @@
+# yamllint disable rule:document-start
+# yamllint disable rule:line-length
+# Reports the result of the "CI - PR" checks in the pull request's status
+# comment (one comment per pull request, updated in place).
+#
+# This workflow runs with write access on pull requests. It does not use any
+# file produced by the pull request's own run: the pull request is found by
+# asking GitHub which open pull request has the checked commit, and the
+# reasons for a failure come from GitHub's record of which jobs failed.
 name: PR Commenter
 
 permissions:
   contents: read
   pull-requests: write
+  actions: read
 
 'on':
   workflow_run:
@@ -12,112 +22,94 @@ permissions:
       - completed
 
 jobs:
-  pr-commenter-ci-success:
-    name: Report CI Success
+  report:
+    name: Report CI result
     runs-on: ubuntu-latest
-    if: ${{ github.actor != 'dependabot[bot]' && github.event.workflow_run.conclusion == 'success' }}
+    if: ${{ github.event.workflow_run.event == 'pull_request' && (github.event.workflow_run.conclusion == 'success' || github.event.workflow_run.conclusion == 'failure') }}
 
     steps:
-      - name: Download changes analysis
-        uses: dawidd6/action-download-artifact@v28
+      - name: Check out the helper script (default branch only)
+        uses: actions/checkout@v7
         with:
-          commit: ${{ github.event.workflow_run.head_sha }}
-          workflow: ci_pr.yml
-          allow_forks: true
+          sparse-checkout: .github/scripts
+          persist-credentials: false
 
-      - id: pr_info
-        run: echo "::set-output name=num::$(cat changes_pr_num/pr_num.txt)"
-
-      - uses: hasura/comment-progress@v2
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          repository: ${{ github.repository }}
-          number: ${{ steps.pr_info.outputs.num }}
-          id: ci-pr-result-${{ github.event.workflow_run.head_sha }}
-          message: |
-            Hey @${{ github.actor }},
-            ✅  Your contribution passed all the checks, awesome!
-            A maintainer will soon review your submission and provide additional feedback regarding your changes.
-            Thanks again for dedicating your precious time to this project. 🔥
-
-      - if: ${{ hashFiles('changes_blueprints/blueprints.txt') != '' }}
-        id: blueprints
+      - name: Find the pull request for the checked commit
+        id: pr
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
         run: |
-          myblueprints=$(< changes_blueprints/blueprints.txt)
-          urls=$(printf '%s' "$myblueprints" | jq --raw-input --slurp '.')
-          echo "::set-output name=urls::$urls"
+          found="$(
+            gh api "repos/${REPO}/pulls?state=open&per_page=100" --paginate |
+              jq -r --arg sha "$HEAD_SHA" \
+                '.[] | select(.head.sha == $sha) | "\(.number) \(.user.login)"' |
+              head -n 1
+          )"
+          number="${found%% *}"
+          author="${found#* }"
+          if [[ -z "$found" || "$author" == 'dependabot[bot]' ]]; then
+            echo "No open pull request to report on for ${HEAD_SHA}."
+            exit 0
+          fi
+          echo "number=${number}" >> "$GITHUB_OUTPUT"
+          echo "author=${author}" >> "$GITHUB_OUTPUT"
 
-      - if: ${{ hashFiles('changes_blueprints/blueprints.txt') != '' }}
-        uses: hasura/comment-progress@v2
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          repository: ${{ github.repository }}
-          number: ${{ steps.pr_info.outputs.num }}
-          id: ci-pr-result-${{ github.event.workflow_run.head_sha }}
-          append: true
-          message: |
-            <br>
-            📝 Updated blueprints included in this PR can be tested by importing them in Home Assistant via the following links.
-            ${{ join(fromJSON(steps.blueprints.outputs.urls), '\n\n') }}
+      - name: Report success
+        if: ${{ steps.pr.outputs.number != '' && github.event.workflow_run.conclusion == 'success' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          NUMBER: ${{ steps.pr.outputs.number }}
+          AUTHOR: ${{ steps.pr.outputs.author }}
+        run: |
+          bash .github/scripts/pr-status-comment.sh <<COMMENT
+          Hey @${AUTHOR},
+          ✅  Your contribution passed all the checks, awesome!
+          A maintainer will soon review your submission and provide additional feedback regarding your changes.
+          Thanks again for dedicating your precious time to this project. 🔥
+          COMMENT
 
-  pr-commenter-ci-failure:
-    name: Report CI Failure
-    runs-on: ubuntu-latest
-    if: ${{ github.actor != 'dependabot[bot]' && github.event.workflow_run.conclusion == 'failure' }}
+      - name: Report failure
+        if: ${{ steps.pr.outputs.number != '' && github.event.workflow_run.conclusion == 'failure' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          NUMBER: ${{ steps.pr.outputs.number }}
+          AUTHOR: ${{ steps.pr.outputs.author }}
+          RUN_ID: ${{ github.event.workflow_run.id }}
+          RUN_URL: ${{ github.event.workflow_run.html_url }}
+        run: |
+          failed="$(
+            gh api "repos/${REPO}/actions/runs/${RUN_ID}/jobs?per_page=100" |
+              jq -r '.jobs[] | select(.conclusion == "failure") | .name'
+          )"
+          reasons=''
+          while IFS= read -r job; do
+            case "$job" in
+              '') ;;
+              'Run Linters')
+                reasons+='* Your submission includes some code style issues. We invite you to inspect the output of the Pull Request checks and fix reported errors and warnings.'$'\n'
+                ;;
+              'Run formatters to check code formatting')
+                reasons+='* Your files are not properly formatted. Did you remember to run `pnpm format` before submitting your changes?'$'\n'
+                ;;
+              'Check website build')
+                reasons+='* The website could not be built with your changes. Please check the build output in the Pull Request checks.'$'\n'
+                ;;
+              *)
+                reasons+="* The check \"${job}\" failed. Please inspect its output in the Pull Request checks."$'\n'
+                ;;
+            esac
+          done <<<"$failed"
+          bash .github/scripts/pr-status-comment.sh <<COMMENT
+          Hey @${AUTHOR},
+          ❌  It looks like there are some issues with your contribution. Don't worry, here's some additional information and guidance on how to solve them.
 
-    steps:
-      - name: Download failure reports
-        uses: dawidd6/action-download-artifact@v28
-        with:
-          commit: ${{ github.event.workflow_run.head_sha }}
-          workflow: ci_pr.yml
-          workflow_conclusion: failure
-          allow_forks: true
+          ${reasons}
+          You can see the details [in the checks](${RUN_URL}).
 
-      - id: pr_info
-        run: echo "::set-output name=num::$(cat changes_pr_num/pr_num.txt)"
-
-      - uses: hasura/comment-progress@v2
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          repository: ${{ github.repository }}
-          number: ${{ steps.pr_info.outputs.num }}
-          id: ci-pr-result-${{ github.event.workflow_run.head_sha }}
-          message: |
-            Hey @${{ github.actor }},
-            ❌  It looks like there are some issues with your contribution. Don't worry, here's some additional information and guidance
-            on how to solve them.
-
-      - if: ${{ hashFiles('lint/results.txt') != '' }}
-        uses: hasura/comment-progress@v2
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          repository: ${{ github.repository }}
-          number: ${{ steps.pr_info.outputs.num }}
-          id: ci-pr-result-${{ github.event.workflow_run.head_sha }}
-          append: true
-          message: |
-            * Your submission includes some code style issues. We invite you to inspect the output of the Pull Request checks and fix reported errors and warnings.
-
-      - if: ${{ hashFiles('format-lint/results.txt') != '' }}
-        uses: hasura/comment-progress@v2
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          repository: ${{ github.repository }}
-          number: ${{ steps.pr_info.outputs.num }}
-          id: ci-pr-result-${{ github.event.workflow_run.head_sha }}
-          append: true
-          message: |
-            * Your files are not properly formatted. Did you remember to run `npm run format` before submitting your changes?
-
-      - uses: hasura/comment-progress@v2
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          repository: ${{ github.repository }}
-          number: ${{ steps.pr_info.outputs.num }}
-          id: ci-pr-result-${{ github.event.workflow_run.head_sha }}
-          append: true
-          message: |
-            <br>
-            Please fix reported issues, then submit your updates here. If you have any questions or doubts, you can always contact a project maintainer. :)
-            Thanks!
+          Please fix reported issues, then submit your updates here. If you have any questions or doubts, you can always contact a project maintainer. :)
+          Thanks!
+          COMMENT

@@ -1,39 +1,59 @@
+# yamllint disable rule:document-start
+# yamllint disable rule:line-length
+# Greets the author of a pull request and tells them checks are running.
+# One status comment per pull request, updated in place (see
+# .github/scripts/pr-status-comment.sh).
+#
+# This workflow runs with write access on pull requests, including those from
+# forks. It must never check out or run code from the pull request: the
+# checkout below is the base branch (main), which is the default here.
 name: PR Commenter
 
 'on':
   pull_request_target:
     branches:
       - main
+    types:
+      - opened
+      - reopened
+      - synchronize
 
 permissions:
   contents: read
   pull-requests: write
+
 jobs:
   thank-you-message:
     name: Thank you message
     runs-on: ubuntu-latest
-    if: ${{ github.actor != 'dependabot[bot]' }}
+    if: ${{ github.event.pull_request.user.login != 'dependabot[bot]' }}
 
     steps:
-      - name: PR opened or not
-        id: pr_opened
-        run: |
-          if [$TYPE == 'opened']
-          then
-              echo "::set-output name=additional_text::'If this is your first PR here, your submission needs to be approved before checks can run, so the process might take a little longer.'"
-          fi
-        env:
-          TYPE: ${{ github.event.action }}
-      - uses: hasura/comment-progress@v2
+      - name: Check out the helper script (base branch only)
+        uses: actions/checkout@v7
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          repository: ${{ github.repository }}
-          number: ${{ github.event.number }}
-          id: ci-pr-progress-${{ github.sha }}
-          message: |
-            Hey @${{ github.actor }}, thank you so much for your contribution! 🚀
+          sparse-checkout: .github/scripts
+          persist-credentials: false
 
-            🔄 We're currently running a few checks to make sure that everything is great with your contribution. ${{ steps.pr_opened.outputs.additional_text }}
-            If further actions need to be performed before your contribution can be reviewed, additional guidance will be provided to you in the next comment.
+      - name: Post or update the status comment
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          NUMBER: ${{ github.event.pull_request.number }}
+          AUTHOR: ${{ github.event.pull_request.user.login }}
+          ASSOCIATION: ${{ github.event.pull_request.author_association }}
+        run: |
+          first_time=''
+          case "$ASSOCIATION" in
+            FIRST_TIME_CONTRIBUTOR | FIRST_TIMER)
+              first_time=' If this is your first PR here, your submission needs to be approved before checks can run, so the process might take a little longer.'
+              ;;
+          esac
+          bash .github/scripts/pr-status-comment.sh <<COMMENT
+          Hey @${AUTHOR}, thank you so much for your contribution! 🚀
 
-            Results are coming soon, stay tuned!
+          🔄 We're currently running a few checks to make sure that everything is great with your contribution.${first_time}
+          If further actions need to be performed before your contribution can be reviewed, additional guidance will be provided right here: this comment is updated when the checks finish.
+
+          Results are coming soon, stay tuned!
+          COMMENT
