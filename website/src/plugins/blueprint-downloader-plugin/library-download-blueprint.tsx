@@ -29,6 +29,7 @@ export default function DownloadBlueprint(props: {
     release_id?: string | null
     version?: string | null
     releasesIndex?: Record<string, Record<string, string[]>> // { [library_id]: { [release_id]: versions[] } }
+    latestIndex?: Record<string, Record<string, string>> // { [library_id]: { [release_id]: latest version } }
   }
 }) {
   const category = props.route.category
@@ -130,7 +131,10 @@ export default function DownloadBlueprint(props: {
     const versions = [
       ...indexForId[effectiveLibraryId][effectiveReleaseId],
     ].sort((a, b) => b.localeCompare(a))
-    effectiveVersion = versions[0]
+    const preferred =
+      props.route.latestIndex?.[effectiveLibraryId]?.[effectiveReleaseId]
+    effectiveVersion =
+      preferred && versions.includes(preferred) ? preferred : versions[0]
   }
 
   // --------------------------------------------------------------------

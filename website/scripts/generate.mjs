@@ -226,6 +226,15 @@ function resolveStatus(...levels) {
   return 'active'
 }
 
+/**
+ * Pick the version shown as "latest": the newest version whose status is
+ * `active`. If a release has no active version, fall back to the newest one.
+ */
+function pickLatestVersion(versions, statusOf) {
+  const sorted = sortVersionsDesc(versions)
+  return sorted.find((v) => statusOf(v) === 'active') ?? sorted[0]
+}
+
 /** Get library-specific configuration from the manifest. */
 function getLibraryConfig(manifest, libraryId) {
   return manifest.libraries?.[libraryId] || null
@@ -406,8 +415,12 @@ function generateReleaseJson(
   versions,
   releaseConfig,
 ) {
-  const sortedVersions = sortVersionsDesc(versions)
-  const latestVersion = sortedVersions[0]
+  const latestVersion = pickLatestVersion(versions, (v) =>
+    resolveStatus(
+      releaseConfig.version_overrides?.[v]?.status,
+      releaseConfig.status,
+    ),
+  )
 
   const result = {
     release_id: releaseId,

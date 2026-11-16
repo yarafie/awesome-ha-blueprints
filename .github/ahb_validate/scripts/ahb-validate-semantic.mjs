@@ -287,16 +287,15 @@ function validateReleaseJson(identity, file) {
       }
     })
 
-    if (json.latest_version) {
-      const latest = [...json.versions].sort().slice(-1)[0]
-      if (json.latest_version !== latest) {
-        record(
-          `release.json latest_version mismatch:
+    // latest_version is the newest ACTIVE version (see generate.mjs), so it
+    // is not always the newest folder. It must be one of the listed versions.
+    if (json.latest_version && !json.versions.includes(json.latest_version)) {
+      record(
+        `release.json latest_version is not one of its versions:
   file: ${file}
-  expected: ${latest}
+  versions: ${json.versions.join(', ')}
   actual: ${json.latest_version}`,
-        )
-      }
+      )
     }
   }
 }

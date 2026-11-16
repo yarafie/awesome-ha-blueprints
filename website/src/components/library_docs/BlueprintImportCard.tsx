@@ -211,6 +211,7 @@ interface ReleaseMetadata {
   maintainers?: ReleaseMaintainer[]
   original_authors?: ReleaseMaintainer[]
   status?: string
+  latest_version?: string
 }
 
 function getStatusBadgeStyle(status?: string) {
@@ -334,9 +335,17 @@ function loadReleaseVersions(
       .filter((v) => hasBlueprintYaml(category, id, library, release, v))
       .sort((a, b) => b.localeCompare(a))
     if (versions.length === 0) return null
+    // "latest" is decided once, by the generator (newest active version).
+    const preferred = loadReleaseMetadata(
+      category,
+      id,
+      library,
+      release,
+    )?.latest_version
     return {
       versions,
-      latestVersion: versions[0],
+      latestVersion:
+        preferred && versions.includes(preferred) ? preferred : versions[0],
     }
   } catch {
     return null
@@ -489,6 +498,11 @@ function BlueprintImportCard({
     }
   }, [category, id, library, release, selectedVersion])
   const versionParam = versions.length > 0 ? selectedVersion : 'latest'
+  const latestVersion =
+    releaseMetadata?.latest_version &&
+    versions.includes(releaseMetadata.latest_version)
+      ? releaseMetadata.latest_version
+      : versions[0]
   const blueprintUrl = `/awesome-ha-blueprints/blueprints/${category}/${id}?library=${library}&release=${release}&version=${versionParam}`
   const versionOptions: VersionOption[] =
     versions.length > 0
@@ -808,7 +822,7 @@ function BlueprintImportCard({
                 }
                 menuPosition='fixed'
                 formatOptionLabel={(option) => {
-                  const isLatest = option.value === versions[0]
+                  const isLatest = option.value === latestVersion
                   return (
                     <div
                       style={{
@@ -914,8 +928,8 @@ function BlueprintImportCard({
                   </tr>
                 </thead>
                 <tbody>
-                  {versions.map((version, index) => {
-                    const isLatest = index === 0
+                  {versions.map((version) => {
+                    const isLatest = version === latestVersion
                     const entry = changelogEntries.find(
                       (e) => e.date === version,
                     )

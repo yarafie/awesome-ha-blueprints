@@ -31,6 +31,7 @@
  *
  * ────────────────────────────────────────────────────────────────
  */
+import fs from 'fs'
 import path from 'path'
 import { globSync } from 'glob'
 
@@ -122,14 +123,47 @@ export default function libraryDownloaderPlugin(context) {
       }
 
       // Return both the flat list and the structured releases index
+      // "latest" per release, as decided by the generator (release.json).
+      // key: "<category>/<id>" -> { [library_id]: { [release_id]: version } }
+      const latestIndex = {}
+      for (const [key, libraries] of releasesByBlueprint) {
+        latestIndex[key] = {}
+        for (const library_id of Object.keys(libraries)) {
+          latestIndex[key][library_id] = {}
+          for (const release_id of Object.keys(libraries[library_id])) {
+            try {
+              const releaseJson = JSON.parse(
+                fs.readFileSync(
+                  path.join(
+                    blueprintsDir,
+                    key,
+                    library_id,
+                    release_id,
+                    'release.json',
+                  ),
+                  'utf8',
+                ),
+              )
+              if (releaseJson.latest_version) {
+                latestIndex[key][library_id][release_id] =
+                  releaseJson.latest_version
+              }
+            } catch {
+              // No release.json: the download page falls back to the newest.
+            }
+          }
+        }
+      }
+
       return {
         blueprints,
         releasesIndex: Object.fromEntries(releasesByBlueprint),
+        latestIndex,
       }
     },
     async contentLoaded({ content, actions }) {
       const { addRoute } = actions
-      const { releasesIndex } = content
+      const { releasesIndex, latestIndex } = content
 
       // Track generated routes to prevent duplicates
       const seen = new Set()
@@ -153,6 +187,7 @@ export default function libraryDownloaderPlugin(context) {
             library_id: null,
             release_id: null,
             releasesIndex: indexForId,
+            latestIndex: latestIndex?.[key] || {},
           })
         }
 
@@ -171,6 +206,7 @@ export default function libraryDownloaderPlugin(context) {
               library_id,
               release_id: null,
               releasesIndex: indexForId,
+              latestIndex: latestIndex?.[key] || {},
             })
           }
 
@@ -189,6 +225,7 @@ export default function libraryDownloaderPlugin(context) {
                 library_id,
                 release_id,
                 releasesIndex: indexForId,
+                latestIndex: latestIndex?.[key] || {},
               })
             }
 
@@ -208,6 +245,7 @@ export default function libraryDownloaderPlugin(context) {
                   release_id,
                   version,
                   releasesIndex: indexForId,
+                  latestIndex: latestIndex?.[key] || {},
                 })
               }
             }
