@@ -1,8 +1,9 @@
 # yamllint disable rule:document-start
 # yamllint disable rule:line-length
 # Greets the author of a pull request and tells them checks are running.
-# One status comment per pull request, updated in place (see
-# .github/scripts/pr-status-comment.sh).
+# This is the pull request's ONE status comment, updated in place on every
+# push. Results are posted as separate comments by pr_commenter_result.yml
+# (see .github/scripts/pr-status-comment.sh).
 #
 # This workflow runs with write access on pull requests, including those from
 # forks. It must never check out or run code from the pull request: the
@@ -49,11 +50,11 @@ jobs:
               first_time=' If this is your first PR here, your submission needs to be approved before checks can run, so the process might take a little longer.'
               ;;
           esac
-          bash .github/scripts/pr-status-comment.sh <<COMMENT
+          bash .github/scripts/pr-status-comment.sh status <<COMMENT
           Hey @${AUTHOR}, thank you so much for your contribution! 🚀
 
           🔄 We're currently running a few checks to make sure that everything is great with your contribution.${first_time}
-          If further actions need to be performed before your contribution can be reviewed, additional guidance will be provided right here: this comment is updated when the checks finish.
+          The result will be posted in a new comment below. If something needs fixing, that comment explains what failed and how to solve it.
 
           Results are coming soon, stay tuned!
           COMMENT

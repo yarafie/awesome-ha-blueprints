@@ -1,7 +1,10 @@
 # yamllint disable rule:document-start
 # yamllint disable rule:line-length
-# Reports the result of the "CI - PR" checks in the pull request's status
-# comment (one comment per pull request, updated in place).
+# Reports the result of the "CI - PR" checks on the pull request:
+#   - every failure is a NEW comment saying what failed and how to fix it
+#   - a success is a NEW comment too (repeated passes update the same one)
+#   - the pull request's status comment is updated to the latest state
+# New comments notify the author; edits do not.
 #
 # This workflow runs with write access on pull requests. It does not use any
 # file produced by the pull request's own run: the pull request is found by
@@ -63,12 +66,20 @@ jobs:
           REPO: ${{ github.repository }}
           NUMBER: ${{ steps.pr.outputs.number }}
           AUTHOR: ${{ steps.pr.outputs.author }}
+          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+          RUN_URL: ${{ github.event.workflow_run.html_url }}
         run: |
-          bash .github/scripts/pr-status-comment.sh <<COMMENT
+          commit="${HEAD_SHA:0:7}"
+          bash .github/scripts/pr-status-comment.sh success <<COMMENT
           Hey @${AUTHOR},
-          ✅  Your contribution passed all the checks, awesome!
+          ✅  Your contribution passed all the checks, awesome! (commit \`${commit}\`)
           A maintainer will soon review your submission and provide additional feedback regarding your changes.
           Thanks again for dedicating your precious time to this project. 🔥
+          COMMENT
+          bash .github/scripts/pr-status-comment.sh status <<COMMENT
+          Hey @${AUTHOR}, thank you so much for your contribution! 🚀
+
+          **Latest result:** ✅ all checks passed for commit \`${commit}\` ([details](${RUN_URL})).
           COMMENT
 
       - name: Report failure
@@ -78,9 +89,11 @@ jobs:
           REPO: ${{ github.repository }}
           NUMBER: ${{ steps.pr.outputs.number }}
           AUTHOR: ${{ steps.pr.outputs.author }}
+          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
           RUN_ID: ${{ github.event.workflow_run.id }}
           RUN_URL: ${{ github.event.workflow_run.html_url }}
         run: |
+          commit="${HEAD_SHA:0:7}"
           failed="$(
             gh api "repos/${REPO}/actions/runs/${RUN_ID}/jobs?per_page=100" |
               jq -r '.jobs[] | select(.conclusion == "failure") | .name'
@@ -90,26 +103,31 @@ jobs:
             case "$job" in
               '') ;;
               'Run Linters')
-                reasons+='* Your submission includes some code style issues. We invite you to inspect the output of the Pull Request checks and fix reported errors and warnings.'$'\n'
+                reasons+='* **Code style:** your submission includes some code style issues. Open the "Run Linters" check, fix the reported errors and warnings, then push again.'$'\n'
                 ;;
               'Run formatters to check code formatting')
-                reasons+='* Your files are not properly formatted. Did you remember to run `pnpm format` before submitting your changes?'$'\n'
+                reasons+='* **Formatting:** your files are not properly formatted. Run `pnpm format` in the repository folder, commit the result and push again.'$'\n'
                 ;;
               'Check website build')
-                reasons+='* The website could not be built with your changes. Please check the build output in the Pull Request checks.'$'\n'
+                reasons+='* **Website build:** the website could not be built with your changes. Open the "Check website build" check to see the error, fix it and push again.'$'\n'
                 ;;
               *)
-                reasons+="* The check \"${job}\" failed. Please inspect its output in the Pull Request checks."$'\n'
+                reasons+="* **${job}:** this check failed. Open it in the Pull Request checks to see why, fix it and push again."$'\n'
                 ;;
             esac
           done <<<"$failed"
-          bash .github/scripts/pr-status-comment.sh <<COMMENT
+          bash .github/scripts/pr-status-comment.sh failure <<COMMENT
           Hey @${AUTHOR},
-          ❌  It looks like there are some issues with your contribution. Don't worry, here's some additional information and guidance on how to solve them.
+          ❌  It looks like there are some issues with your contribution (commit \`${commit}\`). Don't worry, here's what failed and how to solve it.
 
           ${reasons}
-          You can see the details [in the checks](${RUN_URL}).
+          You can see the full details [in the checks](${RUN_URL}).
 
-          Please fix reported issues, then submit your updates here. If you have any questions or doubts, you can always contact a project maintainer. :)
+          Once you push a fix the checks run again automatically. If you have any questions or doubts, you can always contact a project maintainer. :)
           Thanks!
+          COMMENT
+          bash .github/scripts/pr-status-comment.sh status <<COMMENT
+          Hey @${AUTHOR}, thank you so much for your contribution! 🚀
+
+          **Latest result:** ❌ some checks failed for commit \`${commit}\`. See the newest comment below for what failed and how to fix it ([details](${RUN_URL})).
           COMMENT
