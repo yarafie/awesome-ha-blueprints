@@ -1,0 +1,1 @@
+"use strict";(globalThis.webpackChunkawesome_ha_library_website||=[]).push([[1283],{84062(s,e,a){a.r(e);const i=a.p+"assets/images/philips_8719514440937_8719514440999-58ff343b932cd9bd39def5466e20c502.png";a.d(e,["default",0,i])}}]);

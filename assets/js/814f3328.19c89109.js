@@ -1,1 +1,0 @@
-"use strict";(globalThis.webpackChunkawesome_ha_library_website=globalThis.webpackChunkawesome_ha_library_website||[]).push([[7472],{55513(e){e.exports=JSON.parse('{"title":"Recent posts","items":[]}')}}]);

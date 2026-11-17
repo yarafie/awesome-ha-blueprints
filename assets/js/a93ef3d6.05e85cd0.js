@@ -1,0 +1,1 @@
+"use strict";(globalThis.webpackChunkawesome_ha_library_website||=[]).push([[534],{81450(e,s,a){a.r(s);const t=a.p+"assets/images/en_ocean_ptm_215z_foh-df43d5549404f4c5b57924447c5ea2b2.png";a.d(s,["default",0,t])}}]);
