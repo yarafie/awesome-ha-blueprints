@@ -11,12 +11,45 @@ A curated collection of blueprints for Home Assistant.
 
 Reliable, customizable, fully tested by the community.
 
-![Maintained](https://img.shields.io/badge/maintained-yes-brightgreen) ![GPL-3.0 License](https://img.shields.io/github/license/yarafie/awesome-ha-blueprints) ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/yarafie/awesome-ha-blueprints/Continuous%20Integration?label=checks%20and%20build) [![Community Topic here](https://img.shields.io/badge/home%20assistant%20forums-topic-blue)](https://community.home-assistant.io/t/awesome-ha-blueprints-a-curated-list-of-blueprints-easily-create-controller-based-automations-remotes-switches-for-controlling-lights-media-players-and-more/256687)
+![Maintained](https://img.shields.io/badge/maintained-yes-brightgreen) ![GPL-3.0 License](https://img.shields.io/github/license/yarafie/awesome-ha-blueprints) [![Checks and build](https://github.com/yarafie/awesome-ha-blueprints/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/yarafie/awesome-ha-blueprints/actions/workflows/ci.yml) [![Community Topic here](https://img.shields.io/badge/home%20assistant%20forums-topic-blue)](https://community.home-assistant.io/t/awesome-ha-blueprints-a-curated-list-of-blueprints-easily-create-controller-based-automations-remotes-switches-for-controlling-lights-media-players-and-more/256687)
 ![GitHub Discussions](https://img.shields.io/github/discussions/yarafie/awesome-ha-blueprints)
 
 <a href="https://www.buymeacoffee.com/yarafiet"><img width="150" alt="yellow-button" src="https://user-images.githubusercontent.com/30753195/133942263-5fef0166-4ab5-4529-b931-37b5d14f02bf.png"></a>
 
 </div>
+
+## Preface
+
+**Awesome HA Blueprints (yarafie Fork)**
+
+Welcome to **yarafie's Fork** of awesome-ha-blueprints.
+
+**12 October, 2025**
+
+I wasn't planning to come back to this fork, but I've had some time on my hands.
+I've updated this fork, cleaned it up (No Security Vulnerabilities at least according to the github tab on top, which you probably don't see anyways :100: )
+
+I've rolled in and fixed many issues that were reported on EPMatts Repo and folded in some pull requests that EPMatt didn't get around to, and added additional devices that don't exist in his repo.
+
+I'll try to keep this fork updated as much as possible, but I'm the sole maintainer so I'll get to things when I get to them :+1: .
+
+Please note, that many of the blueprints will be trying to use new techniques, so things may break, be warned :)
+
+For now, just enjoy.
+
+**14 January, 2026**
+
+Awesome HA Library 1.0 was released.
+
+A new look for the corresponding repo website was done. Browse through it.
+
+You will immediatly see a new format where I have created Libraries for each controller device.
+
+Under each library are releases and under each release are versions.
+
+All of EPMatt's original blueprints are still present under a library I called EPMatt and Release called awesome.
+
+Feedback is welcomed, for now Just Enjoy.
 
 ## Introduction
 

@@ -4,7 +4,7 @@ The goal of this project is to keep a curated collection of blueprints for Home 
 
 Please consider that this project is released under the [GPL-3.0 License](https://github.com/yarafie/awesome-ha-blueprints/blob/main/LICENSE), and any discussion or interaction must adhere with the [Contributor Covenant Code of Conduct](https://github.com/yarafie/awesome-ha-blueprints/blob/main/CODE_OF_CONDUCT.md). Make sure to read and agree with those terms before submitting your contribution.
 
-Also, keep in mind that any of the following operations require that you've succesfully created a [GitHub](https://github.com/) account. If you have any troubles working with GitHub please consider taking a look at the [Official GitHub Docs](https://docs.github.com/).
+Also, keep in mind that any of the following operations require that you've successfully created a [GitHub](https://github.com/) account. If you have any troubles working with GitHub please consider taking a look at the [Official GitHub Docs](https://docs.github.com/).
 
 ## How to Contribute
 
@@ -113,7 +113,7 @@ Please open a discussion in the [Discussions tab](https://github.com/yarafie/awe
 
 ### 5. I've an idea for a new blueprint but I need help to develop it
 
-Please open an issue in the [Issues tab](https://github.com/yarafie/awesome-ha-blueprints/discussions) using the **New Blueprint Suggestion** template and fill in all the requested fields in the template before submitting the issue.
+Please open an issue in the [Issues tab](https://github.com/yarafie/awesome-ha-blueprints/issues) using the **New blueprint proposal** template and fill in all the requested fields in the template before submitting the issue.
 
 ## Blueprint Guidelines
 
