@@ -102,11 +102,9 @@ jobs:
       - name: Create .nojekyll file
         run: touch website/build/.nojekyll
       - name: Deploy to GitHub Pages
-        uses: s0/git-publish-subdir-action@v2.6.0
+        run: bash .github/scripts/deploy-gh-pages.sh
         env:
-          REPO: self
-          BRANCH: gh-pages
           FOLDER: website/build
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          MESSAGE: '🤖 Deploy static site for change: {msg}'
-          SKIP_EMPTY_COMMITS: true
+          BRANCH: gh-pages
+          COMMIT_NAME: ${{ github.event.pusher.name }}
+          COMMIT_EMAIL: ${{ github.event.pusher.email }}
