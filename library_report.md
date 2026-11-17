@@ -1,13 +1,14 @@
 # Awesome HA Blueprints – Library Report
 
-## _Generated on 2026-11-03_
+_Generated on 2026-11-17_
+---
 
 ## Summary
 
-- **Controllers:** 35 blueprints, 54 versions
+- **Controllers:** 35 blueprints, 56 versions
 - **Automations:** 4 blueprints, 4 versions
-- **Hooks:** 3 blueprints, 19 versions
-- **Breaking versions:** 14
+- **Hooks:** 3 blueprints, 20 versions
+- **Breaking versions:** 13
 
 ---
 
@@ -25,8 +26,6 @@
   - [Enhancement] Refactored controller integration handling to use normalized generic event triggers for ZHA, Zigbee2MQTT, and deCONZ, removing direct MQTT trigger dependencies and reducing trigger complexity. This will close ([EPMatt-issue#1010](https://github.com/EPMatt/awesome-ha-blueprints/issues/1010)).
 - **ikea_e2001_e2002** – EPMatt / awesome / 2026.06.04 (testing)
   - [Enhancement] Based on version 2025.11.16, Added a trigger variable to check if mqtt integration is installed by checking for mqtt entities, and enable associated triggers.
-- **ikea_e2001_e2002_e2313** – EPMatt / awesome / 2025.11.16 (active)
-  - Blueprint was refactored to add back `helper_last_controller_event` in order to fix Long Press/Release Logic for both hooks and custom actions. This will close ([EPMatt-issue#949](https://github.com/EPMatt/awesome-ha-blueprints/issues/949)). See note at top regarding **Helper - Last Controller Event** input. ([@yarafie](https://github.com/yarafie))
 - **ikea_e2001_e2002_e2313** – EPMatt / awesome / 2026.02.18 (active)
   - [Update] Added the IKEA Styrbar Model E2313. If you download this version of the blueprint you may need to and set up your automations again.
 - **xiaomi_wxkg01lm** – EPMatt / awesome / 2025.12.22 (active)
@@ -52,8 +51,8 @@
 ### aqara_djt11lm
 
 - **Title:** Controller - Aqara DJT11LM Vibration Sensor
-- **Librarians:** yarafie, EPMatt
-- **Library Maintainers:** EPMatt, yarafie
+- **Librarians:** yarafie
+- **Library Maintainers:** yarafie
 - **Latest Version:** 2025.10.30
 - **Tags:** zigbee, sensor, vibration
 
@@ -69,8 +68,8 @@
 ### aqara_wxkg11lm
 
 - **Title:** Controller - Aqara WXKG11LM Wireless Mini Switch
-- **Librarians:** yarafie, EPMatt
-- **Library Maintainers:** EPMatt, yarafie
+- **Librarians:** yarafie
+- **Library Maintainers:** yarafie
 - **Latest Version:** 2025.12.22 (**🚨 Breaking Change**)
 - **Tags:** zigbee, button, remote
 
@@ -91,8 +90,8 @@
 ### aqara_wxkg13lm
 
 - **Title:** Controller - Aqara WXKG13LM Wireless Mini Switch T1
-- **Librarians:** yarafie, EPMatt
-- **Library Maintainers:** EPMatt, yarafie
+- **Librarians:** yarafie
+- **Library Maintainers:** yarafie
 - **Latest Version:** 2025.04.12
 - **Tags:** zigbee, button, remote
 
@@ -110,7 +109,7 @@
 - **Title:** Controller - EnOcean PTM 215Z (Friends Of Hue)
 - **Librarians:** yarafie, Nicolai-
 - **Library Maintainers:** Nicolai-, yarafie
-- **Latest Version:** 2026.02.24
+- **Latest Version:** 2026.11.14
 - **Tags:** zigbee, button, remote, switch, 4-button
 
 <details>
@@ -119,14 +118,15 @@
 | Library  | Release | Version    | Status | Breaking |
 | -------- | ------- | ---------- | ------ | -------- |
 | Nicolai- | awesome | 2026.02.24 | active | no       |
+| Nicolai- | awesome | 2026.11.14 | active | no       |
 
 </details>
 
 ### ikea_e1524_e1810
 
 - **Title:** Controller - IKEA E1524/E1810 TRÅDFRI Wireless 5-Button Remote
-- **Librarians:** yarafie, EPMatt
-- **Library Maintainers:** EPMatt, yarafie
+- **Librarians:** yarafie
+- **Library Maintainers:** yarafie
 - **Latest Version:** 2026.01.25
 - **Tags:** zigbee, button, remote, 5-button
 
@@ -143,8 +143,8 @@
 ### ikea_e1743
 
 - **Title:** Controller - IKEA E1743 TRÅDFRI On/Off Switch & Dimmer
-- **Librarians:** yarafie, EPMatt
-- **Library Maintainers:** EPMatt, yarafie
+- **Librarians:** yarafie
+- **Library Maintainers:** yarafie
 - **Latest Version:** 2026.04.12
 - **Tags:** zigbee, dimmer, light
 
@@ -161,8 +161,8 @@
 ### ikea_e1744
 
 - **Title:** Controller - IKEA E1744 SYMFONISK Rotary Remote
-- **Librarians:** yarafie, EPMatt
-- **Library Maintainers:** EPMatt, yarafie
+- **Librarians:** yarafie
+- **Library Maintainers:** yarafie
 - **Latest Version:** 2025.04.19
 - **Tags:** zigbee, knob, rotary, media
 
@@ -178,8 +178,8 @@
 ### ikea_e1766
 
 - **Title:** Controller - IKEA E1766 TRÅDFRI Open/Close Remote
-- **Librarians:** yarafie, EPMatt
-- **Library Maintainers:** EPMatt, yarafie
+- **Librarians:** yarafie
+- **Library Maintainers:** yarafie
 - **Latest Version:** 2025.04.19
 - **Tags:** zigbee, remote, open-close
 
@@ -195,8 +195,8 @@
 ### ikea_e1812
 
 - **Title:** Controller - IKEA E1812 TRÅDFRI Shortcut button
-- **Librarians:** yarafie, EPMatt
-- **Library Maintainers:** EPMatt, yarafie
+- **Librarians:** yarafie
+- **Library Maintainers:** yarafie
 - **Latest Version:** 2026.03.29
 - **Tags:** zigbee, button, shortcut
 
@@ -218,8 +218,8 @@
 ### ikea_e2001_e2002
 
 - **Title:** Controller - IKEA E2001/E2002 STYRBAR Remote control
-- **Librarians:** yarafie, EPMatt
-- **Library Maintainers:** EPMatt, yarafie
+- **Librarians:** yarafie
+- **Library Maintainers:** yarafie
 - **Latest Version:** 2026.06.04 (**🚨 Breaking Change**)
 - **Tags:** zigbee, button, remote, 4-button
 
@@ -248,8 +248,8 @@
 ### ikea_e2001_e2002_e2313
 
 - **Title:** Controller - IKEA E2001/E2002/E2313 STYRBAR Remote control
-- **Librarians:** yarafie, EPMatt
-- **Library Maintainers:** EPMatt, yarafie
+- **Librarians:** yarafie
+- **Library Maintainers:** yarafie
 - **Latest Version:** 2026.04.28
 - **Tags:** zigbee, button, remote, 4-button
 
@@ -258,15 +258,12 @@
 
 | Library | Release  | Version    | Status | Breaking               |
 | ------- | -------- | ---------- | ------ | ---------------------- |
-| EPMatt  | awesome  | 2025.11.16 | active | **🚨 Breaking Change** |
 | EPMatt  | awesome  | 2026.02.18 | active | **🚨 Breaking Change** |
 | EPMatt  | zhae2002 | 2026.04.20 | active | no                     |
 | EPMatt  | zhae2002 | 2026.04.28 | active | no                     |
 
 **Breaking change reasons:**
 
-- **EPMatt / awesome / 2025.11.16**
-  - Blueprint was refactored to add back `helper_last_controller_event` in order to fix Long Press/Release Logic for both hooks and custom actions. This will close ([EPMatt-issue#949](https://github.com/EPMatt/awesome-ha-blueprints/issues/949)). See note at top regarding **Helper - Last Controller Event** input. ([@yarafie](https://github.com/yarafie))
 - **EPMatt / awesome / 2026.02.18**
   - [Update] Added the IKEA Styrbar Model E2313. If you download this version of the blueprint you may need to and set up your automations again.
 
@@ -275,9 +272,9 @@
 ### ikea_e2123
 
 - **Title:** Controller - IKEA E2123 SYMFONISK sound remote, gen 2
-- **Librarians:** yarafie, EPMatt
-- **Library Maintainers:** EPMatt, yarafie
-- **Latest Version:** 2025.03.28
+- **Librarians:** yarafie
+- **Library Maintainers:** yarafie
+- **Latest Version:** 2026.11.13
 - **Tags:** zigbee, remote, media
 
 <details>
@@ -286,14 +283,15 @@
 | Library | Release | Version    | Status | Breaking |
 | ------- | ------- | ---------- | ------ | -------- |
 | EPMatt  | awesome | 2025.03.28 | active | no       |
+| EPMatt  | awesome | 2026.11.13 | active | no       |
 
 </details>
 
 ### ikea_e2201
 
 - **Title:** Controller - IKEA E2201 RODRET Dimmer
-- **Librarians:** yarafie, EPMatt
-- **Library Maintainers:** EPMatt, yarafie
+- **Librarians:** yarafie
+- **Library Maintainers:** yarafie
 - **Latest Version:** 2026.08.09
 - **Tags:** zigbee, dimmer, light
 
@@ -312,8 +310,8 @@
 ### ikea_e2213
 
 - **Title:** Controller - IKEA E2213 SOMRIG shortcut button
-- **Librarians:** yarafie, EPMatt
-- **Library Maintainers:** EPMatt, yarafie
+- **Librarians:** yarafie
+- **Library Maintainers:** yarafie
 - **Latest Version:** 2025.05.08
 - **Tags:** zigbee, button, shortcut
 
@@ -329,8 +327,8 @@
 ### ikea_e2489
 
 - **Title:** Controller - IKEA E2489 BILRESA remote control with buttons
-- **Librarians:** yarafie, EPMatt
-- **Library Maintainers:** EPMatt, yarafie
+- **Librarians:** yarafie
+- **Library Maintainers:** yarafie
 - **Latest Version:** 2026.02.22
 - **Tags:** zigbee, dimmer, light
 
@@ -346,8 +344,8 @@
 ### ikea_e2490
 
 - **Title:** Controller - IKEA E2490 BILRESA remote control with scroll wheel
-- **Librarians:** yarafie, EPMatt
-- **Library Maintainers:** EPMatt, yarafie
+- **Librarians:** yarafie
+- **Library Maintainers:** yarafie
 - **Latest Version:** 2026.02.28
 - **Tags:** zigbee, dimmer, light
 
@@ -363,8 +361,8 @@
 ### ikea_ictc_g_1
 
 - **Title:** Controller - IKEA ICTC-G-1 TRÅDFRI wireless dimmer
-- **Librarians:** yarafie, EPMatt
-- **Library Maintainers:** EPMatt, yarafie
+- **Librarians:** yarafie
+- **Library Maintainers:** yarafie
 - **Latest Version:** 2025.04.19
 - **Tags:** zigbee, dimmer, wall
 
@@ -381,7 +379,7 @@
 
 - **Title:** Controller - Moes XH-SY-04Z 4 button portable remote control
 - **Librarians:** yarafie, wobondar
-- **Library Maintainers:** wobondar
+- **Library Maintainers:** wobondar, yarafie
 - **Latest Version:** 2026.04.06
 - **Tags:** zigbee, button, remote, 4-button
 
@@ -397,8 +395,8 @@
 ### osram_ac025xx00nj
 
 - **Title:** Controller - OSRAM AC025XX00NJ SMART+ Switch Mini
-- **Librarians:** yarafie, EPMatt
-- **Library Maintainers:** EPMatt, yarafie
+- **Librarians:** yarafie
+- **Library Maintainers:** yarafie
 - **Latest Version:** 2025.04.19
 - **Tags:** zigbee, switch
 
@@ -414,8 +412,8 @@
 ### philips_324131092621
 
 - **Title:** Controller - Philips 324131092621 Hue Dimmer switch
-- **Librarians:** yarafie, EPMatt
-- **Library Maintainers:** EPMatt, yarafie
+- **Librarians:** yarafie
+- **Library Maintainers:** yarafie
 - **Latest Version:** 2026.04.08
 - **Tags:** zigbee, dimmer, light
 
@@ -432,8 +430,8 @@
 ### philips_8718699693985
 
 - **Title:** Controller - Philips 8718699693985 Hue Smart Button
-- **Librarians:** yarafie, EPMatt
-- **Library Maintainers:** EPMatt, yarafie
+- **Librarians:** yarafie
+- **Library Maintainers:** yarafie
 - **Latest Version:** 2025.04.19
 - **Tags:** zigbee, button
 
@@ -466,9 +464,9 @@
 ### philips_929002398602
 
 - **Title:** Controller - Philips 929002398602 Hue Dimmer switch v2
-- **Librarians:** yarafie, EPMatt
-- **Library Maintainers:** EPMatt, yarafie
-- **Latest Version:** 2026.11.01
+- **Librarians:** yarafie
+- **Library Maintainers:** yarafie
+- **Latest Version:** 2026.11.16
 - **Tags:** zigbee, dimmer, light
 
 <details>
@@ -479,14 +477,15 @@
 | EPMatt  | awesome | 2025.10.16 | active | no       |
 | EPMatt  | awesome | 2026.04.19 | active | no       |
 | EPMatt  | awesome | 2026.11.01 | active | no       |
+| EPMatt  | awesome | 2026.11.16 | active | no       |
 
 </details>
 
 ### shelly_button_1
 
 - **Title:** Controller - Shelly Button 1
-- **Librarians:** yarafie, EPMatt
-- **Library Maintainers:** EPMatt, yarafie
+- **Librarians:** yarafie
+- **Library Maintainers:** yarafie
 - **Latest Version:** 2025.04.12
 - **Tags:** wifi, button
 
@@ -502,8 +501,8 @@
 ### shelly_snsn_0024x
 
 - **Title:** Controller - Shelly SNSN-0024x Plus i4 with Wall switch 4
-- **Librarians:** yarafie, EPMatt
-- **Library Maintainers:** EPMatt, yarafie
+- **Librarians:** yarafie
+- **Library Maintainers:** yarafie
 - **Latest Version:** 2025.03.25
 - **Tags:** wifi, wall-switch, input-module
 
@@ -519,8 +518,8 @@
 ### smarthjemmet_dk_quad_zig_sw
 
 - **Title:** Controller - Smarthjemmet.dk QUAD-ZIG-SW 4 button remote
-- **Librarians:** yarafie, EPMatt
-- **Library Maintainers:** EPMatt, yarafie
+- **Librarians:** yarafie
+- **Library Maintainers:** Nicolai-, yarafie
 - **Latest Version:** 2025.03.03
 - **Tags:** zigbee, button, remote, 4-button
 
@@ -536,8 +535,8 @@
 ### sonoff_snzb01
 
 - **Title:** Controller - SONOFF SNZB-01 Wireless Switch
-- **Librarians:** yarafie, EPMatt
-- **Library Maintainers:** EPMatt, yarafie
+- **Librarians:** yarafie
+- **Library Maintainers:** yarafie
 - **Latest Version:** 2026.04.21
 - **Tags:** zigbee, button
 
@@ -554,8 +553,8 @@
 ### sonoff_snzb01p
 
 - **Title:** Controller - SONOFF SNZB-01P Wireless Button
-- **Librarians:** yarafie, EPMatt
-- **Library Maintainers:** EPMatt, yarafie
+- **Librarians:** yarafie
+- **Library Maintainers:** yarafie
 - **Latest Version:** 2026.02.20
 - **Tags:** zigbee, button
 
@@ -571,8 +570,8 @@
 ### tuya_ers_10tzbvk_aa
 
 - **Title:** Controller - Tuya ERS-10TZBVK-AA Smart knob
-- **Librarians:** yarafie, EPMatt
-- **Library Maintainers:** EPMatt, yarafie
+- **Librarians:** yarafie
+- **Library Maintainers:** yarafie
 - **Latest Version:** 2026.03.29
 - **Tags:** zigbee, knob, rotary
 
@@ -591,7 +590,7 @@
 
 - **Title:** Controller - Tuya TS0046 Wireless switch with 6 buttons
 - **Librarians:** yarafie, wobondar
-- **Library Maintainers:** wobondar
+- **Library Maintainers:** wobondar, yarafie
 - **Latest Version:** 2026.04.09
 - **Tags:** zigbee, button, remote, 6-button
 
@@ -607,8 +606,8 @@
 ### tuya_zg_101z_d
 
 - **Title:** Controller - Tuya ZG-101Z/D Smart knob
-- **Librarians:** yarafie, EPMatt
-- **Library Maintainers:** EPMatt, yarafie
+- **Librarians:** yarafie
+- **Library Maintainers:** yarafie
 - **Latest Version:** 2025.10.14
 - **Tags:** zigbee, knob, rotary
 
@@ -624,8 +623,8 @@
 ### xiaomi_wxcjkg11lm
 
 - **Title:** Controller - Xiaomi WXCJKG11LM Aqara Opple 2 button remote
-- **Librarians:** yarafie, EPMatt
-- **Library Maintainers:** EPMatt, yarafie
+- **Librarians:** yarafie
+- **Library Maintainers:** yarafie
 - **Latest Version:** 2025.04.19
 - **Tags:** zigbee, button, remote, 2-button
 
@@ -641,8 +640,8 @@
 ### xiaomi_wxcjkg12lm
 
 - **Title:** Controller - Xiaomi WXCJKG12LM Aqara Opple 4 button remote
-- **Librarians:** yarafie, EPMatt
-- **Library Maintainers:** EPMatt, yarafie
+- **Librarians:** yarafie
+- **Library Maintainers:** yarafie
 - **Latest Version:** 2025.04.19
 - **Tags:** zigbee, button, remote, 4-button
 
@@ -658,8 +657,8 @@
 ### xiaomi_wxcjkg13lm
 
 - **Title:** Controller - Xiaomi WXCJKG13LM Aqara Opple 6 button remote
-- **Librarians:** yarafie, EPMatt
-- **Library Maintainers:** EPMatt, yarafie
+- **Librarians:** yarafie
+- **Library Maintainers:** yarafie
 - **Latest Version:** 2025.04.19
 - **Tags:** zigbee, button, remote, 6-button
 
@@ -675,8 +674,8 @@
 ### xiaomi_wxkg01lm
 
 - **Title:** Controller - Xiaomi WXKG01LM Mi Wireless Switch
-- **Librarians:** yarafie, EPMatt
-- **Library Maintainers:** EPMatt, yarafie
+- **Librarians:** yarafie
+- **Library Maintainers:** yarafie
 - **Latest Version:** 2025.12.22 (**🚨 Breaking Change**)
 - **Tags:** zigbee, button, remote
 
@@ -699,8 +698,8 @@
 ### addon_update_notification
 
 - **Title:** Send a mobile notification when add-on update is available
-- **Librarians:** yarafie, EPMatt
-- **Library Maintainers:** EPMatt, yarafie
+- **Librarians:** yarafie
+- **Library Maintainers:** yarafie
 - **Latest Version:** 2021.10.26
 - **Tags:** addon, event, mobile, notification, notify, sensor, supervisor, update
 
@@ -716,8 +715,8 @@
 ### on_off_schedule_state_persistence
 
 - **Title:** On-Off schedule with state persistence
-- **Librarians:** yarafie, EPMatt
-- **Library Maintainers:** EPMatt, yarafie
+- **Librarians:** yarafie
+- **Library Maintainers:** yarafie
 - **Latest Version:** 2021.10.26
 - **Tags:** event, schedule, time
 
@@ -733,8 +732,8 @@
 ### persistent_notification_to_mobile
 
 - **Title:** Send Web UI persistent notifications to Mobile Devices
-- **Librarians:** yarafie, EPMatt
-- **Library Maintainers:** EPMatt, yarafie
+- **Librarians:** yarafie
+- **Library Maintainers:** yarafie
 - **Latest Version:** 2021.10.26
 - **Tags:** event, mobile, notification, notify
 
@@ -750,8 +749,8 @@
 ### simple_safe_scheduler
 
 - **Title:** Simple Safe Scheduler
-- **Librarians:** yarafie, EPMatt
-- **Library Maintainers:** EPMatt, yarafie
+- **Librarians:** yarafie
+- **Library Maintainers:** yarafie
 - **Latest Version:** 2021.10.22
 - **Tags:** event, schedule, time
 
@@ -769,8 +768,8 @@
 ### cover
 
 - **Title:** Hook - Cover
-- **Librarians:** yarafie, EPMatt
-- **Library Maintainers:** EPMatt, yarafie
+- **Librarians:** yarafie
+- **Library Maintainers:** yarafie
 - **Latest Version:** 2026.02.28
 - **Tags:** close, garage, open, stop
 
@@ -794,9 +793,9 @@
 ### light
 
 - **Title:** Hook - Light
-- **Librarians:** yarafie, EPMatt
-- **Library Maintainers:** EPMatt, yarafie
-- **Latest Version:** 2026.04.12
+- **Librarians:** yarafie
+- **Library Maintainers:** yarafie
+- **Latest Version:** 2026.11.14
 - **Tags:** brightness, color, dim, hue, light, off, on
 
 <details>
@@ -814,6 +813,7 @@
 | EPMatt  | awesome | 2026.03.10 | active | **🚨 Breaking Change** |
 | EPMatt  | awesome | 2026.03.11 | active | **🚨 Breaking Change** |
 | EPMatt  | awesome | 2026.04.12 | active | no                     |
+| EPMatt  | awesome | 2026.11.14 | active | no                     |
 
 **Breaking change reasons:**
 
@@ -831,8 +831,8 @@
 ### media_player
 
 - **Title:** Hook - Media Player
-- **Librarians:** yarafie, EPMatt
-- **Library Maintainers:** EPMatt, yarafie
+- **Librarians:** yarafie
+- **Library Maintainers:** yarafie
 - **Latest Version:** 2026.02.28
 - **Tags:** forward, mute, next, pause, play, previous, reverse, stop, volume
 
