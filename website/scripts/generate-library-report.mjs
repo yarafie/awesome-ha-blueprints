@@ -11,8 +11,8 @@
  * the committed file always passes the formatting check.
  *
  * The file is only rewritten when its content changes. The "Generated on"
- * date alone never causes a rewrite, so a build on a new day does not show up
- * as a change in git.
+ * date and time alone never cause a rewrite, so a later build does not show
+ * up as a change in git. They tell when the content last changed.
  *
  * A problem here never fails the build: it prints a warning and leaves the
  * existing report as it is.
@@ -54,10 +54,10 @@ const capitalize = (text) =>
 
 const compare = (a, b) => (a < b ? -1 : a > b ? 1 : 0)
 
-function localDate() {
-  const now = new Date()
-  const pad = (n) => String(n).padStart(2, '0')
-  return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`
+/** Date and time in GMT+3, for example "2026-11-17 07:51 GMT+3". */
+function timestamp() {
+  const shifted = new Date(Date.now() + 3 * 60 * 60 * 1000).toISOString()
+  return `${shifted.slice(0, 10)} ${shifted.slice(11, 16)} GMT+3`
 }
 
 /** Descriptions of the breaking changes of one version, from changelog.json. */
@@ -82,7 +82,7 @@ function breakingChangesForVersion(releaseDir, version) {
 /** The report as plain Markdown, before formatting. */
 export function buildReport(
   blueprintsDir = BLUEPRINTS_DIR,
-  today = localDate(),
+  generatedOn = timestamp(),
 ) {
   const lines = []
   const breakingByCategory = {}
@@ -215,7 +215,7 @@ export function buildReport(
 
   const out = []
   out.push('# Awesome HA Blueprints – Library Report')
-  out.push(`_Generated on ${today}_`)
+  out.push(`_Generated on ${generatedOn}_`)
   out.push('---')
   out.push('## Summary')
   out.push(
@@ -249,9 +249,12 @@ export function buildReport(
   return [...out, ...lines].join('\n') + '\n'
 }
 
-/** The report text without its date, to tell real changes from a new day. */
+/** The "Generated on" line as this script writes it. */
+const STAMPED = /_Generated on \d{4}-\d{2}-\d{2} \d{2}:\d{2} GMT\+3_/
+
+/** The report text without its date and time, to tell real changes apart. */
 export const withoutDate = (text) =>
-  text.replace(/_Generated on \d{4}-\d{2}-\d{2}_/, '_Generated on (date)_')
+  text.replace(/_Generated on [^_\n]*_/, '_Generated on (date)_')
 
 /** True when generate.mjs has produced its JSON files. */
 function hasGeneratedData() {
@@ -279,7 +282,11 @@ async function main() {
   const current = fs.existsSync(OUTPUT)
     ? fs.readFileSync(OUTPUT, 'utf-8')
     : null
-  if (current !== null && withoutDate(current) === withoutDate(formatted)) {
+  if (
+    current !== null &&
+    STAMPED.test(current) &&
+    withoutDate(current) === withoutDate(formatted)
+  ) {
     console.log('library_report.md is up to date')
     return
   }
