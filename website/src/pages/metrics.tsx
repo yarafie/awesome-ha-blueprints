@@ -59,12 +59,7 @@ import {
 // ────────────────────────────────────────────────────────────────
 
 type SortKey =
-  | 'id'
-  | 'category'
-  | 'library'
-  | 'release'
-  | 'total'
-  | 'lastDownloaded'
+  'id' | 'category' | 'library' | 'release' | 'total' | 'lastDownloaded'
 type SortDirection = 'asc' | 'desc'
 type CategoryFilter = 'ALL' | string
 

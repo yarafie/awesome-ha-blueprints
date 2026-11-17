@@ -1,11 +1,12 @@
 ## SUPABASE SQL FUNCTIONS
 
 | ------ | ----------------------------------- | -------------------------------------------------------------------------- | -------- |
-| schema | function_name | arguments | language |
+
+| schema | function_name                       | arguments                                                                  | language |
 | ------ | ----------------------------------- | -------------------------------------------------------------------------- | -------- |
-| public | get_library_downloads | p_category text, p_id text, p_library text, p_release text, p_version text | sql |
-| public | get_library_downloads_aggregates | p_category text, p_library text, p_release text, p_id text | sql |
-| public | get_library_downloads_daily | p_days integer, p_category text, p_library text, p_release text, p_id text | sql |
+| public | get_library_downloads               | p_category text, p_id text, p_library text, p_release text, p_version text | sql      |
+| public | get_library_downloads_aggregates    | p_category text, p_library text, p_release text, p_id text                 | sql      |
+| public | get_library_downloads_daily         | p_days integer, p_category text, p_library text, p_release text, p_id text | sql      |
 | ------ | ----------------------------------- | -------------------------------------------------------------------------- | -------- |
 
 /\*
@@ -60,7 +61,8 @@
   AND (p_library IS NULL OR blueprint_library = p_library)
   AND (p_release IS NULL OR blueprint_release = p_release)
   AND (p_version IS NULL OR blueprint_version = p_version);
-  $$;
+  $$ ;
+  $$
 
 /\*
 
@@ -120,7 +122,8 @@
   blueprint_library,
   blueprint_release,
   blueprint_id;
-  $$;
+  $$ ;
+  $$
 
 /\*
 
@@ -162,4 +165,5 @@
   AND (p_id IS NULL OR blueprint_id = p_id)
   GROUP BY DATE(download_date)
   ORDER BY day ASC;
-  $$;
+  $$ ;
+  $$

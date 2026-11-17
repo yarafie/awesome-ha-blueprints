@@ -16,10 +16,7 @@
  * Supported authentication states
  */
 export type AuthStatus =
-  | 'unauthenticated'
-  | 'authenticating'
-  | 'authenticated'
-  | 'error'
+  'unauthenticated' | 'authenticating' | 'authenticated' | 'error'
 
 /**
  * Normalized authenticated user

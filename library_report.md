@@ -56,6 +56,7 @@
 - **Library Maintainers:** EPMatt, yarafie
 - **Latest Version:** 2025.10.30
 - **Tags:** zigbee, sensor, vibration
+
 <details>
 <summary>Versions</summary>
 
@@ -72,6 +73,7 @@
 - **Library Maintainers:** EPMatt, yarafie
 - **Latest Version:** 2025.12.22 (**🚨 Breaking Change**)
 - **Tags:** zigbee, button, remote
+
 <details>
 <summary>Versions</summary>
 
@@ -93,6 +95,7 @@
 - **Library Maintainers:** EPMatt, yarafie
 - **Latest Version:** 2025.04.12
 - **Tags:** zigbee, button, remote
+
 <details>
 <summary>Versions</summary>
 
@@ -109,6 +112,7 @@
 - **Library Maintainers:** Nicolai-, yarafie
 - **Latest Version:** 2026.02.24
 - **Tags:** zigbee, button, remote, switch, 4-button
+
 <details>
 <summary>Versions</summary>
 
@@ -125,6 +129,7 @@
 - **Library Maintainers:** EPMatt, yarafie
 - **Latest Version:** 2026.01.25
 - **Tags:** zigbee, button, remote, 5-button
+
 <details>
 <summary>Versions</summary>
 
@@ -142,6 +147,7 @@
 - **Library Maintainers:** EPMatt, yarafie
 - **Latest Version:** 2026.04.12
 - **Tags:** zigbee, dimmer, light
+
 <details>
 <summary>Versions</summary>
 
@@ -159,6 +165,7 @@
 - **Library Maintainers:** EPMatt, yarafie
 - **Latest Version:** 2025.04.19
 - **Tags:** zigbee, knob, rotary, media
+
 <details>
 <summary>Versions</summary>
 
@@ -175,6 +182,7 @@
 - **Library Maintainers:** EPMatt, yarafie
 - **Latest Version:** 2025.04.19
 - **Tags:** zigbee, remote, open-close
+
 <details>
 <summary>Versions</summary>
 
@@ -191,6 +199,7 @@
 - **Library Maintainers:** EPMatt, yarafie
 - **Latest Version:** 2026.03.29
 - **Tags:** zigbee, button, shortcut
+
 <details>
 <summary>Versions</summary>
 
@@ -213,6 +222,7 @@
 - **Library Maintainers:** EPMatt, yarafie
 - **Latest Version:** 2026.06.04 (**🚨 Breaking Change**)
 - **Tags:** zigbee, button, remote, 4-button
+
 <details>
 <summary>Versions</summary>
 
@@ -242,6 +252,7 @@
 - **Library Maintainers:** EPMatt, yarafie
 - **Latest Version:** 2026.04.28
 - **Tags:** zigbee, button, remote, 4-button
+
 <details>
 <summary>Versions</summary>
 
@@ -268,6 +279,7 @@
 - **Library Maintainers:** EPMatt, yarafie
 - **Latest Version:** 2025.03.28
 - **Tags:** zigbee, remote, media
+
 <details>
 <summary>Versions</summary>
 
@@ -284,6 +296,7 @@
 - **Library Maintainers:** EPMatt, yarafie
 - **Latest Version:** 2026.08.09
 - **Tags:** zigbee, dimmer, light
+
 <details>
 <summary>Versions</summary>
 
@@ -303,6 +316,7 @@
 - **Library Maintainers:** EPMatt, yarafie
 - **Latest Version:** 2025.05.08
 - **Tags:** zigbee, button, shortcut
+
 <details>
 <summary>Versions</summary>
 
@@ -319,6 +333,7 @@
 - **Library Maintainers:** EPMatt, yarafie
 - **Latest Version:** 2026.02.22
 - **Tags:** zigbee, dimmer, light
+
 <details>
 <summary>Versions</summary>
 
@@ -335,6 +350,7 @@
 - **Library Maintainers:** EPMatt, yarafie
 - **Latest Version:** 2026.02.28
 - **Tags:** zigbee, dimmer, light
+
 <details>
 <summary>Versions</summary>
 
@@ -351,6 +367,7 @@
 - **Library Maintainers:** EPMatt, yarafie
 - **Latest Version:** 2025.04.19
 - **Tags:** zigbee, dimmer, wall
+
 <details>
 <summary>Versions</summary>
 
@@ -367,6 +384,7 @@
 - **Library Maintainers:** wobondar
 - **Latest Version:** 2026.04.06
 - **Tags:** zigbee, button, remote, 4-button
+
 <details>
 <summary>Versions</summary>
 
@@ -383,6 +401,7 @@
 - **Library Maintainers:** EPMatt, yarafie
 - **Latest Version:** 2025.04.19
 - **Tags:** zigbee, switch
+
 <details>
 <summary>Versions</summary>
 
@@ -399,6 +418,7 @@
 - **Library Maintainers:** EPMatt, yarafie
 - **Latest Version:** 2026.04.08
 - **Tags:** zigbee, dimmer, light
+
 <details>
 <summary>Versions</summary>
 
@@ -416,6 +436,7 @@
 - **Library Maintainers:** EPMatt, yarafie
 - **Latest Version:** 2025.04.19
 - **Tags:** zigbee, button
+
 <details>
 <summary>Versions</summary>
 
@@ -432,6 +453,7 @@
 - **Library Maintainers:** Nicolai-, yarafie
 - **Latest Version:** 2026.02.09
 - **Tags:** zigbee, button, remote, rotary, 4-button
+
 <details>
 <summary>Versions</summary>
 
@@ -448,6 +470,7 @@
 - **Library Maintainers:** EPMatt, yarafie
 - **Latest Version:** 2026.11.01
 - **Tags:** zigbee, dimmer, light
+
 <details>
 <summary>Versions</summary>
 
@@ -466,6 +489,7 @@
 - **Library Maintainers:** EPMatt, yarafie
 - **Latest Version:** 2025.04.12
 - **Tags:** wifi, button
+
 <details>
 <summary>Versions</summary>
 
@@ -482,6 +506,7 @@
 - **Library Maintainers:** EPMatt, yarafie
 - **Latest Version:** 2025.03.25
 - **Tags:** wifi, wall-switch, input-module
+
 <details>
 <summary>Versions</summary>
 
@@ -498,6 +523,7 @@
 - **Library Maintainers:** EPMatt, yarafie
 - **Latest Version:** 2025.03.03
 - **Tags:** zigbee, button, remote, 4-button
+
 <details>
 <summary>Versions</summary>
 
@@ -514,6 +540,7 @@
 - **Library Maintainers:** EPMatt, yarafie
 - **Latest Version:** 2026.04.21
 - **Tags:** zigbee, button
+
 <details>
 <summary>Versions</summary>
 
@@ -531,6 +558,7 @@
 - **Library Maintainers:** EPMatt, yarafie
 - **Latest Version:** 2026.02.20
 - **Tags:** zigbee, button
+
 <details>
 <summary>Versions</summary>
 
@@ -547,6 +575,7 @@
 - **Library Maintainers:** EPMatt, yarafie
 - **Latest Version:** 2026.03.29
 - **Tags:** zigbee, knob, rotary
+
 <details>
 <summary>Versions</summary>
 
@@ -565,6 +594,7 @@
 - **Library Maintainers:** wobondar
 - **Latest Version:** 2026.04.09
 - **Tags:** zigbee, button, remote, 6-button
+
 <details>
 <summary>Versions</summary>
 
@@ -581,6 +611,7 @@
 - **Library Maintainers:** EPMatt, yarafie
 - **Latest Version:** 2025.10.14
 - **Tags:** zigbee, knob, rotary
+
 <details>
 <summary>Versions</summary>
 
@@ -597,6 +628,7 @@
 - **Library Maintainers:** EPMatt, yarafie
 - **Latest Version:** 2025.04.19
 - **Tags:** zigbee, button, remote, 2-button
+
 <details>
 <summary>Versions</summary>
 
@@ -613,6 +645,7 @@
 - **Library Maintainers:** EPMatt, yarafie
 - **Latest Version:** 2025.04.19
 - **Tags:** zigbee, button, remote, 4-button
+
 <details>
 <summary>Versions</summary>
 
@@ -629,6 +662,7 @@
 - **Library Maintainers:** EPMatt, yarafie
 - **Latest Version:** 2025.04.19
 - **Tags:** zigbee, button, remote, 6-button
+
 <details>
 <summary>Versions</summary>
 
@@ -645,6 +679,7 @@
 - **Library Maintainers:** EPMatt, yarafie
 - **Latest Version:** 2025.12.22 (**🚨 Breaking Change**)
 - **Tags:** zigbee, button, remote
+
 <details>
 <summary>Versions</summary>
 
@@ -668,6 +703,7 @@
 - **Library Maintainers:** EPMatt, yarafie
 - **Latest Version:** 2021.10.26
 - **Tags:** addon, event, mobile, notification, notify, sensor, supervisor, update
+
 <details>
 <summary>Versions</summary>
 
@@ -684,6 +720,7 @@
 - **Library Maintainers:** EPMatt, yarafie
 - **Latest Version:** 2021.10.26
 - **Tags:** event, schedule, time
+
 <details>
 <summary>Versions</summary>
 
@@ -700,6 +737,7 @@
 - **Library Maintainers:** EPMatt, yarafie
 - **Latest Version:** 2021.10.26
 - **Tags:** event, mobile, notification, notify
+
 <details>
 <summary>Versions</summary>
 
@@ -716,6 +754,7 @@
 - **Library Maintainers:** EPMatt, yarafie
 - **Latest Version:** 2021.10.22
 - **Tags:** event, schedule, time
+
 <details>
 <summary>Versions</summary>
 
@@ -734,6 +773,7 @@
 - **Library Maintainers:** EPMatt, yarafie
 - **Latest Version:** 2026.02.28
 - **Tags:** close, garage, open, stop
+
 <details>
 <summary>Versions</summary>
 
@@ -758,6 +798,7 @@
 - **Library Maintainers:** EPMatt, yarafie
 - **Latest Version:** 2026.04.12
 - **Tags:** brightness, color, dim, hue, light, off, on
+
 <details>
 <summary>Versions</summary>
 
@@ -794,6 +835,7 @@
 - **Library Maintainers:** EPMatt, yarafie
 - **Latest Version:** 2026.02.28
 - **Tags:** forward, mute, next, pause, play, previous, reverse, stop, volume
+
 <details>
 <summary>Versions</summary>
 
