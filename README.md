@@ -27,11 +27,11 @@ Welcome to **yarafie's Fork** of awesome-ha-blueprints.
 **12 October, 2025**
 
 I wasn't planning to come back to this fork, but I've had some time on my hands.
-I've updated this fork, cleaned it up (No Security Vulnerabilities at least according to the github tab on top, which you probably don't see anyways :100: )
+I've updated this fork and cleaned it up.
 
 I've rolled in and fixed many issues that were reported on EPMatts Repo and folded in some pull requests that EPMatt didn't get around to, and added additional devices that don't exist in his repo.
 
-I'll try to keep this fork updated as much as possible, but I'm the sole maintainer so I'll get to things when I get to them :+1: .
+I'll try to keep this fork updated as much as possible, but I look after it in my spare time so I'll get to things when I get to them :+1: .
 
 Please note, that many of the blueprints will be trying to use new techniques, so things may break, be warned :)
 
@@ -43,7 +43,7 @@ Awesome HA Library 1.0 was released.
 
 A new look for the corresponding repo website was done. Browse through it.
 
-You will immediatly see a new format where I have created Libraries for each controller device.
+You will immediately see a new format where I have created Libraries for each controller device.
 
 Under each library are releases and under each release are versions.
 
