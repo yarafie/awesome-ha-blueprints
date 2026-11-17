@@ -1,16 +1,32 @@
 version: 2
 updates:
+  # GitHub Actions used by the workflows: checked once a week, one pull
+  # request per action.
   - package-ecosystem: 'github-actions'
     directory: '/'
     schedule:
-      interval: 'daily'
+      interval: 'weekly'
+      day: 'friday'
+      time: '06:00'
+      timezone: 'Asia/Riyadh'
     commit-message:
       prefix: 'github-actions'
     open-pull-requests-limit: 10
+
+  # npm packages: checked once a week, one pull request per package.
   - package-ecosystem: 'npm'
     directory: '/'
     schedule:
-      interval: 'daily'
+      interval: 'weekly'
+      day: 'friday'
+      time: '06:00'
+      timezone: 'Asia/Riyadh'
     commit-message:
       prefix: 'npm'
     open-pull-requests-limit: 10
+    ignore:
+      # TypeScript 7 is not supported by typescript-eslint yet (it accepts
+      # versions below 6.1.0). Remove this entry once it is.
+      - dependency-name: 'typescript'
+        update-types:
+          - 'version-update:semver-major'
