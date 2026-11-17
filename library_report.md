@@ -5,7 +5,7 @@ _Generated on 2026-11-17_
 
 ## Summary
 
-- **Controllers:** 34 blueprints, 56 versions
+- **Controllers:** 35 blueprints, 56 versions
 - **Automations:** 4 blueprints, 4 versions
 - **Hooks:** 3 blueprints, 20 versions
 - **Breaking versions:** 13
