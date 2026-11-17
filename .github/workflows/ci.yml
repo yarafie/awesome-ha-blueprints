@@ -108,3 +108,5 @@ jobs:
           BRANCH: gh-pages
           COMMIT_NAME: ${{ github.event.pusher.name }}
           COMMIT_EMAIL: ${{ github.event.pusher.email }}
+      - name: Commit the library report if the build changed it
+        run: bash .github/scripts/commit-library-report.sh
