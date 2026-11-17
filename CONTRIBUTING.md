@@ -14,68 +14,30 @@ Please open an issue in the [Issues tab](https://github.com/yarafie/awesome-ha-b
 
 ### 2. I Want to Add a Blueprint to the Project
 
-Awesome! Follow these steps to contribute your new blueprint to this project:
+The way contributions are submitted is being rebuilt around simple forms. Until that is ready, please **open an issue first** in the [Issues tab](https://github.com/yarafie/awesome-ha-blueprints/issues), using the **New Controller Support** template for a new controller, or the **New blueprint proposal** template for anything else. A new blueprint needs a few files that describe it, and a maintainer will help you set them up.
 
-1. **Fork** this repository to your GitHub account.
-2. **Clone** the forked repository to your local machine:
+If you want to prepare the files yourself, this is where a blueprint lives:
 
-   ```sh
-   git clone https://github.com/your-username/awesome-ha-blueprints.git
-   cd awesome-ha-blueprints
-   ```
+```
+website/docs/blueprints/<category>/<blueprint_id>/
+├── manifest.yaml
+├── <blueprint_id>.png
+└── <library_id>/<release_id>/
+    ├── changelog.json
+    ├── hooks.json            (controllers only; hooks have actions.json instead)
+    └── <YYYY.MM.DD>/
+        └── <blueprint_id>.yaml
+```
 
-3. **Set up your development environment** following the [Development Setup](#development-setup) section.
-4. **Create a new branch** named after your blueprint:
+- `<category>` is `controllers`, `hooks` or `automations`.
+- `<library_id>` is usually your GitHub username, and `<release_id>` is a short name for your line of versions.
+- `<YYYY.MM.DD>` is the version, written as its date.
 
-   ```sh
-   git checkout -b my-new-blueprint
-   ```
-
-5. **Copy the example blueprint folder**:
-
-   ```sh
-   cp -r blueprints/automation/example blueprints/automation/my-new-blueprint
-   ```
-
-6. **Inside your blueprint folder** (blueprints/automation/my-new-blueprint):
-   - **Rename** \example.yaml to match your blueprint name.
-   - **Write your blueprint code** inside the renamed .yaml file. Ensure you follow the [Blueprint Guidelines](#blueprint-guidelines).
-
-7. **Update the blueprint docs** in the website/docs/blueprints section:
-   - Copy the example documentation file in a new folder for the blueprint:
-     ```sh
-     cp website/docs/blueprints/automation/example.mdx website/docs/blueprints/automation/my-new-blueprint.mdx
-     ```
-   - Add relevant documentation for your blueprint.
-   - Make sure to add an entry to the **Changelog** at the bottom of the page.
-
-8. **Commit your changes** with a clear message:
-
-   ```sh
-   git add .
-   git commit -m "Add new blueprint: [blueprint name]"
-   ```
-
-9. **Push your branch** to your forked repository:
-
-   ```sh
-   git push origin my-new-blueprint
-   ```
-
-10. **Open a Pull Request (PR)**:
-    - Go to your fork on GitHub, navigate to the **Pull Requests** tab, and click **New Pull Request**.
-    - Select awesome-ha-blueprints/main as the base branch.
-    - Provide a clear description of your blueprint.
-    - Click **Open Pull Request**.
-
-11. **🎉 You're all set!** A maintainer will review your PR, provide feedback if needed, and merge it once approved.
-12. Once merged, you can **safely delete your fork** if you no longer need it.
-
-Thank you for contributing to the Home Assistant community! 🚀🔥
+The easiest start is to copy an existing blueprint of the same category and adapt it. Make sure the blueprint follows the [Blueprint Guidelines](#blueprint-guidelines), then submit it with the steps of the next section.
 
 ### 3. I Want to Improve an Existing Blueprint
 
-Awesome! Follow these steps to contribute your improvements to this project:
+Blueprints are versioned. An improvement is normally added as a **new version** next to the existing ones, so people who use the current version are not affected.
 
 1. **Fork** this repository to your GitHub account.
 2. **Clone** the forked repository to your local machine:
@@ -84,28 +46,43 @@ Awesome! Follow these steps to contribute your improvements to this project:
    cd awesome-ha-blueprints
    ```
 3. **Set up your development environment** following the [Development Setup](#development-setup) section.
-4. **Create a new branch** named after the blueprint you're editing:
-   ```sh
-   git checkout -b my-blueprint-update
+4. **Create a new branch.** The automatic checks read the branch name, so it must have this format:
    ```
-5. **Make your changes to the blueprint**, ensuring you follow the [Blueprint Guidelines](#blueprint-guidelines).
-6. **Update the blueprint docs**, in the `website/docs/blueprints` section, according to your changes. Make sure to add an entry to the **Changelog** at the bottom of the page.
-7. **Commit your changes** with a clear message:
+   ahb_contrib/<category>/<blueprint_id>/<library_id>/<release_id>/<YYYY.MM.DD>/author-<your-github-username>
+   ```
+   The date is the version you are adding, normally today's date. For example:
+   ```sh
+   git checkout -b ahb_contrib/controllers/ikea_e2001_e2002/EPMatt/awesome/2026.11.17/author-your-username
+   ```
+5. **Add your version.** Copy the newest version folder of the release to a new folder named after your date, and make your changes in the copied `.yaml` file, following the [Blueprint Guidelines](#blueprint-guidelines). The old date also appears inside the file (the version shown in the description, the documentation link and `source_url`): change those to your date.
+6. **Describe your change** by adding an entry for your version at the end of `changelog.json`, in the release folder:
+   ```json
+   {
+     "date": "2026.11.17",
+     "changes": [
+       {
+         "author": "@your-username",
+         "description": "[Bug Fix] What changed and why.",
+         "breaking": false
+       }
+     ]
+   }
+   ```
+   Set `breaking` to `true` when people must change their automations after updating, and explain what they need to do.
+7. **Format your files:**
+   ```sh
+   pnpm format
+   ```
+8. **Commit your changes** with a clear message:
    ```sh
    git add .
    git commit -m "Improve blueprint: [blueprint name]"
    ```
-8. **Push your branch** to your forked repository:
-   ```
-   git push origin my-blueprint-update
-   ```
-9. **Open a Pull Request** (PR):
-   - Go to your fork on GitHub, navigate to the Pull Requests tab, and click New Pull Request.
-   - Select `awesome-ha-blueprints/main` as the base branch.
-   - Provide a clear description of your changes.
-   - Click Open Pull Request.
-10. **🎉 You're all set!** A maintainer will review your PR, provide feedback if needed, and merge it once approved.
+9. **Push your branch** to your forked repository and **open a Pull Request** against the `main` branch of this repository. Keep each Pull Request to a single blueprint.
+10. **🎉 You're all set!** The checks run automatically, and a comment on your Pull Request tells you the result and how to fix anything that failed. A maintainer will then review your Pull Request and merge it once approved.
 11. Once merged, you can **safely delete your fork** if you no longer need it.
+
+Thank you for contributing to the Home Assistant community! 🚀🔥
 
 ### 4. I've a question regarding a blueprint / this project
 
