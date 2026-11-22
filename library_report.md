@@ -1,11 +1,11 @@
 # Awesome HA Blueprints – Library Report
 
-_Generated on 2026-11-17 07:54 GMT+3_
+_Generated on 2026-11-22 13:32 GMT+3_
 ---
 
 ## Summary
 
-- **Controllers:** 35 blueprints, 56 versions
+- **Controllers:** 35 blueprints, 59 versions
 - **Automations:** 4 blueprints, 4 versions
 - **Hooks:** 3 blueprints, 20 versions
 - **Breaking versions:** 13
@@ -397,7 +397,7 @@ _Generated on 2026-11-17 07:54 GMT+3_
 - **Title:** Controller - OSRAM AC025XX00NJ SMART+ Switch Mini
 - **Librarians:** yarafie
 - **Library Maintainers:** yarafie
-- **Latest Version:** 2025.04.19
+- **Latest Version:** 2026.11.22
 - **Tags:** zigbee, switch
 
 <details>
@@ -406,6 +406,7 @@ _Generated on 2026-11-17 07:54 GMT+3_
 | Library | Release | Version    | Status | Breaking |
 | ------- | ------- | ---------- | ------ | -------- |
 | EPMatt  | awesome | 2025.04.19 | active | no       |
+| EPMatt  | awesome | 2026.11.22 | active | no       |
 
 </details>
 
@@ -414,7 +415,7 @@ _Generated on 2026-11-17 07:54 GMT+3_
 - **Title:** Controller - Philips 324131092621 Hue Dimmer switch
 - **Librarians:** yarafie
 - **Library Maintainers:** yarafie
-- **Latest Version:** 2026.04.08
+- **Latest Version:** 2026.11.22
 - **Tags:** zigbee, dimmer, light
 
 <details>
@@ -424,6 +425,7 @@ _Generated on 2026-11-17 07:54 GMT+3_
 | ------- | ------- | ---------- | ------ | -------- |
 | EPMatt  | awesome | 2025.10.16 | active | no       |
 | EPMatt  | awesome | 2026.04.08 | active | no       |
+| EPMatt  | awesome | 2026.11.22 | active | no       |
 
 </details>
 
@@ -432,7 +434,7 @@ _Generated on 2026-11-17 07:54 GMT+3_
 - **Title:** Controller - Philips 8718699693985 Hue Smart Button
 - **Librarians:** yarafie
 - **Library Maintainers:** yarafie
-- **Latest Version:** 2025.04.19
+- **Latest Version:** 2026.11.22
 - **Tags:** zigbee, button
 
 <details>
@@ -441,6 +443,7 @@ _Generated on 2026-11-17 07:54 GMT+3_
 | Library | Release | Version    | Status | Breaking |
 | ------- | ------- | ---------- | ------ | -------- |
 | EPMatt  | awesome | 2025.04.19 | active | no       |
+| EPMatt  | awesome | 2026.11.22 | active | no       |
 
 </details>
 

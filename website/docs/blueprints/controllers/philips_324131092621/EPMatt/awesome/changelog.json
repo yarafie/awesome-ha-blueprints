@@ -158,5 +158,15 @@
         "breaking": false
       }
     ]
+  },
+  {
+    "date": "2026.11.22",
+    "changes": [
+      {
+        "author": "@agrauballe",
+        "description": "[Bug Fix] Double press now works. The blueprint compared each button event with a variable that was never defined, so a double press always ran the short press action. ([@agrauballe](https://github.com/agrauballe))",
+        "breaking": false
+      }
+    ]
   }
 ]
