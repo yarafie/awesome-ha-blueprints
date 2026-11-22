@@ -1,19 +1,3 @@
-import {
-  BlueprintImportCard,
-  Inputs,
-  Requirement,
-  Changelog,
-} from '/src/components/library_docs'
-
-<BlueprintImportCard
-  category='automations'
-  id='simple_safe_scheduler'
-  library='EPMatt'
-  release='awesome'
-/>
-
-<br />
-
 ## Description
 
 Scheduling a periodic action in Home Assistant might be trickier than what it looks at first glance. Not only the available automation triggers are limited to only time-based schedules (requiring the user to either use template triggers or install additional integrations for more complex scheduling options), but they also do not guarantee that the automation is executed at the provided time.
@@ -32,22 +16,11 @@ In addition, the blueprint implements useful checks to make sure that, in case o
 
 ## Requirements
 
-<Requirement name='Input Datetime Integration' required>
+### Input Datetime Integration
 
 This integration provides the entity which represents a datetime input in Home Assistant. It should be activated by default so unless you tweaked the default configuration you're good to go.
 
 [Input Datetime Docs](https://www.home-assistant.io/integrations/input_datetime/)
-
-</Requirement>
-
-## Inputs
-
-<Inputs
-  category='automations'
-  id='simple_safe_scheduler'
-  library='EPMatt'
-  release='awesome'
-/>
 
 ## Additional Notes
 
@@ -105,12 +78,3 @@ input_datetime:
       data:
         time: "{{ now().strftime('%H:%M:%S') }}"
 ```
-
-## Changelog
-
-<Changelog
-  category='automations'
-  id='simple_safe_scheduler'
-  library='EPMatt'
-  release='awesome'
-/>

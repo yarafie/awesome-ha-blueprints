@@ -1,19 +1,3 @@
-import {
-  BlueprintImportCard,
-  Inputs,
-  Requirement,
-  Changelog,
-} from '/src/components/library_docs'
-
-<BlueprintImportCard
-  category='automations'
-  id='on_off_schedule_state_persistence'
-  library='EPMatt'
-  release='awesome'
-/>
-
-<br />
-
 ## Description
 
 This blueprint provides a simple on-off schedule, with the addition of state persistence across server reboots, powercuts, or other disruptive events which could potentially alter the expected state of the targeted entities. The automation makes sure the target is always in the expected state, even in these situations, but always leaving the freedom to manually toggle the target state as desired. It can be used on critical targets which require a simple on-off schedule during every single day.
@@ -34,24 +18,6 @@ No additional integrations or addons are required for this blueprint, since it's
 
 If you optionally want to supply a custom event type to the blueprint, you should setup a mechanism to fire the event in any situation a state check should be performed. This could be an integration firing an event, or another automation, so any additional required setup is out of scope of this documentation.
 
-## Inputs
-
-<Inputs
-  category='automations'
-  id='on_off_schedule_state_persistence'
-  library='EPMatt'
-  release='awesome'
-/>
-
 ## Additional Notes
 
 This automation only provides a simple On-Off schedule. More complex situations could require a different approach to the problem. Also, be aware that running multiple automations generated with this blueprint against the same target could result in unexpected behaviour.
-
-## Changelog
-
-<Changelog
-  category='automations'
-  id='on_off_schedule_state_persistence'
-  library='EPMatt'
-  release='awesome'
-/>
