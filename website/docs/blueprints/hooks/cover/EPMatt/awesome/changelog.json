@@ -208,5 +208,15 @@
         "breaking": false
       }
     ]
+  },
+  {
+    "date": "2026.11.22",
+    "changes": [
+      {
+        "author": "@yarafie",
+        "description": "[Bug Fix] IKEA E2490 BILRESA remote control with scroll wheel: the mapping now matches the remote, which has a single wheel and no Up/Down buttons (single, double and triple press of the wheel). Use it together with version 2026.11.22 or newer of the IKEA E2490 controller blueprint, older versions of that controller no longer work with this hook version. No other controller is affected. Related to ([issue#539](https://github.com/yarafie/awesome-ha-blueprints/issues/539)). ([@yarafie](https://github.com/yarafie))",
+        "breaking": true
+      }
+    ]
   }
 ]

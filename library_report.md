@@ -1,14 +1,14 @@
 # Awesome HA Blueprints – Library Report
 
-_Generated on 2026-11-22 19:36 GMT+3_
+_Generated on 2026-11-22 20:17 GMT+3_
 ---
 
 ## Summary
 
-- **Controllers:** 35 blueprints, 60 versions
+- **Controllers:** 35 blueprints, 61 versions
 - **Automations:** 4 blueprints, 4 versions
-- **Hooks:** 3 blueprints, 20 versions
-- **Breaking versions:** 13
+- **Hooks:** 3 blueprints, 23 versions
+- **Breaking versions:** 17
 
 ---
 
@@ -28,6 +28,8 @@ _Generated on 2026-11-22 19:36 GMT+3_
   - [Enhancement] Based on version 2025.11.16, Added a trigger variable to check if mqtt integration is installed by checking for mqtt entities, and enable associated triggers.
 - **ikea_e2001_e2002_e2313** – EPMatt / awesome / 2026.02.18 (active)
   - [Update] Added the IKEA Styrbar Model E2313. If you download this version of the blueprint you may need to and set up your automations again.
+- **ikea_e2490** – EPMatt / awesome / 2026.11.22 (active)
+  - [Bug Fix] The blueprint now matches the remote, which has a single wheel and no Up/Down buttons. The inputs are now Wheel single press, Wheel double press, Wheel triple press and Rotate wheel. The remote alternates between `on` and `off` for single presses, both now count as a single press, and what Zigbee2MQTT reports as `off_double` is a triple press. After updating you need to set up your custom actions again, and update the Light, Media Player and Cover hooks to version 2026.11.22 or newer. This will close ([issue#539](https://github.com/yarafie/awesome-ha-blueprints/issues/539)). Reported by [@DuffyTheDisneyBear](https://github.com/DuffyTheDisneyBear). ([@yarafie](https://github.com/yarafie))
 - **xiaomi_wxkg01lm** – EPMatt / awesome / 2025.12.22 (active)
   - Device Name and Model was corrected to Xiaomi WXKG01LM as it is a different device from the Aqara WXKG11LM. Blueprint will need to be redownloaded and setup again.
 
@@ -35,6 +37,8 @@ _Generated on 2026-11-22 19:36 GMT+3_
 
 - **cover** – EPMatt / awesome / 2025.12.22 (active)
   - Device Name and Model was corrected for both Aqara WXKG11LM and Xiaomi WXKG01LM. Blueprints integrated with these two devices will need to be redownloaded and setup again.
+- **cover** – EPMatt / awesome / 2026.11.22 (active)
+  - [Bug Fix] IKEA E2490 BILRESA remote control with scroll wheel: the mapping now matches the remote, which has a single wheel and no Up/Down buttons (single, double and triple press of the wheel). Use it together with version 2026.11.22 or newer of the IKEA E2490 controller blueprint, older versions of that controller no longer work with this hook version. No other controller is affected. Related to ([issue#539](https://github.com/yarafie/awesome-ha-blueprints/issues/539)). ([@yarafie](https://github.com/yarafie))
 - **light** – EPMatt / awesome / 2025.12.22 (active)
   - Device Name and Model was corrected for both Aqara WXKG11LM and Xiaomi WXKG01LM. Blueprints integrated with these two devices will need to be redownloaded and setup again.
 - **light** – EPMatt / awesome / 2026.03.07 (active)
@@ -43,8 +47,12 @@ _Generated on 2026-11-22 19:36 GMT+3_
   - [Bug Fix] Potential Breaking Change. Changed the increase/decrease steps for color_temp_kelvin from 50 to 250 to be more inline with the kelvin scale 1000 to 10,000.
 - **light** – EPMatt / awesome / 2026.03.11 (active)
   - [Enhancement] Potential Breaking Change if updating from a version before v2026.03.07. Added the Color Temperature Steps for both long and short presses. Setting boundaries for min_color_temp_kelvin and max_color_temp_kelvin attributes from device as a guard.
+- **light** – EPMatt / awesome / 2026.11.22 (active)
+  - [Bug Fix] IKEA E2490 BILRESA remote control with scroll wheel: the mapping now matches the remote, which has a single wheel and no Up/Down buttons (single, double and triple press of the wheel). Use it together with version 2026.11.22 or newer of the IKEA E2490 controller blueprint, older versions of that controller no longer work with this hook version. No other controller is affected. Related to ([issue#539](https://github.com/yarafie/awesome-ha-blueprints/issues/539)). ([@yarafie](https://github.com/yarafie))
 - **media_player** – EPMatt / awesome / 2025.12.22 (active)
   - Device Name and Model was corrected for both Aqara WXKG11LM and Xiaomi WXKG01LM. Blueprints integrated with these two devices will need to be redownloaded and setup again.
+- **media_player** – EPMatt / awesome / 2026.11.22 (active)
+  - [Bug Fix] IKEA E2490 BILRESA remote control with scroll wheel: the mapping now matches the remote, which has a single wheel and no Up/Down buttons (single, double and triple press of the wheel). Use it together with version 2026.11.22 or newer of the IKEA E2490 controller blueprint, older versions of that controller no longer work with this hook version. No other controller is affected. Related to ([issue#539](https://github.com/yarafie/awesome-ha-blueprints/issues/539)). ([@yarafie](https://github.com/yarafie))
 
 ## Controllers
 
@@ -347,15 +355,21 @@ _Generated on 2026-11-22 19:36 GMT+3_
 - **Title:** Controller - IKEA E2490 BILRESA remote control with scroll wheel
 - **Librarians:** yarafie
 - **Library Maintainers:** yarafie
-- **Latest Version:** 2026.02.28
+- **Latest Version:** 2026.11.22 (**🚨 Breaking Change**)
 - **Tags:** zigbee, dimmer, light
 
 <details>
 <summary>Versions</summary>
 
-| Library | Release | Version    | Status | Breaking |
-| ------- | ------- | ---------- | ------ | -------- |
-| EPMatt  | awesome | 2026.02.28 | active | no       |
+| Library | Release | Version    | Status | Breaking               |
+| ------- | ------- | ---------- | ------ | ---------------------- |
+| EPMatt  | awesome | 2026.02.28 | active | no                     |
+| EPMatt  | awesome | 2026.11.22 | active | **🚨 Breaking Change** |
+
+**Breaking change reasons:**
+
+- **EPMatt / awesome / 2026.11.22**
+  - [Bug Fix] The blueprint now matches the remote, which has a single wheel and no Up/Down buttons. The inputs are now Wheel single press, Wheel double press, Wheel triple press and Rotate wheel. The remote alternates between `on` and `off` for single presses, both now count as a single press, and what Zigbee2MQTT reports as `off_double` is a triple press. After updating you need to set up your custom actions again, and update the Light, Media Player and Cover hooks to version 2026.11.22 or newer. This will close ([issue#539](https://github.com/yarafie/awesome-ha-blueprints/issues/539)). Reported by [@DuffyTheDisneyBear](https://github.com/DuffyTheDisneyBear). ([@yarafie](https://github.com/yarafie))
 
 </details>
 
@@ -774,7 +788,7 @@ _Generated on 2026-11-22 19:36 GMT+3_
 - **Title:** Hook - Cover
 - **Librarians:** yarafie
 - **Library Maintainers:** yarafie
-- **Latest Version:** 2026.02.28
+- **Latest Version:** 2026.11.22 (**🚨 Breaking Change**)
 - **Tags:** close, garage, open, stop
 
 <details>
@@ -786,11 +800,14 @@ _Generated on 2026-11-22 19:36 GMT+3_
 | EPMatt  | awesome | 2026.02.20 | active | no                     |
 | EPMatt  | awesome | 2026.02.22 | active | no                     |
 | EPMatt  | awesome | 2026.02.28 | active | no                     |
+| EPMatt  | awesome | 2026.11.22 | active | **🚨 Breaking Change** |
 
 **Breaking change reasons:**
 
 - **EPMatt / awesome / 2025.12.22**
   - Device Name and Model was corrected for both Aqara WXKG11LM and Xiaomi WXKG01LM. Blueprints integrated with these two devices will need to be redownloaded and setup again.
+- **EPMatt / awesome / 2026.11.22**
+  - [Bug Fix] IKEA E2490 BILRESA remote control with scroll wheel: the mapping now matches the remote, which has a single wheel and no Up/Down buttons (single, double and triple press of the wheel). Use it together with version 2026.11.22 or newer of the IKEA E2490 controller blueprint, older versions of that controller no longer work with this hook version. No other controller is affected. Related to ([issue#539](https://github.com/yarafie/awesome-ha-blueprints/issues/539)). ([@yarafie](https://github.com/yarafie))
 
 </details>
 
@@ -799,7 +816,7 @@ _Generated on 2026-11-22 19:36 GMT+3_
 - **Title:** Hook - Light
 - **Librarians:** yarafie
 - **Library Maintainers:** yarafie
-- **Latest Version:** 2026.11.14
+- **Latest Version:** 2026.11.22 (**🚨 Breaking Change**)
 - **Tags:** brightness, color, dim, hue, light, off, on
 
 <details>
@@ -818,6 +835,7 @@ _Generated on 2026-11-22 19:36 GMT+3_
 | EPMatt  | awesome | 2026.03.11 | active | **🚨 Breaking Change** |
 | EPMatt  | awesome | 2026.04.12 | active | no                     |
 | EPMatt  | awesome | 2026.11.14 | active | no                     |
+| EPMatt  | awesome | 2026.11.22 | active | **🚨 Breaking Change** |
 
 **Breaking change reasons:**
 
@@ -829,6 +847,8 @@ _Generated on 2026-11-22 19:36 GMT+3_
   - [Bug Fix] Potential Breaking Change. Changed the increase/decrease steps for color_temp_kelvin from 50 to 250 to be more inline with the kelvin scale 1000 to 10,000.
 - **EPMatt / awesome / 2026.03.11**
   - [Enhancement] Potential Breaking Change if updating from a version before v2026.03.07. Added the Color Temperature Steps for both long and short presses. Setting boundaries for min_color_temp_kelvin and max_color_temp_kelvin attributes from device as a guard.
+- **EPMatt / awesome / 2026.11.22**
+  - [Bug Fix] IKEA E2490 BILRESA remote control with scroll wheel: the mapping now matches the remote, which has a single wheel and no Up/Down buttons (single, double and triple press of the wheel). Use it together with version 2026.11.22 or newer of the IKEA E2490 controller blueprint, older versions of that controller no longer work with this hook version. No other controller is affected. Related to ([issue#539](https://github.com/yarafie/awesome-ha-blueprints/issues/539)). ([@yarafie](https://github.com/yarafie))
 
 </details>
 
@@ -837,7 +857,7 @@ _Generated on 2026-11-22 19:36 GMT+3_
 - **Title:** Hook - Media Player
 - **Librarians:** yarafie
 - **Library Maintainers:** yarafie
-- **Latest Version:** 2026.02.28
+- **Latest Version:** 2026.11.22 (**🚨 Breaking Change**)
 - **Tags:** forward, mute, next, pause, play, previous, reverse, stop, volume
 
 <details>
@@ -850,10 +870,13 @@ _Generated on 2026-11-22 19:36 GMT+3_
 | EPMatt  | awesome | 2026.02.20 | active | no                     |
 | EPMatt  | awesome | 2026.02.22 | active | no                     |
 | EPMatt  | awesome | 2026.02.28 | active | no                     |
+| EPMatt  | awesome | 2026.11.22 | active | **🚨 Breaking Change** |
 
 **Breaking change reasons:**
 
 - **EPMatt / awesome / 2025.12.22**
   - Device Name and Model was corrected for both Aqara WXKG11LM and Xiaomi WXKG01LM. Blueprints integrated with these two devices will need to be redownloaded and setup again.
+- **EPMatt / awesome / 2026.11.22**
+  - [Bug Fix] IKEA E2490 BILRESA remote control with scroll wheel: the mapping now matches the remote, which has a single wheel and no Up/Down buttons (single, double and triple press of the wheel). Use it together with version 2026.11.22 or newer of the IKEA E2490 controller blueprint, older versions of that controller no longer work with this hook version. No other controller is affected. Related to ([issue#539](https://github.com/yarafie/awesome-ha-blueprints/issues/539)). ([@yarafie](https://github.com/yarafie))
 
 </details>

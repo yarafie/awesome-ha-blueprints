@@ -23,7 +23,7 @@ This blueprint is part of the **Controllers-Hooks Ecosystem**. You can read more
 
 This blueprint provides universal support for running any custom action when a button is pressed on the provided IKEA E2490 BILRESA remote control with scroll wheel. Supports controllers integrated with Zigbee2MQTT. The blueprint will automagically detect the integration type and take care of all the rest.
 
-This blueprint is currently only utilizing the top/on and bottom/off buttons, neither the wheel nor the edge buttons are used.
+The remote has a single wheel, which can be pressed once, twice or three times, and rotated. For single presses the remote alternates between sending `on` and `off`; the blueprint treats both as a single press. A long press of the wheel sends nothing, and the bottom button is not available through Zigbee2MQTT.
 
 :::tip
 Automations created with this blueprint can be connected with one or more [Hooks](/docs/blueprints/hooks) supported by this controller.
