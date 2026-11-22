@@ -149,7 +149,7 @@
     "changes": [
       {
         "author": "@yarafie",
-        "description": "[Bug Fix] ZHA: a Left/Right long press no longer also runs the Up button short press. About half a second after a Left/Right button is released the remote sends an extra `on` event; it is now ignored when it arrives within a configurable time after the release (700 ms by default, the value Zigbee2MQTT uses, 0 to disable). This version is based on 2026.02.18 and replaces the attempts of 2026.04.20 and 2026.04.28: Up presses have no added delay and virtual double press works again. Related to ([issue#529](https://github.com/yarafie/awesome-ha-blueprints/issues/529)). ([@yarafie](https://github.com/yarafie))",
+        "description": "[Bug Fix] ZHA: a Left/Right long press no longer also runs the Up button short press. When a Left/Right long press begins, the remote sends a `release` event followed about half a second later by an extra `on` event; that `on` is now ignored when it arrives within a configurable time after a Left/Right `release` event (700 ms by default, the value Zigbee2MQTT uses, 0 to disable). This version is based on 2026.02.18 and replaces the attempts of 2026.04.20 and 2026.04.28: Up presses have no added delay and virtual double press works again. Related to ([issue#529](https://github.com/yarafie/awesome-ha-blueprints/issues/529)). ([@yarafie](https://github.com/yarafie))",
         "breaking": false
       }
     ]

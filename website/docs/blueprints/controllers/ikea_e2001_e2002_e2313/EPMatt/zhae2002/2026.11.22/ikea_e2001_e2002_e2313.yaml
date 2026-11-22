@@ -92,9 +92,9 @@ blueprint:
         helper_zha_release_on_delay:
           name: (Optional) (ZHA) Helper - Ignore Up press after Left/Right release
           description: >-
-            Only used with ZHA. About half a second after a Left or Right button is released, the remote sends an extra "on" event,
-            which would run the Up button short press. That event is ignored when it arrives within this delay after the release.
-            A real Up press inside this delay is ignored as well. A value of 0 disables the feature.
+            Only used with ZHA. When a Left or Right long press begins, the remote first sends a "release" event and, about half a second later, an extra "on" event,
+            which would run the Up button short press. That "on" event is ignored when it arrives within this delay after a Left/Right "release" event.
+            A real Up press inside this delay is ignored as well. A value of 0 disables the feature. Keep the Debounce delay below 400 milliseconds when using it.
           default: 700
           selector:
             number:
@@ -714,10 +714,11 @@ conditions:
         {%- endif -%}
         {%- endset -%}
         {{ trigger_action not in ["","None","unknown"] }}
-      # ZHA only: about half a second after a Left/Right button is released, the remote sends
-      # an extra "on" event. Zigbee2MQTT drops it, ZHA passes it on, and it would run the Up
-      # button short press. It is dropped here, before the automation restarts, so that it
-      # neither cancels running actions nor overwrites the stored last controller event.
+      # ZHA only: when a Left/Right long press begins, the remote sends "release", about half a
+      # second later an extra "on", and only 1.5 seconds after that the "hold" event.
+      # Zigbee2MQTT drops that "on", ZHA passes it on, and it would run the Up button short
+      # press. It is dropped here, before the automation restarts, so that it neither cancels
+      # running actions nor overwrites the stored last controller event.
       - >-
         {%- set stored = (states(helper_last_controller_event) | from_json) if helper_last_controller_event is not none and (states(helper_last_controller_event) | regex_match("^\{\s*?((\"a\":\s*?\".*\"|\"t\":\s*?\d+\.\d+)(,\s*?)?){2}\s*?\}$")) else {} -%}
         {{ not (trigger.id == "zha-button-up-short"

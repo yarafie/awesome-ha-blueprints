@@ -117,11 +117,11 @@ If you notice your controller is not behaving as expected please reset the devic
 
 ### Unwanted Up button short press after a Left/Right long press (ZHA)
 
-When the controller is integrated with ZHA, the remote sends an extra `on` event about half a second after a Left or Right button is released. Without special handling this runs the Up button short press. This is how the device behaves, not a fault of the blueprint or of ZHA; Zigbee2MQTT hides it by dropping that event.
+When the controller is integrated with ZHA, a long press on the Left or Right button starts with an unexpected sequence: the remote first sends a `release` event, about half a second later an extra `on` event, and only about 1.5 seconds after that the actual `hold` event. Without special handling the `on` runs the Up button short press. This is how the device behaves, not a fault of the blueprint or of ZHA; Zigbee2MQTT hides it by dropping that event.
 
-From version 2026.11.22 this release does the same: an `on` event that arrives within **(ZHA) Helper - Ignore Up press after Left/Right release** (700 milliseconds by default) after a Left/Right release is ignored. A real Up press inside that time is ignored as well, since the two cannot be told apart. Up presses at any other time work normally, with no added delay. Set the value to 0 to turn the feature off.
+From version 2026.11.22 this release does the same: an `on` event that arrives within **(ZHA) Helper - Ignore Up press after Left/Right release** (700 milliseconds by default) after a Left/Right `release` event is ignored. A real Up press inside that time is ignored as well, since the two cannot be told apart. Up presses at any other time work normally, with no added delay. Set the value to 0 to turn the feature off.
 
-The **Helper - Last Controller Event** input is required for this to work.
+The **Helper - Last Controller Event** input is required for this to work, and **Helper - Debounce delay** must stay below 400 milliseconds, because the `release` event is only recorded after that delay.
 
 ## Changelog
 
