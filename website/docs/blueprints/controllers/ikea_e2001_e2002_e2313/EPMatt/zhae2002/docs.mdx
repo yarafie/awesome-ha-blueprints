@@ -115,9 +115,13 @@ It has been reported that IKEA E2001/E2002/E2313 controllers integrated with Zig
 
 If you notice your controller is not behaving as expected please reset the device and repeat the pairing process with Zigbee2MQTT, then try again.
 
-### Issues with ZHA specificaly for the E2002 and the device firing the on event ahead of the press/hold events
+### Unwanted Up button short press after a Left/Right long press (ZHA)
 
-It has been reported that IKEA E2002 controller integrated with ZHA might fire the on event when a long press is done on the left/right arrow buttons, during interaction. This issue is not relative to the blueprint itself. The blueprint tries to account for this to a certain degree.
+When the controller is integrated with ZHA, the remote sends an extra `on` event about half a second after a Left or Right button is released. Without special handling this runs the Up button short press. This is how the device behaves, not a fault of the blueprint or of ZHA; Zigbee2MQTT hides it by dropping that event.
+
+From version 2026.11.22 this release does the same: an `on` event that arrives within **(ZHA) Helper - Ignore Up press after Left/Right release** (700 milliseconds by default) after a Left/Right release is ignored. A real Up press inside that time is ignored as well, since the two cannot be told apart. Up presses at any other time work normally, with no added delay. Set the value to 0 to turn the feature off.
+
+The **Helper - Last Controller Event** input is required for this to work.
 
 ## Changelog
 
