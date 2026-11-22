@@ -186,6 +186,17 @@ const config: Config = {
             'https://github.com/yarafie/awesome-ha-blueprints/edit/main/website/',
           showLastUpdateTime: false,
           showLastUpdateAuthor: false,
+          exclude: [
+            // Docusaurus defaults
+            '**/_*.{js,jsx,ts,tsx,md,mdx}',
+            '**/_*/**',
+            '**/*.test.{js,jsx,ts,tsx}',
+            '**/__tests__/**',
+            // Page texts read by scripts/generate.mjs. They are part of the
+            // version pages and must not be published as pages of their own.
+            '**/notes.md',
+            '**/docs.mdx',
+          ],
         },
         theme: {
           customCss: './src/css/custom.css',
