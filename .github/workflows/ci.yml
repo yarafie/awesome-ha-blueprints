@@ -95,6 +95,8 @@ jobs:
       - name: Website - Build
         run: cd website && pnpm build
         env:
+          # the site build needs more than Node's default 4 GB of memory
+          NODE_OPTIONS: --max-old-space-size=8192
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
           LIBRARY_MAINTAINERS: ${{ secrets.LIBRARY_MAINTAINERS }}
