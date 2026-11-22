@@ -163,6 +163,31 @@
           "type": "boolean",
           "description": "Whether this library provides virtual double press events not natively supported by the device."
         },
+        "virtual_double_press_optional": {
+          "type": "boolean",
+          "description": "Whether virtual double press support has to be enabled in the blueprint. Adds that remark to the page description."
+        },
+        "intro": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Optional first sentence of the page description, for devices the standard sentence does not fit."
+        },
+        "description_notes": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Optional extra paragraphs (Markdown) shown at the end of the page description."
+        },
+        "integration_notes": {
+          "type": "object",
+          "description": "Optional text (Markdown) shown inside the requirement card of an integration, keyed by requirement id.",
+          "propertyNames": {
+            "enum": ["zigbee2mqtt", "zha", "deconz", "shelly"]
+          },
+          "additionalProperties": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
         "versions": {
           "type": "object",
           "description": "Optional per-version overrides, keyed by version ID.",
@@ -208,6 +233,31 @@
         "has_virtual_double_press": {
           "type": "boolean",
           "description": "Whether this library provides virtual double press events not natively supported by the device."
+        },
+        "virtual_double_press_optional": {
+          "type": "boolean",
+          "description": "Whether virtual double press support has to be enabled in the blueprint. Adds that remark to the page description."
+        },
+        "intro": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Optional first sentence of the page description, for devices the standard sentence does not fit."
+        },
+        "description_notes": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Optional extra paragraphs (Markdown) shown at the end of the page description."
+        },
+        "integration_notes": {
+          "type": "object",
+          "description": "Optional text (Markdown) shown inside the requirement card of an integration, keyed by requirement id.",
+          "propertyNames": {
+            "enum": ["zigbee2mqtt", "zha", "deconz", "shelly"]
+          },
+          "additionalProperties": {
+            "type": "string",
+            "minLength": 1
+          }
         },
         "supported_integrations": {
           "type": "array",

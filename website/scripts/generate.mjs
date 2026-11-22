@@ -114,24 +114,64 @@ function getActualIntegrations(integrations) {
 
 // ── Notes.md parsing ───────────────────────────────────────────────────────
 
-/** Parse a notes.md file into sections by ### headers. */
+/**
+ * Parse a notes.md file into sections by ### headers.
+ * Text before the first header becomes a section with an empty title.
+ */
 function parseNoteSections(content) {
   if (!content) return []
   const sections = []
-  let current = null
+  let current = { title: '', content: '' }
   for (const line of content.split('\n')) {
     if (line.startsWith('### ')) {
-      if (current) sections.push(current)
+      sections.push(current)
       current = { title: line.slice(4).trim(), content: '' }
-    } else if (current) {
+    } else {
       current.content += line + '\n'
     }
   }
-  if (current) sections.push(current)
+  sections.push(current)
   for (const s of sections) {
     s.content = s.content.trim()
   }
-  return sections
+  return sections.filter((s) => s.title !== '' || s.content !== '')
+}
+
+/**
+ * Plain-Markdown page texts for hooks and automations. Their notes.md may
+ * contain three optional top-level sections:
+ *   ## Description       replaces the short manifest description on the page
+ *   ## Requirements      free text; each "### Name" becomes a requirement card
+ *                        ("### Name (optional)" for one that is not required)
+ *   ## Additional Notes  shown as is
+ */
+function readSectionedNotes(releaseDir) {
+  const out = { description: null, requirements: '', notes: '' }
+  const notesPath = path.join(releaseDir, 'notes.md')
+  if (!fs.existsSync(notesPath)) return out
+  const parts = fs
+    .readFileSync(notesPath, 'utf-8')
+    .split(/^## (Description|Requirements|Additional Notes)[ \t]*$/m)
+  for (let i = 1; i < parts.length; i += 2) {
+    const body = parts[i + 1].trim()
+    if (parts[i] === 'Description' && body) out.description = body
+    if (parts[i] === 'Additional Notes' && body) {
+      out.notes = `## Additional Notes\n\n${body}\n\n`
+    }
+    if (parts[i] === 'Requirements') {
+      const cards = body.split(/^### (.+)$/m)
+      let text = cards[0].trim() ? cards[0].trim() + '\n\n' : ''
+      for (let j = 1; j < cards.length; j += 2) {
+        const optional = /\s*\(optional\)\s*$/i.test(cards[j])
+        const name = cards[j].replace(/\s*\(optional\)\s*$/i, '').trim()
+        text +=
+          `<Requirement name='${name.replace(/'/g, '&apos;')}'${optional ? '' : ' required'}>\n\n` +
+          `${cards[j + 1].trim()}\n\n</Requirement>\n\n`
+      }
+      out.requirements = text.trim()
+    }
+  }
+  return out
 }
 
 /** Build the complete Additional Notes section from manifest flags + notes.md. */
@@ -149,23 +189,43 @@ function buildAdditionalNotesSection(releaseConfig, releaseDir) {
 
   if (!hasHelper && !hasVDP && noteSections.length === 0) return ''
 
+  // A notes.md section named like a standard subsection replaces its
+  // device-independent text.
+  const HELPER_TITLE = 'Helper - Last Controller Event'
+  const VDP_TITLE = 'Virtual double press events'
+  const helperNote = noteSections.find((s) => s.title === HELPER_TITLE)
+  const vdpNote = noteSections.find((s) => s.title === VDP_TITLE)
+
   let section = '## Additional Notes\n\n'
+
+  // Text before the first header of notes.md
+  const preamble = noteSections.find((s) => s.title === '')
+  if (preamble) section += `${preamble.content}\n\n`
 
   // Helper subsection (from requires_helper flag)
   if (hasHelper) {
-    section += '### Helper - Last Controller Event\n\n'
-    section += STANDARD_HELPER_PARAGRAPH + '\n\n'
+    section += `### ${HELPER_TITLE}\n\n`
+    section +=
+      (helperNote
+        ? STANDARD_HELPER_PARAGRAPH.split('\n\n')[0] +
+          '\n\n' +
+          helperNote.content
+        : STANDARD_HELPER_PARAGRAPH) + '\n\n'
   }
 
   // Virtual double press subsection (from flag)
   if (hasVDP) {
-    section += '### Virtual double press events\n\n'
-    section += STANDARD_VDP_ADDITIONAL_NOTE + '\n\n'
+    section += `### ${VDP_TITLE}\n\n`
+    section +=
+      (vdpNote ? vdpNote.content : STANDARD_VDP_ADDITIONAL_NOTE) + '\n\n'
   }
 
   // Remaining sections from notes.md
   const remaining = noteSections.filter(
-    (s) => s.title !== 'Virtual double press events',
+    (s) =>
+      s.title !== '' &&
+      s.title !== VDP_TITLE &&
+      !(hasHelper && s.title === HELPER_TITLE),
   )
   for (const s of remaining) {
     section += `### ${s.title}\n\n${s.content}\n\n`
@@ -255,6 +315,10 @@ function getReleaseConfig(manifest, libraryId, releaseId) {
       supported_controllers: null,
       status: resolveStatus(manifest.status),
       version_overrides: {},
+      intro: null,
+      description_notes: null,
+      virtual_double_press_optional: false,
+      integration_notes: {},
     }
   }
 
@@ -285,6 +349,21 @@ function getReleaseConfig(manifest, libraryId, releaseId) {
       manifest.status,
     ),
     version_overrides: releaseOverride.versions || {},
+    // Optional page texts, per release or per library. They carry what a
+    // hand-written docs.mdx used to add to the standard page.
+    intro: releaseOverride.intro ?? libraryConfig.intro ?? null,
+    description_notes:
+      releaseOverride.description_notes ??
+      libraryConfig.description_notes ??
+      null,
+    virtual_double_press_optional:
+      releaseOverride.virtual_double_press_optional ??
+      libraryConfig.virtual_double_press_optional ??
+      false,
+    integration_notes:
+      releaseOverride.integration_notes ??
+      libraryConfig.integration_notes ??
+      {},
   }
 }
 
@@ -505,11 +584,15 @@ function buildVersionFrontmatter(manifest, category, integrations) {
   return buildFrontmatter(fields)
 }
 
-function buildRequirements(integrations) {
+function buildRequirements(integrations, notes = {}) {
   return integrations
     .map((integ) => {
       const reqId = INTEGRATION_TO_REQUIREMENT_ID[integ.toLowerCase()]
-      return reqId ? `<Requirement id='${reqId}'/>` : null
+      if (!reqId) return null
+      const note = notes?.[reqId]
+      return note
+        ? `<Requirement id='${reqId}'>\n\n${String(note).trim()}\n\n</Requirement>`
+        : `<Requirement id='${reqId}'/>`
     })
     .filter(Boolean)
     .join('\n')
@@ -565,7 +648,17 @@ function generateDefaultVersionMdx(
     descriptionExtra += '\n' + STANDARD_LONG_PRESS_PARAGRAPH + '\n'
   }
   if (releaseConfig.has_virtual_double_press === true) {
-    descriptionExtra += '\n' + STANDARD_VDP_DESCRIPTION_PARAGRAPH + '\n'
+    descriptionExtra +=
+      '\n' +
+      STANDARD_VDP_DESCRIPTION_PARAGRAPH +
+      (releaseConfig.virtual_double_press_optional === true
+        ? ' However, it needs to be enabled in the blueprint.'
+        : '') +
+      '\n'
+  }
+  if (releaseConfig.description_notes) {
+    descriptionExtra +=
+      '\n' + String(releaseConfig.description_notes).trim() + '\n'
   }
 
   // A controller blueprint without an `integration` input detects the
@@ -599,7 +692,14 @@ function generateDefaultVersionMdx(
         : hasHooks && actualIntegrations.length > 1
           ? ' Just specify the integration used to connect the remote to Home Assistant when setting up the automation, and the blueprint will take care of all the rest.'
           : '',
-    requirements: buildRequirements(actualIntegrations),
+    intro:
+      releaseConfig.intro ||
+      `This blueprint provides universal support for running any custom action when a button is pressed on the provided ${manifest.model_name || ''}.`,
+    requirements: buildRequirements(
+      actualIntegrations,
+      releaseConfig.integration_notes,
+    ),
+    requirements_extra: '',
     hooks_sections: buildHooksSections(
       hooksData,
       blueprintId,
@@ -627,6 +727,14 @@ function generateDefaultVersionMdx(
       : TEMPLATES.controllerNoHooks
     return renderTemplate(template, vars)
   }
+
+  // Hooks and automations take their page texts from notes.md sections.
+  const sectioned = readSectionedNotes(releaseDir)
+  if (sectioned.description) vars.description = sectioned.description
+  vars.requirements_extra = sectioned.requirements
+    ? '\n\n' + sectioned.requirements
+    : ''
+  vars.additional_notes_section = sectioned.notes
 
   if (category === 'hooks') {
     return renderTemplate(TEMPLATES.hook, vars)
