@@ -16,6 +16,7 @@ export interface ControllerInfo {
     long_press_loop: boolean
   }
   reference_links?: string[]
+  sends_hook_events?: boolean
 }
 
 export interface ControllerLocation {

@@ -50,7 +50,9 @@ A controller blueprint must follow the [Controller YAML format](https://yarafie.
    ```
 4. Open the **New Controller Support** issue and add your YAML file, a picture of the device (PNG) and, if you have it, the device's manual (PDF). If GitHub does not accept the YAML file type, attach it as a `.zip` or `.txt` file.
 
-A blueprint that does not use the Controllers and Hooks method can be added under a release named `anything`. It is published as supplied and does not have to follow the format.
+A controller does not have to work with Hooks. One that sends no `ahb_controller_event` is accepted as a controller without hooks, and the checker says which kind it found. A blueprint that is not built on the controller layout at all (no `controller_device` input and no `actions_mapping`) is published as supplied and does not have to follow the format.
+
+Every contribution is published under your GitHub name and a **release name** that you choose: a short name for what the blueprint handles, such as `anything` for general purpose, `lights` or `cover`.
 
 ### 3. I Want to Improve an Existing Blueprint
 

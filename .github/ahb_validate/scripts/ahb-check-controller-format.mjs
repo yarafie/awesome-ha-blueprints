@@ -133,9 +133,13 @@ files.forEach((f, i) => {
     )
   else if (r.status === 'free-form' && !r.errors.length)
     console.log(
-      '      ok: free-form release, only the blueprint header is checked',
+      '      ok: free-form blueprint (no controller layout), only the header is checked',
     )
   else if (!r.errors.length && !r.warnings.length) console.log('      ok')
+  if (r.status === 'checked' && r.info.sends_hook_events === false)
+    console.log(
+      '      note: sends no `ahb_controller_event`, so it is a controller without hooks',
+    )
   for (const e of r.errors) console.log(`      ERROR   ${e.rule}  ${e.msg}`)
   for (const w of r.warnings) console.log(`      warning ${w.rule}  ${w.msg}`)
   if (flags.has('--info') && r.status === 'checked') {
@@ -148,6 +152,9 @@ files.forEach((f, i) => {
       `      read: manufacturers   ${(n.manufacturers || []).join(', ') || '-'}`,
     )
     console.log(`      read: events          ${(n.events || []).length}`)
+    console.log(
+      `      read: hooks           ${n.sends_hook_events ? 'sends hook events' : 'no hook events'}`,
+    )
     console.log(
       `      read: features        ${
         Object.entries(n.features || {})

@@ -2,7 +2,7 @@
  * DetailsForm
  * ────────────────────────────────────────────────────────────────
  * The few things that cannot be read from the YAML: manufacturer,
- * model number, tags and optional notes.
+ * model number, a release name, tags and optional notes.
  */
 
 import React from 'react'
@@ -11,6 +11,7 @@ import styles from '../contributors.module.css'
 export interface Details {
   manufacturer: string | null
   model: string | null
+  release: string
   tags: string[]
   notes: string
 }
@@ -18,6 +19,7 @@ export interface Details {
 export const EMPTY_DETAILS: Details = {
   manufacturer: null,
   model: null,
+  release: '',
   tags: [],
   notes: '',
 }
@@ -37,6 +39,7 @@ export const SUGGESTED_TAGS = [
 
 interface DetailsFormProps {
   details: Details
+  library: string
   guess: { manufacturer: string; model: string }
   blueprintId: string
   problems: string[]
@@ -45,6 +48,7 @@ interface DetailsFormProps {
 
 const DetailsForm: React.FC<DetailsFormProps> = ({
   details,
+  library,
   guess,
   blueprintId,
   problems,
@@ -57,6 +61,12 @@ const DetailsForm: React.FC<DetailsFormProps> = ({
         ? details.tags.filter((t) => t !== tag)
         : [...details.tags, tag],
     })
+
+  // an empty release name is explained by the hint under its field; it is
+  // not shown as an error before the contributor has typed anything
+  const shown = problems.filter(
+    (problem) => !problem.startsWith('the release name is missing'),
+  )
 
   return (
     <div>
@@ -84,6 +94,33 @@ const DetailsForm: React.FC<DetailsFormProps> = ({
           />
         </label>
       </div>
+
+      <label className={`${styles.field} ${styles.section}`}>
+        Release name (required)
+        <input
+          className={styles.input}
+          type='text'
+          value={details.release}
+          placeholder='anything'
+          autoCapitalize='none'
+          autoCorrect='off'
+          spellCheck={false}
+          onChange={(e) =>
+            onChange({
+              ...details,
+              release: e.target.value.toLowerCase().replace(/[\s-]+/g, '_'),
+            })
+          }
+        />
+      </label>
+      <p className={styles.hint}>
+        A short name for what your blueprint handles: <code>anything</code> for
+        general purpose, or for example <code>lights</code> or{' '}
+        <code>cover</code>. It is published under your name
+        {library && details.release
+          ? ` as ${library}/${details.release}.`
+          : '.'}
+      </p>
 
       <p className={styles.hint}>
         Tags
@@ -115,9 +152,9 @@ const DetailsForm: React.FC<DetailsFormProps> = ({
         />
       </label>
 
-      {problems.length > 0 && (
+      {shown.length > 0 && (
         <div className={styles.section}>
-          {problems.map((problem) => (
+          {shown.map((problem) => (
             <p
               key={problem}
               className={`${styles.finding} ${styles.findingError}`}

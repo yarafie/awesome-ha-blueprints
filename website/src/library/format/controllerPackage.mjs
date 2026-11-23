@@ -242,7 +242,8 @@ export function buildChangelogText(version, authorId) {
        hasPdf:       true when a manual is supplied
        blueprintId:  optional, suggested from manufacturer + model
        library:      optional, defaults to the author's id
-       release:      optional, defaults to 'awesome'
+       release:      a short name for what the blueprint handles,
+                     e.g. 'anything', 'lights', 'cover' (required)
        version:      optional, defaults to today
        supportedHooks: optional, defaults to none
        librarians:   optional, defaults to yarafie
@@ -291,7 +292,7 @@ export function buildControllerPackage({ yamlText, fields, existingIds = [] }) {
   const model = (f.model ?? guess.model).trim()
   const id = (f.blueprintId || suggestBlueprintId(manufacturer, model)).trim()
   const library = (f.library || author.id || '').trim()
-  const release = (f.release || 'awesome').trim()
+  const release = (f.release || '').trim()
   const version = (f.version || todayAsVersion()).trim()
   const hooks = (f.supportedHooks || []).filter((h) => h !== 'none')
   const tags = [...new Set((f.tags || []).map((t) => String(t).trim()))].filter(
@@ -311,9 +312,13 @@ export function buildControllerPackage({ yamlText, fields, existingIds = [] }) {
     )
   if (!LIBRARY_RE.test(library))
     problems.push(`"${library}" is not a valid library id (GitHub user name)`)
-  if (!ID_RE.test(release))
+  if (!release)
     problems.push(
-      `the release id "${release}" may only contain lowercase letters, digits and single underscores`,
+      'the release name is missing: a short name for what this blueprint handles, for example "anything", "lights" or "cover"',
+    )
+  else if (!ID_RE.test(release))
+    problems.push(
+      `the release name "${release}" may only contain lowercase letters, digits and single underscores`,
     )
   if (!VERSION_RE.test(version))
     problems.push(`the version "${version}" must be written as YYYY.MM.DD`)

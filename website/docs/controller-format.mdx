@@ -25,7 +25,9 @@ Add `--info` to see what the library reads from your file.
 - The format applies to **new controllers** and to **every new version** of an existing controller.
 - Existing versions are not changed. A controller is brought to the format when it next gets a new version.
 - Some older controllers let the user pick the integration from a dropdown. They are converted when they next need work, and the checker skips them until then.
-- A release named `anything` holds blueprints that do not take part in the Controllers and Hooks method. It is published as supplied, and only rules C-01 and C-02 apply to it.
+- A controller that sends no `ahb_controller_event` is a controller without Hooks. It follows the same format, and the checker reports it as such.
+- A blueprint with neither a `controller_device` input nor an `actions_mapping` is not built on the controller layout. It is published as supplied, and only rules C-01 and C-02 apply to it.
+- The release name does not affect the check. It is a short name for what the blueprint handles, such as `anything` for general purpose, `lights` or `cover`.
 
 ### 1. File and header
 
@@ -83,7 +85,7 @@ An **event** is one thing the user can do on the device. Its name is lowercase w
 | C-30          | Every event has one input named `action_<event>`, with an `action` selector and `default: []`.                                                                                 |
 | C-31          | The input's name is `(Optional) <readable event name>`, for example `(Optional) Up button short press`. The part after `(Optional) ` is the event's label on the website.      |
 | C-32          | Every event is sent once in `actions:` as `ahb_controller_event`, with `controller` set to the controller id and `action` set to the event name. This is what Hooks listen to. |
-| C-33          | The set of `action_*` inputs and the set of events that are sent are the same.                                                                                                 |
+| C-33          | The set of `action_*` inputs and the set of events that are sent are the same. A controller without Hooks sends none, and then this rule does not apply.                       |
 
 ### 5. Option inputs and sections
 

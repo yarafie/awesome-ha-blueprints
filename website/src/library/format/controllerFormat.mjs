@@ -25,6 +25,15 @@
                     links and source_url are then not checked.
      includeLegacy  also check the older "integration dropdown"
                     controllers (skipped by default)
+
+   status
+     'checked'    a controller on the standard layout; all rules apply
+     'legacy'     an older "integration dropdown" controller; skipped
+     'free-form'  a blueprint with neither a `controller_device` input nor
+                  an `actions_mapping`; only C-01 and C-02 apply
+
+   info.sends_hook_events tells whether the controller takes part in the
+   Controllers and Hooks method (it sends `ahb_controller_event`).
    ========================================================= */
 import YAML from 'yaml'
 
@@ -185,14 +194,20 @@ export function checkControllerYaml(text, opts = {}) {
   if (!desc) err('C-02', '`blueprint.description` is missing')
 
   // ---- scope
-  if (loc && loc.release === 'anything') {
-    res.status = 'free-form'
-    return res
-  }
   const inputs = flattenInputs(bp.input)
   const inputKeys = inputs.map((i) => i.key)
   if (inputKeys[0] === 'integration' && !opts.includeLegacy) {
     res.status = 'legacy'
+    return res
+  }
+  // A blueprint with neither a `controller_device` input nor an
+  // `actions_mapping` is not built on the controller layout at all. It is a
+  // free-form blueprint: published as supplied, only the header is checked.
+  // The name of its release plays no part in this.
+  const hasMapping =
+    isObj(doc.variables) && doc.variables.actions_mapping !== undefined
+  if (!inputKeys.includes('controller_device') && !hasMapping) {
+    res.status = 'free-form'
     return res
   }
   if (!name || !desc) return res
@@ -426,7 +441,13 @@ export function checkControllerYaml(text, opts = {}) {
   }
   if (!actionInputs.length) err('C-30', 'there are no `action_<event>` inputs')
   const fired = firedEvents(doc.actions ?? doc.action)
-  const notFired = sorted(inputEvents).filter((e) => !fired.has(e))
+  // A controller either takes part in the Controllers and Hooks method or it
+  // does not. One that sends no `ahb_controller_event` at all is a valid
+  // controller without hooks; C-33 applies once it sends at least one.
+  res.info.sends_hook_events = fired.size > 0
+  const notFired = fired.size
+    ? sorted(inputEvents).filter((e) => !fired.has(e))
+    : []
   const noInput = sorted(fired).filter((e) => !inputEvents.has(e))
   if (notFired.length)
     err(

@@ -41,12 +41,29 @@ const CheckPanel: React.FC<CheckPanelProps> = ({ check, fileProblems }) => {
     )
   }
 
+  if (check.status === 'free-form') {
+    return (
+      <p className={`${styles.finding} ${styles.findingError}`}>
+        This file has no <code>controller_device</code> input and no{' '}
+        <code>actions_mapping</code>, so it is not a controller on the standard
+        layout. For now this page prepares packages for those only. See the{' '}
+        <a href={FORMAT_PAGE}>Controller YAML format</a> and its starter
+        template.
+      </p>
+    )
+  }
+
   const { errors, warnings, info } = check
   const features = info.features
   const chips = [
     info.model_name,
     ...(info.integrations ?? []),
     info.events ? `${info.events.length} events` : undefined,
+    info.sends_hook_events === undefined
+      ? undefined
+      : info.sends_hook_events
+        ? 'works with hooks'
+        : 'no hooks',
     features?.long_press_loop ? 'long press loop' : undefined,
     features?.virtual_double_press ? 'virtual double press' : undefined,
     features?.text_helper ? 'text helper' : undefined,

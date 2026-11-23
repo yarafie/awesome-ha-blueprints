@@ -9,7 +9,8 @@
    Build a package:
      node ahb-build-controller-package.mjs \
        --yaml my_remote.yaml --png my_remote.png --author octocat \
-       --model X100 --tags remote,dimmer --out /tmp/package
+       --release anything --model X100 --tags remote,dimmer \
+       --out /tmp/package
 
    Options:
      --yaml <file>          the controller YAML (required)
@@ -23,7 +24,8 @@
      --notes <file>         text for the page's Additional Notes
      --id <blueprint_id>    defaults to <manufacturer>_<model>
      --library <id>         defaults to the author
-     --release <id>         defaults to awesome
+     --release <name>       short name for what the blueprint handles, for
+                            example anything, lights, cover (required)
      --version <date>       YYYY.MM.DD, defaults to today
      --out <folder>         where to write the package (must be empty or new)
 
@@ -287,9 +289,13 @@ function build() {
   for (const w of pkg.check.warnings)
     console.log(`      warning ${w.rule}  ${w.msg}`)
   for (const p of pkg.problems) console.log(`      ERROR   ${p}`)
-  if (pkg.check.status !== 'checked')
+  if (pkg.check.status === 'legacy')
     console.log(
       '      ERROR   this file uses the older "integration dropdown" format; new controllers must follow the Controller YAML format',
+    )
+  if (pkg.check.status === 'free-form')
+    console.log(
+      '      ERROR   this file has neither a `controller_device` input nor an `actions_mapping`, so it is not a controller on the standard layout; packages are built for those only',
     )
   if (!pkg.ok) {
     console.log('\nNo package was written.')

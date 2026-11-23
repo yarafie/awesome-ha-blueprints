@@ -100,6 +100,7 @@ const ContributorsApp: React.FC = () => {
         author: { id: user.login, name: user.name ?? user.login },
         manufacturer,
         model,
+        release: details.release,
         tags: details.tags,
         notes: details.notes,
         hasPdf: files.pdf !== null,
@@ -112,6 +113,7 @@ const ContributorsApp: React.FC = () => {
     existingIds,
     manufacturer,
     model,
+    details.release,
     details.tags,
     details.notes,
     files.pdf,
@@ -126,15 +128,17 @@ const ContributorsApp: React.FC = () => {
     ? 'Add your YAML first'
     : check?.status === 'legacy'
       ? 'The blueprint must follow the new format'
-      : errorCount > 0
-        ? `Fix ${errorCount} ${errorCount === 1 ? 'item' : 'items'} in the format check first`
-        : problems.length > 0
-          ? 'Complete the details first'
-          : !files.png
-            ? 'Add a picture of the device'
-            : !pkg?.ok
-              ? 'The package is not ready yet'
-              : null
+      : check?.status === 'free-form'
+        ? 'This page takes controllers on the standard layout'
+        : errorCount > 0
+          ? `Fix ${errorCount} ${errorCount === 1 ? 'item' : 'items'} in the format check first`
+          : problems.length > 0
+            ? 'Complete the details first'
+            : !files.png
+              ? 'Add a picture of the device'
+              : !pkg?.ok
+                ? 'The package is not ready yet'
+                : null
 
   // ── status of each card ──────────────────────────────────────────
   const filesStatus: StepStatus = files.yaml && files.png ? 'done' : 'todo'
@@ -301,6 +305,7 @@ const ContributorsApp: React.FC = () => {
           >
             <DetailsForm
               details={details}
+              library={user?.login ?? ''}
               guess={guess}
               blueprintId={blueprintId}
               problems={problems}
