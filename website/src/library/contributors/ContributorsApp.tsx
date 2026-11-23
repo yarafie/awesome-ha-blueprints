@@ -30,6 +30,7 @@ import {
 
 import styles from './contributors.module.css'
 import StepCard, { type StepStatus } from './ui/StepCard'
+import StartChoice, { type Category, type Intent } from './ui/StartChoice'
 import FileDrop from './ui/FileDrop'
 import CheckPanel from './ui/CheckPanel'
 import DetailsForm, { EMPTY_DETAILS, type Details } from './ui/DetailsForm'
@@ -66,6 +67,8 @@ function packageReadme(folder: string): string {
 const ContributorsApp: React.FC = () => {
   const { state: auth, login, logout } = useAuth('/contributors')
 
+  const [category, setCategory] = useState<Category | null>(null)
+  const [intent, setIntent] = useState<Intent | null>(null)
   const [files, setFiles] = useState<ContributionFiles>(EMPTY_FILES)
   const [rejected, setRejected] = useState<string[]>([])
   const [details, setDetails] = useState<Details>(EMPTY_DETAILS)
@@ -144,6 +147,9 @@ const ContributorsApp: React.FC = () => {
               : !pkg?.ok
                 ? 'The package is not ready yet'
                 : null
+
+  // the steps appear once the contributor has said what they are adding
+  const started = category === 'controllers' && intent === 'new'
 
   // ── status of each card ──────────────────────────────────────────
   const filesStatus: StepStatus = files.yaml && files.png ? 'done' : 'todo'
@@ -227,10 +233,10 @@ const ContributorsApp: React.FC = () => {
   // ── page ─────────────────────────────────────────────────────────
   return (
     <main className={styles.page}>
-      <h1 className={styles.title}>Contribute a controller</h1>
+      <h1 className={styles.title}>Contribute to the library</h1>
       <p className={styles.lead}>
-        Add your blueprint and a picture. The page checks the format as you go
-        and prepares everything else the library needs.
+        Choose what you would like to contribute. The page checks your blueprint
+        as you go and prepares everything else the library needs.
       </p>
 
       {!user && (
@@ -278,72 +284,74 @@ const ContributorsApp: React.FC = () => {
             </button>
           </div>
 
-          <StepCard step={1} title='What are you adding?' status='done'>
-            <div className={styles.choice}>
-              <button
-                type='button'
-                className={`${styles.choiceItem} ${styles.choiceSelected}`}
-                aria-pressed='true'
+          <StepCard
+            step={1}
+            title='What would you like to contribute?'
+            status={started ? 'done' : 'todo'}
+          >
+            <StartChoice
+              category={category}
+              intent={intent}
+              onCategory={setCategory}
+              onIntent={setIntent}
+            />
+          </StepCard>
+
+          {started && (
+            <>
+              <StepCard step={2} title='Your files' status={filesStatus}>
+                <FileDrop
+                  files={files}
+                  rejected={rejected}
+                  onAdd={handleAdd}
+                  onRemove={handleRemove}
+                />
+              </StepCard>
+
+              <StepCard
+                step={3}
+                title='Format check'
+                status={checkStatus}
+                hint={
+                  check && check.status === 'checked'
+                    ? errorCount > 0
+                      ? `${errorCount} to fix`
+                      : check.warnings.length > 0
+                        ? `passed, ${check.warnings.length} ${check.warnings.length === 1 ? 'remark' : 'remarks'}`
+                        : 'passed'
+                    : undefined
+                }
               >
-                New controller
-              </button>
-              <button type='button' className={styles.choiceItem} disabled>
-                New version · coming next
-              </button>
-            </div>
-          </StepCard>
+                <CheckPanel check={check} fileProblems={fileProblems} />
+              </StepCard>
 
-          <StepCard step={2} title='Your files' status={filesStatus}>
-            <FileDrop
-              files={files}
-              rejected={rejected}
-              onAdd={handleAdd}
-              onRemove={handleRemove}
-            />
-          </StepCard>
+              <StepCard
+                step={4}
+                title='A few details'
+                status={detailsStatus}
+                locked={detailsLocked}
+                hint={detailsLocked ? 'after the format check' : undefined}
+              >
+                <DetailsForm
+                  details={details}
+                  library={user?.login ?? ''}
+                  guess={guess}
+                  blueprintId={blueprintId}
+                  problems={shownProblems}
+                  disabled={detailsLocked}
+                  onChange={setDetails}
+                />
+              </StepCard>
 
-          <StepCard
-            step={3}
-            title='Format check'
-            status={checkStatus}
-            hint={
-              check && check.status === 'checked'
-                ? errorCount > 0
-                  ? `${errorCount} to fix`
-                  : check.warnings.length > 0
-                    ? `passed, ${check.warnings.length} ${check.warnings.length === 1 ? 'remark' : 'remarks'}`
-                    : 'passed'
-                : undefined
-            }
-          >
-            <CheckPanel check={check} fileProblems={fileProblems} />
-          </StepCard>
-
-          <StepCard
-            step={4}
-            title='A few details'
-            status={detailsStatus}
-            locked={detailsLocked}
-            hint={detailsLocked ? 'after the format check' : undefined}
-          >
-            <DetailsForm
-              details={details}
-              library={user?.login ?? ''}
-              guess={guess}
-              blueprintId={blueprintId}
-              problems={shownProblems}
-              disabled={detailsLocked}
-              onChange={setDetails}
-            />
-          </StepCard>
-
-          <StepCard step={5} title='Your package' status={packageStatus}>
-            <PackagePreview
-              files={pkg?.ok ? pkg.files : []}
-              blocker={blocker}
-              onDownload={handleDownload}
-            />
-          </StepCard>
+              <StepCard step={5} title='Your package' status={packageStatus}>
+                <PackagePreview
+                  files={pkg?.ok ? pkg.files : []}
+                  blocker={blocker}
+                  onDownload={handleDownload}
+                />
+              </StepCard>
+            </>
+          )}
         </>
       )}
     </main>

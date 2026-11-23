@@ -104,26 +104,98 @@
   color: var(--ifm-color-emphasis-700);
 }
 
-.choice {
+.tiles {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.5rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.6rem;
 }
 
-.choiceItem {
+.tile,
+.option {
   font: inherit;
-  text-align: center;
-  padding: 0.6rem 0.5rem;
-  border-radius: 8px;
+  text-align: left;
+  display: flex;
+  gap: 0.7rem;
+  padding: 0.7rem;
+  border-radius: 10px;
   border: 1px solid var(--ifm-color-emphasis-300);
   background: transparent;
+  color: var(--ifm-font-color-base);
+  cursor: pointer;
+}
+
+.tile {
+  flex-direction: column;
+}
+
+.option {
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.tile:hover:not(:disabled),
+.option:hover:not(:disabled) {
+  border-color: var(--ifm-color-primary);
+}
+
+.tile:disabled,
+.option:disabled {
+  cursor: default;
+  opacity: 0.55;
+}
+
+.tileSelected {
+  border: 2px solid var(--ifm-color-primary);
+  padding: calc(0.7rem - 1px);
+}
+
+.tileIcon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #1c1e21;
+}
+
+.tileText {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.tileName {
+  font-weight: 600;
+  font-size: 0.95rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.tileHint {
+  font-size: 0.85rem;
+  line-height: 1.4;
   color: var(--ifm-color-emphasis-700);
 }
 
-.choiceSelected {
-  border: 2px solid var(--ifm-color-primary);
-  color: var(--ifm-font-color-base);
+.soon {
+  font-size: 0.7rem;
   font-weight: 600;
+  padding: 0.05rem 0.45rem;
+  border-radius: 999px;
+  background: var(--ifm-color-emphasis-200);
+  color: var(--ifm-color-emphasis-800);
+  white-space: nowrap;
+}
+
+.options {
+  display: grid;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
 }
 
 .drop {
@@ -316,6 +388,17 @@
 
 .section {
   margin: 0.9rem 0 0;
+}
+
+@media (max-width: 600px) {
+  .tiles {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .tile {
+    flex-direction: row;
+    align-items: center;
+  }
 }
 
 @media (max-width: 480px) {
