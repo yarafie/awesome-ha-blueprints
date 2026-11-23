@@ -506,10 +506,16 @@ function checkFile(file, opts) {
     if (!s.endsWith('_section'))
       err('C-41', `section \`${s}\` must end in \`_section\``)
   }
+  // the on/off options are named <button>_long_loop_enabled and
+  // <button>_double_press_enabled
+  for (const k of inputKeys) {
+    const m = k.match(/^(.+_(?:long_loop|double_press))(_exposed)?$/)
+    if (m) warn('C-41', `\`${k}\` should be named \`${m[1]}_enabled\``)
+  }
   res.info.features = {
     text_helper: inputKeys.includes('helper_last_controller_event'),
     virtual_double_press: inputKeys.some((k) =>
-      /_double_press(_enabled)?$/.test(k),
+      /_double_press(_enabled|_exposed)?$/.test(k),
     ),
     long_press_loop: inputKeys.some((k) => /_max_loop_repeats$/.test(k)),
   }
