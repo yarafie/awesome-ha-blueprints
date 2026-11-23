@@ -56,6 +56,10 @@ export function todayAsVersion(date = new Date()) {
   return `${date.getFullYear()}.${p(date.getMonth() + 1)}.${p(date.getDate())}`
 }
 
+// true for the domain itself and for its subdomains, and for nothing else
+// ("evilzigbee2mqtt.io" is not "zigbee2mqtt.io")
+const isHost = (host, domain) => host === domain || host.endsWith(`.${domain}`)
+
 function referenceLabel(url) {
   let host
   try {
@@ -63,11 +67,11 @@ function referenceLabel(url) {
   } catch {
     return 'External'
   }
-  if (host.endsWith('zigbee2mqtt.io')) return 'Zigbee2MQTT'
+  if (isHost(host, 'zigbee2mqtt.io')) return 'Zigbee2MQTT'
   if (host === 'zigbee.blakadder.com') return 'Blakadder'
   if (host === 'github.com' && /deconz/i.test(url)) return 'deCONZ Device'
   if (host === 'github.com' && /zha/i.test(url)) return 'ZHA Quirk'
-  if (host.endsWith('shelly.com') || host.endsWith('shelly.cloud'))
+  if (isHost(host, 'shelly.com') || isHost(host, 'shelly.cloud'))
     return 'Shelly'
   return 'External'
 }

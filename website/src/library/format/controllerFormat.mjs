@@ -318,12 +318,14 @@ export function checkControllerYaml(text, opts = {}) {
     const wantUrl = `${REPO_URL}/blob/main/website/docs/blueprints/controllers/${loc.id}/${loc.library}/${loc.release}/${loc.version}/${loc.id}.yaml`
     if (bp.source_url !== wantUrl)
       err('C-13', '`source_url` does not point to this file')
-    const links = desc.match(
-      new RegExp(`${SITE}/docs/blueprints/controllers/[^)\\s]*`, 'g'),
-    )
-    const bad = (links || []).filter(
-      (l) => l !== base && !l.startsWith(`${here}#`),
-    )
+    // every link into the controllers documentation, found without turning
+    // the site address into a pattern
+    const prefix = `${SITE}/docs/blueprints/controllers/`
+    const links = desc
+      .split(prefix)
+      .slice(1)
+      .map((rest) => prefix + rest.match(/^[^)\s]*/)[0])
+    const bad = links.filter((l) => l !== base && !l.startsWith(`${here}#`))
     if (bad.length)
       err(
         'C-13',
