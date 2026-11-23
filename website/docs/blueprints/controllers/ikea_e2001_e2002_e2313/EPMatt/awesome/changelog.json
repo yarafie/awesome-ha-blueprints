@@ -123,5 +123,15 @@
         "breaking": true
       }
     ]
+  },
+  {
+    "date": "2026.11.23",
+    "changes": [
+      {
+        "author": "@yarafie",
+        "description": "[Bug Fix] ZHA: a Left/Right long press no longer also runs the Up button short press. When a Left/Right long press begins, the remote sends a `release` event followed about half a second later by an extra `on` event; that `on` is now ignored when it arrives within a configurable time after a Left/Right `release` event (700 ms by default, the value Zigbee2MQTT uses, 0 to disable). Zigbee2MQTT and deCONZ are not affected. This fix was developed in the `zhae2002` release, which is now deprecated. See the Additional Notes. Fixes ([issue#529](https://github.com/yarafie/awesome-ha-blueprints/issues/529)). ([@yarafie](https://github.com/yarafie))",
+        "breaking": false
+      }
+    ]
   }
 ]

@@ -18,6 +18,7 @@ libraries:
           - 'media_player'
           - 'cover'
       zhae2002:
+        status: 'deprecated'
         supported_hooks:
           - 'light'
           - 'media_player'

@@ -1,11 +1,11 @@
 # Awesome HA Blueprints – Library Report
 
-_Generated on 2026-11-22 20:17 GMT+3_
+_Generated on 2026-11-23 20:31 GMT+3_
 ---
 
 ## Summary
 
-- **Controllers:** 35 blueprints, 61 versions
+- **Controllers:** 35 blueprints, 62 versions
 - **Automations:** 4 blueprints, 4 versions
 - **Hooks:** 3 blueprints, 23 versions
 - **Breaking versions:** 17
@@ -258,18 +258,19 @@ _Generated on 2026-11-22 20:17 GMT+3_
 - **Title:** Controller - IKEA E2001/E2002/E2313 STYRBAR Remote control
 - **Librarians:** yarafie
 - **Library Maintainers:** yarafie
-- **Latest Version:** 2026.11.22
+- **Latest Version:** 2026.11.23
 - **Tags:** zigbee, button, remote, 4-button
 
 <details>
 <summary>Versions</summary>
 
-| Library | Release  | Version    | Status | Breaking               |
-| ------- | -------- | ---------- | ------ | ---------------------- |
-| EPMatt  | awesome  | 2026.02.18 | active | **🚨 Breaking Change** |
-| EPMatt  | zhae2002 | 2026.04.20 | active | no                     |
-| EPMatt  | zhae2002 | 2026.04.28 | active | no                     |
-| EPMatt  | zhae2002 | 2026.11.22 | active | no                     |
+| Library | Release  | Version    | Status     | Breaking               |
+| ------- | -------- | ---------- | ---------- | ---------------------- |
+| EPMatt  | awesome  | 2026.02.18 | active     | **🚨 Breaking Change** |
+| EPMatt  | zhae2002 | 2026.04.20 | deprecated | no                     |
+| EPMatt  | zhae2002 | 2026.04.28 | deprecated | no                     |
+| EPMatt  | zhae2002 | 2026.11.22 | deprecated | no                     |
+| EPMatt  | awesome  | 2026.11.23 | active     | no                     |
 
 **Breaking change reasons:**
 
