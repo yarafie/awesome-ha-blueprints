@@ -44,6 +44,9 @@ blueprint:
             - integration: mqtt
               manufacturer: IKEA
               model: STYRBAR remote control (E2001/E2002/E2313)
+            - integration: mqtt
+              manufacturer: IKEA
+              model: STYRBAR remote control (E2001/E2002)
             # STYRBAR (Z2M) – include additional common variants
             - integration: mqtt
               manufacturer: IKEA

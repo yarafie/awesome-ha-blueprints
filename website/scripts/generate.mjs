@@ -288,11 +288,17 @@ function resolveStatus(...levels) {
 
 /**
  * Pick the version shown as "latest": the newest version whose status is
- * `active`. If a release has no active version, fall back to the newest one.
+ * `active`. If a release has no active version (a deprecated release), fall
+ * back to the newest version that is not `testing`, and only then to the
+ * newest one. A testing version is never offered ahead of a released one.
  */
 function pickLatestVersion(versions, statusOf) {
   const sorted = sortVersionsDesc(versions)
-  return sorted.find((v) => statusOf(v) === 'active') ?? sorted[0]
+  return (
+    sorted.find((v) => statusOf(v) === 'active') ??
+    sorted.find((v) => statusOf(v) !== 'testing') ??
+    sorted[0]
+  )
 }
 
 /** Get library-specific configuration from the manifest. */

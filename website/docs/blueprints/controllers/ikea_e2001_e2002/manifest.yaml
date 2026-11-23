@@ -13,6 +13,7 @@ libraries:
         name: 'EPMatt'
     releases:
       awesome:
+        status: 'deprecated'
         supported_hooks:
           - 'light'
           - 'media_player'
