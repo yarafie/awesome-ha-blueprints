@@ -7,6 +7,7 @@
 
 import React from 'react'
 import styles from '../contributors.module.css'
+import Message from './Message'
 
 export interface Details {
   manufacturer: string | null
@@ -43,6 +44,7 @@ interface DetailsFormProps {
   guess: { manufacturer: string; model: string }
   blueprintId: string
   problems: string[]
+  disabled: boolean
   onChange: (details: Details) => void
 }
 
@@ -52,6 +54,7 @@ const DetailsForm: React.FC<DetailsFormProps> = ({
   guess,
   blueprintId,
   problems,
+  disabled,
   onChange,
 }) => {
   const toggleTag = (tag: string) =>
@@ -62,14 +65,8 @@ const DetailsForm: React.FC<DetailsFormProps> = ({
         : [...details.tags, tag],
     })
 
-  // an empty release name is explained by the hint under its field; it is
-  // not shown as an error before the contributor has typed anything
-  const shown = problems.filter(
-    (problem) => !problem.startsWith('the release name is missing'),
-  )
-
   return (
-    <div>
+    <fieldset className={styles.fieldset} disabled={disabled}>
       <div className={styles.fields}>
         <label className={styles.field}>
           Manufacturer
@@ -122,7 +119,7 @@ const DetailsForm: React.FC<DetailsFormProps> = ({
           : '.'}
       </p>
 
-      <p className={styles.hint}>
+      <p className={`${styles.hint} ${styles.section}`}>
         Tags
         {blueprintId ? ` · blueprint id ${blueprintId}` : ''}
       </p>
@@ -152,19 +149,19 @@ const DetailsForm: React.FC<DetailsFormProps> = ({
         />
       </label>
 
-      {shown.length > 0 && (
+      {problems.length > 0 && (
         <div className={styles.section}>
-          {shown.map((problem) => (
+          {problems.map((problem) => (
             <p
               key={problem}
               className={`${styles.finding} ${styles.findingError}`}
             >
-              {problem.charAt(0).toUpperCase() + problem.slice(1)}
+              <Message text={problem} />
             </p>
           ))}
         </div>
       )}
-    </div>
+    </fieldset>
   )
 }
 

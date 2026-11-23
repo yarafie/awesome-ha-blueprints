@@ -8,6 +8,7 @@
 
 import React from 'react'
 import styles from '../contributors.module.css'
+import Message from './Message'
 import type { FormatResult } from '@library/format/controllerFormat.mjs'
 
 interface CheckPanelProps {
@@ -15,8 +16,6 @@ interface CheckPanelProps {
   /** further problems found in the file while building the package */
   fileProblems: string[]
 }
-
-const capital = (text: string) => text.charAt(0).toUpperCase() + text.slice(1)
 
 const FORMAT_PAGE = '/awesome-ha-blueprints/docs/controller-format'
 
@@ -43,11 +42,12 @@ const CheckPanel: React.FC<CheckPanelProps> = ({ check, fileProblems }) => {
 
   if (check.status === 'free-form') {
     return (
-      <p className={`${styles.finding} ${styles.findingError}`}>
-        This file has no <code>controller_device</code> input and no{' '}
-        <code>actions_mapping</code>, so it is not a controller on the standard
-        layout. For now this page prepares packages for those only. See the{' '}
-        <a href={FORMAT_PAGE}>Controller YAML format</a> and its starter
+      <p className={`${styles.finding} ${styles.findingNote}`}>
+        This looks like a standalone blueprint: it has no{' '}
+        <code>controller_device</code> input and no <code>actions_mapping</code>
+        , so it is not built on the controller layout. Nothing is wrong with it,
+        but this page cannot prepare a package for it yet. To add a controller,
+        see the <a href={FORMAT_PAGE}>Controller YAML format</a> and its starter
         template.
       </p>
     )
@@ -80,13 +80,13 @@ const CheckPanel: React.FC<CheckPanelProps> = ({ check, fileProblems }) => {
       {errors.map((e, i) => (
         <p key={`e${i}`} className={`${styles.finding} ${styles.findingError}`}>
           <span className={styles.rule}>{e.rule}</span>
-          {capital(e.msg)}
+          <Message text={e.msg} />
         </p>
       ))}
 
       {fileProblems.map((problem) => (
         <p key={problem} className={`${styles.finding} ${styles.findingError}`}>
-          {capital(problem)}
+          <Message text={problem} />
         </p>
       ))}
 
@@ -96,7 +96,7 @@ const CheckPanel: React.FC<CheckPanelProps> = ({ check, fileProblems }) => {
           className={`${styles.finding} ${styles.findingWarning}`}
         >
           <span className={styles.rule}>{w.rule}</span>
-          {capital(w.msg)}
+          <Message text={w.msg} />
         </p>
       ))}
 

@@ -17,7 +17,7 @@
  * offered as a .zip.
  */
 
-import React, { useMemo, useState } from 'react'
+import React, { useMemo, useRef, useState } from 'react'
 
 import { useAuth } from '@library/auth/hooks/useAuth'
 import { blueprintsContext } from '@site/src/utils/libraryContexts'
@@ -69,6 +69,8 @@ const ContributorsApp: React.FC = () => {
   const [files, setFiles] = useState<ContributionFiles>(EMPTY_FILES)
   const [rejected, setRejected] = useState<string[]>([])
   const [details, setDetails] = useState<Details>(EMPTY_DETAILS)
+  // name of the blueprint the entered details belong to
+  const detailsFor = useRef<string | null>(null)
 
   const existingIds = useMemo(existingControllerIds, [])
   const user = auth.status === 'authenticated' ? auth.user : null
@@ -129,11 +131,14 @@ const ContributorsApp: React.FC = () => {
     : check?.status === 'legacy'
       ? 'The blueprint must follow the new format'
       : check?.status === 'free-form'
-        ? 'This page takes controllers on the standard layout'
+        ? 'Standalone blueprints cannot be packaged here yet'
         : errorCount > 0
           ? `Fix ${errorCount} ${errorCount === 1 ? 'item' : 'items'} in the format check first`
           : problems.length > 0
-            ? 'Complete the details first'
+            ? problems.length === 1 &&
+              problems[0].startsWith('the release name is missing')
+              ? 'Enter a release name'
+              : 'Complete the details first'
             : !files.png
               ? 'Add a picture of the device'
               : !pkg?.ok
@@ -142,16 +147,25 @@ const ContributorsApp: React.FC = () => {
 
   // ── status of each card ──────────────────────────────────────────
   const filesStatus: StepStatus = files.yaml && files.png ? 'done' : 'todo'
-  const checkStatus: StepStatus = !check
-    ? 'todo'
-    : formatPasses && fileProblems.length === 0
-      ? 'done'
-      : 'fix'
-  const detailsStatus: StepStatus =
-    !formatPasses || fileProblems.length > 0
+  const checkStatus: StepStatus =
+    !check || check.status === 'free-form'
       ? 'todo'
+      : formatPasses && fileProblems.length === 0
+        ? 'done'
+        : 'fix'
+  const detailsLocked = !formatPasses || fileProblems.length > 0
+  // An empty release name is explained by the hint under its field. It keeps
+  // the package from being built, but it is not shown as an error before the
+  // contributor has typed anything.
+  const shownProblems = problems.filter(
+    (problem) => !problem.startsWith('the release name is missing'),
+  )
+  const detailsStatus: StepStatus = detailsLocked
+    ? 'todo'
+    : shownProblems.length > 0
+      ? 'fix'
       : problems.length > 0
-        ? 'fix'
+        ? 'todo'
         : 'done'
   const packageStatus: StepStatus = blocker === null ? 'done' : 'todo'
 
@@ -159,9 +173,18 @@ const ContributorsApp: React.FC = () => {
   const handleAdd = async (incoming: File[]) => {
     if (incoming.length === 0) return
     const result = await addFiles(files, incoming)
-    // a new YAML is a new blueprint: forget corrections made for the old one
-    if (result.files.yaml !== files.yaml)
-      setDetails((d) => ({ ...d, manufacturer: null, model: null }))
+    // A YAML for a different blueprint starts with empty details. A corrected
+    // copy of the same blueprint (same name) keeps what was entered, except
+    // the manufacturer and model, which are read from the file again.
+    const added = result.files.yaml
+    if (added && added !== files.yaml) {
+      const name = checkControllerYaml(added.text).info.name ?? ''
+      const same = detailsFor.current === null || detailsFor.current === name
+      detailsFor.current = name
+      setDetails((d) =>
+        same ? { ...d, manufacturer: null, model: null } : EMPTY_DETAILS,
+      )
+    }
     setFiles(result.files)
     setRejected(result.rejected)
   }
@@ -283,7 +306,6 @@ const ContributorsApp: React.FC = () => {
             step={3}
             title='Format check'
             status={checkStatus}
-            count={errorCount || undefined}
             hint={
               check && check.status === 'checked'
                 ? errorCount > 0
@@ -301,14 +323,16 @@ const ContributorsApp: React.FC = () => {
             step={4}
             title='A few details'
             status={detailsStatus}
-            count={problems.length || undefined}
+            locked={detailsLocked}
+            hint={detailsLocked ? 'after the format check' : undefined}
           >
             <DetailsForm
               details={details}
               library={user?.login ?? ''}
               guess={guess}
               blueprintId={blueprintId}
-              problems={problems}
+              problems={shownProblems}
+              disabled={detailsLocked}
               onChange={setDetails}
             />
           </StepCard>

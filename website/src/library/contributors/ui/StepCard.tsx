@@ -3,8 +3,9 @@
  * ────────────────────────────────────────────────────────────────
  * One card of the Contributors page, with a status badge:
  *  - done:  a tick
- *  - fix:   a red count of things to fix
+ *  - fix:   a red exclamation mark
  *  - todo:  the step number, in grey
+ * A locked card is dimmed: it cannot be used yet.
  */
 
 import React from 'react'
@@ -16,8 +17,8 @@ interface StepCardProps {
   step: number
   title: string
   status: StepStatus
-  count?: number
   hint?: string
+  locked?: boolean
   children: React.ReactNode
 }
 
@@ -25,8 +26,8 @@ const StepCard: React.FC<StepCardProps> = ({
   step,
   title,
   status,
-  count,
   hint,
+  locked,
   children,
 }) => {
   const badgeClass =
@@ -35,11 +36,10 @@ const StepCard: React.FC<StepCardProps> = ({
       : status === 'fix'
         ? styles.badgeFix
         : styles.badgeTodo
-  const label =
-    status === 'done' ? '✓' : status === 'fix' ? String(count ?? '!') : step
+  const label = status === 'done' ? '✓' : status === 'fix' ? '!' : step
 
   return (
-    <section className={styles.card}>
+    <section className={`${styles.card} ${locked ? styles.cardLocked : ''}`}>
       <div className={styles.cardHead}>
         <div className={`${styles.badge} ${badgeClass}`} aria-hidden='true'>
           {label}
