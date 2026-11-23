@@ -115,13 +115,46 @@ It has been reported that IKEA E2001/E2002/E2313 controllers integrated with Zig
 
 If you notice your controller is not behaving as expected please reset the device and repeat the pairing process with Zigbee2MQTT, then try again.
 
-### Unwanted Up button short press after a Left/Right long press (ZHA)
+### ZHA: a Left/Right long press also runs the Up button short press
 
-When the controller is integrated with ZHA, a long press on the Left or Right button starts with an unexpected sequence: the remote first sends a `release` event, about half a second later an extra `on` event, and only about 1.5 seconds after that the actual `hold` event. Without special handling the `on` runs the Up button short press. This is how the device behaves, not a fault of the blueprint or of ZHA; Zigbee2MQTT hides it by dropping that event.
+**In short:** use version 2026.11.22 or later and leave **(ZHA) Helper - Ignore Up press after Left/Right release** at its default of 700 milliseconds. Do not lower it.
 
-From version 2026.11.22 this release does the same: an `on` event that arrives within **(ZHA) Helper - Ignore Up press after Left/Right release** (700 milliseconds by default) after a Left/Right `release` event is ignored. A real Up press inside that time is ignored as well, since the two cannot be told apart. Up presses at any other time work normally, with no added delay. Set the value to 0 to turn the feature off.
+This note only applies when the controller is integrated with ZHA. Zigbee2MQTT and deCONZ are not affected.
 
-The **Helper - Last Controller Event** input is required for this to work, and **Helper - Debounce delay** must stay below 400 milliseconds, because the `release` event is only recorded after that delay.
+#### Settings to use
+
+| Input                                                   | Value to use         | Why                                                                                                     |
+| ------------------------------------------------------- | -------------------- | ------------------------------------------------------------------------------------------------------- |
+| (ZHA) Helper - Ignore Up press after Left/Right release | 700 (default)        | Values below about 510 let the Up button short press through. Use 550 or more. 0 turns the feature off. |
+| Helper - Debounce delay                                 | 0 (default)          | Must stay below 400, otherwise the Left/Right event is recorded too late.                               |
+| Helper - Last Controller Event                          | An Input Text helper | Required. The blueprint uses it to remember the Left/Right event.                                       |
+
+#### What you will notice
+
+- A Left/Right long press runs only the long press action and, when you let go, the release action. The Up button short press no longer runs with it.
+- A real Up press is ignored if it comes within 0.7 seconds after you start or end a Left/Right long press. At any other time the Up button works normally, with no added delay.
+- The remote itself needs about 2 seconds of holding before it reports a Left/Right long press. This cannot be shortened.
+
+#### Why this happens
+
+When a Left or Right button is held, the remote sends more than the long press. Measured on firmware 2.4.16 (`0x02040016`):
+
+| Event from the remote | Time            | Meaning                                             |
+| --------------------- | --------------- | --------------------------------------------------- |
+| `release`             | 0 ms            | Sent as soon as the button is held                  |
+| `on`                  | about 500 ms    | The same event the Up button sends on a short press |
+| `hold`                | about 2000 ms   | The actual Left/Right long press                    |
+| `release`             | when you let go | End of the long press                               |
+
+The remote sends the `on` on purpose, so that an IKEA light is switched on before its colour is changed. It cannot be told apart from a real Up press, so the blueprint ignores an `on` that arrives shortly after a Left/Right `release`. Zigbee2MQTT does the same for this remote, with the same 700 milliseconds. Since the `on` arrives after about 500 milliseconds, a lower value lets it through.
+
+#### Still seeing the Up action?
+
+1. Check that the automation uses version 2026.11.22 or later of this release.
+2. Set **(ZHA) Helper - Ignore Up press after Left/Right release** back to 700.
+3. Set **Helper - Debounce delay** to 0.
+4. Check that **Helper - Last Controller Event** points to an Input Text helper that no other automation uses.
+5. If it still happens, open an issue and include the `zha_event` events of one Left/Right long press (Developer Tools, Events, listen to `zha_event`).
 
 ## Changelog
 
