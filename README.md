@@ -51,6 +51,16 @@ All of EPMatt's original blueprints are still present under a library I called E
 
 Feedback is welcomed, for now Just Enjoy.
 
+**23 November, 2026**
+
+First, a big thank you to everyone who has contributed to this library so far. The blueprints you wrote, the bugs you reported, the fixes you tested on devices I don't own, and your patience while I get to things in my spare time: all of it is why this collection keeps growing. :pray:
+
+To make things easier for those who come next, I have started simplifying how blueprints are added. The aim is that you only provide the blueprint and its pictures, and the library takes care of everything else.
+
+The first pieces are in place for controllers: a written [format](https://yarafie.github.io/awesome-ha-blueprints/docs/controller-format), a [starter template](https://github.com/yarafie/awesome-ha-blueprints/blob/main/templates/controller_template.yaml) to copy, and a checker that tells you what a blueprint is missing. Existing blueprints stay as they are and are brought to the format when they next get a new version.
+
+If you have been thinking about adding your own device, you are very welcome here, and thank you in advance. :+1:
+
 ## Introduction
 
 **Awesome HA Blueprints** is a curated list of automation blueprints for Home Assistant, which can then be easily imported and updated in any Home Assistant instance.
@@ -76,6 +86,8 @@ Blueprints are divided in categories. If you're interested in creating **control
 ## Contributing
 
 Please check our [Contribution Guidelines](https://github.com/yarafie/awesome-ha-blueprints/blob/main/CONTRIBUTING.md) for additional information on how to contribute. From issues to new blueprints submissions, everything is described in detail to make sure the community can benefit the most from your contribution.
+
+Adding a controller? Start from the [starter template](https://github.com/yarafie/awesome-ha-blueprints/blob/main/templates/controller_template.yaml) and follow the [Controller YAML format](https://yarafie.github.io/awesome-ha-blueprints/docs/controller-format).
 
 ## Supporting the project
 

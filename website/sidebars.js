@@ -10,6 +10,7 @@ export default {
         'importing-a-blueprint',
         'controllers-hooks-ecosystem',
         'contributing',
+        'controller-format',
       ],
     },
     {

@@ -22,9 +22,10 @@ If you want to prepare the files yourself, this is where a blueprint lives:
 website/docs/blueprints/<category>/<blueprint_id>/
 ├── manifest.yaml
 ├── <blueprint_id>.png
+├── <blueprint_id>.pdf        (optional)
 └── <library_id>/<release_id>/
     ├── changelog.json
-    ├── hooks.json            (controllers only; hooks have actions.json instead)
+    ├── hooks.json            (controllers only)
     └── <YYYY.MM.DD>/
         └── <blueprint_id>.yaml
 ```
@@ -32,8 +33,24 @@ website/docs/blueprints/<category>/<blueprint_id>/
 - `<category>` is `controllers`, `hooks` or `automations`.
 - `<library_id>` is usually your GitHub username, and `<release_id>` is a short name for your line of versions.
 - `<YYYY.MM.DD>` is the version, written as its date.
+- `<blueprint_id>.png` is a picture of the device. `<blueprint_id>.pdf` is the device's manual; it is optional and is offered as a download on the blueprint's page.
+- Hooks have `actions.json` in place of `hooks.json`.
 
 The easiest start is to copy an existing blueprint of the same category and adapt it. Make sure the blueprint follows the [Blueprint Guidelines](#blueprint-guidelines), then submit it with the steps of the next section.
+
+#### New controllers
+
+A controller blueprint must follow the [Controller YAML format](https://yarafie.github.io/awesome-ha-blueprints/docs/controller-format). The format lets the library read the name, the supported integrations, the buttons and the options from your YAML file, so that less has to be written by hand.
+
+1. Copy the [starter template](https://github.com/yarafie/awesome-ha-blueprints/blob/main/templates/controller_template.yaml). It is a working blueprint, and every place you must change is marked with `CHANGE`.
+2. Adapt it to your device and test it in your own Home Assistant.
+3. Check it with the format checker, which lists every rule the file breaks:
+   ```sh
+   node .github/ahb_validate/scripts/ahb-check-controller-format.mjs --submission your_file.yaml
+   ```
+4. Open the **New Controller Support** issue and add your YAML file, a picture of the device (PNG) and, if you have it, the device's manual (PDF). If GitHub does not accept the YAML file type, attach it as a `.zip` or `.txt` file.
+
+A blueprint that does not use the Controllers and Hooks method can be added under a release named `anything`. It is published as supplied and does not have to follow the format.
 
 ### 3. I Want to Improve an Existing Blueprint
 
@@ -55,6 +72,11 @@ Blueprints are versioned. An improvement is normally added as a **new version** 
    git checkout -b ahb_contrib/controllers/ikea_e2001_e2002/EPMatt/awesome/2026.11.17/author-your-username
    ```
 5. **Add your version.** Copy the newest version folder of the release to a new folder named after your date, and make your changes in the copied `.yaml` file, following the [Blueprint Guidelines](#blueprint-guidelines). The old date also appears inside the file (the version shown in the description, the documentation link and `source_url`): change those to your date.
+   For a controller, the new version must also follow the [Controller YAML format](https://yarafie.github.io/awesome-ha-blueprints/docs/controller-format), even if the version you copied did not. Check it with:
+   ```sh
+   node .github/ahb_validate/scripts/ahb-check-controller-format.mjs path/to/your/new/version.yaml
+   ```
+   Renaming an input changes what people have to fill in, so mark such a version as `breaking` in the next step.
 6. **Describe your change** by adding an entry for your version at the end of `changelog.json`, in the release folder:
    ```json
    {
@@ -102,6 +124,7 @@ To ensure the delivery of good quality, highly reusable blueprints which can be 
 - **Input Restriction**: use selectors to restrict what users can provide as input to the blueprint.
 - **Code Documentation**: if the blueprint contains a complicated piece of code, consider adding some YAML comments to better explain what the section is trying to achieve.
 - **Consistency**: be consistent within your blueprint, for what regards naming and patterns you use to accomplish certain tasks. Also, adhere to the format of the provided templates.
+- **Format**: controllers follow the [Controller YAML format](https://yarafie.github.io/awesome-ha-blueprints/docs/controller-format). It applies to new controllers and to every new version of an existing one; existing versions are left as they are.
 
 ## Development Setup
 

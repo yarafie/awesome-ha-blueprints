@@ -1,0 +1,125 @@
+---
+title: Controller YAML format
+description: The format a controller blueprint must follow to be added to the Awesome HA Library.
+---
+
+A controller blueprint in this library follows one fixed format. The format lets the library read the blueprint's name, its supported integrations, its buttons and its options straight from the YAML file, and build the documentation page and the Hook tables from it.
+
+Each rule has a number. The format checker names the rule a file breaks, so you know exactly what to fix.
+
+### Quick start
+
+1. Copy the [starter template](https://github.com/yarafie/awesome-ha-blueprints/blob/main/templates/controller_template.yaml). It is a working blueprint, and every place you must change is marked with `CHANGE`.
+2. Adapt it to your device and test it in your own Home Assistant.
+3. Check it:
+
+```sh
+node .github/ahb_validate/scripts/ahb-check-controller-format.mjs \
+  --submission your_file.yaml
+```
+
+Add `--info` to see what the library reads from your file.
+
+### Scope
+
+- The format applies to **new controllers** and to **every new version** of an existing controller.
+- Existing versions are not changed. A controller is brought to the format when it next gets a new version.
+- Some older controllers let the user pick the integration from a dropdown. They are converted when they next need work, and the checker skips them until then.
+- A release named `anything` holds blueprints that do not take part in the Controllers and Hooks method. It is published as supplied, and only rules C-01 and C-02 apply to it.
+
+### 1. File and header
+
+| Rule&nbsp;no. | Requirement                                                                                                                                                                                                |
+| ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| C-01          | The file is valid YAML and a valid Home Assistant blueprint with `domain: automation`.                                                                                                                     |
+| C-02          | `blueprint.name` and `blueprint.description` are present.                                                                                                                                                  |
+| C-03          | `blueprint.name` is `Controller - <Manufacturer> <Model> <Product name>`, for example `Controller - IKEA E2489 BILRESA remote control with buttons`.                                                       |
+| C-04          | The `blueprint:` keys come in this order: `name`, `description`, `source_url`, `domain`, `homeassistant`, `input`. There is no `author` key.                                                               |
+| C-05          | `homeassistant.min_version` is present.                                                                                                                                                                    |
+| C-06          | The top-level keys come in this order: `blueprint`, `variables`, `mode`, `max_exceeded`, `triggers`, `conditions`, `actions`. The plural keys are used, and each trigger uses `trigger:`, not `platform:`. |
+| C-07          | `max_exceeded` is `silent`. `mode` is `single` or `restart`.                                                                                                                                               |
+| C-08          | Each top-level part is introduced by its comment: `# Blueprint Metadata`, `# Automation schema`, `# Mode Block`, `# Triggers Block`, `# Conditions Block`, `# Actions Block`.                              |
+
+### 2. Description
+
+The description has a fixed layout. Some parts depend on where the file ends up in the library, and those are filled in for you.
+
+| Part, in this order                                                                                           | Written by        |
+| ------------------------------------------------------------------------------------------------------------- | ----------------- |
+| `# <blueprint.name>`                                                                                          | you               |
+| `ℹ️ Version <YYYY.MM.DD>`                                                                                     | filled in for you |
+| The summary: `Controller automation for executing any kind of action triggered by the provided <model name>.` | you               |
+| Optional sentences about the long press loop, virtual double press or special features                        | you               |
+| `Supports <integrations>.`                                                                                    | you               |
+| The standard paragraph about Hooks                                                                            | filled in for you |
+| The `## More Info` block with the changelog link, the documentation link and the project line                 | filled in for you |
+
+| Rule&nbsp;no. | Requirement                                                                                                                                                                                                                  |
+| ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| C-10          | The first line is `# ` followed by exactly `blueprint.name`.                                                                                                                                                                 |
+| C-11          | The first text line is the summary. It starts with `Controller automation for executing any kind of action triggered by the provided `, followed by the model name and a full stop.                                          |
+| C-12          | One line `Supports <list>.` names the integrations, in the order Zigbee2MQTT, ZHA, deCONZ, Shelly.                                                                                                                           |
+| C-13          | The version line, the paragraph about Hooks, the `## More Info` block and `source_url` depend on where the file ends up in the library. They are filled in when the blueprint is added, so a submitted file leaves them out. |
+
+### 3. Device input
+
+| Rule&nbsp;no. | Requirement                                                                                                                                   |
+| ------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| C-20          | The first input is `controller_device`, with a `device` selector, `multiple: false` and `default: ''`.                                        |
+| C-21          | Its name is `(Required) (<integrations>) Controller Device`, with the integrations in the C-12 order.                                         |
+| C-22          | The device filter has at least one entry per supported integration (`mqtt`, `zha`, `deconz`, `shelly`), each with `manufacturer` and `model`. |
+| C-23          | The filter entries of each integration are preceded by a `# source: <url>` comment that points to the device's page for that integration.     |
+
+### 4. Events and action inputs
+
+An **event** is one thing the user can do on the device. Its name is lowercase with underscores:
+
+- buttons: `button_<name>_<kind>`, for example `button_up_short`. A device with a single button uses `button_<kind>`.
+- rotation: `rotate_<direction>`, with an optional kind, for example `rotate_left` and `rotate_left_stop`.
+- kinds: `short`, `long`, `release`, `double`, `triple`, `quadruple`, `quintuple`, `many`, `stop`.
+
+| Rule&nbsp;no. | Requirement                                                                                                                                                                    |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| C-30          | Every event has one input named `action_<event>`, with an `action` selector and `default: []`.                                                                                 |
+| C-31          | The input's name is `(Optional) <readable event name>`, for example `(Optional) Up button short press`. The part after `(Optional) ` is the event's label on the website.      |
+| C-32          | Every event is sent once in `actions:` as `ahb_controller_event`, with `controller` set to the controller id and `action` set to the event name. This is what Hooks listen to. |
+| C-33          | The set of `action_*` inputs and the set of events that are sent are the same.                                                                                                 |
+
+### 5. Option inputs and sections
+
+Options are grouped in collapsible sections with fixed names:
+
+| Section                        | Inputs inside                                                                                                     |
+| ------------------------------ | ----------------------------------------------------------------------------------------------------------------- |
+| `general_helpers_section`      | `helper_last_controller_event`, `helper_debounce_delay`                                                           |
+| `double_press_options_section` | `button_<name>_double_press_enabled` per button, `helper_double_press_delay`                                      |
+| `long_press_options_section`   | `button_<name>_long_loop_enabled` and `button_<name>_long_max_loop_repeats` per button, `helper_long_press_delay` |
+
+| Rule&nbsp;no. | Requirement                                                                                                                                                                                        |
+| ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| C-40          | A blueprint uses only the sections it needs. The general helpers section comes before the action inputs, the other two after them.                                                                 |
+| C-41          | The option inputs use exactly the names above. Sections for device-specific options are allowed, and their names end in `_section`.                                                                |
+| C-42          | The text helper `helper_last_controller_event` is present only if the blueprint needs to remember the previous event. Its presence adds the helper requirement and note to the documentation page. |
+
+### 6. Variables, mapping and triggers
+
+| Rule&nbsp;no. | Requirement                                                                                                                                                                         |
+| ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| C-50          | `variables` defines `controller_id` as `!input controller_device`, and `integration_id` as the part of the trigger id before the first dash (see the starter template).             |
+| C-51          | `variables.actions_mapping` has one block per supported integration, with the keys `z2m`, `zha`, `dcz` and `sly`.                                                                   |
+| C-52          | Each block starts with a `# source: <url>` comment and maps event names to the list of raw values the integration sends.                                                            |
+| C-53          | Every key in a mapping block is the name of an event from section 4. Events the blueprint creates itself, such as a virtual double press, need no entry.                            |
+| C-54          | Every trigger has an `id` of the form `<integration key>-<words-with-dashes>`, for example `z2m-button-up-short`. Where one trigger serves one event, the words are the event name. |
+| C-55          | The integrations agree in every place they appear: the device label, the `Supports` line, the device filter, the mapping blocks and the trigger ids.                                |
+
+### 7. What the library reads from your file
+
+| Information                                        | Read from                             |
+| -------------------------------------------------- | ------------------------------------- |
+| Name and model name                                | `blueprint.name` (C-03)               |
+| Summary                                            | the summary line (C-11)               |
+| Supported integrations                             | the mapping blocks (C-51)             |
+| Events and their labels                            | the action inputs (C-30, C-31)        |
+| Text helper, virtual double press, long press loop | the option inputs of section 5        |
+| Reference links                                    | the `# source:` comments (C-23, C-52) |
+| Inputs table                                       | `blueprint.input`                     |
