@@ -1,30 +1,22 @@
 /**
  * Page: Contributors
  * ────────────────────────────────────────────────────────────────
- *
- * Docusaurus routing entrypoint:
- *  - File path == route path
- *  - Keep this file thin
- *
- * Responsibilities:
- *  - Select page-level layout
- *  - Define page header (title / subtitle / actions)
- *  - Mount ContributorsApp
+ * Docusaurus routing entrypoint (file path == route path).
+ * Keeps to the site layout and mounts the ContributorsApp.
  */
 
 import React from 'react'
+import Layout from '@theme/Layout'
 
-import AppLayout from '@library/layout/AppLayout'
-import PageHeader from '@library/layout/PageHeader'
 import ContributorsApp from '@library/contributors/ContributorsApp'
 
-const ContributorsPage: React.FC = () => {
+export default function ContributorsPage(): React.ReactElement {
   return (
-    <AppLayout>
-      <PageHeader title='Welcome to Awesome HA Library Contributors Page' />
+    <Layout
+      title='Contribute'
+      description='Add a controller blueprint to the Awesome HA Library.'
+    >
       <ContributorsApp />
-    </AppLayout>
+    </Layout>
   )
 }
-
-export default ContributorsPage

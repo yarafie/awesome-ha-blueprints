@@ -251,20 +251,36 @@ export function buildChangelogText(version, authorId) {
      existingIds  ids of the controllers already in the library
 
    result
-     { ok, check, problems, location, files }
+     { ok, check, problems, about, location, files }
+     about: 'file' when the problems are in the YAML, 'details' when they
+            are in the answers, otherwise null
      files: [{ path, kind: 'text' | 'png' | 'pdf', text? }]
    ========================================================= */
 export function buildControllerPackage({ yamlText, fields, existingIds = [] }) {
   const problems = []
   const check = checkControllerYaml(yamlText)
   if (check.status !== 'checked' || check.errors.length)
-    return { ok: false, check, problems, location: null, files: [] }
+    return {
+      ok: false,
+      check,
+      problems,
+      about: null,
+      location: null,
+      files: [],
+    }
 
   if (/#\s*CHANGE\b/.test(yamlText) || /ACME X100/.test(yamlText)) {
     problems.push(
       'the file still contains parts of the starter template: remove its "CHANGE" comments and replace the example name "ACME X100"',
     )
-    return { ok: false, check, problems, location: null, files: [] }
+    return {
+      ok: false,
+      check,
+      problems,
+      about: 'file',
+      location: null,
+      files: [],
+    }
   }
 
   const f = fields || {}
@@ -309,14 +325,28 @@ export function buildControllerPackage({ yamlText, fields, existingIds = [] }) {
   const badHooks = hooks.filter((h) => !HOOKS.includes(h))
   if (badHooks.length) problems.push(`unknown hooks: ${badHooks.join(', ')}`)
   if (problems.length)
-    return { ok: false, check, problems, location: null, files: [] }
+    return {
+      ok: false,
+      check,
+      problems,
+      about: 'details',
+      location: null,
+      files: [],
+    }
 
   const location = { id, library, release, version }
   const final = finalizeControllerYaml(yamlText, location, {
     hooks: hooks.length > 0,
   })
   if (final.problems)
-    return { ok: false, check, problems: final.problems, location, files: [] }
+    return {
+      ok: false,
+      check,
+      problems: final.problems,
+      about: 'file',
+      location,
+      files: [],
+    }
 
   // the finished file must pass every rule, including those about its location
   const finalCheck = checkControllerYaml(final.text, { location })
@@ -325,6 +355,7 @@ export function buildControllerPackage({ yamlText, fields, existingIds = [] }) {
       ok: false,
       check: finalCheck,
       problems: ['the finished blueprint does not pass the format check'],
+      about: 'file',
       location,
       files: [],
     }
@@ -376,5 +407,12 @@ export function buildControllerPackage({ yamlText, fields, existingIds = [] }) {
       : []),
     { path: `${rel}/${version}/${id}.yaml`, kind: 'text', text: final.text },
   ]
-  return { ok: true, check: finalCheck, problems: [], location, files }
+  return {
+    ok: true,
+    check: finalCheck,
+    problems: [],
+    about: null,
+    location,
+    files,
+  }
 }
