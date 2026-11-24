@@ -1,0 +1,48 @@
+# yamllint disable rule:document-start
+# yamllint disable rule:line-length
+# A branch named ahb_maintain/... skips the "single blueprint" scope check of
+# the AHB validation, so it is reserved for maintainers of this repository.
+# This workflow fails a pull request that comes from such a branch when its
+# author is not the owner, a member or a collaborator.
+#
+# GitHub itself reports that relation (author_association) with every pull
+# request, so there is no list of names to keep and nothing a fork can change.
+#
+# This workflow runs on pull_request_target, which means GitHub takes it from
+# the base branch (main), not from the pull request. A pull request can
+# therefore not edit or remove this check. It has no permissions, checks out
+# nothing and runs no code from the pull request: it only reads two values
+# that GitHub provides about it.
+name: AHB – Branch guard
+
+'on':
+  pull_request_target:
+    branches:
+      - main
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - edited
+
+permissions: {}
+
+jobs:
+  maintainer-branch:
+    name: Maintainer branches are for maintainers
+    if: startsWith(github.event.pull_request.head.ref, 'ahb_maintain/')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check who opened the pull request
+        env:
+          ASSOCIATION: ${{ github.event.pull_request.author_association }}
+        run: |
+          case "$ASSOCIATION" in
+            OWNER | MEMBER | COLLABORATOR)
+              echo "The author is a maintainer of this repository ($ASSOCIATION)."
+              ;;
+            *)
+              echo "::error title=Maintainer branch::Branches named ahb_maintain/... are reserved for maintainers of this repository. Please rename your branch so that it starts with ahb_contrib/ and open the pull request again."
+              exit 1
+              ;;
+          esac

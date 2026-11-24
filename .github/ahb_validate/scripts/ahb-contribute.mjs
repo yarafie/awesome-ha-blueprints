@@ -79,7 +79,10 @@ import {
   buildControllerPackage,
   guessManufacturerAndModel,
 } from '../../../website/src/library/format/controllerPackage.mjs'
-import { checkControllerYaml } from '../../../website/src/library/format/controllerFormat.mjs'
+import {
+  checkControllerYaml,
+  REPO_URL,
+} from '../../../website/src/library/format/controllerFormat.mjs'
 import { buildControllerUpdate } from '../../../website/src/library/format/controllerUpdate.mjs'
 
 const HERE = path.dirname(fileURLToPath(import.meta.url))
@@ -246,6 +249,25 @@ const dirs = (d) =>
     .filter((e) => e.isDirectory())
     .map((e) => e.name)
 const capital = (text) => text.charAt(0).toUpperCase() + text.slice(1)
+
+// a text as one argument of a shell command
+const quoted = (text) => `'${String(text).replace(/'/g, `'\\''`)}'`
+
+// the two commands that send a branch as a pull request. The repository is
+// named explicitly: in a fork, gh would otherwise suggest the parent of this
+// repository as the target. The text of the pull request is left empty; the
+// commits say what changed.
+function printSendCommands(branch, title) {
+  const repo = REPO_URL.replace('https://github.com/', '')
+  console.log('To send it as a pull request:')
+  console.log(`  git push -u origin ${branch}`)
+  console.log(
+    `  gh pr create --repo ${repo} --base main --title ${quoted(title)} --body ''`,
+  )
+}
+
+const MAINTAINER_NOTE =
+  '      Note: ahb_maintain/ branches are accepted only from maintainers of the\n      repository. A pull request from anyone else fails its checks; leave out\n      --maintainer to get an ahb_contrib/ branch.'
 
 /* ---------- reading one file ---------- */
 // returns { file, data } or a string that says what is wrong
@@ -637,6 +659,7 @@ async function updateFlow() {
   const first1 = `[${id}] Copy ${base.library}/${base.release} ${base.version} as ${loc.version} (no changes)`
   const second = `[${id}] ${loc.library}/${loc.release} ${loc.version}: ${kindLabel} ${last.description}`
   let switchBranch = false
+  if (opt.maintainer) console.log(MAINTAINER_NOTE)
   if (branch !== newBranch) {
     const onMain = branch === 'main' || branch === 'master'
     console.log(
@@ -686,9 +709,12 @@ async function updateFlow() {
   console.log('\nDone.')
   console.log('To see what really changed (the second commit):')
   console.log('  git show HEAD')
-  console.log('To look at the result and send it:')
+  console.log('To look at the result:')
   console.log('  pnpm docs:build')
-  console.log('  then push the branch to your fork and open a pull request')
+  console.log(
+    '  (the build may change library_report.md; leave that file out of your branch)',
+  )
+  printSendCommands(switchBranch ? newBranch : branch, second)
   return 0
 }
 
@@ -932,16 +958,19 @@ async function main() {
   console.log('\nDone.')
   if (inRepo) {
     const rel = `website/docs/blueprints/controllers/${loc.id}`
-    console.log('To look at the result and send it:')
+    const newBranch = `${opt.maintainer ? 'ahb_maintain' : 'ahb_contrib'}/controllers/${loc.id}/${loc.library}/${loc.release}/${loc.version}/author-${loc.library}`
+    const title = `[${loc.id}] New controller: ${info.model_name || loc.id}`
+    if (opt.maintainer) console.log(MAINTAINER_NOTE)
+    console.log('To look at the result:')
     console.log('  pnpm docs:build')
     console.log(
-      `  git switch -c ${opt.maintainer ? 'ahb_maintain' : 'ahb_contrib'}/controllers/${loc.id}/${loc.library}/${loc.release}/${loc.version}/author-${loc.library}`,
+      '  (the build may change library_report.md; leave that file out of your branch)',
     )
+    console.log('To commit it on a branch with the name the checks expect:')
+    console.log(`  git switch -c ${newBranch}`)
     console.log(`  git add ${rel}`)
-    console.log(
-      `  git commit -m "[New Controller] ${info.model_name || loc.id}"`,
-    )
-    console.log('  then push the branch to your fork and open a pull request')
+    console.log(`  git commit -m ${quoted(title)}`)
+    printSendCommands(newBranch, title)
   } else {
     console.log(
       `To add it to the library, copy ${path.join(base, 'controllers', loc.id)}\ninto website/docs/blueprints/controllers/ of your clone.`,
