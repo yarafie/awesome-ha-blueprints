@@ -1,11 +1,11 @@
 # Awesome HA Blueprints – Library Report
 
-_Generated on 2026-11-23 20:55 GMT+3_
+_Generated on 2026-11-24 12:10 GMT+3_
 ---
 
 ## Summary
 
-- **Controllers:** 35 blueprints, 62 versions
+- **Controllers:** 35 blueprints, 63 versions
 - **Automations:** 4 blueprints, 4 versions
 - **Hooks:** 3 blueprints, 23 versions
 - **Breaking versions:** 17
@@ -302,7 +302,7 @@ _Generated on 2026-11-23 20:55 GMT+3_
 - **Title:** Controller - IKEA E2201 RODRET Dimmer
 - **Librarians:** yarafie
 - **Library Maintainers:** yarafie
-- **Latest Version:** 2026.08.09
+- **Latest Version:** 2026.11.24
 - **Tags:** zigbee, dimmer, light
 
 <details>
@@ -314,6 +314,7 @@ _Generated on 2026-11-23 20:55 GMT+3_
 | EPMatt  | awesome | 2026.01.28 | active | no       |
 | EPMatt  | awesome | 2026.02.17 | active | no       |
 | EPMatt  | awesome | 2026.08.09 | active | no       |
+| EPMatt  | awesome | 2026.11.24 | active | no       |
 
 </details>
 
