@@ -1,21 +1,27 @@
 #!/usr/bin/env node
 
 /**
- * Writes library_report.md in the repository root: a summary of every
- * blueprint, its libraries, releases and versions, and the breaking changes.
+ * Writes the Library Report page of the website, docs/library-report.md: a
+ * summary of every blueprint, its libraries, releases and versions, and the
+ * breaking changes.
+ *
+ * The page is generated and not kept in git (see website/.gitignore), like
+ * the other generated pages. It is built together with the site, so what is
+ * published always matches the library, and nobody has to commit a report.
  *
  * It reads the JSON files that generate.mjs produces, so it must run after
- * generate.mjs. `pnpm build` in website/ runs it as its last step.
+ * generate.mjs and before Docusaurus. `pnpm build` and `pnpm start` in
+ * website/ run it in that order.
  *
- * The report is formatted with the Prettier installed in this repository, so
- * the committed file always passes the formatting check.
+ * The report is formatted with the Prettier installed in this repository.
  *
  * The file is only rewritten when its content changes. The "Generated on"
- * date and time alone never cause a rewrite, so a later build does not show
- * up as a change in git. They tell when the content last changed.
+ * date and time alone never cause a rewrite; they tell when the content
+ * last changed (on a fresh checkout: when the site was built).
  *
  * A problem here never fails the build: it prints a warning and leaves the
- * existing report as it is.
+ * existing page as it is. If there is no page yet, it writes a short one that
+ * says so, because the sidebar links to it.
  */
 
 import fs from 'node:fs'
@@ -25,7 +31,41 @@ import { pathToFileURL } from 'node:url'
 
 const ROOT = path.resolve(import.meta.dirname, '../..')
 const BLUEPRINTS_DIR = path.join(ROOT, 'website', 'docs', 'blueprints')
-const OUTPUT = path.join(ROOT, 'library_report.md')
+const OUTPUT = path.join(ROOT, 'website', 'docs', 'library-report.md')
+
+// What Docusaurus needs to show the report as a page. The page has no
+// "Edit this page" link, because it is generated.
+const FRONT_MATTER = `---
+sidebar_label: Library Report
+description: Every blueprint of the library with its libraries, releases, versions and breaking changes.
+custom_edit_url: null
+toc_max_heading_level: 2
+---
+
+`
+
+/**
+ * Docusaurus reads the page as MDX, where "{" starts an expression and "<"
+ * starts a tag. Texts from the changelogs may contain both. Outside of code
+ * they are escaped, except for the tags this report writes itself.
+ */
+export function forMdx(text) {
+  return text
+    .split('\n')
+    .map((line) =>
+      line
+        .split(/(`[^`]*`)/)
+        .map((part) =>
+          part.startsWith('`')
+            ? part
+            : part
+                .replace(/[{}]/g, '\\$&')
+                .replace(/<(?!\/?(?:details|summary)>)/g, '&lt;'),
+        )
+        .join(''),
+    )
+    .join('\n')
+}
 const CATEGORIES = ['controllers', 'automations', 'hooks']
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
@@ -216,6 +256,7 @@ export function buildReport(
   const out = []
   out.push('# Awesome HA Blueprints – Library Report')
   out.push(`_Generated on ${generatedOn}_`)
+  out.push('')
   out.push('---')
   out.push('## Summary')
   out.push(
@@ -277,7 +318,9 @@ async function main() {
 
   const prettier = await import('prettier')
   const options = (await prettier.resolveConfig(OUTPUT)) ?? {}
-  const formatted = await prettier.format(raw, { ...options, filepath: OUTPUT })
+  const formatted =
+    FRONT_MATTER +
+    forMdx(await prettier.format(raw, { ...options, filepath: OUTPUT }))
 
   const current = fs.existsSync(OUTPUT)
     ? fs.readFileSync(OUTPUT, 'utf-8')
@@ -287,17 +330,24 @@ async function main() {
     STAMPED.test(current) &&
     withoutDate(current) === withoutDate(formatted)
   ) {
-    console.log('library_report.md is up to date')
+    console.log('Library Report page is up to date')
     return
   }
   fs.writeFileSync(OUTPUT, formatted, 'utf-8')
-  console.log('library_report.md updated')
+  console.log('Library Report page written (docs/library-report.md)')
 }
 
 if (import.meta.url === pathToFileURL(process.argv[1] ?? '').href) {
   main().catch((error) => {
     console.warn(
-      `Warning: library_report.md was not updated (${error?.message ?? error})`,
+      `Warning: the Library Report page was not updated (${error?.message ?? error})`,
     )
+    // the sidebar links to this page, so it must exist for the site to build
+    if (!fs.existsSync(OUTPUT))
+      fs.writeFileSync(
+        OUTPUT,
+        `${FRONT_MATTER}# Awesome HA Blueprints – Library Report\n\nThe report could not be generated for this build.\n`,
+        'utf-8',
+      )
   })
 }

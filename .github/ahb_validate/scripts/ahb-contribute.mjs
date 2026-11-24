@@ -711,9 +711,6 @@ async function updateFlow() {
   console.log('  git show HEAD')
   console.log('To look at the result:')
   console.log('  pnpm docs:build')
-  console.log(
-    '  (the build may change library_report.md; leave that file out of your branch)',
-  )
   printSendCommands(switchBranch ? newBranch : branch, second)
   return 0
 }
@@ -963,9 +960,6 @@ async function main() {
     if (opt.maintainer) console.log(MAINTAINER_NOTE)
     console.log('To look at the result:')
     console.log('  pnpm docs:build')
-    console.log(
-      '  (the build may change library_report.md; leave that file out of your branch)',
-    )
     console.log('To commit it on a branch with the name the checks expect:')
     console.log(`  git switch -c ${newBranch}`)
     console.log(`  git add ${rel}`)

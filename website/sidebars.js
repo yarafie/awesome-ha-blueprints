@@ -23,6 +23,7 @@ export default {
         'blueprints/controllers',
         'blueprints/hooks',
         'blueprints/automations',
+        'library-report',
       ],
     },
   ],

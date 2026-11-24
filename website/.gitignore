@@ -23,6 +23,9 @@ docs/blueprints/**/*.mdx
 !docs/blueprints/hooks.mdx
 !docs/blueprints/automations.mdx
 
+# The Library Report page, produced by `node scripts/generate-library-report.mjs`
+docs/library-report.md
+
 # Misc
 .DS_Store
 .env
