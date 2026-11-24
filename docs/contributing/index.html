@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="generator" content="Docusaurus v3.10.2">
 <title data-rh="true">Contributing | Awesome HA Library</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:url" content="https://yarafie.github.io/awesome-ha-blueprints/docs/contributing"><meta data-rh="true" property="og:locale" content="en"><meta data-rh="true" name="docusaurus_locale" content="en"><meta data-rh="true" name="docsearch:language" content="en"><meta data-rh="true" name="docusaurus_version" content="current"><meta data-rh="true" name="docusaurus_tag" content="docs-default-current"><meta data-rh="true" name="docsearch:version" content="current"><meta data-rh="true" name="docsearch:docusaurus_tag" content="docs-default-current"><meta data-rh="true" property="og:title" content="Contributing | Awesome HA Library"><meta data-rh="true" name="description" content="Contribution Guidelines for the Awesome HA Library project."><meta data-rh="true" property="og:description" content="Contribution Guidelines for the Awesome HA Library project."><link data-rh="true" rel="icon" href="/awesome-ha-blueprints/img/favicon.ico"><link data-rh="true" rel="canonical" href="https://yarafie.github.io/awesome-ha-blueprints/docs/contributing"><link data-rh="true" rel="alternate" href="https://yarafie.github.io/awesome-ha-blueprints/docs/contributing" hreflang="en"><link data-rh="true" rel="alternate" href="https://yarafie.github.io/awesome-ha-blueprints/docs/contributing" hreflang="x-default"><script data-rh="true" type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Contributing","item":"https://yarafie.github.io/awesome-ha-blueprints/docs/contributing"}]}</script><script>window.env={SUPABASE_URL:"https://tfdjyacvrbiybtazjwhk.supabase.co",SUPABASE_ANON_KEY:"sb_publishable_lOI_pDjsraEzfZ6lIM1BbQ_ptxKbBnl",LIBRARY_MAINTAINERS:"yarafie",ALLOWED_MAINTAINERS:["yarafie"]}</script><link rel="stylesheet" href="/awesome-ha-blueprints/assets/css/styles.8191ee38.css">
-<script src="/awesome-ha-blueprints/assets/js/runtime~main.fa6b6573.js" defer="defer"></script>
+<script src="/awesome-ha-blueprints/assets/js/runtime~main.20539caf.js" defer="defer"></script>
 <script src="/awesome-ha-blueprints/assets/js/main.a0ef3a80.js" defer="defer"></script>
 </head>
 <body>
@@ -36,12 +36,22 @@
 <h4 class="anchor anchorTargetStickyNavbar_AfCy" id="new-controllers">New controllers<a href="#new-controllers" class="hash-link" aria-label="Direct link to New controllers" title="Direct link to New controllers" translate="no">​</a></h4>
 <p>A controller blueprint must follow the <a href="https://yarafie.github.io/awesome-ha-blueprints/docs/controller-format" target="_blank" rel="noopener noreferrer" class="">Controller YAML format</a>. The format lets the library read the name, the supported integrations, the buttons and the options from your YAML file, so that less has to be written by hand.</p>
 <ol>
-<li class="">Copy the <a href="https://github.com/yarafie/awesome-ha-blueprints/blob/main/templates/controller_template.yaml" target="_blank" rel="noopener noreferrer" class="">starter template</a>. It is a working blueprint, and every place you must change is marked with <code>CHANGE</code>.</li>
-<li class="">Adapt it to your device and test it in your own Home Assistant.</li>
-<li class="">Check it with the format checker, which lists every rule the file breaks:<!-- -->
+<li class="">
+<p>Copy the <a href="https://github.com/yarafie/awesome-ha-blueprints/blob/main/templates/controller_template.yaml" target="_blank" rel="noopener noreferrer" class="">starter template</a>. It is a working blueprint, and every place you must change is marked with <code>CHANGE</code>.</p>
+</li>
+<li class="">
+<p>Adapt it to your device and test it in your own Home Assistant.</p>
+</li>
+<li class="">
+<p>Check it with the format checker, which lists every rule the file breaks:</p>
 <div class="language-sh codeBlockContainer_k8GB theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_DGQs"><pre tabindex="0" class="prism-code language-sh codeBlock_WIlr thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_OOAL"><div class="token-line" style="color:#393A34"><span class="token plain">node .github/ahb_validate/scripts/ahb-check-controller-format.mjs --submission your_file.yaml</span><br></div></code></pre></div></div>
 </li>
-<li class="">Open the <strong>New Controller Support</strong> issue and add your YAML file, a picture of the device (PNG) and, if you have it, the device&#x27;s manual (PDF). If GitHub does not accept the YAML file type, attach it as a <code>.zip</code> or <code>.txt</code> file.</li>
+<li class="">
+<p>Open the <strong>New Controller Support</strong> issue and add your YAML file, a picture of the device (PNG) and, if you have it, the device&#x27;s manual (PDF). If GitHub does not accept the YAML file type, attach it as a <code>.zip</code> or <code>.txt</code> file.</p>
+<p><strong>Prefer the command line?</strong> With a clone of your fork and the dependencies installed (<code>pnpm install</code>), run:</p>
+<div class="language-sh codeBlockContainer_k8GB theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_DGQs"><pre tabindex="0" class="prism-code language-sh codeBlock_WIlr thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_OOAL"><div class="token-line" style="color:#393A34"><span class="token plain">pnpm contribute</span><br></div></code></pre></div></div>
+<p>It asks the same questions as the steps above, checks your YAML against the format and writes the complete library folder for your controller into your clone, ready to commit and send as a pull request. Nothing is written before you confirm. <code>pnpm contribute --help</code> lists the options for running it without questions.</p>
+</li>
 </ol>
 <p>A controller does not have to work with Hooks. One that sends no <code>ahb_controller_event</code> is accepted as a controller without hooks, and the checker says which kind it found. A blueprint that is not built on the controller layout at all (no <code>controller_device</code> input and no <code>actions_mapping</code>) is published as supplied and does not have to follow the format.</p>
 <p>Every contribution is published under your GitHub name and a <strong>release name</strong> that you choose: a short name for what the blueprint handles, such as <code>anything</code> for general purpose, <code>lights</code> or <code>cover</code>.</p>
