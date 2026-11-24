@@ -73,6 +73,7 @@ const ContributorsApp: React.FC = () => {
     logout,
     providerToken,
     requestAccess,
+    forgetAccess,
   } = useAuth('/contributors')
 
   const [category, setCategory] = useState<Category | null>(null)
@@ -323,6 +324,7 @@ const ContributorsApp: React.FC = () => {
               author={user.login}
               token={providerToken}
               requestAccess={requestAccess}
+              forgetAccess={forgetAccess}
               draft={updateDraft}
             />
           )}

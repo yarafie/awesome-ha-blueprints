@@ -185,11 +185,29 @@ export function useAuth(redirectPath: string) {
     await auth.login(scopes)
   }
 
+  /**
+   * Let go of the GitHub token once it is no longer needed. It is dropped
+   * from memory, and the stored session is renewed, because a renewed
+   * session does not carry the token. The user stays signed in. This does
+   * not withdraw the permission at GitHub: only the user can do that.
+   */
+  const forgetAccess = async () => {
+    setProviderToken(null)
+    if (!supabase) return
+    try {
+      await supabase.auth.refreshSession()
+    } catch {
+      // the token is gone from memory either way
+    }
+    setProviderToken(null)
+  }
+
   return {
     state,
     login,
     logout,
     providerToken,
     requestAccess,
+    forgetAccess,
   }
 }

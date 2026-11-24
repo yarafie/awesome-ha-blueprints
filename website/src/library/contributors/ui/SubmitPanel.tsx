@@ -36,6 +36,15 @@ interface SubmitPanelProps {
 
 type Permission = 'unknown' | 'granted' | 'needed'
 
+// The page of this site's sign-in app in the contributor's own GitHub
+// settings, where its permission can be withdrawn. The id in it is the
+// public Client ID of the GitHub OAuth app behind the sign-in, not a secret.
+const REVOKE_PAGE =
+  'https://github.com/settings/connections/applications/Ov23liveEDchLGieRirJ'
+// where the contributing guide explains the permission
+const ABOUT_PAGE =
+  '/awesome-ha-blueprints/docs/contributing#the-contribute-page-and-your-github-account'
+
 const SubmitPanel: React.FC<SubmitPanelProps> = ({
   submission,
   token,
@@ -109,6 +118,15 @@ const SubmitPanel: React.FC<SubmitPanelProps> = ({
           </a>
           . Its checks start by themselves.
         </p>
+        <p className={styles.hint}>
+          This page has let go of its access to your GitHub account. The
+          permission itself stays until you withdraw it:{' '}
+          <a href={REVOKE_PAGE} target='_blank' rel='noreferrer'>
+            open the page of this site in your GitHub settings
+          </a>{' '}
+          and press Revoke access. You can allow it again the next time you
+          submit.
+        </p>
       </div>
     )
   }
@@ -123,6 +141,23 @@ const SubmitPanel: React.FC<SubmitPanelProps> = ({
         one branch with two commits (the version you started from, then your
         update) and opens one pull request. Nothing else is changed.
       </p>
+
+      {permission !== 'granted' && (
+        <div className={`${styles.finding} ${styles.findingNote}`}>
+          <strong>Before you allow.</strong> Signing in gave this page only your
+          GitHub name. To submit for you, GitHub asks you to let{' '}
+          <strong>Awesome HA Library Authentication</strong> write to your
+          public repositories; GitHub offers no narrower permission for this,
+          and it sends you an email when you grant it. The page uses the
+          permission only for the steps above and lets go of it as soon as the
+          pull request is open. You can{' '}
+          <a href={REVOKE_PAGE} target='_blank' rel='noreferrer'>
+            withdraw it in your GitHub settings
+          </a>{' '}
+          at any time. If you would rather not grant it, download the package
+          instead. <a href={ABOUT_PAGE}>More about this permission</a>
+        </div>
+      )}
 
       {step !== null && (
         <ol className={styles.progress}>
@@ -181,8 +216,7 @@ const SubmitPanel: React.FC<SubmitPanelProps> = ({
         )}
         {ready && permission === 'needed' && (
           <span className={styles.hint}>
-            GitHub asks you to allow this page to write to your public
-            repositories. You come back here with everything you entered.
+            You come back here with everything you entered.
           </span>
         )}
       </div>

@@ -82,6 +82,8 @@ Blueprints are versioned. An improvement is normally added as a **new version** 
 
 **The short way:** after steps 1 to 3 below, run `pnpm contribute` and choose **An update to a blueprint**. You say which existing version your file is based on and point it to your updated YAML file. It checks the format, shows what changed compared with that version, adds the changelog entry, creates the branch with the right name and makes two commits: first the version you based your work on, copied without changes, then your update. The second commit then shows exactly what you changed. After that, continue with step 9.
 
+**On the website:** open the [Contribute page](https://yarafie.github.io/awesome-ha-blueprints/contributors), sign in with GitHub and choose **Controllers**, then **An update to a blueprint**. It asks the same questions, runs the same checks and makes the same two commits as the command line. At the end you can download the package, or press **Submit pull request** and the page opens the pull request in your name. You need no clone and no tools; what the page asks GitHub for is described in [The Contribute page and your GitHub account](#the-contribute-page-and-your-github-account).
+
 1. **Fork** this repository to your GitHub account.
 2. **Clone** the forked repository to your local machine:
    ```sh
@@ -139,6 +141,16 @@ Please open a discussion in the [Discussions tab](https://github.com/yarafie/awe
 ### 5. I've an idea for a new blueprint but I need help to develop it
 
 Please open an issue in the [Issues tab](https://github.com/yarafie/awesome-ha-blueprints/issues) using the **New blueprint proposal** template and fill in all the requested fields in the template before submitting the issue.
+
+## The Contribute page and your GitHub account
+
+The [Contribute page](https://yarafie.github.io/awesome-ha-blueprints/contributors) works with your GitHub account in two steps, and asks for no more than each step needs.
+
+- **Signing in** asks GitHub only for your identity: your user name and email address. Your user name is recorded as the author of what you contribute.
+- **Submitting a pull request** needs more. GitHub asks you to let the application _Awesome HA Library Authentication_ write to your public repositories. GitHub offers no narrower permission for this kind of sign-in. It is asked for only when you press **Allow on GitHub and continue**, never when you sign in, and GitHub sends you an email when you grant it.
+- **What the page does with it:** it creates a copy (fork) of this repository in your account if you have none, adds one branch with two commits there, and opens one pull request. It changes nothing else. All of this happens in your browser; the sign-in itself is handled by Supabase, an authentication service, and this project runs no server of its own.
+- **Afterwards** the page lets go of its access as soon as the pull request is open. The permission itself stays with GitHub until you withdraw it: open [Authorized OAuth Apps](https://github.com/settings/applications) in your GitHub settings, choose _Awesome HA Library Authentication_ and press **Revoke access**. The next time you sign in and submit, GitHub simply asks again.
+- **If you would rather not grant it,** download the package from the page and attach it to an issue, or use the command line (`pnpm contribute`). Neither needs this permission.
 
 ## Blueprint Guidelines
 

@@ -53,6 +53,8 @@ interface UpdateFlowProps {
   token: string | null
   /** asks GitHub for a permission; the browser leaves the page */
   requestAccess: (scopes: string) => Promise<void>
+  /** lets go of the GitHub token once the pull request exists */
+  forgetAccess: () => Promise<void>
   /** what was entered before a visit to GitHub, to start from */
   draft: UpdateDraft | null
 }
@@ -76,6 +78,7 @@ const UpdateFlow: React.FC<UpdateFlowProps> = ({
   author,
   token,
   requestAccess,
+  forgetAccess,
   draft,
 }) => {
   const [id, setId] = useState(draft?.id ?? '')
@@ -550,7 +553,11 @@ const UpdateFlow: React.FC<UpdateFlowProps> = ({
               breaking,
             })
           }
-          onSubmitted={() => setSubmitted(true)}
+          onSubmitted={() => {
+            setSubmitted(true)
+            // the page has no further use for the permission
+            void forgetAccess()
+          }}
         />
       </StepCard>
     </>
