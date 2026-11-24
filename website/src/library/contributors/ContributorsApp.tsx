@@ -236,6 +236,20 @@ const ContributorsApp: React.FC = () => {
   return (
     <main className={styles.page}>
       <h1 className={styles.title}>Contribute to the library</h1>
+      {user && (
+        <div className={styles.signin}>
+          {user.avatar_url && (
+            <img className={styles.avatar} src={user.avatar_url} alt='' />
+          )}
+          <span className={styles.grow}>
+            Signed in as <strong>{user.login}</strong>
+          </span>
+          <button type='button' className={styles.linkButton} onClick={logout}>
+            Sign out
+          </button>
+        </div>
+      )}
+
       <p className={styles.lead}>
         Choose what you would like to contribute. The page checks your blueprint
         as you go and prepares everything else the library needs.
@@ -270,22 +284,6 @@ const ContributorsApp: React.FC = () => {
 
       {user && (
         <>
-          <div className={styles.signin}>
-            {user.avatar_url && (
-              <img className={styles.avatar} src={user.avatar_url} alt='' />
-            )}
-            <span className={styles.grow}>
-              Signed in as <strong>{user.login}</strong>
-            </span>
-            <button
-              type='button'
-              className={styles.linkButton}
-              onClick={logout}
-            >
-              Sign out
-            </button>
-          </div>
-
           <StepCard
             step={1}
             title='What would you like to contribute?'
