@@ -58,5 +58,15 @@
         "breaking": false
       }
     ]
+  },
+  {
+    "date": "2026.11.24",
+    "changes": [
+      {
+        "author": "@yarafie",
+        "description": "[Bug Fix] ZHA: remove a duplicated trigger for the Down button release. ([@yarafie](https://github.com/yarafie))",
+        "breaking": false
+      }
+    ]
   }
 ]
