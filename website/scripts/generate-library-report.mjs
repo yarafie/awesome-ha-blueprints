@@ -47,7 +47,9 @@ toc_max_heading_level: 2
 /**
  * Docusaurus reads the page as MDX, where "{" starts an expression and "<"
  * starts a tag. Texts from the changelogs may contain both. Outside of code
- * they are escaped, except for the tags this report writes itself.
+ * they are escaped, except for the tags this report writes itself. A
+ * backslash is escaped as well: left alone, one in front of a "{" would
+ * undo the escape of that brace and start an expression after all.
  */
 export function forMdx(text) {
   return text
@@ -59,7 +61,7 @@ export function forMdx(text) {
           part.startsWith('`')
             ? part
             : part
-                .replace(/[{}]/g, '\\$&')
+                .replace(/[\\{}]/g, '\\$&')
                 .replace(/<(?!\/?(?:details|summary)>)/g, '&lt;'),
         )
         .join(''),
