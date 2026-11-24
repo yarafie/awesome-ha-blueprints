@@ -5,6 +5,7 @@
   "scripts": {
     "docs:start": "pnpm --filter ./website start",
     "docs:build": "pnpm --filter ./website build",
+    "contribute": "node .github/ahb_validate/scripts/ahb-contribute.mjs",
     "format": "prettier --write .",
     "lint": "turbo run lint",
     "prepare": "husky"
