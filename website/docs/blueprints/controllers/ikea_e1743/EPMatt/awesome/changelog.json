@@ -258,5 +258,15 @@
         "breaking": false
       }
     ]
+  },
+  {
+    "date": "2026.11.24",
+    "changes": [
+      {
+        "author": "@yarafie",
+        "description": "[Bug Fix] ZHA: a long press also ends on the new move_up_release and move_down_release events. ([@yarafie](https://github.com/yarafie))",
+        "breaking": false
+      }
+    ]
   }
 ]
