@@ -39,6 +39,7 @@ import {
 } from './services/files'
 import { buildZip, type ZipEntry } from './services/zip'
 import { saveDraft, type UpdateDraft } from './services/draft'
+import { submitUpdate, UPDATE_STEPS } from './services/github'
 import {
   changelogTextOf,
   controllerIds,
@@ -539,7 +540,14 @@ const UpdateFlow: React.FC<UpdateFlowProps> = ({
           onDownload={handleDownload}
         />
         <SubmitPanel
-          submission={submission}
+          submit={
+            submission
+              ? (granted, onStep) =>
+                  submitUpdate({ ...submission, token: granted }, onStep)
+              : null
+          }
+          steps={UPDATE_STEPS}
+          holds='two commits (the version you started from, then your update)'
           token={token}
           requestAccess={requestAccess}
           onLeave={() =>

@@ -1,7 +1,7 @@
 /**
  * Submitting to GitHub
  * ────────────────────────────────────────────────────────────────
- * Sends an update as a pull request, in the name of the signed-in
+ * Sends a contribution as a pull request, in the name of the signed-in
  * contributor and with the permission they gave on GitHub. It does
  * what `pnpm contribute` does on a computer:
  *
@@ -9,9 +9,10 @@
  *     it when there is none; a maintainer works in the repository
  *     itself
  *   - one branch with the name the checks expect
- *   - two commits: the version the update is based on, copied without
- *     changes, then the update
- *   - one pull request, with the second commit message as its title
+ *   - for an update, two commits: the version it is based on, copied
+ *     without changes, then the update; for a new controller, one
+ *     commit with its folder
+ *   - one pull request, with the last commit message as its title
  *
  * Nothing is written before every check has passed, and nothing that
  * exists is changed: the branch and the files must be new.
@@ -25,13 +26,28 @@ const ROOT = 'website/docs/blueprints/'
 /** the permission the page asks for on GitHub */
 export const WRITE_SCOPE = 'public_repo'
 
-export const SUBMIT_STEPS = [
+const STEPS_BEFORE = [
   'Checking your permission on GitHub',
   'Checking the library on GitHub',
   'Preparing your copy of the repository',
+]
+export const UPDATE_STEPS: readonly string[] = [
+  ...STEPS_BEFORE,
   'Creating the branch with two commits',
   'Opening the pull request',
-] as const
+]
+export const NEW_STEPS: readonly string[] = [
+  ...STEPS_BEFORE,
+  'Creating the branch with your files',
+  'Opening the pull request',
+]
+
+/** a file of a commit: text, or the bytes of a picture or a manual */
+export interface CommitFile {
+  path: string
+  text?: string
+  bytes?: Uint8Array
+}
 
 export interface UpdateSubmission {
   token: string
@@ -54,6 +70,18 @@ export interface UpdateSubmission {
   changelogText: string
   kind: 'fix' | 'improvement'
   description: string
+}
+
+export interface NewSubmission {
+  token: string
+  /** GitHub name of the signed-in contributor */
+  login: string
+  id: string
+  location: { library: string; release: string; version: string }
+  /** name of the device, for the title */
+  modelName: string
+  /** the whole folder of the new controller */
+  files: CommitFile[]
 }
 
 export interface SubmitResult {
@@ -159,6 +187,13 @@ const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 const encoded = (path: string) =>
   path.split('/').map(encodeURIComponent).join('/')
 
+function asBase64(bytes: Uint8Array): string {
+  let binary = ''
+  for (let i = 0; i < bytes.length; i += 0x8000)
+    binary += String.fromCharCode(...bytes.subarray(i, i + 0x8000))
+  return btoa(binary)
+}
+
 export function updateMessages(s: UpdateSubmission): [string, string] {
   const { id, base, location } = s
   const label = s.kind === 'fix' ? '[Bug Fix]' : '[Enhancement]'
@@ -169,15 +204,22 @@ export function updateMessages(s: UpdateSubmission): [string, string] {
   ]
 }
 
+export function newMessage(s: NewSubmission): string {
+  return `[${s.id}] New controller: ${s.modelName || s.id}`
+}
+
+const STALE =
+  'The library on GitHub is not the same as on this page. Reload the page and start again.'
+
 /**
- * Sends the update. `onStep` is called with the number of the step that
- * starts (see SUBMIT_STEPS).
+ * One submission in progress: who it is for, the state of the repository
+ * it starts from, and the steps both kinds of contribution share.
  */
-export async function submitUpdate(
-  s: UpdateSubmission,
+async function start(
+  token: string,
+  expectedLogin: string,
   onStep: (step: number) => void,
-): Promise<SubmitResult> {
-  const { token } = s
+) {
   const get = (path: string, raw = false) =>
     call(token, 'GET', path, undefined, raw)
   const post = (path: string, body: unknown) => call(token, 'POST', path, body)
@@ -191,9 +233,9 @@ export async function submitUpdate(
       'GitHub has not given this page the permission to submit for you yet.',
       { needsPermission: true },
     )
-  if (String(me.data.login).toLowerCase() !== s.login.toLowerCase())
+  if (String(me.data.login).toLowerCase() !== expectedLogin.toLowerCase())
     throw new SubmitError(
-      `You are signed in here as ${s.login}, but GitHub answers for ${me.data.login}. Sign out, sign in again and submit once more.`,
+      `You are signed in here as ${expectedLogin}, but GitHub answers for ${me.data.login}. Sign out, sign in again and submit once more.`,
     )
   const login = String(me.data.login)
   const upstream = await get(`/repos/${UPSTREAM}`)
@@ -206,122 +248,160 @@ export async function submitUpdate(
   const ref = await get(`/repos/${UPSTREAM}/git/ref/heads/${encoded(main)}`)
   if (!ref.ok) throw refused(ref, `to show the ${main} branch`)
   const mainSha = String(ref.data.object.sha)
+  /** a file or folder of the library on GitHub, as it is now */
   const content = (path: string) =>
     get(
       `/repos/${UPSTREAM}/contents/${encoded(ROOT + path)}?ref=${mainSha}`,
       true,
     )
-  const stale =
-    'The library on GitHub is not the same as on this page. Reload the page and start again.'
+
+  /** steps 3 to 5: where the branch goes, the commits, the pull request */
+  const finish = async (
+    location: { library: string; release: string; version: string },
+    id: string,
+    commits: { files: CommitFile[]; message: string }[],
+  ): Promise<SubmitResult> => {
+    // ── 3. where the branch goes ───────────────────────────────────
+    onStep(2)
+    let head = UPSTREAM
+    if (!maintainer) {
+      const fork = await post(`/repos/${UPSTREAM}/forks`, {
+        default_branch_only: true,
+      })
+      if (!fork.ok) throw refused(fork, 'to create your copy of the repository')
+      head = String(fork.data.full_name)
+      // a new copy takes a moment; it is ready when it has the commit
+      let ready = false
+      for (let i = 0; i < 20 && !ready; i++) {
+        if (i > 0) await wait(2000)
+        ready = (await get(`/repos/${head}/git/commits/${mainSha}`)).ok
+      }
+      if (!ready)
+        throw new SubmitError(
+          `Your copy of the repository (${head}) does not have the newest state of the library yet. Open it on GitHub, press "Sync fork", and submit once more.`,
+          { link: `https://github.com/${head}` },
+        )
+    }
+    const branch = `${maintainer ? 'ahb_maintain' : 'ahb_contrib'}/controllers/${id}/${location.library}/${location.release}/${location.version}/author-${login}`
+    const exists = await get(`/repos/${head}/git/ref/heads/${encoded(branch)}`)
+    if (exists.ok)
+      throw new SubmitError(
+        `The branch for this contribution already exists in ${head}. If a pull request was opened from it before, use that one; otherwise delete the branch on GitHub and submit once more.`,
+        { link: `https://github.com/${head}/tree/${encoded(branch)}` },
+      )
+    if (exists.status !== 404) throw refused(exists, 'to look for the branch')
+
+    // ── 4. the commits and the branch ──────────────────────────────
+    onStep(3)
+    const mainCommit = await get(`/repos/${head}/git/commits/${mainSha}`)
+    if (!mainCommit.ok) throw refused(mainCommit, 'to read the newest commit')
+    let parent = mainSha
+    let parentTree = String(mainCommit.data.tree.sha)
+    for (const { files, message } of commits) {
+      const entries = []
+      for (const file of files) {
+        const entry = { path: ROOT + file.path, mode: '100644', type: 'blob' }
+        if (file.bytes) {
+          // pictures and manuals are stored first, then named in the tree
+          const blob = await post(`/repos/${head}/git/blobs`, {
+            content: asBase64(file.bytes),
+            encoding: 'base64',
+          })
+          if (!blob.ok) throw refused(blob, `to store ${file.path}`)
+          entries.push({ ...entry, sha: String(blob.data.sha) })
+        } else entries.push({ ...entry, content: file.text ?? '' })
+      }
+      const tree = await post(`/repos/${head}/git/trees`, {
+        base_tree: parentTree,
+        tree: entries,
+      })
+      if (!tree.ok) throw refused(tree, 'to store the files')
+      const made = await post(`/repos/${head}/git/commits`, {
+        message,
+        tree: tree.data.sha,
+        parents: [parent],
+      })
+      if (!made.ok) throw refused(made, 'to create the commit')
+      parent = String(made.data.sha)
+      parentTree = String(tree.data.sha)
+    }
+    const created = await post(`/repos/${head}/git/refs`, {
+      ref: `refs/heads/${branch}`,
+      sha: parent,
+    })
+    if (!created.ok) throw refused(created, 'to create the branch')
+
+    // ── 5. the pull request ────────────────────────────────────────
+    onStep(4)
+    const owner = head.split('/')[0]
+    const pull = await post(`/repos/${UPSTREAM}/pulls`, {
+      title: commits[commits.length - 1].message,
+      head: `${owner}:${branch}`,
+      base: main,
+      body: '',
+    })
+    if (!pull.ok) {
+      const failure = refused(pull, 'to open the pull request')
+      throw new SubmitError(
+        `${failure.message}. The branch was created; you can open the pull request yourself.`,
+        {
+          link: `https://github.com/${UPSTREAM}/compare/${encoded(main)}...${owner}:${encoded(branch)}?expand=1`,
+        },
+      )
+    }
+    return {
+      url: String(pull.data.html_url),
+      number: Number(pull.data.number),
+      branch,
+    }
+  }
+
+  return { content, finish }
+}
+
+/**
+ * Sends an update. `onStep` is called with the number of the step that
+ * starts (see UPDATE_STEPS).
+ */
+export async function submitUpdate(
+  s: UpdateSubmission,
+  onStep: (step: number) => void,
+): Promise<SubmitResult> {
+  const { content, finish } = await start(s.token, s.login, onStep)
   const baseNow = await content(s.basePath)
-  if (!baseNow.ok || baseNow.data !== s.baseText) throw new SubmitError(stale)
+  if (!baseNow.ok || baseNow.data !== s.baseText) throw new SubmitError(STALE)
   const changelogNow = await content(s.changelogPath)
   const changelogKnown = s.changelogText === '[]' ? null : s.changelogText
-  if (
+  const changelogSame =
     changelogNow.status === 404
-      ? changelogKnown !== null
-      : changelogNow.data !== changelogKnown
-  )
-    throw new SubmitError(stale)
+      ? changelogKnown === null
+      : changelogNow.data === changelogKnown
+  if (!changelogSame) throw new SubmitError(STALE)
   const taken = await content(s.baseCopy.path)
   if (taken.status !== 404)
     throw new SubmitError(
       `Version ${s.location.version} of this blueprint already exists on GitHub. Reload the page and start again.`,
     )
+  const [first, second] = updateMessages(s)
+  return finish(s.location, s.id, [
+    { files: [s.baseCopy], message: first },
+    { files: s.files, message: second },
+  ])
+}
 
-  // ── 3. where the branch goes ─────────────────────────────────────
-  onStep(2)
-  let head = UPSTREAM
-  if (!maintainer) {
-    const fork = await post(`/repos/${UPSTREAM}/forks`, {
-      default_branch_only: true,
-    })
-    if (!fork.ok) throw refused(fork, 'to create your copy of the repository')
-    head = String(fork.data.full_name)
-    // a new copy takes a moment; it is ready when it has the commit
-    let ready = false
-    for (let i = 0; i < 20 && !ready; i++) {
-      if (i > 0) await wait(2000)
-      ready = (await get(`/repos/${head}/git/commits/${mainSha}`)).ok
-    }
-    if (!ready)
-      throw new SubmitError(
-        `Your copy of the repository (${head}) does not have the newest state of the library yet. Open it on GitHub, press "Sync fork", and submit once more.`,
-        { link: `https://github.com/${head}` },
-      )
-  }
-  const branch = `${maintainer ? 'ahb_maintain' : 'ahb_contrib'}/controllers/${s.id}/${s.location.library}/${s.location.release}/${s.location.version}/author-${login}`
-  const exists = await get(`/repos/${head}/git/ref/heads/${encoded(branch)}`)
-  if (exists.ok)
+/**
+ * Sends a new controller. `onStep` is called with the number of the step
+ * that starts (see NEW_STEPS).
+ */
+export async function submitNew(
+  s: NewSubmission,
+  onStep: (step: number) => void,
+): Promise<SubmitResult> {
+  const { content, finish } = await start(s.token, s.login, onStep)
+  const taken = await content(`controllers/${s.id}`)
+  if (taken.status !== 404)
     throw new SubmitError(
-      `The branch for this update already exists in ${head}. If a pull request was opened from it before, use that one; otherwise delete the branch on GitHub and submit once more.`,
-      { link: `https://github.com/${head}/tree/${encoded(branch)}` },
+      `A controller with the id ${s.id} already exists on GitHub. Reload the page and start again.`,
     )
-  if (exists.status !== 404) throw refused(exists, 'to look for the branch')
-
-  // ── 4. two commits and the branch ────────────────────────────────
-  onStep(3)
-  const [firstMessage, secondMessage] = updateMessages(s)
-  const mainCommit = await get(`/repos/${head}/git/commits/${mainSha}`)
-  if (!mainCommit.ok) throw refused(mainCommit, 'to read the newest commit')
-  const commit = async (
-    parent: string,
-    parentTree: string,
-    files: { path: string; text: string }[],
-    message: string,
-  ) => {
-    const tree = await post(`/repos/${head}/git/trees`, {
-      base_tree: parentTree,
-      tree: files.map((file) => ({
-        path: ROOT + file.path,
-        mode: '100644',
-        type: 'blob',
-        content: file.text,
-      })),
-    })
-    if (!tree.ok) throw refused(tree, 'to store the files')
-    const made = await post(`/repos/${head}/git/commits`, {
-      message,
-      tree: tree.data.sha,
-      parents: [parent],
-    })
-    if (!made.ok) throw refused(made, 'to create the commit')
-    return { sha: String(made.data.sha), tree: String(tree.data.sha) }
-  }
-  const first = await commit(
-    mainSha,
-    String(mainCommit.data.tree.sha),
-    [s.baseCopy],
-    firstMessage,
-  )
-  const second = await commit(first.sha, first.tree, s.files, secondMessage)
-  const created = await post(`/repos/${head}/git/refs`, {
-    ref: `refs/heads/${branch}`,
-    sha: second.sha,
-  })
-  if (!created.ok) throw refused(created, 'to create the branch')
-
-  // ── 5. the pull request ──────────────────────────────────────────
-  onStep(4)
-  const owner = head.split('/')[0]
-  const pull = await post(`/repos/${UPSTREAM}/pulls`, {
-    title: secondMessage,
-    head: `${owner}:${branch}`,
-    base: main,
-    body: '',
-  })
-  if (!pull.ok) {
-    const failure = refused(pull, 'to open the pull request')
-    throw new SubmitError(
-      `${failure.message}. The branch with both commits was created; you can open the pull request yourself.`,
-      {
-        link: `https://github.com/${UPSTREAM}/compare/${encoded(main)}...${owner}:${encoded(branch)}?expand=1`,
-      },
-    )
-  }
-  return {
-    url: String(pull.data.html_url),
-    number: Number(pull.data.number),
-    branch,
-  }
+  return finish(s.location, s.id, [{ files: s.files, message: newMessage(s) }])
 }

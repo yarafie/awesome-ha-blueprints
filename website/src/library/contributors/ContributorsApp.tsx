@@ -38,7 +38,14 @@ import PackagePreview from './ui/PackagePreview'
 import UpdateFlow from './UpdateFlow'
 import { addFiles, EMPTY_FILES, type ContributionFiles } from './services/files'
 import { buildZip, type ZipEntry } from './services/zip'
-import { takeDraft, type UpdateDraft } from './services/draft'
+import {
+  saveNewDraft,
+  takeDraft,
+  takeNewDraft,
+  type UpdateDraft,
+} from './services/draft'
+import { NEW_STEPS, submitNew, type CommitFile } from './services/github'
+import SubmitPanel from './ui/SubmitPanel'
 
 /** ids of the controllers that are already in the library */
 function existingControllerIds(): string[] {
@@ -88,11 +95,28 @@ const ContributorsApp: React.FC = () => {
 
   useEffect(() => {
     const draft = takeDraft()
-    if (!draft) return
-    setUpdateDraft(draft)
-    setCategory('controllers')
-    setIntent('update')
+    if (draft) {
+      setUpdateDraft(draft)
+      setCategory('controllers')
+      setIntent('update')
+      return
+    }
+    // a new controller that was put aside, with its picture and manual
+    let current = true
+    takeNewDraft<Details>().then((saved) => {
+      if (!saved || !current) return
+      setFiles(saved.files)
+      setDetails(saved.details)
+      detailsFor.current = saved.detailsFor
+      setCategory('controllers')
+      setIntent('new')
+    })
+    return () => {
+      current = false
+    }
   }, [])
+  // once the pull request exists, the answers can no longer be changed
+  const [submitted, setSubmitted] = useState(false)
 
   const existingIds = useMemo(existingControllerIds, [])
   const user = auth.status === 'authenticated' ? auth.user : null
@@ -179,21 +203,35 @@ const ContributorsApp: React.FC = () => {
       : formatPasses && fileProblems.length === 0
         ? 'done'
         : 'fix'
-  const detailsLocked = !formatPasses || fileProblems.length > 0
+  const detailsLocked = !formatPasses || fileProblems.length > 0 || submitted
   // An empty release name is explained by the hint under its field. It keeps
   // the package from being built, but it is not shown as an error before the
   // contributor has typed anything.
   const shownProblems = problems.filter(
     (problem) => !problem.startsWith('the release name is missing'),
   )
-  const detailsStatus: StepStatus = detailsLocked
-    ? 'todo'
-    : shownProblems.length > 0
-      ? 'fix'
-      : problems.length > 0
-        ? 'todo'
-        : 'done'
+  const detailsStatus: StepStatus = submitted
+    ? 'done'
+    : detailsLocked
+      ? 'todo'
+      : shownProblems.length > 0
+        ? 'fix'
+        : problems.length > 0
+          ? 'todo'
+          : 'done'
   const packageStatus: StepStatus = blocker === null ? 'done' : 'todo'
+
+  // the files of the package as they are sent to GitHub; null until ready
+  const newFiles: CommitFile[] | null =
+    blocker === null && pkg?.ok && files.png
+      ? pkg.files.map((file) =>
+          file.kind === 'png'
+            ? { path: file.path, bytes: files.png!.bytes }
+            : file.kind === 'pdf' && files.pdf
+              ? { path: file.path, bytes: files.pdf.bytes }
+              : { path: file.path, text: file.text ?? '' },
+        )
+      : null
 
   // ── actions ──────────────────────────────────────────────────────
   const handleAdd = async (incoming: File[]) => {
@@ -362,7 +400,11 @@ const ContributorsApp: React.FC = () => {
                 title='A few details'
                 status={detailsStatus}
                 locked={detailsLocked}
-                hint={detailsLocked ? 'after the format check' : undefined}
+                hint={
+                  detailsLocked && !submitted
+                    ? 'after the format check'
+                    : undefined
+                }
               >
                 <DetailsForm
                   details={details}
@@ -380,6 +422,40 @@ const ContributorsApp: React.FC = () => {
                   files={pkg?.ok ? pkg.files : []}
                   blocker={blocker}
                   onDownload={handleDownload}
+                />
+                <SubmitPanel
+                  submit={
+                    newFiles && pkg?.location && user
+                      ? (granted, onStep) =>
+                          submitNew(
+                            {
+                              token: granted,
+                              login: user.login,
+                              id: pkg.location!.id,
+                              location: pkg.location!,
+                              modelName: check?.info.model_name ?? '',
+                              files: newFiles,
+                            },
+                            onStep,
+                          )
+                      : null
+                  }
+                  steps={NEW_STEPS}
+                  holds='one commit that adds the folder of your controller'
+                  token={providerToken}
+                  requestAccess={requestAccess}
+                  onLeave={() =>
+                    saveNewDraft({
+                      files,
+                      details,
+                      detailsFor: detailsFor.current,
+                    })
+                  }
+                  onSubmitted={() => {
+                    setSubmitted(true)
+                    // the page has no further use for the permission
+                    void forgetAccess()
+                  }}
                 />
               </StepCard>
             </>

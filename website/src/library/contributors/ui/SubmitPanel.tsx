@@ -1,8 +1,9 @@
 /**
  * SubmitPanel
  * ────────────────────────────────────────────────────────────────
- * The last part of the package card: sends the update to GitHub as a
- * pull request in the contributor's name.
+ * The last part of the package card: sends the contribution to GitHub
+ * as a pull request in the contributor's name. What is sent, and in how
+ * many commits, is decided by the flow that shows the panel.
  *
  * The page needs a permission from GitHub for that. It is asked for
  * here, at the moment it is needed, and what the page does with it is
@@ -14,20 +15,23 @@ import styles from '../contributors.module.css'
 import {
   canSubmit,
   SubmitError,
-  SUBMIT_STEPS,
-  submitUpdate,
   WRITE_SCOPE,
   type SubmitResult,
-  type UpdateSubmission,
 } from '../services/github'
 
 interface SubmitPanelProps {
-  /** everything to send, or null while the package is not ready */
-  submission: Omit<UpdateSubmission, 'token'> | null
+  /** sends the package, or null while the package is not ready */
+  submit:
+    | ((token: string, onStep: (step: number) => void) => Promise<SubmitResult>)
+    | null
+  /** the steps `submit` goes through, as shown while it runs */
+  steps: readonly string[]
+  /** what the branch will hold, to complete "adds one branch with …" */
+  holds: string
   /** GitHub token of the signed-in contributor, if the page has one */
   token: string | null
-  /** called just before the browser leaves for GitHub */
-  onLeave: () => void
+  /** called just before the browser leaves for GitHub; it is waited for */
+  onLeave: () => void | Promise<unknown>
   /** asks GitHub for the permission; the browser leaves the page */
   requestAccess: (scopes: string) => Promise<void>
   /** called once the pull request exists */
@@ -46,7 +50,9 @@ const ABOUT_PAGE =
   '/awesome-ha-blueprints/docs/contributing#the-contribute-page-and-your-github-account'
 
 const SubmitPanel: React.FC<SubmitPanelProps> = ({
-  submission,
+  submit,
+  steps,
+  holds,
   token,
   onLeave,
   requestAccess,
@@ -76,8 +82,9 @@ const SubmitPanel: React.FC<SubmitPanelProps> = ({
 
   const handleAllow = async () => {
     setFailure(null)
-    onLeave()
     try {
+      // what was entered is put aside first
+      await onLeave()
       await requestAccess(WRITE_SCOPE)
     } catch (err) {
       setFailure(
@@ -89,11 +96,11 @@ const SubmitPanel: React.FC<SubmitPanelProps> = ({
   }
 
   const handleSubmit = async () => {
-    if (!submission || !token || busy) return
+    if (!submit || !token || busy) return
     setBusy(true)
     setFailure(null)
     try {
-      const done = await submitUpdate({ ...submission, token }, setStep)
+      const done = await submit(token, setStep)
       setResult(done)
       onSubmitted(done)
     } catch (err) {
@@ -131,15 +138,15 @@ const SubmitPanel: React.FC<SubmitPanelProps> = ({
     )
   }
 
-  const ready = submission !== null
+  const ready = submit !== null
 
   return (
     <div className={styles.section}>
       <p className={styles.hint} style={{ marginBottom: '0.5rem' }}>
         Or submit it from here as a pull request. In your name, the page creates
         a copy of the repository in your GitHub account if you have none, adds
-        one branch with two commits (the version you started from, then your
-        update) and opens one pull request. Nothing else is changed.
+        one branch with {holds} and opens one pull request. Nothing else is
+        changed.
       </p>
 
       {permission !== 'granted' && (
@@ -155,13 +162,13 @@ const SubmitPanel: React.FC<SubmitPanelProps> = ({
             withdraw it in your GitHub settings
           </a>{' '}
           at any time. If you would rather not grant it, download the package
-          instead. <a href={ABOUT_PAGE}>More about this permission</a>
+          instead. <a href={ABOUT_PAGE}>More about this permission</a>.
         </div>
       )}
 
       {step !== null && (
         <ol className={styles.progress}>
-          {SUBMIT_STEPS.map((label, i) => (
+          {steps.map((label, i) => (
             <li
               key={label}
               className={
