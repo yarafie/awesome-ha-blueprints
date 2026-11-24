@@ -23,6 +23,18 @@
        --author octocat --release anything --tags remote,dimmer \
        --into repo --yes
 
+   An update to a blueprint that is already in the library:
+
+     pnpm contribute --update ikea_e2201 --base EPMatt/awesome/2026.08.09 \
+       --yaml my_e2201.yaml --author octocat --kind fix \
+       --description "ZHA: the Down button release is detected again" \
+       --breaking no --into repo --yes
+
+   You state which existing version your file is based on. Written into
+   this repository, the update becomes two commits back to back: first
+   that version copied to the new folder without changes, then your
+   update, so that the second commit shows what really changed.
+
    Options:
      --yaml <file>          the controller YAML
      --png <file>           picture of the device
@@ -38,6 +50,15 @@
      --into repo            write the package into this repository, ready
                             to commit and open a pull request
      --into <folder>        write the package into a new or empty folder
+
+     --update <id>          update this controller instead of adding one
+     --base <l/r/v>         the version your file is based on, written as
+                            <library>/<release>/<version>
+     --kind <kind>          fix or improvement
+     --description <text>   what changed, in one line for the changelog
+     --breaking <yes|no>    whether existing automations must be changed
+     --maintainer           name the branch ahb_maintain/... instead of
+                            ahb_contrib/... (maintainers of the library)
      --yes                  ask nothing: take the suggested values and write
                             without confirmation; answers that have no
                             suggestion must then be given as options
@@ -59,6 +80,7 @@ import {
   guessManufacturerAndModel,
 } from '../../../website/src/library/format/controllerPackage.mjs'
 import { checkControllerYaml } from '../../../website/src/library/format/controllerFormat.mjs'
+import { buildControllerUpdate } from '../../../website/src/library/format/controllerUpdate.mjs'
 
 const HERE = path.dirname(fileURLToPath(import.meta.url))
 const REPO_ROOT = path.resolve(HERE, '..', '..', '..')
@@ -95,7 +117,7 @@ const INTENTS = [
   {
     name: 'An update to a blueprint',
     text: 'A fix or an improvement for a blueprint that is already in the library.',
-    ready: false,
+    ready: true,
   },
   {
     name: 'Your own version',
@@ -124,6 +146,7 @@ for (let i = 0; i < argv.length; i++) {
   const a = argv[i]
   if (a === '--') continue
   if (a === '--yes') opt.yes = true
+  else if (a === '--maintainer') opt.maintainer = true
   else if (a === '--help' || a === '-h') opt.help = true
   else if (a.startsWith('--') && i + 1 < argv.length)
     opt[a.slice(2)] = argv[++i]
@@ -302,6 +325,374 @@ function printTree(files) {
 }
 
 /* =========================================================
+   An update to a blueprint
+   ---------------------------------------------------------
+   A new version of a controller that is already in the library.
+   The contributor states which existing version the file is based
+   on; it is never assumed to be the newest one. Written into this
+   repository, the result is two commits back to back: first the
+   base copied to the new folder without changes, then the update,
+   so that the second commit shows what really changed.
+   ========================================================= */
+const git = (args, options = {}) =>
+  execFileSync('git', args, {
+    cwd: REPO_ROOT,
+    encoding: 'utf8',
+    stdio: ['ignore', 'pipe', 'pipe'],
+    ...options,
+  }).trim()
+
+// every version of a controller: [{ library, release, version, text }]
+function versionsOf(id) {
+  const out = []
+  const root = path.join(CONTROLLERS_DIR, id)
+  for (const library of dirs(root).sort())
+    for (const release of dirs(path.join(root, library)).sort())
+      for (const version of dirs(path.join(root, library, release)).sort()) {
+        const file = path.join(root, library, release, version, `${id}.yaml`)
+        if (/^\d{4}\.\d{2}\.\d{2}$/.test(version) && fs.existsSync(file))
+          out.push({
+            library,
+            release,
+            version,
+            text: fs.readFileSync(file, 'utf8'),
+          })
+      }
+  return out
+}
+
+async function askYesNo(question, fallback) {
+  for (;;) {
+    const answer = (await ask(`${question} (y/n)`, fallback)).toLowerCase()
+    if (/^y(es)?$/.test(answer)) return true
+    if (/^no?$/.test(answer)) return false
+  }
+}
+
+async function updateFlow() {
+  // ---- 2
+  step(2, 'The blueprint and your file')
+  const ids = dirs(CONTROLLERS_DIR)
+  let id = opt.update
+  for (;;) {
+    if (id === undefined)
+      id = await ask('Blueprint id of the controller, for example ikea_e2201')
+    if (ids.includes(id)) break
+    const near = ids.filter((n) => id && (n.includes(id) || id.includes(n)))
+    console.log(
+      `      No controller with the id "${id}".${near.length ? ` Did you mean: ${near.slice(0, 8).join(', ')}` : ''}`,
+    )
+    if (opt.update !== undefined) return 1
+    id = undefined
+  }
+  const versions = versionsOf(id)
+  if (!versions.length) {
+    console.log(`      ERROR   "${id}" has no versions to base an update on`)
+    return 1
+  }
+  const name = (v) => `${v.library}/${v.release}/${v.version}`
+  console.log('      Which version is your file based on?')
+  versions.forEach((v, i) => {
+    const last = !versions.some(
+      (o) =>
+        o.library === v.library &&
+        o.release === v.release &&
+        o.version > v.version,
+    )
+    console.log(
+      `      ${String(i + 1).padStart(2)}) ${v.library}/${v.release}  ${v.version}${last ? '  (newest of this release)' : ''}`,
+    )
+  })
+  let base
+  if (opt.base !== undefined) {
+    base = versions.find((v) => name(v) === opt.base)
+    if (!base) {
+      console.log(
+        `      ERROR   --base ${opt.base} is not one of these; write it as <library>/<release>/<version>`,
+      )
+      return 1
+    }
+  } else
+    for (;;) {
+      // no suggestion on purpose: the base must be stated, not assumed
+      const n = Number(await ask('Number of the version'))
+      if (versions[n - 1]) {
+        base = versions[n - 1]
+        break
+      }
+      console.log(
+        `      Please answer with a number from 1 to ${versions.length}.`,
+      )
+    }
+  console.log(`      -> based on ${name(base)}`)
+  const yaml = await askFile(
+    'yaml',
+    'Your updated blueprint, YAML file',
+    opt.yaml,
+    false,
+  )
+  const yamlText = yaml.data.toString('utf8')
+
+  const releaseDir = path.join(CONTROLLERS_DIR, id, base.library, base.release)
+  const changelogFile = path.join(releaseDir, 'changelog.json')
+  const build = (fields) =>
+    buildControllerUpdate({
+      yamlText,
+      id,
+      base,
+      versions,
+      changelogText: fs.existsSync(changelogFile)
+        ? fs.readFileSync(changelogFile, 'utf8')
+        : '[]',
+      manifestText: fs.readFileSync(
+        path.join(CONTROLLERS_DIR, id, 'manifest.yaml'),
+        'utf8',
+      ),
+      fields,
+    })
+
+  // ---- 3
+  step(3, 'Format check and comparison')
+  // a first run with stand-in answers: it tells everything about the file
+  const first = build({
+    author: { id: 'octocat' },
+    kind: 'fix',
+    description: 'stand-in for the first check',
+  })
+  if (first.check)
+    for (const w of first.check.warnings)
+      console.log(`      remark  ${w.rule}  ${capital(w.msg)}`)
+  if (first.about === 'file') {
+    for (const p of first.problems) console.log(`      ERROR   ${capital(p)}`)
+    console.log(
+      `\n${first.problems.length} to fix. The rules are described here:\n${FORMAT_PAGE}\nNothing was written.`,
+    )
+    return 1
+  }
+  if (first.about === 'details') {
+    // the stand-in answers are fine, so this is about the version itself
+    for (const p of first.problems) console.log(`      ERROR   ${capital(p)}`)
+    console.log('\nNothing was written.')
+    return 1
+  }
+  const warnings = first.check.warnings.length
+  console.log(
+    `      Your blueprint follows the format${warnings ? `, with ${warnings} remark(s)` : ''}.`,
+  )
+  const c = first.comparison
+  console.log(`      Compared with ${name(base)}:`)
+  console.log(
+    `        lines:   ${c.lines.added} added, ${c.lines.removed} removed`,
+  )
+  if (c.inputs)
+    for (const [label, keys] of Object.entries(c.inputs))
+      console.log(
+        `        ${label === 'added' ? 'inputs: ' : '        '} ${keys.length} ${label}${keys.length ? `: ${keys.join(', ')}` : ''}`,
+      )
+  if (first.notes.length) {
+    console.log('      Please check:')
+    for (const n of first.notes) console.log(`        - ${capital(n)}`)
+    if (!opt.yes && !(await askYesNo('Is that what you intend?', '')))
+      cancelled('Stopped, so that you can choose another base or file.')
+  }
+
+  // ---- 4
+  step(4, 'A few details')
+  const preset = { ...opt }
+  const last = {
+    author: defaultAuthor(),
+    kind: '',
+    description: '',
+    breaking: first.suggestBreaking ? 'y' : 'n',
+  }
+  if (first.suggestBreaking)
+    console.log(
+      '      An input was removed, so existing automations may need changes.',
+    )
+  let result
+  for (;;) {
+    const author =
+      preset.author ?? (await ask('Your GitHub user name', last.author))
+    let kind = preset.kind
+    if (kind === undefined) {
+      console.log('      1) A fix   2) An improvement')
+      do kind = await ask('Your choice', last.kind)
+      while (!['1', '2', 'fix', 'improvement'].includes(kind))
+    }
+    kind = { 1: 'fix', 2: 'improvement' }[kind] ?? kind
+    let description = preset.description
+    if (description === undefined)
+      do
+        description = await ask(
+          'What changed, in one line for the changelog',
+          last.description,
+        )
+      while (!description)
+    const breakingAnswer =
+      preset.breaking ??
+      ((await askYesNo(
+        'Do existing automations have to be changed',
+        last.breaking,
+      ))
+        ? 'y'
+        : 'n')
+    const breaking = /^y(es)?$/i.test(breakingAnswer)
+    Object.assign(last, {
+      author,
+      kind,
+      description,
+      breaking: breaking ? 'y' : 'n',
+    })
+
+    result = build({ author: { id: author }, kind, description, breaking })
+    if (result.ok) break
+    for (const p of result.problems) console.log(`      ERROR   ${capital(p)}`)
+    const allPreset = ['author', 'kind', 'description'].every(
+      (k) => preset[k] !== undefined,
+    )
+    if (result.about === 'file' || allPreset || opt.yes) {
+      console.log('\nNothing was written.')
+      return 1
+    }
+    console.log('      Please answer again (Enter keeps your last answer).')
+    for (const k of ['author', 'kind', 'description', 'breaking'])
+      delete preset[k]
+  }
+  const loc = result.location
+  console.log(
+    `      New version ${loc.version} of ${id}, in ${loc.library}/${loc.release}, based on ${base.version}`,
+  )
+
+  // ---- 5
+  step(5, 'Your package')
+  printTree(result.files)
+
+  let into = opt.into
+  if (!into) {
+    console.log('      Where should it go?')
+    const where = await choose([
+      {
+        name: 'This repository',
+        text: 'As two commits: the base copied without changes, then your update.',
+        ready: true,
+      },
+      { name: 'A separate folder', text: 'To look at it first.', ready: true },
+    ])
+    into =
+      where.name === 'This repository'
+        ? 'repo'
+        : await ask('Folder', '~/ahb-package')
+  }
+
+  if (into !== 'repo') {
+    const baseDir = path.resolve(plain(into))
+    if (fs.existsSync(baseDir) && fs.readdirSync(baseDir).length) {
+      console.log(`      ERROR   ${baseDir} is not empty`)
+      return 1
+    }
+    if (!opt.yes && !(await askYesNo(`Write 2 files into ${baseDir}?`, 'y')))
+      cancelled('Cancelled.')
+    result.files.forEach((f, i) => {
+      const target = path.join(baseDir, f.path)
+      fs.mkdirSync(path.dirname(target), { recursive: true })
+      fs.writeFileSync(target, f.text)
+      console.log(`      (${i + 1}/${result.files.length}) written ${f.path}`)
+    })
+    console.log(
+      `\nDone. This update is based on ${name(base)}.\nTo see what changed:\n  pnpm version-diff ${path.join(CONTROLLERS_DIR, id, base.library, base.release, base.version, `${id}.yaml`)} ${path.join(baseDir, result.files[0].path)}`,
+    )
+    return 0
+  }
+
+  // ---- into this repository, as two commits
+  const rel = (p) => path.posix.join('website/docs/blueprints', p)
+  const yamlRel = rel(result.files[0].path)
+  const changelogRel = rel(result.files[1].path)
+  let branch
+  try {
+    branch = git(['rev-parse', '--abbrev-ref', 'HEAD'])
+    if (git(['diff', '--cached', '--name-only'])) {
+      console.log(
+        '      ERROR   Some changes are already staged for commit. Commit or unstage them first.',
+      )
+      return 1
+    }
+    if (git(['status', '--porcelain', '--', changelogRel])) {
+      console.log(
+        `      ERROR   ${changelogRel} has changes that are not committed.`,
+      )
+      return 1
+    }
+  } catch (err) {
+    console.log(`      ERROR   git could not be used here: ${err.message}`)
+    return 1
+  }
+  if (fs.existsSync(path.join(REPO_ROOT, yamlRel))) {
+    console.log(`      ERROR   ${yamlRel} already exists`)
+    return 1
+  }
+  // the automatic checks of a pull request read the branch name
+  const newBranch = `${opt.maintainer ? 'ahb_maintain' : 'ahb_contrib'}/controllers/${id}/${loc.library}/${loc.release}/${loc.version}/author-${last.author}`
+  const kindLabel = last.kind === 'fix' ? '[Bug Fix]' : '[Enhancement]'
+  const first1 = `[${id}] Copy ${base.library}/${base.release} ${base.version} as ${loc.version} (no changes)`
+  const second = `[${id}] ${loc.library}/${loc.release} ${loc.version}: ${kindLabel} ${last.description}`
+  let switchBranch = false
+  if (branch !== newBranch) {
+    const onMain = branch === 'main' || branch === 'master'
+    console.log(
+      `      You are on ${branch}. The automatic checks of a pull request read the\n      branch name, which should be:\n        ${newBranch}`,
+    )
+    if (
+      opt.yes ||
+      (await askYesNo('Create that branch and switch to it?', 'y'))
+    )
+      switchBranch = true
+    else if (onMain) cancelled('Cancelled: an update is not committed on main.')
+  }
+  console.log(`      Two commits on ${switchBranch ? newBranch : branch}:`)
+  console.log(`        1. ${first1}`)
+  console.log(`        2. ${second}`)
+  if (!opt.yes && !(await askYesNo('Make these two commits?', 'y')))
+    cancelled('Cancelled.')
+
+  let done = 0
+  try {
+    if (switchBranch) git(['switch', '-c', newBranch])
+    const target = path.join(REPO_ROOT, yamlRel)
+    fs.mkdirSync(path.dirname(target), { recursive: true })
+
+    fs.writeFileSync(target, result.baseCopy.text)
+    git(['add', '--', yamlRel])
+    git(['commit', '-m', first1, '--', yamlRel])
+    done = 1
+    console.log(`      (1/2) committed: the base, copied without changes`)
+
+    fs.writeFileSync(target, result.files[0].text)
+    fs.writeFileSync(path.join(REPO_ROOT, changelogRel), result.files[1].text)
+    git(['add', '--', yamlRel, changelogRel])
+    git(['commit', '-m', second, '--', yamlRel, changelogRel])
+    done = 2
+    console.log(`      (2/2) committed: your update`)
+  } catch (err) {
+    console.log(
+      `      ERROR   git stopped after ${done} of 2 commits:\n${String(err.stderr || err.message).trim()}`,
+    )
+    console.log(
+      '\nLook at the state with "git status" and "git log --oneline -3" before you go on.',
+    )
+    return 1
+  }
+
+  console.log('\nDone.')
+  console.log('To see what really changed (the second commit):')
+  console.log('  git show HEAD')
+  console.log('To look at the result and send it:')
+  console.log('  pnpm docs:build')
+  console.log('  then push the branch to your fork and open a pull request')
+  return 0
+}
+
+/* =========================================================
    The five steps
    ========================================================= */
 async function main() {
@@ -314,10 +705,18 @@ async function main() {
   step(1, 'What would you like to contribute?')
   const category = await choose(CATEGORIES)
   console.log(`      ${category.name}: what would you like to add?`)
-  const intent = await choose(INTENTS)
+  // --update names the intent; with --yes and no --update it is a new device
+  const intent =
+    opt.update !== undefined
+      ? INTENTS[1]
+      : opt.yes
+        ? INTENTS[0]
+        : await choose(INTENTS)
   console.log(`      -> ${category.name} - ${intent.name}`)
 
   // ---- 2
+  if (intent === INTENTS[1]) return updateFlow()
+
   step(2, 'Your files')
   const yaml = await askFile('yaml', 'Blueprint, YAML file', opt.yaml, false)
   const png = await askFile(
@@ -535,7 +934,9 @@ async function main() {
     const rel = `website/docs/blueprints/controllers/${loc.id}`
     console.log('To look at the result and send it:')
     console.log('  pnpm docs:build')
-    console.log(`  git switch -c add/${loc.id}`)
+    console.log(
+      `  git switch -c ${opt.maintainer ? 'ahb_maintain' : 'ahb_contrib'}/controllers/${loc.id}/${loc.library}/${loc.release}/${loc.version}/author-${loc.library}`,
+    )
     console.log(`  git add ${rel}`)
     console.log(
       `  git commit -m "[New Controller] ${info.model_name || loc.id}"`,

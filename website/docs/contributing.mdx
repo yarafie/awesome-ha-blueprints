@@ -80,6 +80,8 @@ Every contribution is published under your GitHub name and a **release name** th
 
 Blueprints are versioned. An improvement is normally added as a **new version** next to the existing ones, so people who use the current version are not affected.
 
+**The short way:** after steps 1 to 3 below, run `pnpm contribute` and choose **An update to a blueprint**. You say which existing version your file is based on and point it to your updated YAML file. It checks the format, shows what changed compared with that version, adds the changelog entry, creates the branch with the right name and makes two commits: first the version you based your work on, copied without changes, then your update. The second commit then shows exactly what you changed. After that, continue with step 9.
+
 1. **Fork** this repository to your GitHub account.
 2. **Clone** the forked repository to your local machine:
    ```sh
