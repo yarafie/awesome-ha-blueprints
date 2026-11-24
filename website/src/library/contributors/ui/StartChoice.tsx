@@ -74,7 +74,7 @@ export const INTENTS: IntentOption[] = [
     id: 'update',
     name: 'An update to a blueprint',
     text: 'A fix or an improvement for a blueprint that is already in the library. It becomes a new version.',
-    ready: false,
+    ready: true,
   },
   {
     id: 'variant',

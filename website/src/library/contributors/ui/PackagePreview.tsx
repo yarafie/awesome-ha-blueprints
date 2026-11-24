@@ -8,10 +8,9 @@
 
 import React from 'react'
 import styles from '../contributors.module.css'
-import type { PackageFile } from '@library/format/controllerPackage.mjs'
 
 interface PackagePreviewProps {
-  files: PackageFile[]
+  files: { path: string }[]
   blocker: string | null
   onDownload: () => void
 }

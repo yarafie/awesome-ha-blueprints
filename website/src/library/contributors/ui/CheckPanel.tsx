@@ -84,11 +84,19 @@ const CheckPanel: React.FC<CheckPanelProps> = ({ check, fileProblems }) => {
         </p>
       ))}
 
-      {fileProblems.map((problem) => (
-        <p key={problem} className={`${styles.finding} ${styles.findingError}`}>
-          <Message text={problem} />
-        </p>
-      ))}
+      {fileProblems.map((problem) => {
+        // a problem that comes from a rule starts with its number
+        const rule = /^(C-\d+)\s+([\s\S]*)$/.exec(problem)
+        return (
+          <p
+            key={problem}
+            className={`${styles.finding} ${styles.findingError}`}
+          >
+            {rule && <span className={styles.rule}>{rule[1]}</span>}
+            <Message text={rule ? rule[2] : problem} />
+          </p>
+        )
+      })}
 
       {warnings.map((w, i) => (
         <p

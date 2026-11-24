@@ -35,6 +35,7 @@ import FileDrop from './ui/FileDrop'
 import CheckPanel from './ui/CheckPanel'
 import DetailsForm, { EMPTY_DETAILS, type Details } from './ui/DetailsForm'
 import PackagePreview from './ui/PackagePreview'
+import UpdateFlow from './UpdateFlow'
 import { addFiles, EMPTY_FILES, type ContributionFiles } from './services/files'
 import { buildZip, type ZipEntry } from './services/zip'
 
@@ -150,6 +151,7 @@ const ContributorsApp: React.FC = () => {
 
   // the steps appear once the contributor has said what they are adding
   const started = category === 'controllers' && intent === 'new'
+  const updating = category === 'controllers' && intent === 'update'
 
   // ── status of each card ──────────────────────────────────────────
   const filesStatus: StepStatus = files.yaml && files.png ? 'done' : 'todo'
@@ -287,7 +289,7 @@ const ContributorsApp: React.FC = () => {
           <StepCard
             step={1}
             title='What would you like to contribute?'
-            status={started ? 'done' : 'todo'}
+            status={started || updating ? 'done' : 'todo'}
           >
             <StartChoice
               category={category}
@@ -296,6 +298,8 @@ const ContributorsApp: React.FC = () => {
               onIntent={setIntent}
             />
           </StepCard>
+
+          {updating && <UpdateFlow author={user.login} />}
 
           {started && (
             <>

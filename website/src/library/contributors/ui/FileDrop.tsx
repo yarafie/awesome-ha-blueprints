@@ -2,7 +2,8 @@
  * FileDrop
  * ────────────────────────────────────────────────────────────────
  * One drop area for all files. The files are sorted by type, so the
- * YAML, the picture and the manual can be dropped together.
+ * YAML, the picture and the manual can be dropped together. For an
+ * update only the YAML is asked for.
  */
 
 import React, { useState } from 'react'
@@ -12,6 +13,8 @@ import { formatSize, type ContributionFiles } from '../services/files'
 interface FileDropProps {
   files: ContributionFiles
   rejected: string[]
+  /** only the YAML is needed: no rows for the picture and the manual */
+  yamlOnly?: boolean
   onAdd: (files: File[]) => void
   onRemove: (kind: keyof ContributionFiles) => void
 }
@@ -52,6 +55,7 @@ const Row: React.FC<RowProps> = ({
 const FileDrop: React.FC<FileDropProps> = ({
   files,
   rejected,
+  yamlOnly,
   onAdd,
   onRemove,
 }) => {
@@ -72,12 +76,14 @@ const FileDrop: React.FC<FileDropProps> = ({
           onAdd(Array.from(e.dataTransfer.files))
         }}
       >
-        Drop your files here, or tap to choose them
+        {yamlOnly
+          ? 'Drop your updated YAML here, or tap to choose it'
+          : 'Drop your files here, or tap to choose them'}
         <input
           className={styles.hiddenInput}
           type='file'
-          multiple
-          accept='.yaml,.yml,.png,.pdf'
+          multiple={!yamlOnly}
+          accept={yamlOnly ? '.yaml,.yml' : '.yaml,.yml,.png,.pdf'}
           onChange={(e) => {
             onAdd(Array.from(e.target.files ?? []))
             e.target.value = ''
@@ -91,21 +97,25 @@ const FileDrop: React.FC<FileDropProps> = ({
         detail={files.yaml ? formatSize(files.yaml.size) : undefined}
         onRemove={() => onRemove('yaml')}
       />
-      <Row
-        label='Picture of the device, PNG'
-        name={files.png?.name}
-        detail={
-          files.png ? `${files.png.width} × ${files.png.height}` : undefined
-        }
-        onRemove={() => onRemove('png')}
-      />
-      <Row
-        label='Device manual, PDF'
-        name={files.pdf?.name}
-        detail={files.pdf ? formatSize(files.pdf.size) : undefined}
-        optional
-        onRemove={() => onRemove('pdf')}
-      />
+      {!yamlOnly && (
+        <>
+          <Row
+            label='Picture of the device, PNG'
+            name={files.png?.name}
+            detail={
+              files.png ? `${files.png.width} × ${files.png.height}` : undefined
+            }
+            onRemove={() => onRemove('png')}
+          />
+          <Row
+            label='Device manual, PDF'
+            name={files.pdf?.name}
+            detail={files.pdf ? formatSize(files.pdf.size) : undefined}
+            optional
+            onRemove={() => onRemove('pdf')}
+          />
+        </>
+      )}
 
       {rejected.length > 0 && (
         <div className={styles.section}>
