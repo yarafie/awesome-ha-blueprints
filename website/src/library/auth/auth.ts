@@ -47,13 +47,17 @@ export function createAuth(options: AuthInitOptions) {
 
   /**
    * Start GitHub OAuth login.
+   *
+   * @param scopes further GitHub permissions to ask for (space separated).
+   *               Without it only the identity is asked for.
    */
-  const login = async () => {
+  const login = async (scopes?: string) => {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'github',
       options: {
         redirectTo:
           window.location.origin + baseUrl + redirectPath.replace(/^\//, ''),
+        ...(scopes ? { scopes } : {}),
       },
     })
 

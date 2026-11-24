@@ -17,7 +17,7 @@
  * offered as a .zip.
  */
 
-import React, { useMemo, useRef, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 
 import { useAuth } from '@library/auth/hooks/useAuth'
 import { blueprintsContext } from '@site/src/utils/libraryContexts'
@@ -38,6 +38,7 @@ import PackagePreview from './ui/PackagePreview'
 import UpdateFlow from './UpdateFlow'
 import { addFiles, EMPTY_FILES, type ContributionFiles } from './services/files'
 import { buildZip, type ZipEntry } from './services/zip'
+import { takeDraft, type UpdateDraft } from './services/draft'
 
 /** ids of the controllers that are already in the library */
 function existingControllerIds(): string[] {
@@ -66,7 +67,13 @@ function packageReadme(folder: string): string {
 }
 
 const ContributorsApp: React.FC = () => {
-  const { state: auth, login, logout } = useAuth('/contributors')
+  const {
+    state: auth,
+    login,
+    logout,
+    providerToken,
+    requestAccess,
+  } = useAuth('/contributors')
 
   const [category, setCategory] = useState<Category | null>(null)
   const [intent, setIntent] = useState<Intent | null>(null)
@@ -75,6 +82,16 @@ const ContributorsApp: React.FC = () => {
   const [details, setDetails] = useState<Details>(EMPTY_DETAILS)
   // name of the blueprint the entered details belong to
   const detailsFor = useRef<string | null>(null)
+  // an update that was put aside for a visit to GitHub (see SubmitPanel)
+  const [updateDraft, setUpdateDraft] = useState<UpdateDraft | null>(null)
+
+  useEffect(() => {
+    const draft = takeDraft()
+    if (!draft) return
+    setUpdateDraft(draft)
+    setCategory('controllers')
+    setIntent('update')
+  }, [])
 
   const existingIds = useMemo(existingControllerIds, [])
   const user = auth.status === 'authenticated' ? auth.user : null
@@ -293,11 +310,22 @@ const ContributorsApp: React.FC = () => {
               category={category}
               intent={intent}
               onCategory={setCategory}
-              onIntent={setIntent}
+              onIntent={(next) => {
+                // "Change" also lets go of what was restored after GitHub
+                if (next === null) setUpdateDraft(null)
+                setIntent(next)
+              }}
             />
           </StepCard>
 
-          {updating && <UpdateFlow author={user.login} />}
+          {updating && (
+            <UpdateFlow
+              author={user.login}
+              token={providerToken}
+              requestAccess={requestAccess}
+              draft={updateDraft}
+            />
+          )}
 
           {started && (
             <>

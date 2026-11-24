@@ -30,6 +30,7 @@ import FileDrop from './ui/FileDrop'
 import CheckPanel from './ui/CheckPanel'
 import Message from './ui/Message'
 import PackagePreview from './ui/PackagePreview'
+import SubmitPanel from './ui/SubmitPanel'
 import {
   addFiles,
   EMPTY_FILES,
@@ -37,6 +38,7 @@ import {
   type YamlFile,
 } from './services/files'
 import { buildZip, type ZipEntry } from './services/zip'
+import { saveDraft, type UpdateDraft } from './services/draft'
 import {
   changelogTextOf,
   controllerIds,
@@ -47,6 +49,12 @@ import {
 interface UpdateFlowProps {
   /** GitHub name of the signed-in contributor */
   author: string
+  /** GitHub token of the contributor, if the page has one */
+  token: string | null
+  /** asks GitHub for a permission; the browser leaves the page */
+  requestAccess: (scopes: string) => Promise<void>
+  /** what was entered before a visit to GitHub, to start from */
+  draft: UpdateDraft | null
 }
 
 type Kind = UpdateFields['kind']
@@ -64,17 +72,30 @@ const STAND_IN = {
 const count = (n: number, one: string, many: string) =>
   `${n} ${n === 1 ? one : many}`
 
-const UpdateFlow: React.FC<UpdateFlowProps> = ({ author }) => {
-  const [id, setId] = useState('')
-  const [baseName, setBaseName] = useState<string | null>(null)
-  const [yaml, setYaml] = useState<YamlFile | null>(null)
+const UpdateFlow: React.FC<UpdateFlowProps> = ({
+  author,
+  token,
+  requestAccess,
+  draft,
+}) => {
+  const [id, setId] = useState(draft?.id ?? '')
+  const [baseName, setBaseName] = useState<string | null>(
+    draft?.baseName ?? null,
+  )
+  const [yaml, setYaml] = useState<YamlFile | null>(draft?.yaml ?? null)
   const [rejected, setRejected] = useState<string[]>([])
   // the "Please check" notes the contributor has confirmed
-  const [confirmed, setConfirmed] = useState<string | null>(null)
-  const [kind, setKind] = useState<Kind | null>(null)
-  const [description, setDescription] = useState('')
+  const [confirmed, setConfirmed] = useState<string | null>(
+    draft?.confirmed ?? null,
+  )
+  const [kind, setKind] = useState<Kind | null>(draft?.kind ?? null)
+  const [description, setDescription] = useState(draft?.description ?? '')
   // null: follow the suggestion (an input was removed)
-  const [breaking, setBreaking] = useState<boolean | null>(null)
+  const [breaking, setBreaking] = useState<boolean | null>(
+    draft?.breaking ?? null,
+  )
+  // once the pull request exists, the answers can no longer be changed
+  const [submitted, setSubmitted] = useState(false)
 
   const ids = useMemo(controllerIds, [])
   const versions: ExistingVersion[] = useMemo(
@@ -145,6 +166,25 @@ const UpdateFlow: React.FC<UpdateFlowProps> = ({ author }) => {
 
   const ready = blocker === null && result !== null && result.ok
 
+  // everything the submit step sends; null while the package is not ready
+  const submission =
+    ready && base && kind && result.location && result.baseCopy
+      ? {
+          login: author,
+          id,
+          location: result.location,
+          base,
+          basePath: `controllers/${id}/${nameOf(base)}/${id}.yaml`,
+          baseText: base.text,
+          baseCopy: result.baseCopy,
+          files: result.files,
+          changelogPath: `controllers/${id}/${base.library}/${base.release}/changelog.json`,
+          changelogText: changelogTextOf(id, base.library, base.release),
+          kind,
+          description,
+        }
+      : null
+
   // ── status of each card ──────────────────────────────────────────
   const sourceStatus: StepStatus = base && yaml ? 'done' : 'todo'
   const checkStatus: StepStatus = !first
@@ -154,14 +194,16 @@ const UpdateFlow: React.FC<UpdateFlowProps> = ({ author }) => {
       : intended
         ? 'done'
         : 'todo'
-  const detailsLocked = !fileFine || !intended
-  const detailsStatus: StepStatus = detailsLocked
-    ? 'todo'
-    : shownProblems.length > 0
-      ? 'fix'
-      : result?.ok
-        ? 'done'
-        : 'todo'
+  const detailsLocked = !fileFine || !intended || submitted
+  const detailsStatus: StepStatus = submitted
+    ? 'done'
+    : detailsLocked
+      ? 'todo'
+      : shownProblems.length > 0
+        ? 'fix'
+        : result?.ok
+          ? 'done'
+          : 'todo'
   const warnings = first?.check?.warnings.length ?? 0
 
   // ── actions ──────────────────────────────────────────────────────
@@ -410,7 +452,7 @@ const UpdateFlow: React.FC<UpdateFlowProps> = ({ author }) => {
         title='A few details'
         status={detailsStatus}
         locked={detailsLocked}
-        hint={detailsLocked ? 'after the check' : undefined}
+        hint={detailsLocked && !submitted ? 'after the check' : undefined}
       >
         <fieldset className={styles.fieldset} disabled={detailsLocked}>
           <p className={styles.hint} style={{ marginBottom: '0.4rem' }}>
@@ -492,6 +534,23 @@ const UpdateFlow: React.FC<UpdateFlowProps> = ({ author }) => {
           files={ready ? result.files : []}
           blocker={blocker}
           onDownload={handleDownload}
+        />
+        <SubmitPanel
+          submission={submission}
+          token={token}
+          requestAccess={requestAccess}
+          onLeave={() =>
+            saveDraft({
+              id,
+              baseName,
+              yaml,
+              confirmed,
+              kind,
+              description,
+              breaking,
+            })
+          }
+          onSubmitted={() => setSubmitted(true)}
         />
       </StepCard>
     </>

@@ -415,6 +415,26 @@
   margin-top: 0.25rem;
 }
 
+.progress {
+  margin: 0 0 0.7rem;
+  padding-left: 1.4rem;
+  font-size: 0.9rem;
+  line-height: 1.7;
+}
+
+.progressDone {
+  color: var(--ifm-color-success-dark);
+}
+
+.progressNow {
+  font-weight: 600;
+}
+
+.progressFailed {
+  font-weight: 600;
+  color: var(--ifm-color-danger-dark);
+}
+
 .actions {
   display: flex;
   align-items: center;

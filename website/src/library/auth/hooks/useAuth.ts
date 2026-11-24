@@ -12,7 +12,7 @@
  *  - MUST be safe during Docusaurus SSG (no throws on missing env)
  */
 
-import { useEffect, useMemo, useReducer } from 'react'
+import { useEffect, useMemo, useReducer, useState } from 'react'
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext'
 
 import { authReducer, initialAuthState } from '../state/authReducer'
@@ -44,6 +44,13 @@ export function useAuth(redirectPath: string) {
    * Auth state machine
    */
   const [state, dispatch] = useReducer(authReducer, initialAuthState)
+
+  /**
+   * The GitHub token of the signed-in user, when GitHub handed one over
+   * with the sign-in. It is kept in memory only and is what a page uses
+   * to act on GitHub in the user's name (see requestAccess).
+   */
+  const [providerToken, setProviderToken] = useState<string | null>(null)
 
   /**
    * Supabase client
@@ -88,6 +95,8 @@ export function useAuth(redirectPath: string) {
 
       const meta = data.session.user.user_metadata || {}
       if (!meta.user_name || !meta.provider_id) return
+      if (data.session.provider_token)
+        setProviderToken(data.session.provider_token)
 
       dispatch({
         type: 'AUTH_SUCCESS',
@@ -105,12 +114,15 @@ export function useAuth(redirectPath: string) {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
       if (!session) {
+        setProviderToken(null)
         dispatch({ type: 'AUTH_LOGOUT' })
         return
       }
 
       const meta = session.user.user_metadata || {}
       if (!meta.user_name || !meta.provider_id) return
+      // a refreshed session no longer carries the token: keep the one we have
+      if (session.provider_token) setProviderToken(session.provider_token)
 
       dispatch({
         type: 'AUTH_SUCCESS',
@@ -157,12 +169,27 @@ export function useAuth(redirectPath: string) {
   const logout = async () => {
     if (!auth) return
     await auth.logout()
+    setProviderToken(null)
     dispatch({ type: 'AUTH_LOGOUT' })
+  }
+
+  /**
+   * Ask GitHub for a further permission (for example 'public_repo').
+   * The browser goes to GitHub and comes back to the same page, so a
+   * page that needs its state afterwards has to save it first.
+   * Throws when the request could not be started.
+   */
+  const requestAccess = async (scopes: string) => {
+    if (!auth)
+      throw new Error('Authentication is not available in this environment')
+    await auth.login(scopes)
   }
 
   return {
     state,
     login,
     logout,
+    providerToken,
+    requestAccess,
   }
 }
